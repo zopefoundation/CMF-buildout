@@ -1,0 +1,57 @@
+<dtml-var standard_html_header>
+
+<dtml-if expr="_.hasattr(REQUEST, 'ids') and REQUEST['ids']">
+<dtml-with expr="_.getitem(REQUEST['ids'][0], 0)">
+<dtml-if cb_isMoveable>
+
+<div class="Desktop">
+<h1> Rename <dtml-var meta_type> </H2>
+
+<form action="folder_rename" method="POST">
+<table class="FormLayout">
+<tr>
+  <td align="left" valign="top">
+  <dtml-let getIcon="_.hasattr(this(), 'getIcon') and getIcon()"
+            icon="getIcon or _.getattr(this(), 'icon', '')">
+  <dtml-if icon>
+  <img src="&dtml-portal_url;/&dtml-icon;" alt="" border="0">
+  </dtml-if></dtml-let>
+  </td>
+  <td align="left" valign="top">
+  <dtml-var getId>
+  </td>
+</tr>
+<tr>
+  <td align="left" valign="top">
+  <strong>to:</strong>
+  </td>
+  <td align="left" valign="top">
+  <input type="text" name="new_id" value="&dtml-getId;" size="20">
+  </td>
+</tr>
+<tr>
+<td></td>
+<td>
+  <input type="hidden" name="id" value="&dtml-getId;">
+  <input type="submit" value=" Ok ">
+</td>
+</tr>
+</table>
+</form>
+<dtml-else>
+<form action="folder_contents" method="get">
+<p>The item <em>&dtml-getId;</em> does not support this operation.</P>
+<input type="submit" name="submit" value=" Ok ">
+</form>
+</dtml-if>
+
+</dtml-with>
+<dtml-else>
+<form action="folder_contents" method="get">
+<p>You must select an item to rename.</p>
+<input type="submit" name="submit" value=" Ok ">
+</form>
+
+</dtml-if>
+
+<dtml-var standard_html_footer>

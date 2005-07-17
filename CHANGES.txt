@@ -1,0 +1,354 @@
+CMF 1.4.7 (2004/08/11)
+
+  New Features
+
+    - Minor featurelet: The "Action Providers" ZMI tab on the portal_actions 
+      tool now links directly to the tools shown 
+      (http://zope.org/Collectors/CMF/181)
+
+  Bug Fixes
+
+    - CMFCore.PortalFolder: Enforce check of "Delete objects" permission
+      during cut + paste. (http://zope.org/Collectors/CMF/259)
+
+      N.B.  This fix depends on an update to the underlying Zope software,
+            e.g., Zope 2.7.3 or later.  Two new unit tests fail on
+            Zope 2.7.2 and earlier.
+
+    - CMFDefault.MetadataTool: Validation would disallow
+      vocabulary-constrained metadata elements to be empty
+      (http://zope.org/Collectors/CMF/217)
+
+    - CMFDefault.DiscussionItem: Replies were not sorted chronologically
+      (http://zope.org/Collectors/CMF/211)
+
+    - CMFDefault.Image and CMFDefault.File: When copy/pasting Image and File
+      objects the review state did not revert to "private".
+      (http://zope.org/Collectors/CMF/176)
+
+    - CMFTopic: Change topic_view template to show title and ID (it only
+      showed title before; http://zope.org/Collectors/CMF/180)
+
+    - CMFCore.PortalFolder: Unlike other content, only Managers were able
+      to create PortalFolders using mkdir in FTP. Fixed by inserting
+      missing security declaration for PortalFolder.manage_addFolder 
+      (http://zope.org/Collectors/CMF/167)
+
+    - Default text format for NewsItems is now structured-text, just like
+      it is for Documents, thus removing a spurious difference
+      (http://zope.org/Collectors/CMF/138).
+
+    - CMFCalendar.CalendarTool: (Lost) fix for issues 65 and 159.
+      The determination of the date/time range constituting a specific month
+      was faulty.
+
+    - CMFDefault.DublinCore: Use the portal_metadata tool's 'getPublisher'
+      for the DublinCore 'Publisher' element (thanks to Eric Brown for the 
+      patch).
+
+    - CMFDefault.Document: Make Document render compliant XHTML when format
+      is 'plain' (thanks to Eric Brown for the patch).
+
+CMF 1.4.6 (2004/07/30)
+
+  Bug Fixes
+
+    - CMFCalendar.Event: Fixed long-standing bug where day, month, and year
+      were processed in the wrong order by Event.edit().
+      (http://zope.org/Collectors/CMF/202)
+
+    - CMFCalendar.Event: PUT() caused improper splitting of 'Contributors'
+      metadata header.
+
+    - CMFCalendar.CalendarTool: Code assumed US datetime format throughout.
+      At least since Zope 2.7 users can change that.
+      (http://plone.org/collector/3218)
+
+    - CMFCore.PortalFolder: _verifyObjectPaste() did not check the
+      container's allowed content types, enabling users to paste objects
+      they were not allowed to add.
+      (http://plone.org/collector/2183)
+
+    - CMFDefault.File and CMFDefault.Image: setFormat() failed to update
+      the content_type property causing a stale mimetype to be used when
+      serving the file or image.
+      (http://plone.org/collector/1323)
+
+    - CMFDefault.Document and CMFDefault.Link: PUT() caused improper
+      splitting of 'Contributors' metadata header.
+      (http://plone.org/collector/3217)
+      
+    - CMFCore.utils: Introduced contributorsplitter() utility function.
+
+    - CMFCore.PortalFolder: checkIdAvailable() failed to catch 
+      zExceptions.BadRequest.
+
+CMF 1.4.5 (2004/07/08)
+
+  Bug Fixes
+
+    - When someone customises something twice, rather than raise an error,
+      show them a nice message and takes them to the already customised
+      object.
+
+    - FSImage didn't recognize '.bmp' files (Collector #245).
+
+    - Further hardening of member property, 'email', to prevent trickier
+      header injection into system-generated e-mails (Collector #243 redux).
+
+CMF 1.4.4 (2004/05/14)
+
+  Bug Fixes
+
+    - Unchecked member property, 'email', could allow header injection
+      into system-generated e-mails (Collector #243).
+
+CMF 1.4.3 (2004/04/22)
+
+  Bug Fixes
+
+    - CMFCalendar.CalendarTool: Converted '_usage' queries to dictionary
+      syntax. Shuts up DeprecationWarnings in Zope 2.7.
+
+    - CMFCore.CachingPolicyManager:  make REQUEST argument optional
+      for public methods, to ease scripting policy operations from
+      setup code. (Collector #234)
+
+    - Action definitions: Removed leading spaces. (Collector #229)
+
+CMF 1.4.3-rc1 (2004/02/05)
+
+  Bug Fixes
+
+    - CMFCore.PortalFolder: Explicitly declare base interfaces.
+
+    - CMFCore.MembershipTool: Don't swallow ConflictError during wrapUser.
+
+    - CMFDefault.SkinnedFolder: Creator() method now resembles the one from
+      DublinCore. This allows for unowned objects and shuts up a deprecation
+      warning in Zope 2.6.4/2.7.0.
+
+    - CMFCore.CookieCrumbler: No longer disregards an existing cookie auth
+      token for DAV requests (like PROPFIND) that occur over the main HTTP
+      port. Eliminates additional user challenges for browser-based DAV
+      clients like MS WebFolders.
+
+    - CMFCore.FSMetadata: the "acquire" flag for permission mappings was
+      not converted to an int;  '0' was therefore coming through as true.
+
+    - CMFCore.FSPageTemplate.py: compatibiltity with Python 2.3 (can't
+      mutate a class' __dict__ directly;  use setattr(klass, name, value)
+      instead).
+
+CMF 1.4.2 (2003/10/27)
+
+  Bug Fixes
+
+    - CMFDefault RegistrationTool:  enforced using the member's e-mail
+      address, rather than the one passed in from the request.
+
+    - CMFCore MembershipTool: Fixed 'getCandidateLocalRoles()'.
+      Didn't work without having 'Member' role. (Collector #148 and #169)
+
+    - CMFCore MembershipTool: Changed the permission for searchMembers to
+      'List portal members'. By default Anonymous users are no longer able to
+      list member ids and email addresses. (Collector #189)
+
+CMF 1.4.1 (2003/09/08)
+
+  Bug Fixes
+
+    - Initialize class security correctly on ActionProviderBase
+      (Collector #186).
+
+    - Filesystem-based scripts should open their files in text mode, not
+      binary (Collector #185).
+
+    - Remove ownership from filesystem-based skin methods, which
+      can't be trojaned, and therefore need not pay the performance
+      penalty of ownership checking.
+
+    - CMFCore/MembershipTool.py:  include traceback in log messages
+      for errors during 'wrapUser'.
+
+    - CMFDefault/skins: Fix permission name and html in roster.
+
+    - CMFCore/TypesTool.py: Make sure oldstyle FactoryTypeInformation
+      data is always converted.  Actions are now completely migrated during
+      TypeInformation creation.
+
+    - CMFCore/utils.py: Fix buglet in 'minimalpath()', which caused
+      proudct lookup to fail when a second 'Products' directory was
+      in the path.
+
+    - CMFCore/Skinnable.py: Fix acquisition wrapping so that getPhysicalPath
+      is not spoofed during funny traversals.
+
+    - CMFCore/TypesTool.py:  Fix ownership of constructor scripts used by
+      ScriptableTypeInformation (Collector #165).
+
+    - CMFDefault/skins: Fix some minor template issues in ZPT skins
+      (Collector #156 and other).
+
+    - CMFDefault and CMFCalendar skins: Fix stylesheets (Collector #164).
+
+    - CMFCalendar:  fix bug in month-spanning events (patch from Helge
+      Tesdal).
+
+    - CMFCore and CMFDefault MembershipTool: Make sure 'createMemberarea()'
+      always grants the right Ownership and Owner role for new member folders.
+      This doesn't fix existing member folders with wrong Owner roles.
+      If you use a customized MembershipTool, make sure your createMemberarea
+      method does the Right Thing.
+      (Collector #162)
+
+CMF 1.4 (2003/05/19)
+
+  Bug Fixes
+
+    - The memberdata tool now fetches properties from member objects using
+      'getProperty' when returning search results, rather than performing
+      direct attribute access on the member.
+
+    - The CookieCrumber now functions for HEAD requests.
+
+    - type actions: They are now absolute URLs by default.
+      For 'getActionById' and '_getViewFor' they are converted to relative
+      URLs. (Collector #152)
+
+CMF 1.4beta1 (2003/04/28)
+
+  New Features
+
+    - Made TypeInformation objects derive from CMFCore.ActionProviderBase:
+      their actions are now TALES expressions, and they have conditions
+      (like all the "tool actions").
+
+    - zpt skins (CMFDefault): Added i18n attributes.
+      See INSTALL.txt for installing internationalization support.
+      (Collector #122, thanks to Gitte Wange for her contribution)
+
+    - zpt skins (CMFDefault): Added 'zpt_content/transition_form.pt'.
+      'content_*_form.pt' now use this template.
+
+    - skins (CMFDefault): Made scripts independent of submit button 'values'.
+
+    - Added .css to the extensions that create FSFile objects in
+      DirectoryViews (see CMFCore/FSFile.py)
+      All sites upgrading which expected css extension to be dropped and to
+      contain DTML will be required to rename their css files to foo.dtml.
+      (Collector #129)
+
+    - Added .js to the extensions that create FSFile objects in
+      DirectoryViews
+
+    - MembershipTool (CMFDefault): Un-hardwired members folder.
+      You now can get the members folder object using 'getMembersFolder()'.
+      If you want to change the id of the members folder, rename the folder
+      and set the members folder using portal_membership's configuration tab.
+      (Collector #128)
+
+    - utils: Changed behavior of 'bodyfinder' and 'html_headcheck'.
+      The head check in html_headcheck is now a bit different, but the result
+      should be closer to what people expect.
+      The head check in bodyfinder is removed. In most cases you want to call
+      bodyfinder only if html_headcheck is true.
+
+    - Added FSFile skin object, in order to allow .swf files (et al.) in
+      skins
+
+    - Added 'listMetaTags' skin method, which filters the DublinCore
+      metadata into a form suitable for inclusion as <meta> tags.
+
+    - Added .metadata file for FSObjects, which allows the easy addition of
+      more features without adding lots and lots of files. ConfigParser format.
+
+    - Added proxy roles to FS Python Scripts and FS DTML Methods via the proxy
+      property in .metadata files.
+
+  Bug Fixes
+
+    - utils: Changed behavior of 'StrippingParser' and 'scrubHTML'.
+      They now close empty tags.
+      (Collector #108, thanks to 'tanghus' for the patch)
+
+    - Removed deprecated 'register' module and 'PortalContentRegistration'
+      interface.
+
+    - Moved URLTool to CMFCore. Added interface and basic tests.
+      (Collector #67)
+
+    - Protected the Pending review action in DefaultWorkflow by
+      ReviewPortalContent (Collector #52).
+
+    - Raise ValueError instead of TypeError in TypesTool.getActionById
+      if the action is not found (Collector #56).
+
+    - Cleaned up Interfaces and API Help (Collector #96):
+
+      o Removed redundant 'Syndicatable' and 'IndexableContent' interfaces.
+
+      o Removed unfixable 'Membership' and 'ReviewableContent' interfaces.
+
+      o Removed listActions() from 'Contentish' and 'portal_workflow'
+        interface.
+
+      o Removed redundant or 'None' overriding of listActions().
+
+      o Updated all interfaces to work with new Zope 2.6 Interface API.
+
+      o Added 'portal_properties' and 'Dynamic' interfaces.
+
+      o Added many interface implementation tests and made them pass.
+
+    - MembershipTool (CMFDefault): Fixed acquisition bug. (Collector #102)
+
+    - Skinnable: Changed docstring for setupCurrentSkin and added
+      docstring to changeSkin: the latter is now used to set skin
+      manually mid-request. (Collector #27)
+
+    - Document: Ensured that setFormat('text/plain') does not overwrite
+      text_format if text_format is 'plain'. (Collector #140)
+
+    - Action providers: Default _actions' are now tuples, not lists.
+      (Collector #123)
+
+    - Document: Ensured that 'edit()' and 'PUT()' strip of xhtml headers and
+      html headers including DOCTYPE declarations. (Collector #41)
+
+    - Fixed some minor buglets. (Collector #80, #94 and #95)
+
+    - Ensure that a couple of calls to string.split only split into a
+      maximum of two parts.
+      (Collector #82)
+
+    - Enabled the CMF to be installed in a PRODUCTS_PATH.
+      In doing so, also made it easier to move CMF sites between
+      Windows and Unix.
+      (Collector #64)
+
+    - Multimodule checkin to convert calls from user.getUserName() to
+      user.getId() where appropriate.  User names should not be used
+      as immutable references, while user ids should.  The distinction
+      is not clearly enforcd in the stock user folder or any current user
+      folder implementations, but newer user folder implementations
+      will rely upon it.
+
+    - Remove redundant VERSION.txt files;  the canonical spelling is
+      'version.txt' (Collector #13).
+
+    - Correct security assertion on CMFDefault.Image's manage_afterAdd
+      (Collector #141).
+
+    - Ensure that the security attributes are reindexed on all
+      subobjects too when a folderish object changes state in the
+      workflow (Collector #115).
+
+    - Backport fix of CMFCore/tests/test_FSImage.py to work with
+      recent Zopes (> 2.6), which force HTTP headers to be strings.
+
+    - Use return instead of raise in RegistrationTool.testPropertiesValidity
+      if id is incorrect (Collector #48).
+
+    - Correctly cleanup temporaries in CMFCore.MemberDataTool when
+      wrapping a user object (Collector #136).

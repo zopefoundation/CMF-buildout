@@ -1,0 +1,5 @@
+<dtml-call expr="RESPONSE.expireCookie('folderfilter', path='/')">
+<dtml-call expr="RESPONSE.redirect( absolute_url()
+                                  + '/folder_contents'
+                                  + '?portal_status_message=Filter+cleared.'
+                                  )">

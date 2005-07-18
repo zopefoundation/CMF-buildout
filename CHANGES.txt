@@ -28,6 +28,10 @@ HEAD only (unreleased)
 
   Bug Fixes
 
+    - Fix DefaultWorkflowDefinition bug on isActionSupported() for the
+      keywargs support to reflect DCWorkflowDefinition changes. Add a
+      test case for this definition as well.
+
     - Added testing framework to suppress / examine output from warnings
       module and from zLOG.
 

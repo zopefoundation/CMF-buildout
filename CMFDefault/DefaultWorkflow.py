@@ -168,7 +168,7 @@ class DefaultWorkflowDefinition (SimpleItemWithProperties):
         return actions
 
     security.declarePrivate('isActionSupported')
-    def isActionSupported(self, ob, action):
+    def isActionSupported(self, ob, action, **kw):
         '''
         Returns a true value if the given action name is supported.
         '''

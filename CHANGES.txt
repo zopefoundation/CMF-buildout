@@ -1,5 +1,11 @@
 After CMF 1.5.2
 
+Bugs Fixed
+
+    - Fix DefaultWorkflowDefinition bug on isActionSupported() for the
+      keywargs support to reflect DCWorkflowDefinition changes. Add a
+      test case for this definition as well.
+
 
 CMF 1.5.2 (2005/07/17)
 

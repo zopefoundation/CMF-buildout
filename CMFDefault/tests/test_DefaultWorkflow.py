@@ -20,8 +20,31 @@ import Testing
 import Zope2
 Zope2.startup()
 
+from Products.CMFCore.tests.base.dummy import DummyContent
+from Products.CMFCore.tests.base.dummy import DummySite
+from Products.CMFCore.tests.base.dummy import DummyTool
+from Products.CMFCore.tests.base.dummy import DummyUserFolder
+
+from Products.CMFCore.WorkflowTool import addWorkflowFactory
+from Products.CMFCore.WorkflowTool import WorkflowTool
+
+from Products.CMFDefault.MembershipTool import MembershipTool
+from Products.CMFDefault.DefaultWorkflow import DefaultWorkflowDefinition
 
 class DefaultWorkflowDefinitionTests(TestCase):
+
+    def setUp(self):
+
+        self.site = DummySite('site')
+        self.site._setObject('portal_types', DummyTool())
+        self.site._setObject('portal_workflow', WorkflowTool())
+        self.site._setObject('portal_membership', MembershipTool())
+        self.site._setObject('acl_users', DummyUserFolder())
+
+        addWorkflowFactory(DefaultWorkflowDefinition,
+                           id='default_workflow', title='default_workflow')
+
+        self._constructDummyWorkflow()
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -40,6 +63,34 @@ class DefaultWorkflowDefinitionTests(TestCase):
 
         verifyClass(IWorkflowDefinition, DefaultWorkflowDefinition)
 
+    def _constructDummyWorkflow(self):
+
+        wftool = self.site.portal_workflow
+        wftool.manage_addWorkflow('default_workflow (default_workflow)', 'wf')
+        wftool.setDefaultChain('wf')
+
+    def _getDummyWorkflow(self):
+        wftool = self.site.portal_workflow
+        return wftool.wf
+
+    def test_isActionSupported(self):
+
+        wf = self._getDummyWorkflow()
+        dummy = self.site._setObject('dummy', DummyContent())
+
+        for action in ('submit', 'retract', 'publish', 'reject',):
+            self.assert_(wf.isActionSupported(dummy, action))
+
+    def test_isActionSupported_with_keywargs(self):
+
+        wf = self._getDummyWorkflow()
+        dummy = self.site._setObject('dummy', DummyContent())
+
+        for action in ('submit', 'retract', 'publish', 'reject',):
+            self.assert_(wf.isActionSupported(dummy, action,
+                                              arg1=1, arg2=2))
+
+    # XXX more tests...
 
 def test_suite():
     return TestSuite((

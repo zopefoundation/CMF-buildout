@@ -60,6 +60,10 @@ class FSZSQLMethodCustomizationTests(SecurityTest, FSZSQLMaker):
 
         self.fsZSQL = self.fsdir.testsql
 
+    def tearDown(self):
+        SecurityTest.tearDown(self)
+        FSZSQLMaker.tearDown(self)
+
     def test_customize( self ):
 
         self.fsZSQL.manage_doCustomize( folder_path='custom' )

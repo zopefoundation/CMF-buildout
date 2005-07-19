@@ -49,7 +49,7 @@
   <td align="left" valign="top">
   </td>
   <td align="left" valign="top">
-  <input type="submit" name="submit" value=" Login "
+  <input type="submit" name="submit" value="Login"
          i18n:attributes="value" />
   </td>
 </tr>

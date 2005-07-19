@@ -121,7 +121,7 @@
           </td>
          </tr>
          <tr>
-          <td colspan="2"><input type="submit" name="edit" value=" Save "
+          <td colspan="2"><input type="submit" name="edit" value="Save"
                                  i18n:attributes="value"></td>
          </tr>
 

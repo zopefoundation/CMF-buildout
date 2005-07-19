@@ -155,7 +155,7 @@
  <tr>
   <td><br /></td>
   <td>
-    <input type="submit" value=" Search " i18n:attributes="value" />
+    <input type="submit" value="Search" i18n:attributes="value" />
   </td>
  </tr>
 </table>

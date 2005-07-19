@@ -6,12 +6,13 @@ except ImportError:
     import Zope as Zope2
 Zope2.startup()
 
-from os import curdir, mkdir, stat, remove
-from os.path import join, abspath, dirname
-from shutil import copytree, rmtree
-from tempfile import mktemp
 import sys
 import time
+from os import chmod, curdir, mkdir, remove, stat, walk
+from os.path import join, abspath, dirname
+from shutil import copytree, rmtree
+from stat import S_IWRITE
+from tempfile import mktemp
 
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
@@ -222,6 +223,10 @@ class FSDVTest( TestCase ):
                       self._skinname),
                  join(self.tempname,
                       self._skinname))
+        # make sure we have a writable copy
+        for root, dirs, files in walk(self.tempname):
+            for name in dirs + files:
+                chmod(join(root, name), S_IWRITE)
         # store the skin path name
         self.skin_path_name = join(self.tempname,self._skinname,self._layername)
 

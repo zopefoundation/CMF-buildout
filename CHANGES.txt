@@ -2,6 +2,9 @@ After CMF 1.5.2
 
 Bugs Fixed
 
+    - Made sure FSDVTest always deletes its temporary folder on tearDown.
+      (http://www.zope.org/Collectors/CMF/106)
+
     - Fix DefaultWorkflowDefinition bug on isActionSupported() for the
       keywargs support to reflect DCWorkflowDefinition changes. Add a
       test case for this definition as well.

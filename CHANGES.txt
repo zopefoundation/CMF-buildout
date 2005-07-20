@@ -2,6 +2,13 @@ After CMF 1.5.2
 
 Bugs Fixed
 
+    - Change CVS checkout documentation to their equivalent Subversion
+      instructions
+
+    - In CMFSetup, make sure to give special treatment to both CVS and 
+      .svn folders where this is necessary (e.g. to implicitly skip them
+      when importing profiles)
+
     - Made sure FSDVTest always deletes its temporary folder on tearDown.
       (http://www.zope.org/Collectors/CMF/106)
 

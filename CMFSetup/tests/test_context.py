@@ -281,6 +281,7 @@ class DirectoryImportContextTests( FilesystemTestBase
         self._makeFile( FILENAME, printable )
         self._makeFile( os.path.join( SUBDIR, 'another.txt' ), 'ABC' )
         self._makeFile( os.path.join( SUBDIR, 'CVS/skip.txt' ), 'DEF' )
+        self._makeFile( os.path.join( SUBDIR, '.svn/skip.txt' ), 'GHI' )
 
         site = DummySite( 'site' ).__of__( self.root )
         ctx = self._makeOne( site, self._PROFILE_PATH )
@@ -290,6 +291,7 @@ class DirectoryImportContextTests( FilesystemTestBase
         self.failUnless( 'nested.txt' in names )
         self.failUnless( 'another.txt' in names )
         self.failIf( 'CVS' in names )
+        self.failIf( '.svn' in names )
 
     def test_listDirectory_skip_explicit( self ):
 
@@ -299,16 +301,17 @@ class DirectoryImportContextTests( FilesystemTestBase
         self._makeFile( FILENAME, printable )
         self._makeFile( os.path.join( SUBDIR, 'another.txt' ), 'ABC' )
         self._makeFile( os.path.join( SUBDIR, 'CVS/skip.txt' ), 'DEF' )
+        self._makeFile( os.path.join( SUBDIR, '.svn/skip.txt' ), 'GHI' )
 
         site = DummySite( 'site' ).__of__( self.root )
         ctx = self._makeOne( site, self._PROFILE_PATH )
 
         names = ctx.listDirectory( SUBDIR, ( 'nested.txt', ) )
-        self.assertEqual( len( names ), 2 )
+        self.assertEqual( len( names ), 3 )
         self.failIf( 'nested.txt' in names )
         self.failUnless( 'another.txt' in names )
         self.failUnless( 'CVS' in names )
-
+        self.failUnless( '.svn' in names )
 
 class DirectoryExportContextTests( FilesystemTestBase
                                  , ConformsToISetupContext

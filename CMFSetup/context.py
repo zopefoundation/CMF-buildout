@@ -118,7 +118,7 @@ class DirectoryImportContext( Implicit ):
         return os.path.isdir( full_path )
 
     security.declareProtected( ManagePortal, 'listDirectory' )
-    def listDirectory( self, path, skip=('CVS',) ):
+    def listDirectory( self, path, skip=('CVS', '.svn') ):
 
         """ See IImportContext.
         """

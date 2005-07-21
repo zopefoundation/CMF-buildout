@@ -14,8 +14,6 @@
 
 $Id$
 """
-from warnings import warn
-
 import Globals
 from AccessControl import ClassSecurityInfo
 from Acquisition import ImplicitAcquisitionWrapper
@@ -91,9 +89,6 @@ class FSPropertiesObject (FSObject, PropertyManager):
         Read the file (indicated by exandpath(self._filepath), and parse the
         data if necessary.
         """
-        warn('FSProperties objects will disappear in CMF 1.7 - Use '
-             'FSMetadata objects instead.', DeprecationWarning)
-
         fp = expandpath(self._filepath)
 
         file = open(fp, 'r')    # not 'rb', as this is a text file!

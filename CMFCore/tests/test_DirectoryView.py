@@ -34,6 +34,7 @@ class DirectoryViewPathTests( TestCase, WarningInterceptor ):
     """
 
     def setUp(self):
+        self._trap_warning_output()
         from Products.CMFCore.DirectoryView import registerDirectory
         from Products.CMFCore.DirectoryView import addDirectoryViews
         registerDirectory('fake_skins', _prefix)

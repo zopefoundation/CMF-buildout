@@ -130,7 +130,7 @@ else:
 _prefix = abspath(join(_prefix,'..'))
 
 
-class FSDVTest( TestCase ):
+class FSDVTest( TestCase, WarningInterceptor ):
     # Base class for FSDV test, creates a fake skin
     # copy that can be edited.
 
@@ -139,6 +139,7 @@ class FSDVTest( TestCase ):
     _layername = 'fake_skin'
 
     def _registerDirectory(self, object=None, ignore=None):
+        self._trap_warning_output()
         from Products.CMFCore.DirectoryView import registerDirectory
         from Products.CMFCore.DirectoryView import addDirectoryViews
         if ignore is None:
@@ -224,4 +225,5 @@ class FSDVTest( TestCase ):
 
     def tearDown(self):
         # kill the copy
+        self._free_warning_output()
         rmtree(self.tempname)

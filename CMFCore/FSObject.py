@@ -23,6 +23,8 @@ from AccessControl.Role import RoleManager
 from AccessControl.Permission import Permission
 from Acquisition import Implicit
 from Acquisition import aq_base
+from Acquisition import aq_inner
+from Acquisition import aq_parent
 from OFS.Cache import Cacheable
 from OFS.SimpleItem import Item
 from DateTime import DateTime
@@ -81,6 +83,7 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
         """
 
         obj = self._createZODBClone()
+        parent = aq_parent(aq_inner(self))
 
         # Preserve cache manager associations
         cachemgr_id = self.ZCacheable_getManagerId()
@@ -102,7 +105,10 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
             rop_info = self.rolesOfPermission(old_perm)
             roles = [x['name'] for x in rop_info if x['selected'] != '']
             try:
-                obj.manage_permission(old_perm, roles=roles, acquire=acquired)
+                # if obj is based on OFS.ObjectManager an acquisition context is
+                # required for _subobject_permissions()
+                obj.__of__(parent).manage_permission(old_perm, roles=roles,
+                                                     acquire=acquired)
             except ValueError:
                 # The permission was invalid, never mind
                 pass

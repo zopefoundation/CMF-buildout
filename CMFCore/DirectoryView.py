@@ -59,14 +59,19 @@ def _filtered_listdir(path, ignore=ignore):
 
 class _walker:
     def __init__(self, ignore=ignore):
-        self.ignore = ignore
+        # make a dict for faster lookup
+        self.ignore = dict([(x, None) for x in ignore])
 
     def __call__(self, listdir, dirname, names):
-        names = [ (name, stat(path.join(dirname,name))[8])
-                  for name
-                  in names
-                  if name not in self.ignore and not ignore_re.match(name) ]
-        listdir.extend(names)
+        # filter names inplace, so filtered directories don't get visited
+        names[:] = [ name
+                     for name
+                     in names
+                     if name not in self.ignore and not ignore_re.match(name) ]
+        # append with stat info
+        results = [ (name, stat(path.join(dirname,name))[8])
+                    for name in names ]
+        listdir.extend(results)
 
 class DirectoryInformation:
     data = None

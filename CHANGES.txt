@@ -2,6 +2,11 @@ After CMF 1.5.2
 
 Bugs Fixed
 
+    - Apply an interim fix for slow pathwalking implementation in
+      development mode on Windows (http://www.zope.org/Collectors/CMF/367)
+      Note that a better fix would be to leverage pywin32 APIs for
+      file / directory monitoring.
+
     - FSObject.manage_doCustomize() was broken for folderish objects on Zope
       2.8 because manage_permission requires a context to work.
       (see http://www.zope.org/Collectors/CMF/368)

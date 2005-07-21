@@ -2,6 +2,10 @@ After CMF 1.5.2
 
 Bugs Fixed
 
+    - FSObject.manage_doCustomize() was broken for folderish objects on Zope
+      2.8 because manage_permission requires a context to work.
+      (see http://www.zope.org/Collectors/CMF/368)
+      
     - CMFCore/FSPropertiesObject and CMFCore/FSMetadata: Removed a wrongly 
       inserted DeprecationWarning in the FSPropertiesObject class and
       put it into the FSMetadata class. We are not deprecating ".props"

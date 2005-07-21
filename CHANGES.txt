@@ -2,6 +2,11 @@ After CMF 1.5.2
 
 Bugs Fixed
 
+    - CMFCore/FSPropertiesObject and CMFCore/FSMetadata: Removed a wrongly 
+      inserted DeprecationWarning in the FSPropertiesObject class and
+      put it into the FSMetadata class. We are not deprecating ".props"
+      files, but ".properties" and ".security".
+
     - Change CVS checkout documentation to their equivalent Subversion
       instructions
 

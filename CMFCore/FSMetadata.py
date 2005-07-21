@@ -19,6 +19,7 @@ from zLOG import LOG, ERROR
 from sys import exc_info
 from os.path import exists
 from ConfigParser import ConfigParser
+from warnings import warn
 
 import re
 
@@ -158,6 +159,8 @@ class FSMetadata:
         except IOError:
             return None
         else:
+            warn('.properties objects will disappear in CMF 1.7 - Use '
+                 '.metadata objects instead.', DeprecationWarning)
             lines = f.readlines()
             f.close()
             props = {}
@@ -186,6 +189,8 @@ class FSMetadata:
         except IOError:
             return None
         else:
+            warn('.security objects will disappear in CMF 1.7 - Use '
+                 '.metadata objects instead.', DeprecationWarning)
             lines = f.readlines()
             f.close()
             prm = {}

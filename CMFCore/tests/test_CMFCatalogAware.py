@@ -32,6 +32,7 @@ from Products.ZCatalog import CatalogBrains
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.CMFCore.tests.base.testcase import LogInterceptor
 
+CMF_SECURITY_INDEXES = CMFCatalogAware._cmf_security_indexes
 
 def physicalpath(ob):
     return '/'.join(ob.getPhysicalPath())
@@ -151,9 +152,9 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
         l = list(cat.log)
         l.sort()
         self.assertEquals(l, [
-            "reindex /site/foo ('allowedRolesAndUsers',)",
-            "reindex /site/foo/bar ('allowedRolesAndUsers',)",
-            "reindex /site/foo/hop ('allowedRolesAndUsers',)",
+            "reindex /site/foo %s"%str(CMF_SECURITY_INDEXES),
+            "reindex /site/foo/bar %s"%str(CMF_SECURITY_INDEXES),
+            "reindex /site/foo/hop %s"%str(CMF_SECURITY_INDEXES),
             ])
         self.failIf(foo.notified)
         self.failIf(bar.notified)
@@ -172,9 +173,9 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
         l = list(cat.log)
         l.sort()
         self.assertEquals(l, [
-            "reindex /site/foo ('allowedRolesAndUsers',)",
-            "reindex /site/foo/bar ('allowedRolesAndUsers',)",
-            "reindex /site/foo/hop ('allowedRolesAndUsers',)",
+            "reindex /site/foo %s" %str(CMF_SECURITY_INDEXES),
+            "reindex /site/foo/bar %s" %str(CMF_SECURITY_INDEXES),
+            "reindex /site/foo/hop %s"%str(CMF_SECURITY_INDEXES),
             ])
         self.failIf(foo.notified)
         self.failIf(bar.notified)
@@ -201,7 +202,7 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
         cat.setObs([foo, missing])
         foo.reindexObjectSecurity()
         self.assertEquals(cat.log,
-                          ["reindex /site/foo ('allowedRolesAndUsers',)"])
+                          ["reindex /site/foo %s"%str(CMF_SECURITY_INDEXES)])
         self.failIf(foo.notified)
         self.failIf(missing.notified)
 
@@ -216,7 +217,7 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
         cat.setObs([foo, missing])
         foo.reindexObjectSecurity()
         self.assertEquals(cat.log,
-                          ["reindex /site/foo ('allowedRolesAndUsers',)"])
+                          ["reindex /site/foo %s" %str(CMF_SECURITY_INDEXES)])
         self.failIf(foo.notified)
         self.failIf(missing.notified)
         self.assertEqual( len(self.logged), 1 ) # logging because no raise

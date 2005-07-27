@@ -2,6 +2,9 @@ After CMF 1.5.2
 
 Bugs Fixed
 
+    - Changed the INSTALL_SVN instructions to conform to the new branch
+      and tag naming scheme instituted for the subversion repository.
+
     - Apply an interim fix for slow pathwalking implementation in
       development mode on Windows (http://www.zope.org/Collectors/CMF/367)
       Note that a better fix would be to leverage pywin32 APIs for

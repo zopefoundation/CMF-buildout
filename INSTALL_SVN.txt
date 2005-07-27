@@ -90,10 +90,8 @@ Fetching a Previous Version
   Retrieving Sources for a specific release
   
      Sources for prior releases are tagged, using the release version 
-     identifier, but with the periods replaced with underscores.  For 
-     instance, version 1.5.2 of the CMF was tagged as 'CMF-1_5_2-release'.  
-     To fetch such a release from Subversion::
+     number. For instance, version 1.5.2 of the CMF was tagged as 
+     '1.5.2'.  To fetch such a release from Subversion::
   
-      $ svn co svn://svn.zope.org/repos/main/CMF/tags/CMF-1_5_2-release \
-        CMF-1.5.2
+      $ svn co svn://svn.zope.org/repos/main/CMF/tags/1.5.2 CMF-1.5.2
   

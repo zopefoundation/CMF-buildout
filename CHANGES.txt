@@ -28,6 +28,10 @@ HEAD only (unreleased)
 
   Bug Fixes
 
+    - Updated RELEASE.txt and the slurp_release script to now use Subversion
+      instead of CVS, and to reflect the new tag/branch naming conventions
+      used in the CMF repository.
+
     - Added testing framework to suppress / examine output from warnings
       module and from zLOG.
 

@@ -9,7 +9,7 @@ import getopt
 import base64
 import mimetypes
 
-CVSROOT = ':pserver:anonymous@cvs.zope.org:/cvs-repository'
+SVNROOT = 'svn://svn.zope.org/repos/main/CMF'
 
 class ReleasePackage:
 
@@ -24,11 +24,11 @@ class ReleasePackage:
     #
     def exportReleaseFiles( self ):
 
-        """ Do the CVS export of CMF for a given release.
+        """ Do the Subversion export of CMF for a given release.
         """
+        tag_dir = '%s/tags/%s' % (SVNROOT, self._release_tag)
         os.system( 'rm -rf %s' % self._version_id )
-        command = ( '/usr/bin/cvs -d %s export -r %s -d %s CMF'
-                % ( CVSROOT, self._release_tag, self._version_id ) )
+        command = ('/usr/bin/env svn export %s %s' % (tag_dir, self._version_id))
 
         os.system( command )
 

@@ -365,7 +365,7 @@ class ToolInit:
         self.tools = tools
         if product_name is not None:
             warn("The product_name parameter of ToolInit is now ignored",
-                 DeprecationWarning)
+                 DeprecationWarning, stacklevel=2)
         self.icon = icon
 
     def initialize(self, context):

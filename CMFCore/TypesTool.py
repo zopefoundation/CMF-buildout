@@ -727,7 +727,8 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
                 # than one TypeInformation sharing the same meta_type.
                 warn('Please switch to the new format for typeinfo names '
                      '\"product_id: type_id (meta_type)\", the old '
-                     'spelling will disappear in CMF 1.7', DeprecationWarning)
+                     'spelling will disappear in CMF 1.7', DeprecationWarning,
+                     stacklevel=2)
 
                 ti_prod, ti_mt = [x.strip() for x in typeinfo_name.split(':')]
 

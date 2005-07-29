@@ -21,4 +21,4 @@ from warnings import warn
 
 warn( "The module, 'Products.CMFCore.CMFCorePermissions' is a deprecated "
       "compatiblity alias for 'Products.CMFCore.permissions';  please use "
-      "the new module instead.", DeprecationWarning)
+      "the new module instead.", DeprecationWarning, stacklevel=2)

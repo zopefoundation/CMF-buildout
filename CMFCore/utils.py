@@ -730,4 +730,7 @@ class BBBTransaction:
     def abort(self, sub=False):
         get_transaction().abort(sub)
 
+    def get(self):
+        return get_transaction()
+
 transaction = BBBTransaction()

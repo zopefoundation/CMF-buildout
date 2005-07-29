@@ -49,7 +49,6 @@ from StructuredText.StructuredText import HTML
 
 from exceptions import AccessControl_Unauthorized
 from exceptions import NotFound
-from warnings import warn
 
 security = ModuleSecurityInfo( 'Products.CMFCore.utils' )
 
@@ -424,7 +423,7 @@ class ToolInit:
         if product_name is not None:
             warn("The product_name parameter of ToolInit is deprecated and "
                  "will be ignored in CMF1.6: %s" % product_name,
-                 DeprecationWarning)
+                 DeprecationWarning, stacklevel=2)
         self.product_name = product_name
         self.icon = icon
 

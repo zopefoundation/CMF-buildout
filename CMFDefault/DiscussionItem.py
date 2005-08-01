@@ -298,14 +298,15 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
         id = str( id )
 
         item = DiscussionItem( id, title=title, description=title )
+        self._container[id] = item
+        item = item.__of__(self)
+
         item._edit( text_format=text_format, text=text )
-        item.__of__(self).addCreator(Creator)
-        item.__of__(self).indexObject()
+        item.addCreator(Creator)
+        item.indexObject()
 
         item.setReplyTo( self._getDiscussable() )
-        item.__of__(self).notifyWorkflowCreated()
-
-        self._container[ id ] = item
+        item.notifyWorkflowCreated()
 
         return id
 

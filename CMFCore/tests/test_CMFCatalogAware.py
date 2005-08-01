@@ -112,7 +112,7 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
         self.site.foo = TheClass('foo')
 
     def tearDown(self):
-        self._ignore_log_errors
+        self._ignore_log_errors()
 
     def test_indexObject(self):
         foo = self.site.foo

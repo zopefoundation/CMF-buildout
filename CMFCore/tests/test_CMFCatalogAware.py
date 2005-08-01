@@ -76,7 +76,7 @@ class DummyCatalog(SimpleItem):
         self.obs = []
     def indexObject(self, ob):
         self.log.append('index %s' % physicalpath(ob))
-    def reindexObject(self, ob, idxs=[], update_metadata=0):
+    def reindexObject(self, ob, idxs=[], update_metadata=0, uid=None):
         self.log.append('reindex %s %s' % (physicalpath(ob), idxs))
     def unindexObject(self, ob):
         self.log.append('unindex %s' % physicalpath(ob))
@@ -86,9 +86,6 @@ class DummyCatalog(SimpleItem):
         res = []
         for ob, obpath in self.obs:
             if not (obpath+'/').startswith(path+'/'):
-                continue
-            if obpath == path:
-                # Normal PathIndex skips initial value
                 continue
             res.append(self.brain_class(ob, obpath))
         return res

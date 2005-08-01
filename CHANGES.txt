@@ -33,6 +33,11 @@ Bugs Fixed
       keywargs support to reflect DCWorkflowDefinition changes. Add a
       test case for this definition as well.
 
+  Others
+
+    - CMFCatalogAware: reindexObjectSecurity() now always reindexes the
+      catalog objects without changing their catalog uid. This is useful
+      for third-party code that indexes objects with special uids.
 
 CMF 1.5.2 (2005/07/17)
 

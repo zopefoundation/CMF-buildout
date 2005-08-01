@@ -80,39 +80,40 @@ class CMFCatalogAware(Base):
 
     security.declareProtected(ModifyPortalContent, 'reindexObjectSecurity')
     def reindexObjectSecurity(self, skip_self=False):
-        """
-            Reindex security-related indexes on the object
-            (and its descendants).
+        """Reindex security-related indexes on the object.
+
+        Recurses in the children to reindex them too.
+
+        If skip_self is True, only the children will be reindexed. This
+        is a useful optimization if the object itself has just been
+        fully reindexed, as there's no need to reindex its security twice.
         """
         catalog = getToolByName(self, 'portal_catalog', None)
-        if catalog is not None:
-            path = '/'.join(self.getPhysicalPath())
-            for brain in catalog.unrestrictedSearchResults(path=path):
-                brain_path = brain.getPath()
-                # self is treated at the end of the method
-                # Optimization in case of an indexable container
-                if brain_path == path:
-                    continue
-                # Get the object
-                if hasattr(aq_base(brain), '_unrestrictedGetObject'):
-                    ob = brain._unrestrictedGetObject()
-                else:
-                    # BBB older Zope
-                    ob = self.unrestrictedTraverse(brain_path, None)
-                if ob is None:
-                    # Ignore old references to deleted objects.
-                    LOG('reindexObjectSecurity', PROBLEM,
-                        "Cannot get %s from catalog" % brain_path)
-                    continue
-                s = getattr(ob, '_p_changed', 0)
-                catalog.reindexObject(ob, idxs=self._cmf_security_indexes,
-                                      update_metadata=0)
-                if s is None: ob._p_deactivate()
-            # Reindex the object itself in here if not explicitly
-            # asked to not to
-            if not skip_self:
-                catalog.reindexObject(self, idxs=self._cmf_security_indexes,
-                                      update_metadata=0)
+        if catalog is None:
+            return
+        path = '/'.join(self.getPhysicalPath())
+        for brain in catalog.unrestrictedSearchResults(path=path):
+            brain_path = brain.getPath()
+            if brain_path == path and skip_self:
+                continue
+            # Get the object
+            if hasattr(aq_base(brain), '_unrestrictedGetObject'):
+                ob = brain._unrestrictedGetObject()
+            else:
+                # BBB: Zope 2.7
+                ob = self.unrestrictedTraverse(brain_path, None)
+            if ob is None:
+                # BBB: Ignore old references to deleted objects.
+                # Can happen only in Zope 2.7, or when using
+                # catalog-getObject-raises off in Zope 2.8
+                LOG('reindexObjectSecurity', PROBLEM,
+                    "Cannot get %s from catalog" % brain_path)
+                continue
+            # Recatalog with the same catalog uid.
+            s = getattr(ob, '_p_changed', 0)
+            catalog.reindexObject(ob, idxs=self._cmf_security_indexes,
+                                  update_metadata=0, uid=brain_path)
+            if s is None: ob._p_deactivate()
 
     # Workflow methods
     # ----------------

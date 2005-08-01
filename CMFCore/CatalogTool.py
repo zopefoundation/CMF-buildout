@@ -320,17 +320,25 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
         self.uncatalog_object(url)
 
     security.declarePrivate('reindexObject')
-    def reindexObject(self, object, idxs=[], update_metadata=1):
-        '''Update catalog after object data has changed.
+    def reindexObject(self, object, idxs=[], update_metadata=1, uid=None):
+        """Update catalog after object data has changed.
+
         The optional idxs argument is a list of specific indexes
         to update (all of them by default).
-        '''
-        url = self.__url(object)
+
+        The update_metadata flag controls whether the object's
+        metadata record is updated as well.
+
+        If a non-None uid is passed, it will be used as the catalog uid
+        for the object instead of its physical path.
+        """
+        if uid is None:
+            uid = self.__url(object)
         if idxs != []:
             # Filter out invalid indexes.
             valid_indexes = self._catalog.indexes.keys()
             idxs = [i for i in idxs if i in valid_indexes]
-        self.catalog_object(object, url, idxs, update_metadata)
+        self.catalog_object(object, uid, idxs, update_metadata)
 
     # BBB: for Zope 2.8.0
     # copied from revision 31005 of ZCatalog.py

@@ -100,7 +100,7 @@ class ReleasePackage:
         """ How are we used?
         """
         USAGE = """\
-slurp_release [options] release_tag version_id
+slurp_release [options] version_id
 
 options:
 
@@ -149,10 +149,11 @@ options:
 
         self._command = command
 
-        if len( args ) != 2:
+        if len( args ) != 1:
             self._usage()
 
-        self._release_tag, self._version_id = args
+        self._release_tag = args[0]
+        self._version_id = 'CMF-%s' % self._release_tag
 
     def _runCommand( self ):
 

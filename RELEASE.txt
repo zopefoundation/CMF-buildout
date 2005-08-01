@@ -82,18 +82,15 @@ RELEASE.txt - notes for creating a CMF release
     picker widget.
 
     With Subversion and zope.org preparations done the 'slurp_release.py' 
-    script will do the remaining work. You run it with the Subversion tag 
-    and version ID as parameters::
+    script will do the remaining work. You run it with version ID 
+    (like '1.8.4-beta2') as parameter::
 
-      slurp_release.py [options] release_tag version_id
+      slurp_release.py [options] version_id
 
     slurp_release can be run from anywhere, it does not depend on your 
     Subversion sandbox because it will create its own. Without any options 
     it will complete the whole procedure including upload to the zope.org site. 
-    Use 'slurp_release.py --help' to find out more. The release_tag is equal 
-    to the Subversion tag in the repository (1.8.4-beta2, to stick with our 
-    example) whereas the version_id is the ID of the software release on 
-    zope.org (CMF-1.8.4-beta2).
+    Use 'slurp_release.py --help' to find out more.
 
     Once 'slurp_release.py' has completed the upload step you need to visit
     the uploaded files on zope.org and make sure they get published on the 

@@ -1,6 +1,6 @@
 CMF 1.5.3-beta (2005/08/02)
 
-Bugs Fixed
+  Bugs Fixed
 
     - Changed the INSTALL_SVN instructions to conform to the new branch
       and tag naming scheme instituted for the subversion repository.

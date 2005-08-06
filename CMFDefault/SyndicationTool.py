@@ -27,7 +27,7 @@ from OFS.SimpleItem import SimpleItem
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.Expression import Expression
-from Products.CMFCore.PortalFolder import PortalFolder
+from Products.CMFCore.PortalFolder import PortalFolderBase
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import UniqueObject
 
@@ -244,12 +244,12 @@ class SyndicationTool (UniqueObject, SimpleItem, ActionProviderBase):
     def getSyndicatableContent(self, obj):
         """
         An interface for allowing folderish items to implement an
-        equivalent of PortalFolder.contentValues()
+        equivalent of PortalFolderBase.contentValues()
         """
         if hasattr(obj, 'synContentValues'):
             values = obj.synContentValues()
         else:
-            values = PortalFolder.contentValues(obj)
+            values = PortalFolderBase.contentValues(obj)
         return values
 
     security.declarePublic('buildUpdatePeriods')

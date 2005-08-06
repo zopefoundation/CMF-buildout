@@ -81,7 +81,7 @@ class CalendarRequestTests(unittest.TestCase):
         # Log in as a god :-)
         newSecurityManager( None, UnrestrictedUser('god', 'god', ['Manager'], '') )
 
-        factory = app.manage_addProduct['CMFSetup'].addConfiguredSite
+        factory = app.manage_addProduct['CMFDefault'].addConfiguredSite
         factory('CalendarTest', 'CMFDefault:default', snapshot=False,
                 extension_ids=('CMFCalendar:default',))
         self.Site = app.CalendarTest

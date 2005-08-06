@@ -35,16 +35,3 @@ def initialize( context ):
             , icon='www/tool.png'
             ).initialize( context )
 
-    from factory import addConfiguredSiteForm
-    from factory import addConfiguredSite
-
-    # Add factory for a site which follows a profile.  We specify
-    # meta_type and interfaces because we don't actually register a
-    # class here, only a factory.
-    context.registerClass( meta_type='Configured CMF Site'
-                         , constructors=( addConfiguredSiteForm
-                                        , addConfiguredSite
-                                        )
-                         , permissions=( 'Add CMF Sites', )
-                         , interfaces=None
-                         )

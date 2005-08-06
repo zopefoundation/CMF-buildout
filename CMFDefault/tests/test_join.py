@@ -26,7 +26,7 @@ from Products.CMFCore.tests.base.testcase import TransactionalTest
 class MembershipTests( TransactionalTest ):
 
     def test_join( self ):
-        factory = self.root.manage_addProduct['CMFSetup'].addConfiguredSite
+        factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
         factory('site', 'CMFDefault:default', snapshot=False)
         site = self.root.site
         member_id = 'test_user'
@@ -40,7 +40,7 @@ class MembershipTests( TransactionalTest ):
         self.failUnless(u)
 
     def test_join_without_email( self ):
-        factory = self.root.manage_addProduct['CMFSetup'].addConfiguredSite
+        factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
         factory('site', 'CMFDefault:default', snapshot=False)
         site = self.root.site
         self.assertRaises(ValueError,
@@ -51,7 +51,7 @@ class MembershipTests( TransactionalTest ):
                           )
 
     def test_join_with_variable_id_policies( self ):
-        factory = self.root.manage_addProduct['CMFSetup'].addConfiguredSite
+        factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
         factory('site', 'CMFDefault:default', snapshot=False)
         site = self.root.site
         member_id = 'test.user'

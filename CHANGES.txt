@@ -28,6 +28,12 @@ HEAD only (unreleased)
 
   Bug Fixes
 
+    - Got rid of the "CMF Site" and "Configured CMF Site" duality in the ZMI
+      add list by removing the "CMF Site" class registration in CMFDefault
+      and moving the "Configured CMF Site" registration from CMFSetup into
+      CMFDefault, renaming it to "CMF Site". 
+      (http://www.zope.org/Collectors/CMF/364)
+
     - Updated RELEASE.txt and the slurp_release script to now use Subversion
       instead of CVS, and to reflect the new tag/branch naming conventions
       used in the CMF repository.

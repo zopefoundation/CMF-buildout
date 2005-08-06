@@ -31,7 +31,7 @@ class DiscussionReplyTest(RequestTest):
     def setUp(self):
         RequestTest.setUp(self)
         try:
-            factory = self.root.manage_addProduct['CMFSetup'].addConfiguredSite
+            factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
             factory('cmf', 'CMFDefault:default', snapshot=False)
             self.portal = self.root.cmf
             # Become a Manager

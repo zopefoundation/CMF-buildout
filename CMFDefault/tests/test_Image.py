@@ -91,7 +91,7 @@ class TestImageCopyPaste(RequestTest):
         RequestTest.setUp(self)
         try:
             newSecurityManager(None, UnrestrictedUser('manager', '', ['Manager'], []))
-            factory = self.root.manage_addProduct['CMFSetup'].addConfiguredSite
+            factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
             factory('cmf', 'CMFDefault:default', snapshot=False)
             self.site = self.root.cmf
             self.site.invokeFactory('File', id='file')

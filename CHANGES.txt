@@ -1,3 +1,13 @@
+After CMF 1.5.3-beta
+
+  Bugs fixed
+
+    - When the CMFBTreeFolder was moved into CMFCore, its base class was
+      changed to PortalFolderBase. This broke an assumption in the
+      portal_syndication tool that relied on all syndication containers
+      deriving from PortalFolder (http://www.zope.org/Collectors/CMF/369)
+
+
 CMF 1.5.3-beta (2005/08/02)
 
   Bugs Fixed

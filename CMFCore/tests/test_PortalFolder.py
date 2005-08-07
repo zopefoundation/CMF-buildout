@@ -50,6 +50,7 @@ from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import newSecurityManager
 from Products.CMFCore.tests.base.testcase import noSecurityManager
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
 from Products.CMFCore.tests.base.tidata import FTIDATA_DUMMY
 from Products.CMFCore.tests.base.utils import has_path
 from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
@@ -384,13 +385,30 @@ class PortalFolderTests(SecurityTest):
         self.assertRaises(BadRequest, test._setObject, 'foo',
                                       DummyContent('foo'))
 
-    def test_checkIdRaisesBadRequest(self):
+    def test__checkId_Duplicate(self):
         #
         #   _checkId() should raise BadRequest on duplicate id
         #
         test = self._makeOne('test')
         test._setObject('foo', DummyContent('foo'))
         self.assertRaises(BadRequest, test._checkId, 'foo')
+
+    def test__checkId_PortalRoot(self):
+        test = self._makeOne('test')
+        acl_users = self.site._setObject('acl_users', DummyUserFolder())
+        test._checkId('acl_users')
+        newSecurityManager(None, acl_users.user_foo)
+        self.assertRaises(BadRequest, test._checkId, 'acl_users')
+
+    def test__checkId_MethodAlias(self):
+        test = self._makeOne('test')
+        test._setPortalTypeName('Dummy Content 15')
+        ttool = self.site._setObject('portal_types', TypesTool())
+        ttool._setObject('Dummy Content 15', FTI(**FTIDATA_CMF15[0]))
+        acl_users = self.site._setObject('acl_users', DummyUserFolder())
+        test._checkId('view.html')
+        newSecurityManager(None, acl_users.user_foo)
+        self.assertRaises(BadRequest, test._checkId, 'view.html')
 
     def test_checkIdAvailableCatchesBadRequest(self):
         #

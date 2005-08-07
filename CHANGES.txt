@@ -1,3 +1,12 @@
+CMF 1.5.4-beta (unreleased)
+
+  Bug Fixes
+
+    - PortalFolder: Improved the _checkId method.
+      Method Aliases mask objects with matching IDs. Thus _checkId() and
+      checkIdAvailable() now make sure non-managers can't create objects with
+      IDs already taken by Method Aliases of the current folder.
+
 CMF 1.5.3 (2005/08/07)
 
   Bugs fixed
@@ -6,7 +15,6 @@ CMF 1.5.3 (2005/08/07)
       changed to PortalFolderBase. This broke an assumption in the
       portal_syndication tool that relied on all syndication containers
       deriving from PortalFolder (http://www.zope.org/Collectors/CMF/369)
-
 
 CMF 1.5.3-beta (2005/08/02)
 

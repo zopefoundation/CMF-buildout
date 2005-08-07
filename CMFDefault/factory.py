@@ -18,15 +18,15 @@ $Id$
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.Portal import CMFSite
+from Products.CMFSetup import EXTENSION
+from Products.CMFSetup import profile_registry
+from Products.CMFSetup.tool import SetupTool
 
-from interfaces import EXTENSION
-from registry import _profile_registry as profile_registry
-from tool import SetupTool
+from Portal import CMFSite
 from utils import _wwwdir
 
-def addConfiguredSiteForm( dispatcher ):
 
+def addConfiguredSiteForm(dispatcher):
     """ Wrap the PTF in 'dispatcher', including 'profile_registry' in options.
     """
     wrapped = PageTemplateFile( 'siteAddForm', _wwwdir ).__of__( dispatcher )
@@ -43,14 +43,8 @@ def addConfiguredSiteForm( dispatcher ):
     return wrapped( base_profiles=tuple(base_profiles),
                     extension_profiles =tuple(extension_profiles) )
 
-def addConfiguredSite( dispatcher
-                     , site_id
-                     , profile_id
-                     , snapshot=True
-                     , RESPONSE=None 
-                     , extension_ids=()
-                     ):
-
+def addConfiguredSite(dispatcher, site_id, profile_id, snapshot=True,
+                      RESPONSE=None, extension_ids=()):
     """ Add a CMFSite to 'dispatcher', configured according to 'profile_id'.
     """
     site = CMFSite( site_id )

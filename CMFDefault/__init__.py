@@ -24,6 +24,7 @@ from Products.CMFCore.utils import registerIcon
 from Products.CMFSetup import BASE
 from Products.CMFSetup import profile_registry
 
+import factory
 import utils
 from permissions import AddPortalContent
 
@@ -115,23 +116,12 @@ def initialize( context ):
                                      'CMFDefault',
                                      BASE)
 
-    from Products.CMFSetup.factory import addConfiguredSiteForm
-    from Products.CMFSetup.factory import addConfiguredSite
-
-    # Add factory for a site which follows a profile.  We specify
-    # meta_type and interfaces because we don't actually register a
-    # class here, only a factory.
-    context.registerClass( meta_type='CMF Site'
-                         , constructors=( addConfiguredSiteForm
-                                        , addConfiguredSite
-                                        )
-                         , permissions=( 'Add CMF Sites', )
-                         , interfaces=None
-                         ) 
-
-    # Since there is no "normal" class registration for Portal.CMFSite,
-    # the ZMI icons would disappear without the following icon registration
-    registerIcon(Portal.CMFSite, 'images/portal.gif', globals())
+    context.registerClass( Portal.CMFSite
+                         , constructors=(factory.addConfiguredSiteForm,
+                                         factory.addConfiguredSite,
+                                         Portal.manage_addCMFSite)
+                         , icon='images/portal.gif'
+                         )
 
     registerIcon( DefaultWorkflow.DefaultWorkflowDefinition
                 , 'images/workflow.gif'

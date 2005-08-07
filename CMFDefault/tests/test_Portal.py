@@ -29,7 +29,7 @@ class CMFSiteTests( SecurityRequestTest ):
 
     def _makeSite( self, id='testsite' ):
 
-        from Products.CMFSetup.factory import addConfiguredSite
+        from Products.CMFDefault.factory import addConfiguredSite
 
         addConfiguredSite(self.root, id, 'CMFDefault:default', snapshot=False)
         return getattr( self.root, id )

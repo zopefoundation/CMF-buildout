@@ -284,9 +284,6 @@ class PortalGenerator:
         p.description = description
 
 
-manage_addCMFSiteForm = HTMLFile('dtml/addPortal', globals())
-manage_addCMFSiteForm.__name__ = 'addPortal'
-
 def manage_addCMFSite(self, id, title='Portal', description='',
                          create_userfolder=1,
                          email_from_address='postmaster@localhost',

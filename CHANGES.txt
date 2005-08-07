@@ -1,4 +1,4 @@
-After CMF 1.5.3-beta
+CMF 1.5.3 (2005/08/07)
 
   Bugs fixed
 

@@ -399,6 +399,10 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
                 # don't allow an override.
                 if hasattr(ob, id) and id not in ob.contentIds():
                     raise BadRequest('The id "%s" is reserved.' % id)
+            # Don't allow ids used by Method Aliases.
+            ti = self.getTypeInfo()
+            if ti and ti.queryMethodID(id, context=self):
+                raise BadRequest('The id "%s" is reserved.' % id)
         # Otherwise we're ok.
 
     def _verifyObjectPaste(self, object, validate_src=1):

@@ -184,6 +184,9 @@ class DummyFolder(DummyObject):
     def reindexObjectSecurity(self):
         pass
 
+    def contentIds(self):
+        return ('user_bar',)
+
 
 class DummySite(DummyFolder):
     """ A dummy portal folder.
@@ -191,6 +194,7 @@ class DummySite(DummyFolder):
 
     _domain = 'http://www.foobar.com'
     _path = 'bar'
+    _isPortalRoot = 1
 
     def absolute_url(self, relative=0):
         return '/'.join( (self._domain, self._path, self._id) )
@@ -227,12 +231,12 @@ class DummyUser(Implicit):
     getUserName = getId
 
     def allowed(self, object, object_roles=None):
-        if object.getId() == 'portal_membership':
-            return 0
-        if object_roles:
-            if 'FooAdder' in object_roles:
-                return 0
-        return 1
+        if object_roles is None or 'Anonymous' in object_roles:
+            return 1
+        for role in object_roles:
+            if role in self.getRolesInContext(object):
+                return 1
+        return 0
 
     def getRolesInContext(self, object):
         return ('Authenticated', 'Dummy', 'Member')

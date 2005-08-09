@@ -130,8 +130,7 @@
 <!-- end user_menu_bar div-->
 </div>
 
-<div id="main_body">
-
+<div id="main_body" i18n:domain="cmf_default">
 
  <table class="Forematter"
         width="100%" border="0" cellpadding="0" cellspacing="0" >
@@ -142,8 +141,7 @@
   <table class="ContextActionsBox"
          width="100%"
          style="float: left;"
-         metal:define-macro="actions_box"
-         i18n:domain="cmf_default">
+         metal:define-macro="actions_box">
 
    <!-- object actions -->
    <tr class="ContextActionsRow">

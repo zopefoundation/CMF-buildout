@@ -1,67 +1,65 @@
-<html xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      metal:use-macro="here/main_template/macros/master">
+<html metal:use-macro="context/main_template/macros/master">
 <head>
- <metal:block fill-slot="base"
- ><tal:span tal:replace="structure here/getBaseTag"
-/></metal:block>
+ <metal:slot fill-slot="base"
+ ><tal:span tal:replace="structure context/getBaseTag"
+/></metal:slot>
 </head>
 <body>
 
-<metal:block metal:fill-slot="main">
+<metal:slot metal:fill-slot="main" i18n:domain="cmf_calendar">
 <div class="Desktop">
 
 <table class="Event" border="0" cellpadding="5" width="100%" cellspacing="3">
  <tr>
-  <th width="10%">Event Name</th>
-  <td nowrap="nowrap" tal:content="here/Title">Title</td>
-  <th width="10%">Contact Name</th>
-  <td nowrap="nowrap" tal:content="here/contact_name">contact_name</td>
+  <th width="10%" i18n:translate="">Event Name</th>
+  <td nowrap="nowrap" tal:content="context/Title">Title</td>
+  <th width="10%" i18n:translate="">Contact Name</th>
+  <td nowrap="nowrap" tal:content="context/contact_name">contact_name</td>
  </tr>
  <tr>
-  <th width="10%">Location</th>
-  <td nowrap="nowrap" tal:content="here/location">location</td>
-  <th width="10%">Contact Email</th>
-  <td nowrap="nowrap" tal:condition="here/contact_email">
-   <a tal:attributes="href python:'mailto:' + here.contact_email"
-      tal:content="here/contact_email"
+  <th width="10%" i18n:translate="">Location</th>
+  <td nowrap="nowrap" tal:content="context/location">location</td>
+  <th width="10%" i18n:translate="">Contact Email</th>
+  <td nowrap="nowrap" tal:condition="context/contact_email">
+   <a tal:attributes="href python:'mailto:' + context.contact_email"
+      tal:content="context/contact_email"
       href="mailto:contact_email">contact_email</a></td>
  </tr>
  <tr>
-  <th width="10%">Event type</th>
+  <th width="10%" i18n:translate="">Event type</th>
   <td valign="top" nowrap="nowrap"
-     tal:content="python:' '.join( here.Subject() )"></td>
-  <th width="10%">Contact Phone</th>
-  <td nowrap="nowrap" tal:content="here/contact_phone">contact_phone</td>
+     tal:content="python:' '.join( context.Subject() )"></td>
+  <th width="10%" i18n:translate="">Contact Phone</th>
+  <td nowrap="nowrap" tal:content="context/contact_phone">contact_phone</td>
  </tr>
- <tr tal:condition="here/event_url|nothing">
-  <th width="10%">Event URL</th>
+ <tr tal:condition="context/event_url|nothing">
+  <th width="10%" i18n:translate="">Event URL</th>
   <td colspan="3" nowrap="nowrap"><a href="event_url"
-     tal:attributes="href here/event_url"
-     tal:content="here/event_url">event_url</a></td>
+     tal:attributes="href context/event_url"
+     tal:content="context/event_url">event_url</a></td>
  </tr>
  <tr>
   <td colspan="4"><hr /></td>
  </tr>
  <tr>
-  <th width="10%">Start Date</th>
-  <td tal:content="python:DateTime.Date(here.start())">start</td>
-  <th width="10%">Stop Date</th>
-  <td tal:content="python:DateTime.Date(here.end())">end</td>
+  <th width="10%" i18n:translate="">Start Date</th>
+  <td tal:content="python:DateTime.Date(context.start())">start</td>
+  <th width="10%" i18n:translate="">Stop Date</th>
+  <td tal:content="python:DateTime.Date(context.end())">end</td>
  </tr>
  <tr>
-  <th width="10%">Start Time</th>
-  <td tal:content="python:DateTime.Time(here.start())">start</td>
-  <th width="10%">Stop Time</th>
-  <td tal:content="python:DateTime.Time(here.end())">end</td>
+  <th width="10%" i18n:translate="">Start Time</th>
+  <td tal:content="python:DateTime.Time(context.start())">start</td>
+  <th width="10%" i18n:translate="">Stop Time</th>
+  <td tal:content="python:DateTime.Time(context.end())">end</td>
  </tr>
  <tr>
   <td colspan="4"><hr /></td>
  </tr>
  <tr>
-  <th width="10%">Description</th>
+  <th width="10%" i18n:translate="">Description</th>
   <td colspan="3" valign="top" nowrap="nowrap"
-     tal:content="here/Description">Description</td>
+     tal:content="context/Description">Description</td>
  </tr>
  <tr>
   <td colspan="4">&nbsp;</td>
@@ -69,7 +67,7 @@
 </table>
 
 </div>
-</metal:block>
+</metal:slot>
 
 </body>
 </html>

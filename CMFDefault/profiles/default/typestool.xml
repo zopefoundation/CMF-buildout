@@ -6,6 +6,8 @@
  <type id="Favorite"/>
  <type id="File"/>
  <type id="Folder"/>
+ <type id="CMF BTree Folder"
+       filename="types/CMF_BTree_Folder.xml"/>
  <type id="Image"/>
  <type id="Link"/>
  <type id="News Item" filename="types/News_Item.xml"/>

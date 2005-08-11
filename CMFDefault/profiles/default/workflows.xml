@@ -10,6 +10,9 @@
   <type type_id="Folder">
 
   </type>
+  <type type_id="CMF BTree Folder">
+
+  </type>
   <type type_id="Topic">
 
   </type>

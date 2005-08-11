@@ -2,6 +2,10 @@ HEAD only (unreleased)
 
   New Features
 
+    - CMFDefault CMFSetup profile: Added CMF BTree Folder to the list of
+      automatically instantiated types in the types tool.
+      (http://www.zope.org/Collectors/CMF/371)
+
     - CMFDefault skins: Added members_delete_form.
       This adds a confirmation step to avoid accidental deletion of members.
 

@@ -829,24 +829,12 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
         return rval
 
     security.declareProtected(AccessContentsInformation, 'listContentTypes')
-    def listContentTypes( self, container=None, by_metatype=0 ):
-        """
-            Return list of content types.
-
-        o Passing 'by_metatype' is deprecated (type information may not
-          correspond 1:1 to an underlying meta_type).
+    def listContentTypes(self, container=None):
+        """ List type info IDs.
         """
         typenames = {}
         for t in self.listTypeInfo( container ):
-
-            if by_metatype:
-                warn('TypeInformation.listContentTypes(by_metatype=1) is '
-                     'deprecated.',
-                     DeprecationWarning)
-                name = t.Metatype()
-            else:
-                name = t.getId()
-
+            name = t.getId()
             if name:
                 typenames[ name ] = None
 

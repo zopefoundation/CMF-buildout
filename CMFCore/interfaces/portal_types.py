@@ -128,12 +128,11 @@ class portal_types(Interface):
             the user's permissions.
         """
 
-    def listContentTypes(container=None, by_metatype=0):
-        """
-            Return list of content types, or the equivalent
-            metatypes;  if 'container' is passed, then filter
-            the list to include only types which are addable in
-            'container'.
+    def listContentTypes(container=None):
+        """ List type info IDs.
+
+        If 'container' is passed, then filter the list to include only types
+        which are addable in 'container'.
         """
 
     def constructContent(contentType, container, id, RESPONSE=None

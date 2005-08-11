@@ -1,7 +1,8 @@
 ##parameters=type_name='', **kw
-##title=
 ##
+from Products.CMFDefault.utils import MessageID as _
+
 if type_name:
     return context.setStatus(True)
 else:
-    return context.setStatus(False, 'Please select a content type.')
+    return context.setStatus(False, _('Please select a content type.'))

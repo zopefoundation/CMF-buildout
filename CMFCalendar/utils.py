@@ -1,0 +1,25 @@
+##############################################################################
+#
+# Copyright (c) 2005 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+""" Utility functions.
+
+$Id$
+"""
+
+from AccessControl import ModuleSecurityInfo
+from zope.i18nmessageid import MessageIDFactory
+
+
+security = ModuleSecurityInfo('Products.CMFCalendar.utils')
+
+security.declarePublic('MessageID')
+MessageID = MessageIDFactory('cmf_calendar')

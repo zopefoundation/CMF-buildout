@@ -3,6 +3,7 @@
 from ZTUtils import Batch
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import html_marshal
+from Products.CMFDefault.utils import MessageID as _
 
 atool = getToolByName(script, 'portal_actions')
 mtool = getToolByName(script, 'portal_membership')
@@ -45,9 +46,9 @@ hidden_vars = []
 for name, value in html_marshal(b_start=b_start):
     hidden_vars.append( {'name': name, 'value': value} )
 buttons = []
-buttons.append( {'name': 'members_new', 'value': 'New...'} )
+buttons.append( {'name': 'members_new', 'value': _('New...')} )
 if items:
-    buttons.append( {'name': 'members_delete', 'value': 'Delete...'} )
+    buttons.append( {'name': 'members_delete', 'value': _('Delete...')} )
 options['form'] = { 'action': target,
                     'listHiddenVarInfos': tuple(hidden_vars),
                     'listButtonInfos': tuple(buttons) }

@@ -2,13 +2,16 @@
 ##title=Rename objects in a folder
 ##
 from Products.CMFDefault.exceptions import CopyError
+from Products.CMFDefault.utils import MessageID as _
 
 if not ids == new_ids:
     try:
         context.manage_renameObjects(ids, new_ids)
-        return context.setStatus(True, 'Item%s renamed.' %
-                                       ( len(ids) != 1 and 's' or '' ) )
+        if len(ids) == 1:
+            return context.setStatus(True, _('Item renamed.'))
+        else:
+            return context.setStatus(True, _('Items renamed.'))
     except CopyError:
-        return context.setStatus(False, 'CopyError: Rename failed.')
+        return context.setStatus(False, _('CopyError: Rename failed.'))
 else:
-    return context.setStatus(False, 'Nothing to change.')
+    return context.setStatus(False, _('Nothing to change.'))

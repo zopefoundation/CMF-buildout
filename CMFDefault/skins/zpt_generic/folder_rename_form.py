@@ -2,6 +2,7 @@
 ##
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import html_marshal
+from Products.CMFDefault.utils import MessageID as _
 
 utool = getToolByName(script, 'portal_url')
 portal_url = utool()
@@ -38,8 +39,8 @@ hidden_vars = []
 for name, value in html_marshal(**default_kw):
     hidden_vars.append( {'name': name, 'value': value} )
 buttons = []
-buttons.append( {'name': 'rename', 'value': 'Rename'} )
-buttons.append( {'name': 'cancel', 'value': 'Cancel'} )
+buttons.append( {'name': 'rename', 'value': _('Rename')} )
+buttons.append( {'name': 'cancel', 'value': _('Cancel')} )
 options['form'] = { 'action': target,
                     'listHiddenVarInfos': tuple(hidden_vars),
                     'listButtonInfos': tuple(buttons) }

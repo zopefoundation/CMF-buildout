@@ -1,6 +1,7 @@
 ##parameters=change=''
 ##
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import MessageID as _
 
 atool = getToolByName(script, 'portal_actions')
 ptool = getToolByName(script, 'portal_properties')
@@ -17,7 +18,7 @@ options = {}
 
 target = atool.getActionInfo('global/configPortal')['url']
 buttons = []
-buttons.append( {'name': 'change', 'value': 'Change'} )
+buttons.append( {'name': 'change', 'value': _('Change')} )
 options['form'] = { 'action': target,
                     'email_from_name': ptool.getProperty('email_from_name'),
                     'email_from_address':

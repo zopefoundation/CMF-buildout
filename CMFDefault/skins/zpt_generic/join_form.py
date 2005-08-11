@@ -2,6 +2,7 @@
 ##
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.permissions import ManageUsers
+from Products.CMFDefault.utils import MessageID as _
 
 atool = getToolByName(script, 'portal_actions')
 mtool = getToolByName(script, 'portal_membership')
@@ -27,11 +28,12 @@ elif cancel and \
 
 options = {}
 
-if context.REQUEST.get('portal_status_message', '') == 'Success!':
+if context.REQUEST.get('portal_status_message', '') == _('Success!'):
     is_anon = False
     is_newmember = True
 
-options['title'] = is_usermanager and 'Register Member' or 'Become a Member'
+options['title'] = is_usermanager and _('Register Member') \
+                                  or _('Become a Member')
 options['member_id'] = member_id
 options['member_email'] = member_email
 options['password'] = is_newmember and context.REQUEST.get('password', '') or ''
@@ -46,11 +48,11 @@ options['validate_email'] = validate_email
 buttons = []
 if is_newmember:
     target = atool.getActionInfo('user/logged_in')['url']
-    buttons.append( {'name': 'login', 'value': 'Log in'} )
+    buttons.append( {'name': 'login', 'value': _('Log in')} )
 else:
     target = atool.getActionInfo('user/join')['url']
-    buttons.append( {'name': 'add', 'value': 'Register'} )
-    buttons.append( {'name': 'cancel', 'value': 'Cancel'} )
+    buttons.append( {'name': 'add', 'value': _('Register')} )
+    buttons.append( {'name': 'cancel', 'value': _('Cancel')} )
 options['form'] = { 'action': target,
                     'listButtonInfos': tuple(buttons) }
 

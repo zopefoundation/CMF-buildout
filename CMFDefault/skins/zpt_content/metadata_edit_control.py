@@ -2,6 +2,7 @@
 ##
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.exceptions import ResourceLockedError
+from Products.CMFDefault.utils import MessageID as _
 
 dtool = getToolByName(script, 'portal_discussion')
 
@@ -63,6 +64,6 @@ try:
                         , language=language
                         , rights=rights
                         )
-    return context.setStatus(True, 'Metadata changed.')
+    return context.setStatus(True, _('Metadata changed.'))
 except ResourceLockedError, errmsg:
     return context.setStatus(False, errmsg)

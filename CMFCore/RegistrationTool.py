@@ -16,25 +16,25 @@ $Id$
 """
 
 import re
-
-from Globals import InitializeClass
-from Globals import DTMLFile
-from OFS.SimpleItem import SimpleItem
-from AccessControl import ClassSecurityInfo
 from random import choice
 
+from AccessControl import ClassSecurityInfo
+from Globals import DTMLFile
+from Globals import InitializeClass
+from OFS.SimpleItem import SimpleItem
+
 from ActionProviderBase import ActionProviderBase
+from interfaces.portal_registration \
+        import portal_registration as IRegistrationTool
 from permissions import AddPortalMember
 from permissions import MailForgottenPassword
 from permissions import ManagePortal
-from utils import UniqueObject
 from utils import _checkPermission
+from utils import _dtmldir
 from utils import _limitGrantedRoles
 from utils import getToolByName
-from utils import _dtmldir
-
-from interfaces.portal_registration \
-        import portal_registration as IRegistrationTool
+from utils import MessageID as _
+from utils import UniqueObject
 
 
 class RegistrationTool(UniqueObject, SimpleItem, ActionProviderBase):
@@ -54,7 +54,7 @@ class RegistrationTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     manage_options = (ActionProviderBase.manage_options +
                      ({ 'label' : 'Overview', 'action' : 'manage_overview' }
-                     ,{ 'label' : 'Configure', 'action' : 'manage_configuration' } 
+                     ,{ 'label' : 'Configure', 'action' : 'manage_configuration' }
                      ) + SimpleItem.manage_options)
 
     #
@@ -138,8 +138,8 @@ class RegistrationTool(UniqueObject, SimpleItem, ActionProviderBase):
         detected before the fact so that a cleaner message can be printed.
         '''
         if not self.isMemberIdAllowed(id):
-            raise ValueError('The login name you selected is already '
-                             'in use or is not valid. Please choose another.')
+            raise ValueError(_('The login name you selected is already in '
+                               'use or is not valid. Please choose another.'))
 
         failMessage = self.testPasswordValidity(password)
         if failMessage is not None:

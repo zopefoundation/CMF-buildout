@@ -1,5 +1,7 @@
 ##parameters=change='', change_and_view=''
 ##
+from Products.CMFDefault.utils import MessageID as _
+
 form = context.REQUEST.form
 if change and \
         context.validateTextFile(**form) and \
@@ -19,8 +21,8 @@ options = {}
 
 buttons = []
 target = context.getActionInfo('object/edit')['url']
-buttons.append( {'name': 'change', 'value': 'Change'} )
-buttons.append( {'name': 'change_and_view', 'value': 'Change and View'} )
+buttons.append( {'name': 'change', 'value': _('Change')} )
+buttons.append( {'name': 'change_and_view', 'value': _('Change and View')} )
 options['form'] = { 'action': target,
                     'listButtonInfos': tuple(buttons) }
 

@@ -2,10 +2,13 @@
 ##title=Cut objects from a folder and copy to the clipboard
 ##
 from Products.CMFDefault.exceptions import CopyError
+from Products.CMFDefault.utils import MessageID as _
 
 try:
     context.manage_cutObjects(ids, context.REQUEST)
-    return context.setStatus( True, 'Item%s cut.' %
-                                    ( len(ids) != 1 and 's' or '' ) )
+    if len(ids) == 1:
+        return context.setStatus(True, _('Item cut.'))
+    else:
+        return context.setStatus(True, _('Items cut.'))
 except CopyError:
-    return context.setStatus(False, 'CopyError: Cut failed.')
+    return context.setStatus(False, _('CopyError: Cut failed.'))

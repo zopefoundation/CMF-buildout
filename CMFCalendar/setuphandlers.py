@@ -51,6 +51,7 @@ def importVarious(context):
 
     # Set up a MetadataTool element policy for events
     try:
+        _ = str # MetadataTool ist not aware of MessageIDs
         mdtool.addElementPolicy(
             element='Subject',
             content_type='Event',
@@ -58,8 +59,8 @@ def importVarious(context):
             supply_default=0,
             default_value='',
             enforce_vocabulary=0,
-            allowed_vocabulary=('Appointment', 'Convention', 'Meeting',
-                                'Social Event', 'Work'),
+            allowed_vocabulary=(_('Appointment'), _('Convention'),
+                                _('Meeting'), _('Social Event'), _('Work')),
             REQUEST=None)
     except MetadataError:
         pass

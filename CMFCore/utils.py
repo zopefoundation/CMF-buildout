@@ -44,10 +44,12 @@ from OFS.PropertySheets import PropertySheets
 from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
+from zope.i18nmessageid import MessageIDFactory
 
 from exceptions import AccessControl_Unauthorized
 from exceptions import NotFound
 from warnings import warn
+
 
 security = ModuleSecurityInfo( 'Products.CMFCore.utils' )
 
@@ -646,3 +648,7 @@ class SimpleRecord:
 
     def __init__(self, **kw):
         self.__dict__.update(kw)
+
+
+security.declarePublic('MessageID')
+MessageID = MessageIDFactory('cmf_default')

@@ -2,6 +2,8 @@ HEAD only (unreleased)
 
   New Features
 
+    - Replaced user messages by MassageIDs to improve the i18n support.  
+
     - CMFDefault CMFSetup profile: Added CMF BTree Folder to the list of
       automatically instantiated types in the types tool.
       (http://www.zope.org/Collectors/CMF/371)

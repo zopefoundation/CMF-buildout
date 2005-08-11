@@ -2,10 +2,13 @@
 ##title=Copy objects from a folder to the clipboard
 ##
 from Products.CMFDefault.exceptions import CopyError
+from Products.CMFDefault.utils import MessageID as _
 
 try:
     context.manage_copyObjects(ids, context.REQUEST)
-    return context.setStatus( True, 'Item%s copied.' %
-                                    ( len(ids) != 1 and 's' or '' ) )
+    if len(ids) == 1:
+        return context.setStatus(True, _('Item copied.'))
+    else:
+        return context.setStatus(True, _('Items copied.'))
 except CopyError:
-    return context.setStatus(False, 'CopyError: Copy failed.')
+    return context.setStatus(False, _('CopyError: Copy failed.'))

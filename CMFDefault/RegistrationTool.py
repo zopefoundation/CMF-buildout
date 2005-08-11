@@ -14,24 +14,25 @@
 
 $Id$
 """
+
 import re
 
-from Globals import InitializeClass, DTMLFile
 from AccessControl import ClassSecurityInfo
+from Globals import InitializeClass
 
-from Products.CMFCore.utils import _checkPermission
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.Expression import Expression
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.RegistrationTool import RegistrationTool as BaseTool
+from Products.CMFCore.utils import _checkPermission
+from Products.CMFCore.utils import getToolByName
 
 from permissions import AddPortalMember
 from permissions import ManagePortal
-from utils import _dtmldir
+from utils import MessageID as _
 
 
 class RegistrationTool(BaseTool):
+
     """ Manage through-the-web signup policies.
     """
 
@@ -65,14 +66,14 @@ class RegistrationTool(BaseTool):
         o If not, return a string explaining why.
         """
         if not password:
-            return 'You must enter a password.'
+            return _('You must enter a password.')
 
         if len(password) < 5 and not _checkPermission(ManagePortal, self):
-            return 'Your password must contain at least 5 characters.'
+            return _('Your password must contain at least 5 characters.')
 
         if confirm is not None and confirm != password:
-            return ( 'Your password and confirmation did not match. '
-                   + 'Please try again.' )
+            return _('Your password and confirmation did not match. '
+                     'Please try again.')
 
         return None
 
@@ -88,19 +89,19 @@ class RegistrationTool(BaseTool):
 
             username = props.get('username', '')
             if not username:
-                return 'You must enter a valid name.'
+                return _('You must enter a valid name.')
 
             if not self.isMemberIdAllowed(username):
-                return ('The login name you selected is already '
-                        'in use or is not valid. Please choose another.')
+                return _('The login name you selected is already in use or '
+                         'is not valid. Please choose another.')
 
             email = props.get('email')
             if email is None:
-                return 'You must enter an email address.'
+                return _('You must enter an email address.')
 
             ok, message =  _checkEmail( email )
             if not ok:
-                return 'You must enter a valid email address.'
+                return _('You must enter a valid email address.')
 
         else: # Existing member.
             email = props.get('email')
@@ -109,13 +110,13 @@ class RegistrationTool(BaseTool):
 
                 ok, message =  _checkEmail( email )
                 if not ok:
-                    return 'You must enter a valid email address.'
+                    return _('You must enter a valid email address.')
 
             # Not allowed to clear an existing non-empty email.
             existing = member.getProperty('email')
-            
+
             if existing and email == '':
-                return 'You must enter a valid email address.'
+                return _('You must enter a valid email address.')
 
         return None
 
@@ -129,12 +130,13 @@ class RegistrationTool(BaseTool):
         member = membership.getMemberById(forgotten_userid)
 
         if member is None:
-            raise ValueError('The username you entered could not be found.')
+            raise ValueError(_('The username you entered could not be '
+                               'found.'))
 
         # assert that we can actually get an email address, otherwise
         # the template will be made with a blank To:, this is bad
         if not member.getProperty('email'):
-            raise ValueError('That user does not have an email address.')
+            raise ValueError(_('That user does not have an email address.'))
 
         check, msg = _checkEmail(member.getProperty('email'))
         if not check:
@@ -162,7 +164,8 @@ class RegistrationTool(BaseTool):
         member = membership.getMemberById( new_member_id )
 
         if member is None:
-            raise ValueError('The username you entered could not be found.')
+            raise ValueError(_('The username you entered could not be '
+                               'found.'))
 
         if password is None:
             password = member.getPassword()
@@ -170,12 +173,13 @@ class RegistrationTool(BaseTool):
         email = member.getProperty( 'email' )
 
         if email is None:
-            raise ValueError( 'No email address is registered for member: %s'
-                            % new_member_id )
+            msg = _('No email address is registered for member: ${member_id}')
+            msg.mapping = {'member_id': new_member_id}
+            raise ValueError(msg)
 
         check, msg = _checkEmail(email)
         if not check:
-            raise ValueError, msg
+            raise ValueError(msg)
 
         # Rather than have the template try to use the mailhost, we will
         # render the message ourselves and send it from here (where we
@@ -253,4 +257,3 @@ def _checkEmail( address ):
         if matched != expected:
             return False, message
     return True, ''
-

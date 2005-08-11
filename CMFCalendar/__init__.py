@@ -17,6 +17,7 @@ $Id$
 
 import sys
 
+import utils
 from Products.CMFCore import utils
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.CMFSetup import EXTENSION

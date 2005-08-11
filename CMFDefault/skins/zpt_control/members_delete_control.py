@@ -2,10 +2,13 @@
 ##title=Delete members
 ##
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import MessageID as _
 
 mtool = getToolByName(script, 'portal_membership')
 
 mtool.deleteMembers(ids)
 
-return context.setStatus( True, 'Selected member%s deleted.' %
-                                ( len(ids) != 1 and 's' or '' ) )
+if len(ids) == 1:
+    return context.setStatus(True, _('Selected member deleted.'))
+else:
+    return context.setStatus(True, _('Selected members deleted.'))

@@ -2,13 +2,15 @@
 ##title=Return breadcrumbs
 ##
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import MessageID as _
+
 ptool = getToolByName(script, 'portal_properties')
 utool = getToolByName(script, 'portal_url')
 portal_url = utool()
 result = []
 
 if include_root:
-    result.append( { 'id'      : 'root'
+    result.append( { 'id'      : _('root')
                    , 'title'   : ptool.title()
                    , 'url'     : portal_url
                    }

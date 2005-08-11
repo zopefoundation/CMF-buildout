@@ -9,6 +9,7 @@ from Products.CMFDefault.permissions import ListFolderContents
 from Products.CMFDefault.permissions import ManageProperties
 from Products.CMFDefault.permissions import ViewManagementScreens
 from Products.CMFDefault.utils import html_marshal
+from Products.CMFDefault.utils import MessageID as _
 
 mtool = getToolByName(script, 'portal_membership')
 utool = getToolByName(script, 'portal_url')
@@ -105,19 +106,19 @@ else:
     is_default = 0
 
 columns = ( {'key': 'Type',
-             'title': 'Type',
+             'title': _('Type'),
              'width': '20',
              'colspan': '2'}
           , {'key': 'getId',
-             'title': 'Name',
+             'title': _('Name'),
              'width': '360',
              'colspan': None}
           , {'key': 'modified',
-             'title': 'Last Modified',
+             'title': _('Last Modified'),
              'width': '180',
              'colspan': None}
           , {'key': 'position',
-             'title': 'Position',
+             'title': _('Position'),
              'width': '80',
              'colspan': None }
           )
@@ -164,16 +165,16 @@ for name, value in html_marshal(**default_kw):
 buttons = []
 if items_manage_allowed:
     if items_add_allowed and context.allowedContentTypes():
-        buttons.append( {'name': 'items_new', 'value': 'New...'} )
+        buttons.append( {'name': 'items_new', 'value': _('New...')} )
         if items:
-            buttons.append( {'name': 'items_rename', 'value': 'Rename'} )
+            buttons.append( {'name': 'items_rename', 'value': _('Rename')} )
     if items:
-        buttons.append( {'name': 'items_cut', 'value': 'Cut'} )
-        buttons.append( {'name': 'items_copy', 'value': 'Copy'} )
+        buttons.append( {'name': 'items_cut', 'value': _('Cut')} )
+        buttons.append( {'name': 'items_copy', 'value': _('Copy')} )
     if items_add_allowed and context.cb_dataValid():
-        buttons.append( {'name': 'items_paste', 'value': 'Paste'} )
+        buttons.append( {'name': 'items_paste', 'value': _('Paste')} )
     if items_delete_allowed and items:
-        buttons.append( {'name': 'items_delete', 'value': 'Delete'} )
+        buttons.append( {'name': 'items_delete', 'value': _('Delete')} )
 length = batch_obj.sequence_length
 is_orderable = items_move_allowed and (key == 'position') and length > 1
 is_sortable = items_move_allowed and not is_default

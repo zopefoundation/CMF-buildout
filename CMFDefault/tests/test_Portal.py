@@ -58,6 +58,7 @@ class CMFSiteTests( SecurityRequestTest ):
 
         portal_types = [ x for x in site.portal_types.listContentTypes()
                            if x not in ( 'Discussion Item'
+                                       , 'CMF BTree Folder'
                                        , 'Folder'
                                        , 'Topic'
                                        ) ]

@@ -148,12 +148,20 @@ class File( OFS.Image.File
                 , contributors=()
                 , effective_date=None
                 , expiration_date=None
-                , format='text/html'
+                , format=None
                 , language='en-US'
                 , rights=''
                 ):
         OFS.Image.File.__init__( self, id, title, file
                                , content_type, precondition )
+
+        # If no file format has been passed in, rely on what OFS.Image.File
+        # detected. Unlike Images, which have code to try and pick the content
+        # type out of the binary data, File objects only provide the correct
+        # type if a "hint" in the form of a filename extension is given.
+        if format is None:
+            format = self.content_type 
+
         DefaultDublinCoreImpl.__init__( self, title, subject, description
                                , contributors, effective_date, expiration_date
                                , format, language, rights )

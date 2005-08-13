@@ -140,12 +140,18 @@ class Image( OFS.Image.Image
                 , contributors=()
                 , effective_date=None
                 , expiration_date=None
-                , format='image/png'
+                , format=None
                 , language='en-US'
                 , rights=''
                 ):
         OFS.Image.File.__init__( self, id, title, file
                                , content_type, precondition )
+
+        # If no file format has been passed in, rely on what OFS.Image.File
+        # detected.
+        if format is None:
+            format = self.content_type
+
         DefaultDublinCoreImpl.__init__( self, title, subject, description
                                , contributors, effective_date, expiration_date
                                , format, language, rights )

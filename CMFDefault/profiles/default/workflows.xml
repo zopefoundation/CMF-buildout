@@ -7,10 +7,10 @@
   <default>
    <bound-workflow workflow_id="default_workflow"/>
   </default>
-  <type type_id="Folder">
+  <type type_id="CMF BTree Folder">
 
   </type>
-  <type type_id="CMF BTree Folder">
+  <type type_id="Folder">
 
   </type>
   <type type_id="Topic">

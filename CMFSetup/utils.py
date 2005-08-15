@@ -212,18 +212,21 @@ class ImportConfiguratorBase(Implicit):
 
         return {
           'object':
-            { 'name':            {KEY: 'id'},
+            { 'i18n:domain':     {},
+              'name':            {KEY: 'id'},
               'meta_type':       {},
               'insert-before':   {},
               'insert-after':    {},
               'property':        {KEY: 'properties', DEFAULT: ()},
-              'object':          {KEY: 'objects', DEFAULT: ()} },
+              'object':          {KEY: 'objects', DEFAULT: ()},
+              'xmlns:i18n':      {} },
           'property':
             { 'name':            {KEY: 'id'},
               '#text':           {KEY: 'value', DEFAULT: ''},
               'element':         {KEY: 'elements', DEFAULT: ()},
               'type':            {},
-              'select_variable': {} },
+              'select_variable': {},
+              'i18n:translate':  {} },
           'element':
             { 'value':           {KEY: None} },
           'description':
@@ -272,6 +275,9 @@ class ImportConfiguratorBase(Implicit):
                     pass
 
         [ self.initObject(obj, info) for info in o_info['objects'] ]
+
+        if 'i18n:domain' in o_info:
+            obj.i18n_domain = o_info['i18n:domain']
 
         [ self.initProperty(obj, info) for info in o_info['properties'] ]
 
@@ -352,10 +358,15 @@ class ExportConfiguratorBase(Implicit):
 
         properties = []
         subobjects = []
+        i18n_domain = getattr(obj, 'i18n_domain', None)
 
         if getattr( aq_base(obj), '_propertyMap' ):
             for prop_map in obj._propertyMap():
-                properties.append( self._extractProperty(obj, prop_map) )
+                prop_info = self._extractProperty(obj, prop_map)
+                if i18n_domain and prop_info['id'] in ('title', 'description'):
+                    prop_info['i18ned'] = ''
+                if prop_info['id'] != 'i18n_domain':
+                    properties.append(prop_info)
 
         if getattr( aq_base(obj), 'objectValues' ):
             for sub in obj.objectValues():
@@ -363,6 +374,7 @@ class ExportConfiguratorBase(Implicit):
 
         return { 'id': obj.getId(),
                  'meta_type': obj.meta_type,
+                 'i18n_domain': i18n_domain or None,
                  'properties': tuple(properties),
                  'subobjects': tuple(subobjects) }
 

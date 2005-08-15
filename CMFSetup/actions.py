@@ -222,22 +222,23 @@ class ActionProvidersConfigurator(ConfiguratorBase):
 
         return {
           'actions-tool':
-             { 'action-provider': {KEY: 'providers', DEFAULT: ()},
-               'object':          {KEY: 'objects', DEFAULT: ()} },
+            { 'action-provider': {KEY: 'providers', DEFAULT: ()},
+              'object':          {KEY: 'objects', DEFAULT: ()},
+              'xmlns:i18n':      {} },
           'action-provider':
-             { 'id':              {},
-               'remove':          {},
-               'action':          {KEY: 'actions', DEFAULT: ()} },
+            { 'id':              {},
+              'remove':          {},
+              'action':          {KEY: 'actions', DEFAULT: ()} },
           'action':
-             { 'action_id':       {KEY: 'id'},
-               'title':           {},
-               'description':     {CONVERTER: self._convertToUnique},
-               'category':        {},
-               'condition_expr':  {KEY: 'condition'},
-               'permission':      {KEY: 'permissions', DEFAULT: ()},
-               'visible':         {CONVERTER: self._convertToBoolean},
-               'url_expr':        {KEY: 'action'} },
+            { 'action_id':       {KEY: 'id'},
+              'title':           {},
+              'description':     {CONVERTER: self._convertToUnique},
+              'category':        {},
+              'condition_expr':  {KEY: 'condition'},
+              'permission':      {KEY: 'permissions', DEFAULT: ()},
+              'visible':         {CONVERTER: self._convertToBoolean},
+              'url_expr':        {KEY: 'action'} },
           'permission':
-             { '#text':           {KEY: None} } }
+            { '#text':           {KEY: None} } }
 
 InitializeClass(ActionProvidersConfigurator)

@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
-<actions-tool xmlns:tal="http://xml.zope.org/namespaces/tal">
- <tal:loop tal:repeat="info here/listProviderInfo"
+<actions-tool xmlns:tal="http://xml.zope.org/namespaces/tal"
+   tal:attributes="xmlns:i18n string:http://xml.zope.org/namespaces/i18n">
+ <tal:loop tal:repeat="info context/listProviderInfo"
  ><action-provider id="portal_actions"
                   tal:attributes="id info/id;" >
   <action action_id="folder_contents"

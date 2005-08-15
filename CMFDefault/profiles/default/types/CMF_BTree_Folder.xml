@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
-<type-info id="CMF BTree Folder" kind="Factory-based Type Information">
-  <property name="title">CMF BTree Folder</property>
-  <property name="description">Folder for holding very large numbers of items.</property>
+<type-info id="CMF BTree Folder"
+           kind="Factory-based Type Information"
+           i18n:domain="cmf_default"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+  <property name="title" i18n:translate="">CMF BTree Folder</property>
+  <property name="description" i18n:translate="">Folder for holding very large numbers of items.</property>
   <property name="content_icon">folder_icon.gif</property>
   <property name="content_meta_type">CMF BTree Folder</property>
   <property name="product">CMFCore</property>

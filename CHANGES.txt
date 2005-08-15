@@ -2,7 +2,12 @@ HEAD only (unreleased)
 
   New Features
 
-    - Replaced user messages by MassageIDs to improve the i18n support.  
+    - TypeInformation and newstyle Actions: Added i18n support.
+      If 'i18n_domain' is specified, 'title' and 'description' are returned as
+      MassageID objects instead of strings. This allows to use different i18n
+      domains for different TypeInfos and Actions.
+
+    - Replaced user messages by MassageIDs to improve the i18n support.
 
     - CMFDefault CMFSetup profile: Added CMF BTree Folder to the list of
       automatically instantiated types in the types tool.
@@ -62,7 +67,7 @@ HEAD only (unreleased)
 
     - CMFSetup: Merged the registerClass and registerIcon call since 
       registerClass is capable of registering icons.
-    
+
     - DublinCore and PortalFolder: Changed fallback in 'Type' method.
       The fallback is only necessary if the related type info is missing.
 
@@ -79,9 +84,9 @@ HEAD only (unreleased)
     - The CMF now depends on Zope 2.8 / Five.
 
     - Non-release packages moved out of the /CMF/ repository package:
-    
+
       o hotfixes moved to /CMF_Hotfixes
-      
+
       o others (CMFCollector, CMFStaging, CMFTracker, CMFWorkspaces)
         moved to /CMF_Extras/
 

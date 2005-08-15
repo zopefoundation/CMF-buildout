@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
-<type-info id="Image" kind="Factory-based Type Information">
-  <property name="title">Image</property>
-  <property name="description">Image objects can be embedded in Portal documents.</property>
+<type-info id="Image" kind="Factory-based Type Information"
+           i18n:domain="cmf_default"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+  <property name="title" i18n:translate="">Image</property>
+  <property name="description" i18n:translate="">Image objects can be embedded in Portal documents.</property>
   <property name="content_icon">image_icon.gif</property>
   <property name="content_meta_type">Portal Image</property>
   <property name="product">CMFDefault</property>

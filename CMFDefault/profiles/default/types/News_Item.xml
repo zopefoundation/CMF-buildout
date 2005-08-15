@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <type-info id="News Item"
-           kind="Factory-based Type Information">
-  <property name="title">News Item</property>
-  <property name="description">News Items contain short text articles and carry a title as well as
+           kind="Factory-based Type Information"
+           i18n:domain="cmf_default"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+  <property name="title" i18n:translate="">News Item</property>
+  <property name="description" i18n:translate="">News Items contain short text articles and carry a title as well as
 an optional description.</property>
   <property name="content_icon">newsitem_icon.gif</property>
   <property name="content_meta_type">News Item</property>

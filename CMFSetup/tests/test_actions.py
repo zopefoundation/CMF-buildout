@@ -178,7 +178,7 @@ class ActionProvidersConfiguratorTests( _ActionSetup ):
         configurator = self._makeOne( site )
 
         tool_info = configurator.parseXML( _EMPTY_EXPORT )
-        self.assertEqual( len(tool_info), 2 )
+        self.assertEqual( len(tool_info), 3 )
 
         self.assertEqual( len( tool_info[ 'providers' ] ), 1 )
 
@@ -192,7 +192,7 @@ class ActionProvidersConfiguratorTests( _ActionSetup ):
 
         configurator = self._makeOne( site )
         tool_info = configurator.parseXML( _NORMAL_EXPORT )
-        self.assertEqual( len(tool_info), 2 )
+        self.assertEqual( len(tool_info), 3 )
 
         self.assertEqual( len( tool_info['providers'] ), 3 )
 
@@ -232,7 +232,7 @@ class ActionProvidersConfiguratorTests( _ActionSetup ):
 
 _EMPTY_EXPORT = """\
 <?xml version="1.0"?>
-<actions-tool>
+<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <action-provider id="portal_actions">
  </action-provider>
 </actions-tool>
@@ -240,7 +240,7 @@ _EMPTY_EXPORT = """\
 
 _NORMAL_EXPORT = """\
 <?xml version="1.0"?>
-<actions-tool>
+<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <action-provider id="portal_actions">
  </action-provider>
  <action-provider id="portal_foo">
@@ -267,7 +267,7 @@ _NORMAL_EXPORT = """\
 
 _NEWSYTLE_EXPORT = """\
 <?xml version="1.0"?>
-<actions-tool>
+<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <action-provider id="portal_actions">
  </action-provider>
  <object name="dummy" meta_type="CMF Action Category">
@@ -295,9 +295,29 @@ _NEWSYTLE_EXPORT = """\
 </actions-tool>
 """
 
+_I18N_IMPORT = """\
+<?xml version="1.0"?>
+<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <action-provider id="portal_actions">
+ </action-provider>
+ <object name="dummy" meta_type="CMF Action Category">
+  <property name="title"></property>
+ <object name="foo" meta_type="CMF Action" i18n:domain="foo_domain">
+  <property name="title" i18n:translate="">Foo</property>
+  <property name="description" i18n:translate=""></property>
+  <property name="url_expr">string:${object_url}/foo</property>
+  <property name="icon_expr"></property>
+  <property name="available_expr">python:1</property>
+  <property name="permissions"></property>
+  <property name="visible">True</property>
+ </object>
+ </object>
+</actions-tool>
+"""
+
 _INSERT_IMPORT = """\
 <?xml version="1.0"?>
-<actions-tool>
+<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <object name="dummy">
  <object name="spam" meta_type="CMF Action" insert-before="*">
   <property name="title">Spam</property>
@@ -318,7 +338,7 @@ _INSERT_IMPORT = """\
 
 _REMOVE_IMPORT = """\
 <?xml version="1.0"?>
-<actions-tool>
+<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <action-provider id="portal_actions" remove="">
  </action-provider>
  <action-provider id="not_existing" remove="">
@@ -489,6 +509,33 @@ class Test_importActionProviders( _ActionSetup ):
         self.failUnless( 'bar' in atool.dummy.objectIds() )
         self.failIf( foo.listActions() )
         self.failIf( bar.listActions() )
+
+    def test_i18n(self):
+
+        from Products.CMFSetup.actions import importActionProviders
+
+        site = self._initSite(0, 0)
+        atool = site.portal_actions
+
+        context = DummyImportContext(site)
+        context._files['actions.xml'] = _I18N_IMPORT
+        importActionProviders(context)
+
+        self.assertEqual(len(atool.listActionProviders()), 1)
+        self.assertEqual(atool.objectIds(), ['dummy'])
+        self.assertEqual(atool.dummy.objectIds(), ['foo'])
+        self.assertEqual(atool.dummy.foo.i18n_domain, 'foo_domain')
+
+        # complete the roundtrip
+        context = DummyExportContext(site)
+        from Products.CMFSetup.actions import exportActionProviders
+        exportActionProviders(context)
+
+        self.assertEqual(len(context._wrote), 1)
+        filename, text, content_type = context._wrote[0]
+        self.assertEqual(filename, 'actions.xml')
+        self._compareDOM(text, _I18N_IMPORT)
+        self.assertEqual(content_type, 'text/xml')
 
     def test_insert_skip_purge(self):
 

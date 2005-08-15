@@ -312,6 +312,7 @@ class ExportConfiguratorBaseTests(_ConfiguratorBaseTests):
 
         EXPECTED = { 'id': 'dummy',
                      'meta_type': 'Dummy Type',
+                     'i18n_domain': None,
                      'properties': _NORMAL_PROPERTY_INFO,
                      'subobjects': () }
 

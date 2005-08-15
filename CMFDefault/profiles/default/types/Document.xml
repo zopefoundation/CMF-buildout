@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <type-info id="Document"
-           kind="Factory-based Type Information">
-  <property name="title">Document</property>
-  <property name="description">Documents contain text that can be formatted using 'Structured Text.'
+           kind="Factory-based Type Information"
+           i18n:domain="cmf_default"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+  <property name="title" i18n:translate="">Document</property>
+  <property name="description" i18n:translate="">Documents contain text that can be formatted using 'Structured Text.'
 They may also contain HTML, or "plain" text.</property>
   <property name="content_icon">document_icon.gif</property>
   <property name="content_meta_type">Document</property>

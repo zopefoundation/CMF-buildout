@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <type-info id="Favorite"
-           kind="Factory-based Type Information">
-  <property name="title">Favorite</property>
-  <property name="description">A Favorite is a Link to an intra-portal resource.</property>
+           kind="Factory-based Type Information"
+           i18n:domain="cmf_default"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+  <property name="title" i18n:translate="">Favorite</property>
+  <property name="description" i18n:translate="">A Favorite is a Link to an intra-portal resource.</property>
   <property name="content_icon">link_icon.gif</property>
   <property name="content_meta_type">Favorite</property>
   <property name="product">CMFDefault</property>

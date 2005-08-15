@@ -18,6 +18,7 @@ $Id$
 from sys import exc_info
 from warnings import warn
 
+import Products
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
@@ -28,7 +29,7 @@ from OFS.Folder import Folder
 from OFS.ObjectManager import IFAwareObjectManager
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from zLOG import LOG, ERROR
-import Products
+from zope.i18nmessageid import MessageID
 
 from ActionProviderBase import ActionProviderBase
 from exceptions import AccessControl_Unauthorized
@@ -77,6 +78,8 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
          'label':'Title'},
         {'id':'description', 'type': 'text', 'mode':'w',
          'label':'Description'},
+        {'id':'i18n_domain', 'type': 'string', 'mode':'w',
+         'label':'I18n Domain'},
         {'id':'content_icon', 'type': 'string', 'mode':'w',
          'label':'Icon'},
         {'id':'content_meta_type', 'type': 'string', 'mode':'w',
@@ -103,6 +106,7 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
 
     title = ''
     description = ''
+    i18n_domain = ''
     content_meta_type = ''
     content_icon = ''
     immediate_view = ''
@@ -182,7 +186,10 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
             l10n/i18n or where a single content class is being
             used twice, under different names.
         """
-        return self.title or self.getId()
+        if self.title and self.i18n_domain:
+            return MessageID(self.title, self.i18n_domain)
+        else:
+            return self.title or self.getId()
 
     security.declareProtected(View, 'Description')
     def Description(self):
@@ -190,7 +197,10 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
             Textual description of the class of objects (intended
             for display in a "constructor list").
         """
-        return self.description
+        if self.description and self.i18n_domain:
+            return MessageID(self.description, self.i18n_domain)
+        else:
+            return self.description
 
     security.declareProtected(View, 'Metatype')
     def Metatype(self):

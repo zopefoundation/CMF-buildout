@@ -208,7 +208,7 @@ class TypeInfoExportConfiguratorTests(_TypeInfoSetup):
         found = configurator.getTypeInfo('foo')
         expected = _TI_LIST[0]
 
-        self.assertEqual(found['kind'], 'Factory-based Type Information')
+        self.assertEqual(found['meta_type'], 'Factory-based Type Information')
 
         for key in ('id', 'aliases'):
             self.assertEqual(found[key], expected[key])
@@ -233,7 +233,7 @@ class TypeInfoExportConfiguratorTests(_TypeInfoSetup):
         found = configurator.getTypeInfo('bar')
         expected = _TI_LIST[1]
 
-        self.assertEqual(found['kind'], 'Scriptable Type Information')
+        self.assertEqual(found['meta_type'], 'Scriptable Type Information')
 
         for key in ('id', 'aliases'):
             self.assertEqual(found[key], expected[key])
@@ -356,6 +356,7 @@ _TI_LIST = ({
     'id':                    'foo',
     'title':                 'Foo',
     'description':           'Foo things',
+    'i18n_domain':           'foo_domain',
     'content_meta_type':     'Foo Thing',
     'content_icon':          'foo.png',
     'product':               'CMFSetup',
@@ -509,10 +510,12 @@ _FOO_OLD_EXPORT = """\
 
 _FOO_EXPORT = """\
 <type-info
+   i18n:domain="foo_domain"
    id="%s"
-   kind="Factory-based Type Information">
-  <property name="title">Foo</property>
-  <property name="description">Foo things</property>
+   kind="Factory-based Type Information"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+  <property name="title" i18n:translate="">Foo</property>
+  <property name="description" i18n:translate="">Foo things</property>
   <property name="content_icon">foo.png</property>
   <property name="content_meta_type">Foo Thing</property>
   <property name="product">CMFSetup</property>
@@ -617,7 +620,8 @@ _BAR_OLD_EXPORT = """\
 _BAR_EXPORT = """\
 <type-info
    id="%s"
-   kind="Scriptable Type Information">
+   kind="Scriptable Type Information"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
   <property name="title">Bar</property>
   <property name="description">Bar things</property>
   <property name="content_icon">bar.png</property>

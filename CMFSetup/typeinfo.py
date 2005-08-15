@@ -99,6 +99,9 @@ def importTypesTool( context ):
             for prop_info in info['properties']:
                 tic.initProperty(type_info, prop_info)
 
+        if 'i18n:domain' in info:
+            type_info.i18n_domain = info['i18n:domain']
+
         if 'actions' in info:
             type_info._actions = info['actions']
 
@@ -274,12 +277,13 @@ class TypeInfoImportConfigurator(ImportConfiguratorBase):
 
         return {
           'type-info':
-            { 'id':                   {},
+            { 'i18n:domain':          {},
+              'id':                   {},
               'kind':                 {},
               'aliases':              {CONVERTER: self._convertAliases},
               'action':               {KEY: 'actions'},
               'property':             {KEY: 'properties', DEFAULT: ()},
-              },
+              'xmlns:i18n':           {} },
           'aliases':
             { 'alias':                {KEY: None} },
           'alias':
@@ -313,9 +317,8 @@ class TypeInfoExportConfigurator(ExportConfiguratorBase):
 
     security = ClassSecurityInfo()
 
-    security.declareProtected( ManagePortal, 'getTypeInfo' )
-    def getTypeInfo( self, type_id ):
-
+    security.declareProtected(ManagePortal, 'getTypeInfo')
+    def getTypeInfo(self, type_id):
         """ Return a mapping for the given type info in the site.
 
         o These mappings are pretty much equivalent to the stock
@@ -323,9 +326,12 @@ class TypeInfoExportConfigurator(ExportConfiguratorBase):
           CMF.
         """
         ti = self._getTI(type_id)
-        return self._makeTIMapping(ti)
+        ti_info = self._extractObject(ti)
+        ti_info['aliases'] = ti.getMethodAliases()
+        ti_info['actions'] = [ ai.getMapping() for ai in ti.listActions() ]
+        return ti_info
 
-    security.declarePrivate('_getTI' )
+    security.declarePrivate('_getTI')
     def _getTI(self, type_id):
         """Get the TI from its id."""
         typestool = getToolByName(self._site, 'portal_types')
@@ -333,26 +339,6 @@ class TypeInfoExportConfigurator(ExportConfiguratorBase):
             return typestool.getTypeInfo(str(type_id)) # gTI expects ASCII?
         except KeyError:
             raise ValueError("Unknown type: %s" % type_id)
-
-    security.declarePrivate( '_makeTIMapping' )
-    def _makeTIMapping( self, ti ):
-
-        """ Convert a TypeInformation object into the appropriate mapping.
-        """
-        return {
-            'id': ti.getId(),
-            'kind': ti.meta_type,
-            'aliases': ti.getMethodAliases(),
-            'actions': [ai.getMapping() for ai in ti.listActions()],
-            }
-
-    security.declareProtected(ManagePortal, 'generateProperties')
-    def generateProperties(self, type_id):
-        """Get a sequence of mappings for properties."""
-        ti = self._getTI(type_id)
-        prop_infos = [self._extractProperty(ti, prop_map)
-                      for prop_map in ti._propertyMap()]
-        return self.generatePropertyNodes(prop_infos)
 
     def _getExportTemplate(self):
 

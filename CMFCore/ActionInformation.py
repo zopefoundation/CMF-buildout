@@ -24,6 +24,7 @@ from OFS.ObjectManager import IFAwareObjectManager
 from OFS.OrderedFolder import OrderedFolder
 from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from zope.i18nmessageid import MessageID
 
 from Expression import Expression
 from interfaces.portal_actions import Action as IAction
@@ -86,6 +87,7 @@ class Action(SimpleItemWithProperties):
     __implements__ = IAction
 
     meta_type = 'CMF Action'
+    i18n_domain = 'cmf_default'
 
     security = ClassSecurityInfo()
 
@@ -94,6 +96,8 @@ class Action(SimpleItemWithProperties):
          'label': 'Title'},
         {'id': 'description', 'type': 'text', 'mode': 'w',
          'label': 'Description'},
+        {'id':'i18n_domain', 'type': 'string', 'mode':'w',
+         'label':'I18n Domain'},
         {'id': 'url_expr', 'type': 'string', 'mode': 'w',
          'label': 'URL (Expression)'},
         {'id': 'icon_expr', 'type': 'string', 'mode': 'w',
@@ -110,6 +114,7 @@ class Action(SimpleItemWithProperties):
         self.id = id
         self._setPropValue( 'title', kw.get('title', '') )
         self._setPropValue( 'description', kw.get('description', '') )
+        self._setPropValue( 'i18n_domain', kw.get('i18n_domain', '') )
         self._setPropValue( 'url_expr', kw.get('url_expr', '') )
         self._setPropValue( 'icon_expr', kw.get('icon_expr', '') )
         self._setPropValue( 'available_expr', kw.get('available_expr', '') )
@@ -148,6 +153,10 @@ class Action(SimpleItemWithProperties):
                     lazy_keys.append(id)
                 elif id == 'available':
                     val = True
+            elif id == 'i18n_domain':
+                continue
+            elif self.i18n_domain and id in ('title', 'description'):
+                val = MessageID(val, self.i18n_domain)
             lazy_map[id] = val
 
         return (lazy_map, lazy_keys)

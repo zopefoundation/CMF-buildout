@@ -2,6 +2,14 @@ After CMF 1.5.3
 
   Bug Fixes
 
+    - CMFCore.FSImage and FSFile: Unlike the current behavior of Zope itself,
+      FSImage and FSFile would set a content-length response header for 304
+      (not modified) responses, which should not be done according to 
+      RFC 2616. It won't do so anymore, but Zope itself will still force a
+      content-length header in ZServer.HTTPResponse. This misbehavior
+      has been filed as a Zope issue (http://www.zope.org/Collectors/Zope/1866).
+      (http://www.zope.org/Collectors/CMF/372)
+
     - PortalFolder: Improved the _checkId method.
       Method Aliases mask objects with matching IDs. Thus _checkId() and
       checkIdAvailable() now make sure non-managers can't create objects with

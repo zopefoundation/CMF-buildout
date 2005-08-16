@@ -137,11 +137,11 @@ class FSFile(FSObject):
         RESPONSE.setHeader('Last-Modified', rfc1123_date(last_mod))
         RESPONSE.setHeader('Content-Type', self.content_type)
 
-        # We always set a content-length, even if the response is a 304,
-        # contrary to RFC 2616 because Apache proxies < 1.3.27
-        # will set a content-length header of "0" if one is not present
-        # in the response.  See http://www.zope.org/Collectors/Zope/544
-        RESPONSE.setHeader('Content-Length', data_len)
+        if status != 304:
+            # Avoid setting content-length for a 304. See RFC 2616.
+            # Zope might still, for better or for worse, set a 
+            # content-length header with value "0".
+            RESPONSE.setHeader('Content-Length', data_len)
 
         #There are 2 Cache Managers which can be in play....
         #need to decide which to use to determine where the cache headers

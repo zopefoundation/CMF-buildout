@@ -105,9 +105,9 @@ class FSImageTests( RequestTest, FSDVTest):
         data = image.index_html( self.REQUEST, self.RESPONSE )
 
         self.assertEqual( data, '' )
-        # test that we properly hack around apache bug noted in code
+        # test that we don't supply a content-length
         self.assertEqual( self.RESPONSE.getHeader('Content-Length'.lower()),
-                                                  str(len(ref)) )
+                                                  None )
         self.assertEqual( self.RESPONSE.getStatus(), 304 )
 
     def test_index_html_without_304( self ):

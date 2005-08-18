@@ -2,10 +2,10 @@ After CMF 1.5.3
 
   Bug Fixes
 
-    - CMFCore.FSDTMLMethod: Cache headers from the Caching Policy Manager
-      never got set for FS DTML Methods due to the way PortalContent's
-      __call__ method called the template.
-      (http://www.zope.org/Collectors/CMF/374)
+    - CMFCore.PortalContent, CMFCore.FSSTXMethod, CMFTopic.Topic,
+      CMFDefault.SkinnedFolder: Cache headers from the Caching Policy Manager
+      never got set for DTML-based skins due to the way the view template
+      __call__ method was invoked. (http://www.zope.org/Collectors/CMF/374)
 
     - CMFCore.FSImage and FSFile: Unlike the current behavior of Zope itself,
       FSImage and FSFile would set a content-length response header for 304

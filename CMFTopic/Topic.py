@@ -120,7 +120,7 @@ class Topic( PortalFolder ):
             method = _getViewFor(self)
 
         if getattr(aq_base(method), 'isDocTemp', 0):
-            return method(self, self.REQUEST)
+            return method(self, self.REQUEST, self.REQUEST['RESPONSE'])
         else:
             return method()  
 

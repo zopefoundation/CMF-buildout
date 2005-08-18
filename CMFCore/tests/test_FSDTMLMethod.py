@@ -66,7 +66,7 @@ class FSDTMLMethodTests( RequestTest, FSDTMLMaker ):
         original_len = len( self.RESPONSE.headers )
         script = self._makeOne('testDTML', 'testDTML.dtml')
         script = script.__of__(self.root)
-        script(self.root, self.REQUEST)
+        script(self.root, self.REQUEST, self.RESPONSE)
         self.failUnless( len( self.RESPONSE.headers ) >= original_len + 2 )
         self.failUnless( 'foo' in self.RESPONSE.headers.keys() )
         self.failUnless( 'bar' in self.RESPONSE.headers.keys() )

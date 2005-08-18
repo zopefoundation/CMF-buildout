@@ -91,7 +91,7 @@ class SkinnedFolder(CMFCatalogAware, PortalFolder):
         '''
         view = _getViewFor(self)
         if getattr(aq_base(view), 'isDocTemp', 0):
-            return view(self, self.REQUEST)
+            return view(self, self.REQUEST, self.REQUEST['RESPONSE'])
         else:
             return view()
 

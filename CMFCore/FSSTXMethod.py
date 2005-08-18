@@ -127,7 +127,7 @@ class FSSTXMethod( FSObject ):
         template = getattr( self, 'stxmethod_view', self._default_template )
 
         if getattr( template, 'isDocTemp', 0 ):
-            posargs = ( self, REQUEST )
+            posargs = ( self, REQUEST, RESPONSE )
         else:
             posargs = ()
 

@@ -110,11 +110,6 @@ class FSDTMLMethod(RestrictedDTML, RoleManager, FSObject, Globals.HTML):
         """Render the document given a client object, REQUEST mapping,
         Response, and key word arguments."""
 
-        # If a RESPONSE is not passed in, try to access it through the
-        # REQUEST.
-        if RESPONSE is None and REQUEST != {}:
-            RESPONSE = getattr(REQUEST, 'RESPONSE', None)
-
         self._updateFromFS()
 
         if not self._cache_namespace_keys:

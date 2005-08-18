@@ -98,7 +98,7 @@ class PortalContent(DynamicType, CMFCatalogAware, SimpleItem):
         if method_id:
             method = getattr(self, method_id)
             if getattr(aq_base(method), 'isDocTemp', 0):
-                return method(self, self.REQUEST)
+                return method(self, self.REQUEST, self.REQUEST['RESPONSE'])
             else:
                 return method()
         else:

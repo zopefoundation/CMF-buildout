@@ -81,6 +81,8 @@ class DummyCatalog( Implicit ):
                     bucket = self._indexes[ index_id ].setdefault( word, [] )
                     bucket.append( rid )
 
+    indexObject = _index
+
     def searchResults( self, REQUEST=None, **kw ):
 
         from sets import Set
@@ -227,13 +229,39 @@ class TestTopic(SecurityTest):
         self.assertEqual( len( query ), 1 )
         self.assertEqual( query['baz'], 'bam' )
 
+    def test_selfIndexing(self):
+        # The Topic object is CatalogAware and should be in the catalog
+        # after it has beeen instantiated.
+        self._initSite()
+        topic = self._makeOne('top')
+
+        # A topic without criteria will return a full catalog search result
+        # set, so we should not have one result, for the Topic object itself.
+        results = topic.queryCatalog()
+
+        self.assertEquals(len(results), 1)
+        self.assertEquals(results[0].getObject().getId(), topic.getId())
+        self.assertEquals(results[0].getObject(), topic)
+
+    def test_searchableText(self):
+        # Test the catalog helper
+        topic = self._makeOne('top')
+        topic.edit(False, title='FOO', description='BAR')
+
+        st = topic.SearchableText()
+        self.failUnless(st.find('BAR') != -1)
+        self.failUnless(st.find('FOO') != -1)
+
     def test_queryCatalog_noop( self ):
 
         self._initSite()
         self._initDocuments( **_DOCUMENTS )
         topic = self._makeOne('top')
 
-        brains = topic.queryCatalog()
+        # Need to filter out the Topic object itself, which is also
+        # CatalogAware and will index itself after instantiation.
+        brains = [ x for x in topic.queryCatalog()
+                      if x.getObject().getId() != 'top' ]
 
         self.assertEqual( len( brains ), len( _DOCUMENTS ) )
 
@@ -272,7 +300,11 @@ class TestTopic(SecurityTest):
         self._initDocuments( **_DOCUMENTS )
         topic = self._makeOne('top')
 
-        brains = topic.synContentValues()
+        #brains = topic.synContentValues()
+        # Need to filter out the Topic object itself, which is also
+        # CatalogAware and will index itself after instantiation.
+        brains = [ x for x in topic.synContentValues()
+                      if x.getObject().getId() != 'top' ]
 
         self.assertEqual( len( brains ), len( _DOCUMENTS ) )
 

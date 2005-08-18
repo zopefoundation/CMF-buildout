@@ -32,6 +32,15 @@ After CMF 1.5.3
       content_type. It is now preserved, if possible.
       (http://www.zope.org/Collectors/CMF/370)
 
+  Features
+
+    - CMFTopic.Topic: Made Topics a tad more useful by subclassing from
+      CMFDefault.SkinnedFolder instead of CMFCore.PortalFolder, because
+      SkinnedFolder is CatalogAware. Topics now offer useful information
+      for Title, Description and SearchableText, so Topic objects can
+      be located in the portal by using the standars search facilities.
+      (http://www.zope.org/Collectors/CMF/53)
+
   Others
 
     - CMFCore.PortalFolder._checkId() allows root doted prefixed name

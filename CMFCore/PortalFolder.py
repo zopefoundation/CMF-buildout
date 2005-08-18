@@ -108,9 +108,9 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
     security = ClassSecurityInfo()
 
     description = ''
-    
+
     manage_options = ( Folder.manage_options +
-                       CMFCatalogAware.manage_options )  
+                       CMFCatalogAware.manage_options )
 
     def __init__( self, id, title='' ):
         self.id = id
@@ -446,7 +446,10 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
             if ob is not None:
                 # If the portal root has a non-contentish object by this name,
                 # don't allow an override.
-                if hasattr(ob, id) and id not in ob.contentIds():
+                if (hasattr(ob, id) and
+                    id not in ob.contentIds() and
+                    # Allow root doted prefixed object name overrides
+                    not id.startswith('.')):
                     raise BadRequest('The id "%s" is reserved.' % id)
             # Don't allow ids used by Method Aliases.
             ti = self.getTypeInfo()

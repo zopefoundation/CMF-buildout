@@ -26,6 +26,11 @@ After CMF 1.5.3
       content_type. It is now preserved, if possible.
       (http://www.zope.org/Collectors/CMF/370)
 
+  Others
+
+    - CMFCore.PortalFolder._checkId() allows root doted prefixed name
+      object overrides.
+
 CMF 1.5.3 (2005/08/07)
 
   Bugs fixed

@@ -406,6 +406,23 @@ class PortalFolderTests(SecurityTest):
         test._setObject('foo', DummyContent('foo'))
         self.failIf(test.checkIdAvailable('foo'))
 
+    def test__checkId_starting_with_dot(self):
+        #
+        # doted prefixed names at the root of the portal can be overriden
+        #
+
+        # Create a .foo at the root
+        self.site._setObject('.foo', DummyContent('.foo'))
+
+        # Create a sub-folder
+        sub = self._makeOne('sub')
+
+        # It should be possible to create another .foo object in the
+        # sub-folder
+        acl_users = self.site._setObject('acl_users', DummyUserFolder())
+        newSecurityManager(None, acl_users.user_foo)
+
+        self.assert_(sub.checkIdAvailable('.foo'))
 
 class PortalFolderMoveTests(SecurityTest):
 

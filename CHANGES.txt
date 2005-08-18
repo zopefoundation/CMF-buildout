@@ -2,6 +2,12 @@ After CMF 1.5.3
 
   Bug Fixes
 
+    - CMFTopic.DateCriteria: The behavior and naming of date criteria
+      operators was very confusing and in many cases unexpected and 
+      wrong. For that reason e.g. Plone replaced the implementation
+      with a more user-friendly handling which is hereby introduced
+      to CMF proper. (http://www.zope.org/Collectors/CMF/339)
+
     - CMFCore.PortalContent, CMFCore.FSSTXMethod, CMFTopic.Topic,
       CMFDefault.SkinnedFolder: Cache headers from the Caching Policy Manager
       never got set for DTML-based skins due to the way the view template

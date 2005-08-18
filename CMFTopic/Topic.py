@@ -19,7 +19,7 @@ from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
 from Globals import InitializeClass
 
-from Products.CMFCore.PortalFolder import PortalFolder
+from Products.CMFDefault.SkinnedFolder import SkinnedFolder
 from Products.CMFCore.utils import getToolByName
 
 from permissions import ListFolderContents
@@ -92,7 +92,7 @@ def addTopic( self, id, title='', REQUEST=None ):
         REQUEST['RESPONSE'].redirect( 'manage_main' )
 
 
-class Topic( PortalFolder ):
+class Topic( SkinnedFolder ):
 
     """ Topics are 'canned queries'
     
@@ -161,6 +161,8 @@ class Topic( PortalFolder ):
         if title is not None:
             self.title = title
         self.description = description
+
+        self.reindexObject()
 
     security.declareProtected(View, 'buildQuery')
     def buildQuery( self ):
@@ -273,5 +275,16 @@ class Topic( PortalFolder ):
             result.append( mt.meta_type )
 
         return tuple( result )
+
+    #
+    #   Cataloging helper to make finding this item easier
+    #
+    security.declareProtected(View, 'SearchableText')
+    def SearchableText(self):
+        """
+        SeachableText is used for full text seraches of a portal.  It
+        should return a concatenation of all useful text.
+        """
+        return "%s %s" % (self.title, self.description) 
 
 InitializeClass( Topic )

@@ -20,13 +20,13 @@
     <select name="criteria.operation:records">
      <option value="min"
              tal:attributes="selected python:here.operation=='min'"
-     >At the least:</option>
+     >More than</option>
      <option value="max"
              tal:attributes="selected python:here.operation=='max'"
-     >At the most:</option>
+     >Less than</option>
      <option value="within_day"
              tal:attributes="selected python:here.operation=='within_day'"
-     >Within the day:</option>
+     >On the day</option>
     </select>
 
    <select name="criteria.value:records"
@@ -43,7 +43,7 @@
     <select name="criteria.daterange:records">
      <option value="old"
              tal:attributes="selected python:here.daterange == 'old'"
-     >old</option>
+     >ago</option>
      <option value="ahead"
              tal:attributes="selected python:here.daterange == 'ahead'"
      >ahead</option>

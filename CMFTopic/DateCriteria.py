@@ -110,19 +110,57 @@ class FriendlyDateCriterion( AbstractCriterion ):
         if self.value is not None:
             field = self.Field()
             value = self.value
+            operation = self.operation
 
             # Negate the value for 'old' days
-            if self.daterange == 'old':
+            if self.daterange == 'old' and value != 0:
                 value = -value
+
+                # Also reverse the operator to match what a user would expect.
+                # Queries such as "More than 2 days ago" should match dates
+                # *earlier* than "today minus 2", and "Less than 2 days ago"
+                # would be expected to return dates *later* then "today minus
+                # two".
+                if operation == 'max':
+                    operation = 'min'
+                elif operation == 'min':
+                    operation = 'max'
 
             date = DateTime() + value
 
-            operation = self.operation
             if operation == 'within_day':
+                # When items within a day are requested, the range is between
+                # the earliest and latest time of that particular day
                 range = ( date.earliestTime(), date.latestTime() )
                 return ( ( field, {'query': range, 'range': 'min:max'} ), )
-            else:
-                return ( ( field, {'query': date, 'range': operation} ), )
+
+            elif operation == 'min':
+                if value != 0:
+                    if self.daterange == 'old':
+                        date_range = (date, DateTime())
+                        return ( ( field, { 'query': date_range
+                                          , 'range': 'min:max'
+                                          } ), )
+                    else:
+                        return ( ( field, { 'query': date.earliestTime()
+                                          , 'range': operation 
+                                          } ), )
+                else:
+                    # Value 0 means "Now", so get everything from now on
+                    return ( ( field, {'query': date,'range': operation } ), )
+
+            elif operation == 'max':
+                if value != 0:
+                    if self.daterange == 'old':
+                        return ((field, {'query': date, 'range': operation}),)
+                    else:
+                        date_range = (DateTime(), date.latestTime())
+                        return ( ( field, { 'query': date_range
+                                          , 'range': 'min:max'
+                                          } ), )
+                else:
+                    # Value is 0, meaning "Now", get everything before "Now"
+                    return ( ( field, {'query': date, 'range': operation} ), )
         else:
             return ()
 

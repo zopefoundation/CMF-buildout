@@ -1,8 +1,15 @@
-# Copyright (c) 2001 New Information Paradigms Ltd
+##############################################################################
 #
-# This Software is released under the MIT License:
-# http://www.opensource.org/licenses/mit-license.html
-# See license.txt for more details.
+# Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
 """ Customizable ZSQL methods that come from the filesystem.
 
 $Id$

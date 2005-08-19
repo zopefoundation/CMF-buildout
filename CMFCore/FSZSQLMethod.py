@@ -3,7 +3,7 @@
 # This Software is released under the MIT License:
 # http://www.opensource.org/licenses/mit-license.html
 # See license.txt for more details.
-""" (not yet) Customizable ZSQL methods that come from the filesystem.
+""" Customizable ZSQL methods that come from the filesystem.
 
 $Id$
 """

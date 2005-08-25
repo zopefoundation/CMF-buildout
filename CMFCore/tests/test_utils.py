@@ -3,39 +3,37 @@ import Testing
 import Zope2
 Zope2.startup()
 
-from AccessControl import getSecurityManager
-from AccessControl.Owned import Owned
-from AccessControl.Permission import Permission
-
-from Products.CMFCore.tests.base.dummy import DummyObject
-from Products.CMFCore.tests.base.dummy import DummySite
-from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import SecurityTest
-from Products.CMFCore.utils import _checkPermission
-from Products.CMFCore.utils import normalize
-from Products.CMFCore.utils import keywordsplitter
-from Products.CMFCore.utils import contributorsplitter
-
-
-class DummyObject(Owned, DummyObject):
-    pass
-
 
 class CoreUtilsTests(SecurityTest):
 
-    def setUp(self):
-        SecurityTest.setUp(self)
-        self.site = DummySite('site').__of__(self.root)
-        self.site._setObject( 'acl_users', DummyUserFolder() )
-        self.site._setObject('content_dummy', DummyObject(id='content_dummy'))
-        self.site._setObject('actions_dummy', DummyObject(id='actions_dummy'))
+    def _makeSite(self):
+        from AccessControl.Owned import Owned
+        from Products.CMFCore.tests.base.dummy import DummySite
+        from Products.CMFCore.tests.base.dummy import DummyUserFolder
+        from Products.CMFCore.tests.base.dummy import DummyObject
+
+        class _DummyObject(Owned, DummyObject):
+            pass
+
+        site = DummySite('site').__of__(self.root)
+        site._setObject( 'acl_users', DummyUserFolder() )
+        site._setObject('content_dummy', _DummyObject(id='content_dummy'))
+        site._setObject('actions_dummy', _DummyObject(id='actions_dummy'))
+
+        return site
 
     def test__checkPermission(self):
-        o = self.site.actions_dummy
+        from AccessControl import getSecurityManager
+        from AccessControl.Permission import Permission
+        from Products.CMFCore.utils import _checkPermission
+
+        site = self._makeSite()
+        o = site.actions_dummy
         Permission('View',(),o).setRoles(('Anonymous',))
         Permission('WebDAV access',(),o).setRoles(('Authenticated',))
         Permission('Manage users',(),o).setRoles(('Manager',))
-        eo = self.site.content_dummy
+        eo = site.content_dummy
         eo._owner = (['acl_users'], 'user_foo')
         getSecurityManager().addContext(eo)
         self.failUnless( _checkPermission('View', o) )
@@ -48,20 +46,28 @@ class CoreUtilsTests(SecurityTest):
         self.failIf( _checkPermission('Manage users', o) )
 
     def test_normalize(self):
+        from Products.CMFCore.utils import normalize
+
         self.assertEqual( normalize('foo/bar'), 'foo/bar' )
         self.assertEqual( normalize('foo\\bar'), 'foo/bar' )
 
     def test_keywordsplitter_empty(self):
+        from Products.CMFCore.utils import keywordsplitter
+
         for x in [ '', ' ', ',', ',,', ';', ';;' ]:
             self.assertEqual( keywordsplitter({'Keywords': x}), 
                               [] )
 
     def test_keywordsplitter_single(self):
+        from Products.CMFCore.utils import keywordsplitter
+
         for x in [ 'foo', ' foo ', 'foo,', 'foo ,,', 'foo;', 'foo ;;' ]:
             self.assertEqual( keywordsplitter({'Keywords': x}), 
                               ['foo'] )
 
     def test_keywordsplitter_multi(self):
+        from Products.CMFCore.utils import keywordsplitter
+
         for x in [ 'foo, bar, baz'
                  , 'foo, bar , baz'
                  , 'foo, bar,, baz'
@@ -71,16 +77,22 @@ class CoreUtilsTests(SecurityTest):
                               ['foo', 'bar', 'baz'] )
 
     def test_contributorsplitter_emtpy(self):
+        from Products.CMFCore.utils import contributorsplitter
+
         for x in [ '', ' ', ';', ';;' ]:
             self.assertEqual( contributorsplitter({'Contributors': x}), 
                               [] )
 
     def test_contributorsplitter_single(self):
+        from Products.CMFCore.utils import contributorsplitter
+
         for x in [ 'foo', ' foo ', 'foo;', 'foo ;;' ]:
             self.assertEqual( contributorsplitter({'Contributors': x}), 
                               ['foo'] )
 
     def test_contributorsplitter_multi(self):
+        from Products.CMFCore.utils import contributorsplitter
+
         for x in [ 'foo; bar; baz'
                  , 'foo; bar ; baz'
                  , 'foo; bar;; baz'

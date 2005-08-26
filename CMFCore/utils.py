@@ -19,6 +19,7 @@ from os import path as os_path
 from os.path import abspath
 import re
 from warnings import warn
+from copy import deepcopy
 
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
@@ -261,7 +262,8 @@ def _mergedLocalRoles(object):
             object=getattr(object, 'aq_inner', object)
             continue
         break
-    return merged
+
+    return deepcopy(merged)
 
 mergedLocalRoles = _mergedLocalRoles    # XXX: Deprecated spelling
 

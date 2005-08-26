@@ -2,6 +2,11 @@ After CMF 1.5.3
 
   Bug Fixes
 
+    - CMFCore.utils: The return value from _mergedLocalRoles allowed
+      direct manipulation of objects' local role settings since it
+      contained references to the actual values instead of copies.
+      (http://www.zope.org/Collectors/CMF/376)
+
     - CMFTopic.DateCriteria: The behavior and naming of date criteria
       operators was very confusing and in many cases unexpected and 
       wrong. For that reason e.g. Plone replaced the implementation

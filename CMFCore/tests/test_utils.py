@@ -100,6 +100,22 @@ class CoreUtilsTests(SecurityTest):
             self.assertEqual( contributorsplitter({'Contributors': x}), 
                               ['foo', 'bar', 'baz'] )
 
+    def test_mergedLocalRolesManipulation(self):
+        # The _mergedLocalRoles function used to return references to
+        # actual local role settings and it was possible to manipulate them
+        # by changing the return value. http://www.zope.org/Collectors/CMF/376
+        from Products.CMFCore.tests.base.dummy import DummyContent
+        from Products.CMFCore.utils import _mergedLocalRoles
+        obj = DummyContent()
+        obj.manage_addLocalRoles('dummyuser1', ['Manager', 'Owner'])
+        self.assertEqual(len(obj.get_local_roles_for_userid('dummyuser1')), 2)
+
+        merged_roles = _mergedLocalRoles(obj)
+        merged_roles['dummyuser1'].append('FOO')
+
+        # The values on the object itself should still the the same
+        self.assertEqual(len(obj.get_local_roles_for_userid('dummyuser1')), 2)
+
 
 def test_suite():
     return TestSuite((

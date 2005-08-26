@@ -18,6 +18,7 @@ $Id$
 from os import path as os_path
 from os.path import abspath
 import re
+from copy import deepcopy
 
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
@@ -208,7 +209,8 @@ def _mergedLocalRoles(object):
             object=getattr(object, 'aq_inner', object)
             continue
         break
-    return merged
+
+    return deepcopy(merged)
 
 security.declarePrivate('_ac_inherited_permissions')
 def _ac_inherited_permissions(ob, all=0):

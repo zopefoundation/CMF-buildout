@@ -82,6 +82,16 @@
        </tr>
 
        <tr valign="top">
+       <th align="right"> Vary </th>
+       <td colspan="3">
+         <input type="text"
+                name="vary"
+                value="&dtml-getVary;"
+                size="40">
+       </td>
+       </tr>
+
+       <tr valign="top">
        <td><br /></td>
        <td colspan="3">
          <input type="submit" name="updatePolicy:method" value=" Change ">
@@ -89,6 +99,7 @@
          <input type="submit" name="movePolicyUp:method" value=" Up ">
          <input type="submit" name="movePolicyDown:method" value=" Down ">
        </td>
+       </tr>
 
        </table>
 
@@ -157,10 +168,17 @@
          <input type="text" name="max_age_secs:int" value="0">
        </td>
 
-       <th align="right"> Most-revalidate? </th>
+       <th align="right"> Must-revalidate? </th>
        <td>
          <input type="checkbox" name="must_revalidate:int"
                               value="1">
+       </td>
+       </tr>
+
+       <tr valign="top">
+       <th align="right"> Vary </th>
+       <td colspan="3">
+         <input type="text" name="vary" size="40">
        </td>
        </tr>
 

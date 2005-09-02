@@ -2,11 +2,58 @@ After CMF 1.4.8
 
   Bug Fixes
 
+    - DCWorkflow Guard check now uses utils._checkPermission instead of Zope's
+      checkPermission (allows using proxy roles)
+
+    - Added check for executable owner and proxy roles to _checkPermission
+
+    - Put the DiscussionItem in its container before indexing it.
+
+    - CMFCore.utils: The return value from _mergedLocalRoles allowed
+      direct manipulation of objects' local role settings since it
+      contained references to the actual values instead of copies.
+      (http://www.zope.org/Collectors/CMF/376)
+
+    - CMFDefault.Image and CMFDefault.File: When calling the constructor,
+      any intelligent content type detection would be destroyed by the
+      call to initialize Dublin Core values, which would overwrite the
+      content_type. It is now preserved, if possible.
+      (http://www.zope.org/Collectors/CMF/370)
+
+    - CMFCore.FSImage and FSFile: Unlike the current behavior of Zope
+      itself, FSImage and FSFile would set a content-length response
+      header for 304 (not modified) responses, which should not be
+      done according to RFC 2616. It won't do so anymore, but Zope
+      itself will still force a content-length header in
+      ZServer.HTTPResponse. This misbehavior has been filed as a Zope
+      issue (http://www.zope.org/Collectors/Zope/1866).
+      (http://www.zope.org/Collectors/CMF/372)
+
+    - CMFCore.PortalContent, CMFCore.FSSTXMethod, CMFTopic.Topic,
+      CMFDefault.SkinnedFolder: Cache headers from the Caching Policy
+      Manager never got set for DTML-based skins due to the way the
+      view template __call__ method was
+      invoked. (http://www.zope.org/Collectors/CMF/374)
+
+    - Make CookieCrumbler set a 'Cache-Control' header, default to
+      'private' when a autentication cookie is present.
+
+    - Be verbose about what caching policy manager set headers by
+      including a 'X-Cache-Headers-Set-By' header.
+
+    - Added 'Vary' setting to Caching Policy Manager.
+
+    - Provide a __delattr__ method to FSDirectoryView to avoid ZODB
+      bloat (http://www.zope.org/Collectors/CMF/316).
+
+    - Preserve cache manager associations when customizing
+      FSObject-based objects into the ZODB.
+
     - CMFCore.FSObject:  Make FSObject-derivatives role managers, so that
       role settings in '.metadata' files work.  Thanks to Dieter Maurer for
       the patch!  (http://www.zope.org/Collectors/CMF/359)
 
-    - DCWorkflow.Scripts:  Usinng inherited manage_main requires wrapping 
+    - DCWorkflow.Scripts:  Usinng inherited manage_main requires wrapping
       for Zope 2.8 compatibility.
 
     - CMFDefault.SyndicationTool: Zope 2.8 raises AttributeError where
@@ -86,16 +133,16 @@ CMF 1.4.8 (2005/03/18)
       due to inappropriate borrowing of an unbound method from
       ZopePageTemplate.
 
-    - CMFDefault.DiscussionItem: Workflow did not get notified when a 
+    - CMFDefault.DiscussionItem: Workflow did not get notified when a
       DiscussionItem was added to content.
       (http://zope.org/Collectors/CMF/280)
-  
+
 CMF 1.4.7 (2004/08/11)
 
   New Features
 
-    - Minor featurelet: The "Action Providers" ZMI tab on the portal_actions 
-      tool now links directly to the tools shown 
+    - Minor featurelet: The "Action Providers" ZMI tab on the portal_actions
+      tool now links directly to the tools shown
       (http://zope.org/Collectors/CMF/181)
 
   Bug Fixes
@@ -123,7 +170,7 @@ CMF 1.4.7 (2004/08/11)
 
     - CMFCore.PortalFolder: Unlike other content, only Managers were able
       to create PortalFolders using mkdir in FTP. Fixed by inserting
-      missing security declaration for PortalFolder.manage_addFolder 
+      missing security declaration for PortalFolder.manage_addFolder
       (http://zope.org/Collectors/CMF/167)
 
     - Default text format for NewsItems is now structured-text, just like
@@ -135,7 +182,7 @@ CMF 1.4.7 (2004/08/11)
       was faulty.
 
     - CMFDefault.DublinCore: Use the portal_metadata tool's 'getPublisher'
-      for the DublinCore 'Publisher' element (thanks to Eric Brown for the 
+      for the DublinCore 'Publisher' element (thanks to Eric Brown for the
       patch).
 
     - CMFDefault.Document: Make Document render compliant XHTML when format
@@ -169,10 +216,10 @@ CMF 1.4.6 (2004/07/30)
     - CMFDefault.Document and CMFDefault.Link: PUT() caused improper
       splitting of 'Contributors' metadata header.
       (http://plone.org/collector/3217)
-      
+
     - CMFCore.utils: Introduced contributorsplitter() utility function.
 
-    - CMFCore.PortalFolder: checkIdAvailable() failed to catch 
+    - CMFCore.PortalFolder: checkIdAvailable() failed to catch
       zExceptions.BadRequest.
 
 CMF 1.4.5 (2004/07/08)

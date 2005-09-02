@@ -51,7 +51,27 @@ class TestImageElement(TestCase):
         image.setFormat('image/gif')
         self.assertEqual(image.Format(), 'image/gif')
         self.assertEqual(image.content_type, 'image/gif')
- 
+
+    def test_ImageContentTypeUponConstruction(self):
+        # Test the content type after calling the constructor with the
+        # file object being passed in (http://www.zope.org/Collectors/CMF/370)
+        testfile = open(TEST_JPG, 'rb')
+        image = Image('testimage', file=testfile)
+        testfile.close()
+        self.assertEqual(image.Format(), 'image/jpeg')
+        self.assertEqual(image.content_type, 'image/jpeg')
+
+    def test_FileContentTypeUponConstruction(self):
+        # Test the content type after calling the constructor with the
+        # file object being passed in (http://www.zope.org/Collectors/CMF/370)
+        testfile = open(TEST_JPG, 'rb')
+        # Notice the cheat? File objects lack the extra intelligence that
+        # picks content types from the actual file data, so it needs to be
+        # helped along with a file extension...
+        file = File('testfile.jpg', file=testfile)
+        testfile.close()
+        self.assertEqual(file.Format(), 'image/jpeg')
+        self.assertEqual(file.content_type, 'image/jpeg')
 
 class TestImageCopyPaste(RequestTest):
 

@@ -122,7 +122,12 @@ class FSImage(FSObject):
         RESPONSE.setStatus(status)
         RESPONSE.setHeader('Last-Modified', rfc1123_date(last_mod))
         RESPONSE.setHeader('Content-Type', self.content_type)
-        RESPONSE.setHeader('Content-Length', data_len)
+
+        if status != 304:
+            # Avoid setting content-length for a 304. See RFC 2616.
+            # Zope might still, for better or for worse, set a
+            # content-length header with value "0".
+            RESPONSE.setHeader('Content-Length', data_len)
 
         #There are 2 Cache Managers which can be in play....
         #need to decide which to use to determine where the cache headers

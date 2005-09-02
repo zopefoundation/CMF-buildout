@@ -1,15 +1,25 @@
+##############################################################################
+#
+# Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+""" Unit tests for FSFile module.
+
+$Id$
+"""
 import unittest
 import Zope
 import os.path
 
-class DummyCachingManager:
-    def getHTTPCachingHeaders( self, content, view_name, keywords, time=None ):
-        return (
-            ('foo', 'Foo'), ('bar', 'Bar'),
-            ('test_path', '/'.join(content.getPhysicalPath())),
-            )
-
 from Products.CMFCore.tests.base.testcase import RequestTest, FSDVTest
+from Products.CMFCore.tests.base.dummy import DummyCachingManager
 
 class FSFileTests( RequestTest, FSDVTest):
 
@@ -99,6 +109,9 @@ class FSFileTests( RequestTest, FSDVTest):
         data = file.index_html( self.REQUEST, self.RESPONSE )
 
         self.assertEqual( data, '' )
+        # test that we don't supply a content-length
+        self.assertEqual( self.RESPONSE.getHeader('Content-Length'.lower()),
+                                                  None )
         self.assertEqual( self.RESPONSE.getStatus(), 304 )
 
 

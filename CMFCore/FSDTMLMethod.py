@@ -23,7 +23,7 @@ from AccessControl import ClassSecurityInfo, getSecurityManager, Permissions
 from OFS.DTMLMethod import DTMLMethod, decapitate, guess_content_type
 from AccessControl.Role import RoleManager
 
-from utils import _dtmldir
+from utils import _dtmldir, _setCacheHeaders
 from CMFCorePermissions import View
 from CMFCorePermissions import ViewManagementScreens
 from CMFCorePermissions import FTPAccess
@@ -153,6 +153,9 @@ class FSDTMLMethod(RestrictedDTML, RoleManager, FSObject, Globals.HTML):
             else:
                 c, e=guess_content_type(self.getId(), r)
             RESPONSE.setHeader('Content-Type', c)
+        if RESPONSE is not None:
+            # caching policy manager hook
+            _setCacheHeaders(self, {})
         result = decapitate(r, RESPONSE)
         if not self._cache_namespace_keys:
             self.ZCacheable_set(result)

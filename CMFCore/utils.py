@@ -15,7 +15,8 @@ import os
 from os import path as os_path
 import re
 import operator
-from types import StringType
+from types import StringType, UnicodeType
+from copy import deepcopy
 
 from Globals import package_home
 from Globals import HTMLFile
@@ -25,7 +26,7 @@ from Globals import MessageDialog
 
 from ExtensionClass import Base
 from Acquisition import Implicit
-from Acquisition import aq_get, aq_inner, aq_parent
+from Acquisition import aq_base, aq_get, aq_inner, aq_parent
 
 from AccessControl import ClassSecurityInfo
 from AccessControl import ModuleSecurityInfo
@@ -114,11 +115,30 @@ def _getAuthenticatedUser( self ):
 security.declarePrivate('_checkPermission')
 def _checkPermission(permission, obj, StringType = type('')):
     roles = rolesForPermissionOn(permission, obj)
-    if type(roles) is StringType:
+    if type(roles) in (StringType, UnicodeType):
         roles=[roles]
-    if _getAuthenticatedUser( obj ).allowed( obj, roles ):
-        return 1
-    return 0
+    context = getSecurityManager()._context
+
+    # check executable owner and proxy roles
+    # this code is ported from ZopeSecurityPolicy.validate
+    stack = context.stack
+    if stack:
+        eo = stack[-1]
+        owner = eo.getOwner()
+        if owner is not None:
+            if not owner.allowed(obj, roles):
+                return 0
+            proxy_roles = getattr(eo, '_proxy_roles', None)
+            if proxy_roles:
+                if obj is not aq_base(obj):
+                    if not owner._check_context(obj):
+                        return 0
+                for r in proxy_roles:
+                    if r in roles:
+                         return 1
+                return 0
+
+    return context.user.allowed(obj, roles)
 
 security.declarePrivate('_verifyActionPermissions')
 def _verifyActionPermissions(obj, action):
@@ -225,7 +245,8 @@ def _mergedLocalRoles(object):
             object=getattr(object, 'aq_inner', object)
             continue
         break
-    return merged
+
+    return deepcopy(merged)
 
 mergedLocalRoles = _mergedLocalRoles    # XXX: Deprecated spelling
 
@@ -301,6 +322,10 @@ def _setCacheHeaders(obj, extra_context):
             RESPONSE = REQUEST['RESPONSE']
             for key, value in headers:
                 RESPONSE.setHeader(key, value)
+            if headers:
+                RESPONSE.setHeader('X-Cache-Headers-Set-By',
+                                   'CachingPolicyManager: %s' %
+                                   '/'.join(manager.getPhysicalPath()))
 
 class _ViewEmulator(Implicit):
     """Auxiliary class used to adapt FSFile and FSImage

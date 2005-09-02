@@ -216,6 +216,9 @@ class DummyUser(Implicit):
     def getRoles(self):
         return ('Authenticated', 'Member')
 
+    def _check_context(self, object):
+        return 1
+
 
 class DummyUserFolder(Implicit):
     """ A dummy User Folder with 2 dummy Users.
@@ -283,3 +286,14 @@ class DummyTool(Implicit,ActionProviderBase):
 
     def notifyCreated(self, ob):
         self.test_notified = ob
+
+class DummyCachingManager:
+
+    def getHTTPCachingHeaders( self, content, view_name, keywords, time=None ):
+        return (
+            ('foo', 'Foo'), ('bar', 'Bar'),
+            ('test_path', '/'.join(content.getPhysicalPath())),
+            )
+
+    def getPhysicalPath(self):
+        return ('baz',)

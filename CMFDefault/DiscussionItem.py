@@ -288,7 +288,7 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
     #   Discussable interface
     #
     security.declareProtected(ReplyToItem, 'createReply')
-    def createReply( self, title, text, Creator=None ):
+    def createReply( self, title, text, Creator=None, text_format='structured-text' ):
         """
             Create a reply in the proper place
         """
@@ -297,20 +297,20 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
         id = int(DateTime().timeTime())
         while self._container.get( str(id), None ) is not None:
             id = id + 1
+
         id = str( id )
 
         item = DiscussionItem( id, title=title, description=title )
-        item._edit( text_format='structured-text', text=text )
+        self._container[id] = item
+        item = item.__of__(self)
 
+        item._edit( text_format=text_format, text=text )
         if Creator:
             item.creator = Creator
-
-        item.__of__( self ).indexObject()
+        item.indexObject()
 
         item.setReplyTo( self._getDiscussable() )
-        item.__of__( self ).notifyWorkflowCreated()
-
-        self._container[ id ] = item
+        item.notifyWorkflowCreated()
 
         return id
 

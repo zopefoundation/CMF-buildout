@@ -4,10 +4,8 @@ import Zope
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import FSDVTest
-
-class DummyCachingManager:
-    def getHTTPCachingHeaders( self, content, view_name, keywords, time=None ):
-        return ( ( 'foo', 'Foo' ), ( 'bar', 'Bar' ) )
+from Products.StandardCacheManagers import RAMCacheManager
+from Products.CMFCore.tests.base.dummy import DummyCachingManager
 
 class FSPTMaker(FSDVTest):
 
@@ -109,6 +107,23 @@ class FSPageTemplateCustomizationTests( SecurityTest, FSPTMaker ):
 
         self.assertEqual( len( self.custom.objectIds() ), 1 )
         self.failUnless( 'testPT' in self.custom.objectIds() )
+
+    def test_customize_caching(self):
+        # Test to ensure that cache manager associations survive customizing
+        cache_id = 'gofast'
+        RAMCacheManager.manage_addRAMCacheManager( self.root
+                                                 , cache_id
+                                                 , REQUEST=None
+                                                 )
+        self.fsPT.ZCacheable_setManagerId(cache_id, REQUEST=None)
+
+        self.assertEqual(self.fsPT.ZCacheable_getManagerId(), cache_id)
+
+        self.fsPT.manage_doCustomize(folder_path='custom')
+        custom_pt = self.custom.testPT
+
+        self.assertEqual(custom_pt.ZCacheable_getManagerId(), cache_id)
+
 
     def test_dontExpandOnCreation( self ):
 

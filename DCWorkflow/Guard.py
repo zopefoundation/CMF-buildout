@@ -24,6 +24,7 @@ from AccessControl import ClassSecurityInfo
 from Acquisition import Explicit
 
 from Products.CMFCore.CMFCorePermissions import ManagePortal
+from Products.CMFCore.utils import _checkPermission
 
 from Expression import Expression, StateChangeInfo, createExprContext
 from utils import _dtmldir
@@ -47,7 +48,7 @@ class Guard (Persistent, Explicit):
         if pp:
             found = 0
             for p in pp:
-                if sm.checkPermission(p, ob):
+                if _checkPermission(p, ob):
                     found = 1
                     break
             if not found:
@@ -102,7 +103,7 @@ class Guard (Persistent, Explicit):
                 res.append('<br/>')
             res.append('Requires expr:')
             res.append('<code>' + escape(self.expr.text) + '</code>')
-        return join(res, ' ')
+        return ' '.join(res)
 
     def changeFromProperties(self, props):
         '''
@@ -114,12 +115,12 @@ class Guard (Persistent, Explicit):
         s = props.get('guard_permissions', None)
         if s:
             res = 1
-            p = map(strip, split(s, ';'))
+            p = [ permission.strip() for permission in s.split(';') ]
             self.permissions = tuple(p)
         s = props.get('guard_roles', None)
         if s:
             res = 1
-            r = map(strip, split(s, ';'))
+            p = [ role.strip() for role in s.split(';') ]
             self.roles = tuple(r)
         s = props.get('guard_expr', None)
         if s:
@@ -131,13 +132,13 @@ class Guard (Persistent, Explicit):
     def getPermissionsText(self):
         if not self.permissions:
             return ''
-        return join(self.permissions, '; ')
+        return '; '.join(self.permissions)
 
     security.declareProtected(ManagePortal, 'getRolesText')
     def getRolesText(self):
         if not self.roles:
             return ''
-        return join(self.roles, '; ')
+        return '; '.join(self.roles)
 
     security.declareProtected(ManagePortal, 'getExprText')
     def getExprText(self):

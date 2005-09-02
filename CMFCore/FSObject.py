@@ -78,7 +78,13 @@ class FSObject(Acquisition.Implicit, Item, Cacheable, RoleManager):
         """
 
         obj = self._createZODBClone()
-        
+
+        # Preserve cache manager associations
+        cachemgr_id = self.ZCacheable_getManagerId()
+        if ( cachemgr_id and
+             getattr(obj, 'ZCacheable_setManagerId', None) is not None ):
+            obj.ZCacheable_setManagerId(cachemgr_id)
+
         id = obj.getId()
         fpath = tuple(split(folder_path, '/'))
         portal_skins = getToolByName(self,'portal_skins') 

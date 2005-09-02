@@ -68,6 +68,8 @@ class CookieCrumbler (SimpleItemWithProperties):
                     'label':'Auto-login page ID'},
                    {'id':'logout_page', 'type': 'string', 'mode':'w',
                     'label':'Logout page ID'},
+                   {'id':'cache_header_value', 'type': 'string', 'mode':'w',
+                    'label':'Cache-Control header value'},
                    )
 
     auth_cookie = '__ac'
@@ -76,6 +78,7 @@ class CookieCrumbler (SimpleItemWithProperties):
     persist_cookie = '__ac_persistent'
     auto_login_page = 'login_form'
     logout_page = 'logged_out'
+    cache_header_value = 'private'
 
     security.declarePrivate('delRequestVar')
     def delRequestVar(self, req, name):
@@ -167,6 +170,12 @@ class CookieCrumbler (SimpleItemWithProperties):
                 resp.unauthorized = self.unauthorized
                 resp._unauthorized = self._unauthorized
         if attempt != ATTEMPT_NONE:
+            if self.cache_header_value:
+                # we don't want caches to cache the resulting page
+                resp.setHeader('Cache-Control', self.cache_header_value)
+                # demystify this in the response.
+                resp.setHeader('X-Cache-Control-Hdr-Modified-By',
+                               'CookieCrumbler')
             phys_path = self.getPhysicalPath()
             if self.logout_page:
                 # Cookies are in use.

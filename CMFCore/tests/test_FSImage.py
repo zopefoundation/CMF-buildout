@@ -1,15 +1,25 @@
+##############################################################################
+#
+# Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+""" Unit tests for FSImage module.
+
+$Id$
+"""
 import unittest
 import Zope
 import os.path
 
-class DummyCachingManager:
-    def getHTTPCachingHeaders( self, content, view_name, keywords, time=None ):
-        return (
-            ('foo', 'Foo'), ('bar', 'Bar'),
-            ('test_path', '/'.join(content.getPhysicalPath())),
-            )
-
 from Products.CMFCore.tests.base.testcase import RequestTest, FSDVTest
+from Products.CMFCore.tests.base.dummy import DummyCachingManager
 
 class FSImageTests( RequestTest, FSDVTest):
 
@@ -93,6 +103,9 @@ class FSImageTests( RequestTest, FSDVTest):
         data = image.index_html( self.REQUEST, self.RESPONSE )
 
         self.assertEqual( data, '' )
+        # test that we don't supply a content-length
+        self.assertEqual( self.RESPONSE.getHeader('Content-Length'.lower()),
+                                                  None )
         self.assertEqual( self.RESPONSE.getStatus(), 304 )
 
 
@@ -122,6 +135,35 @@ class FSImageTests( RequestTest, FSDVTest):
         image = self._makeOne('test_image', 'test_image.gif')
         image = image.__of__(self.root)
         image.index_html(self.REQUEST, self.RESPONSE)
+        headers = self.RESPONSE.headers
+        self.failUnless(len(headers) >= original_len + 3)
+        self.failUnless('foo' in headers.keys())
+        self.failUnless('bar' in headers.keys())
+        self.assertEqual(headers['test_path'], '/test_image')
+
+    def test_index_html_with_304_and_caching( self ):
+
+        # See collector #355
+        self.root.caching_policy_manager = DummyCachingManager()
+        original_len = len(self.RESPONSE.headers)
+        path, ref = self._extractFile()
+
+        import os
+        from webdav.common import rfc1123_date
+
+        mod_time = os.stat( path )[ 8 ]
+
+        image = self._makeOne( 'test_image', 'test_image.gif' )
+        image = image.__of__( self.root )
+
+        self.REQUEST.environ[ 'IF_MODIFIED_SINCE'
+                            ] = '%s;' % rfc1123_date( mod_time+3600 )
+
+        data = image.index_html( self.REQUEST, self.RESPONSE )
+
+        self.assertEqual( data, '' )
+        self.assertEqual( self.RESPONSE.getStatus(), 304 )
+
         headers = self.RESPONSE.headers
         self.failUnless(len(headers) >= original_len + 3)
         self.failUnless('foo' in headers.keys())

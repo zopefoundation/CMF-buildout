@@ -24,6 +24,7 @@ from AccessControl.SecurityManagement import newSecurityManager
 from DateTime import DateTime
 
 from Products.CMFCore.tests.base.dummy import DummyContent
+from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.security import UserWithRoles
 from Products.CMFCore.tests.base.testcase import SecurityTest
@@ -84,7 +85,7 @@ class CatalogToolTests(SecurityTest):
         user = OmnipotentUser().__of__(self.root)
         newSecurityManager(None, user)
 
-    def test_processActions( self ):
+    def test_processActions(self):
         """
             Tracker #405:  CatalogTool doesn't accept optional third
             argument, 'idxs', to 'catalog_object'.
@@ -289,11 +290,25 @@ class CatalogToolTests(SecurityTest):
         convert(kw)
         self.assertEqual(kw, {'expires': {'query': (5,7), 'range': 'min:max'}})
 
+    def test_refreshCatalog(self):
+        site = DummySite('site').__of__(self.root)
+        site._setObject('dummy', DummyContent(catalog=1))
+        site._setObject('portal_catalog', self._makeOne())
+        ctool = site.portal_catalog
+        ctool.catalog_object(site.dummy, '/dummy')
+
+        self.assertEqual(1, len(ctool._catalog.searchResults()))
+        ctool.refreshCatalog(clear=1)
+        self.assertEqual(1, len(ctool._catalog.searchResults()),
+                         'CMF Collector issue #379 (\'Update Catalog\' '
+                         'fails): %s entries after refreshCatalog'
+                         % (len(ctool._catalog.searchResults()),))
+
 
 def test_suite():
     return TestSuite((
-        makeSuite( IndexableObjectWrapperTests ),
-        makeSuite( CatalogToolTests ),
+        makeSuite(IndexableObjectWrapperTests),
+        makeSuite(CatalogToolTests),
         ))
 
 if __name__ == '__main__':

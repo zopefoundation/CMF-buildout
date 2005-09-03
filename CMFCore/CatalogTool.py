@@ -103,8 +103,8 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
     #
     #   Subclass extension interface
     #
-    security.declarePublic( 'enumerateIndexes' ) # Subclass can call
-    def enumerateIndexes( self ):
+    security.declarePublic('enumerateIndexes') # Subclass can call
+    def enumerateIndexes(self):
         #   Return a list of ( index_name, type, extra ) tuples for the initial
         #   index set.
         plaintext_extra = SimpleRecord( lexicon_id='plaintext_lexicon'
@@ -148,8 +148,8 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
                  )
                )
 
-    security.declarePublic( 'enumerateColumns' )
-    def enumerateColumns( self ):
+    security.declarePublic('enumerateColumns')
+    def enumerateColumns(self):
         #   Return a sequence of schema names to be cached.
         return ( 'Subject'
                , 'Title'
@@ -198,7 +198,7 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
     #   'portal_catalog' interface methods
     #
 
-    def _listAllowedRolesAndUsers( self, user ):
+    def _listAllowedRolesAndUsers(self, user):
         result = list( user.getRoles() )
         result.append( 'Anonymous' )
         result.append( 'user:%s' % user.getId() )
@@ -294,7 +294,8 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
 
     manage_catalogFind = DTMLFile( 'catalogFind', _dtmldir )
 
-    def catalog_object(self, obj, uid, idxs=None, update_metadata=1):
+    def catalog_object(self, obj, uid=None, idxs=None, update_metadata=1,
+                       pghandler=None):
         # Wraps the object with workflow and accessibility
         # information just before cataloging.
         wftool = getToolByName(self, 'portal_workflow', None)
@@ -303,19 +304,20 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
         else:
             vars = {}
         w = IndexableObjectWrapper(vars, obj)
-        ZCatalog.catalog_object(self, w, uid, idxs, update_metadata)
+        ZCatalog.catalog_object(self, w, uid, idxs, update_metadata,
+                                pghandler)
 
     security.declarePrivate('indexObject')
     def indexObject(self, object):
-        '''Add to catalog.
-        '''
+        """Add to catalog.
+        """
         url = self.__url(object)
         self.catalog_object(object, url)
 
     security.declarePrivate('unindexObject')
     def unindexObject(self, object):
-        '''Remove from catalog.
-        '''
+        """Remove from catalog.
+        """
         url = self.__url(object)
         self.uncatalog_object(url)
 

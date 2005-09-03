@@ -1,3 +1,12 @@
+CMF 1.5.4 (unreleased)
+
+  Bug Fixes
+
+    - CatalogTool: Made sure the catalog_object method works with Zope 2.8.
+      The new 'pghandler' argument was missing. This broke at least the
+      refreshCatalog method used by 'Update Catalog'.
+      (http://www.zope.org/Collectors/CMF/379)
+
 CMF 1.5.4-beta (2005/08/28)
 
   Bug Fixes

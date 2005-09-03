@@ -300,7 +300,8 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
 
     manage_catalogFind = DTMLFile( 'catalogFind', _dtmldir )
 
-    def catalog_object(self, obj, uid, idxs=None, update_metadata=1):
+    def catalog_object(self, obj, uid=None, idxs=None, update_metadata=1,
+                       pghandler=None):
         # Wraps the object with workflow and accessibility
         # information just before cataloging.
         wftool = getToolByName(self, 'portal_workflow', None)
@@ -309,7 +310,12 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
         else:
             vars = {}
         w = IndexableObjectWrapper(vars, obj)
-        ZCatalog.catalog_object(self, w, uid, idxs, update_metadata)
+        try:
+            ZCatalog.catalog_object(self, w, uid, idxs, update_metadata,
+                                    pghandler)
+        except TypeError:
+            # BBB: for Zope 2.7
+            ZCatalog.catalog_object(self, w, uid, idxs, update_metadata)
 
     security.declarePrivate('indexObject')
     def indexObject(self, object):

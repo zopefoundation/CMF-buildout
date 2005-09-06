@@ -1,3 +1,11 @@
+After CMF 1.5.4
+
+  Bug Fixes
+
+    - CalendarTool: If an event ends at exactly midnight, don't show it
+      in the list of events for the day starting at midnight.
+      (http://www.zope.org/Collectors/CMF/246)
+
 CMF 1.5.4 (2005/09/04)
 
   Bug Fixes

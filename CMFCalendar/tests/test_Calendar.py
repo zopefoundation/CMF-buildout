@@ -533,6 +533,40 @@ class CalendarRequestTests(unittest.TestCase):
 
         self.assertEqual(len(self.Site.portal_calendar.getEventsForThisDay(DateTime('2002/05/01'))), 2)
 
+    def test_EventEndingMidnight(self):
+        # Events ending exactly at midnight should not be shown for the day
+        # after (see http://www.zope.org/Collectors/CMF/246)
+        cal = self.Site.portal_calendar
+        the_day = DateTime('2002/05/01')
+        day_after = DateTime('2002/05/02')
+
+        self.Site.invokeFactory( 'Event'
+                               , id='party'
+                               , start_date=the_day
+                               , end_date=day_after
+                               )
+        self.Site.portal_workflow.doActionFor(self.Site.party, 'publish')
+
+        # One entry should be present for the day of the event
+        self.assertEqual(len(cal.getEventsForThisDay(the_day)), 1)
+
+        # No entry should be present for the day after
+        self.assertEqual(len(cal.getEventsForThisDay(day_after)), 0)
+
+        # First week of May 2002
+        data = [
+               {'day': 1, 'event': 1, 'eventslist':[{'start': '00:00:00', 'end': '23:59:59', 'title': 'party'}]},
+               {'day': 2, 'event': 0, 'eventslist':[]},
+               {'day': 3, 'event': 0, 'eventslist':[]},
+               {'day': 4, 'event': 0, 'eventslist':[]},
+               {'day': 5, 'event': 0, 'eventslist':[]},
+               {'day': 6, 'event': 0, 'eventslist':[]},
+               {'day': 7, 'event': 0, 'eventslist':[]},
+               ]
+
+        events = self.Site.portal_calendar.catalog_getevents(2002, 5)
+        self.assertEqual([events[e] for e in range(1, 8)], data)
+
 
 def test_suite():
     return unittest.TestSuite((

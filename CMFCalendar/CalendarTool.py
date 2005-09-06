@@ -175,19 +175,28 @@ class CalendarTool (UniqueObject, SimpleItem):
             else:
                 eventStartDay = result.start.day()
                 event['start'] = result.start.Time()
-            event['title'] = result.Title or result.id
+
+            event['title'] = result.Title or result.getId
+
             if eventStartDay != eventEndDay:
                 allEventDays = range(eventStartDay, eventEndDay+1)
                 eventDays[eventStartDay]['eventslist'].append( {'end': None,
-                        'start': result.start.Time(), 'title': result.Title} )
+                        'start': result.start.Time(), 'title': event['title']} )
                 eventDays[eventStartDay]['event'] = 1
+
                 for eventday in allEventDays[1:-1]:
                     eventDays[eventday]['eventslist'].append( {'end': None,
-                                       'start': None, 'title': result.Title} )
+                                       'start': None, 'title': event['title']} )
                     eventDays[eventday]['event'] = 1
-                eventDays[eventEndDay]['eventslist'].append( {'end':
-                    result.end.Time(), 'start': None, 'title': result.Title} )
-                eventDays[eventEndDay]['event'] = 1
+
+                if result.end == result.end.earliestTime():
+                    last_day = eventDays[allEventDays[-2]]
+                    last_days_event = last_day['eventslist'][-1]
+                    last_days_event['end'] = (result.end-1).latestTime().Time()
+                else:
+                    eventDays[eventEndDay]['eventslist'].append( {'end':
+                        result.end.Time(), 'start': None, 'title': event['title']} )
+                    eventDays[eventEndDay]['event'] = 1
             else:
                 eventDays[eventStartDay]['eventslist'].append(event)
                 eventDays[eventStartDay]['event'] = 1
@@ -207,10 +216,15 @@ class CalendarTool (UniqueObject, SimpleItem):
             C) Start before this day  AND  end after this day"""
 
         catalog = self.portal_catalog
+        day, month, year = ( int(thisDay.day())
+                           , int(thisDay.month())
+                           , int(thisDay.year())
+                           )
 
-        first_date, last_date = self.getBeginAndEndTimes(thisDay.day(), thisDay.month(), thisDay.year())
-        #first_date=DateTime(thisDay.Date()+" 00:00:00")
-        #last_date=DateTime(thisDay.Date()+" 23:59:59")
+        first_date, last_date = self.getBeginAndEndTimes(day, month, year)
+        zone = first_date.localZone()
+        after_midnight_str = '%d-%02d-%02d 00:01:00 %s' % (year,month,day,zone)
+        after_midnight = DateTime(after_midnight_str)
 
         # Get all events that Start on this day
         query = self.portal_catalog(
@@ -223,7 +237,7 @@ class CalendarTool (UniqueObject, SimpleItem):
         query += self.portal_catalog(
                          portal_type=self.getCalendarTypes(),
                          review_state=self.getCalendarStates(),
-                         end={'query': (first_date, last_date),
+                         end={'query': (after_midnight, last_date),
                               'range': 'minmax'} )
 
         # Get all events that Start before this day AND End after this day
@@ -255,8 +269,8 @@ class CalendarTool (UniqueObject, SimpleItem):
 
     security.declarePublic('getPreviousMonth')
     def getPreviousMonth(self, month, year):
-        # given any particular year and month, this method will return a datetime object
-        # for one month prior
+        # given any particular year and month, this method will return a 
+        # datetime object for one month prior
 
         try: month=int(month)
         except: raise "Calendar Type Error", month

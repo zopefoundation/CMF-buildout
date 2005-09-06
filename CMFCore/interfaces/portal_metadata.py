@@ -26,79 +26,77 @@ class portal_metadata(Interface):
     id = Attribute('id', 'Must be set to "portal_metadata"')
 
     #
-    #   Site-wide queries.
+    #   Site-wide queries, specific to Dublin Core metadata.
     #
     def getFullName(userid):
-        """
-            Convert an internal userid to a "formal" name, if
-            possible, perhaps using the 'portal_membership' tool.
+        """ Convert an internal userid to a "formal" name.
+        
+        o Convert only if possible, perhaps using the 'portal_membership'
+          tool;  otherwise, return 'userid'.
 
-            Used to map userid's for Creator, Contributor DCMI
-            queries.
+        o Used to map userid's for Creator, Contributor DCMI queries.
         """
 
     def getPublisher():
-        """
-            Return the "formal" name of the publisher of the
-            portal.
+        """ Return the "formal" name of the publisher of the site.
         """
 
     #
-    #   Content-specific queries.
+    #   Content-specific queries, for Dublin Core metadata.
     #
     def listAllowedSubjects(content=None):
-        """
-            List the allowed values of the 'Subject' DCMI element
-            'Subject' elements should be keywords categorizing
-            their resource.
+        """ List the allowed values of the 'Subject' DCMI element.
 
-            Return only values appropriate for content's type, or
-            all values if None.
+        o 'Subject' elements should be keywords categorizing their resource.
+
+        o Return only values appropriate for content's type, or all values
+          if content is None.
         """
 
     def listAllowedFormats(content=None):
-        """
-            List the allowed values of the 'Format' DCMI element.
-            These items should be usable as HTTP 'Content-type'
-            values.
+        """ List the allowed values of the 'Format' DCMI element.
 
-            Return only values appropriate for content's type, or
-            all values if None.
+        o These items should be usable as HTTP 'Content-type' values.
+
+        o Return only values appropriate for content's type, or all values
+          if content is None.
         """
 
     def listAllowedLanguages(content=None):
-        """
-            List the allowed values of the 'Language' DCMI element.
-            'Language' element values should be suitable for generating
-            HTTP headers.
+        """ List the allowed values of the 'Language' DCMI element.
 
-            Return only values appropriate for content's type, or
-            all values if None.
+        o 'Language' element values should be suitable for generating
+          HTTP headers.
+
+        o Return only values appropriate for content's type, or all values if
+          content is None.
         """
 
     def listAllowedRights(content=None):
-        """
-            List the allowed values of the 'Rights' DCMI element.
-            The 'Rights' element describes copyright or other IP
-            declarations pertaining to a resource.
+        """ List the allowed values of the 'Rights' DCMI element.
 
-            Return only values appropriate for content's type, or
-            all values if None.
+        o The 'Rights' element describes copyright or other IP declarations
+          pertaining to a resource.
+
+        o Return only values appropriate for content's type, or all values if
+          content is None.
         """
 
     #
     #   Validation policy hooks.
     #
     def setInitialMetadata(content):
-        """
-            Set initial values for content metatdata, supplying
-            any site-specific defaults.
+        """ Set initial values for content metatdata.
+        
+        o Supply any site-specific defaults.
         """
 
     def validateMetadata(content):
-        """
-            Enforce portal-wide policies about DCI, e.g.,
-            requiring non-empty title/description, etc.  Called
-            by the CMF immediately before saving changes to the
-            metadata of an object.
+        """ Enforce portal-wide policies about metadata.
+        
+        o E.g., policies may require non-empty title/description, etc.
+        
+        o This method may be called by view / workflow code at "appropriate"
+          times, such as immediately before saving changes to the metadata of
+          an object.
         """

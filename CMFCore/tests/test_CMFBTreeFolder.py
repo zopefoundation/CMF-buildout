@@ -1,9 +1,25 @@
+##############################################################################
+#
+# Copyright (c) 2005 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
 """ Unit test for CMFBTreeFolder
 
 $Id$
 """
 
 import unittest
+import Testing
+import Zope2
+Zope2.startup()
+
 
 class CMFBTreeFolderTests(unittest.TestCase):
 
@@ -22,25 +38,17 @@ class CMFBTreeFolderTests(unittest.TestCase):
         self.assertEqual( len( empty.objectIds() ), 0 )
 
     def test___module_aliases__( self ):
- 
-        # This test will *fail* on Zope 2.8.0, because it (erroneously)
-        # included CMFBTreeFolder in the core BTreeFolder2 product.
+
         from Products.BTreeFolder2.CMFBTreeFolder \
             import CMFBTreeFolder as BBB
 
         self.failUnless( BBB is self._getTargetClass() )
-        
+
 
 def test_suite():
-    suite = unittest.TestSuite()
-    # Don't test CMFBTreeFolder unless the underlying support is present.
-    try:
-        import Products.BTreeFolder2
-    except ImportError:
-        pass
-    else:
-        suite.addTest( unittest.makeSuite( CMFBTreeFolderTests ) )
-    return suite
+    return unittest.TestSuite((
+        unittest.makeSuite(CMFBTreeFolderTests),
+        ))
 
 if __name__ == '__main__':
-    unittest.main( defaultTest='test_suite' )
+    unittest.main(defaultTest='test_suite')

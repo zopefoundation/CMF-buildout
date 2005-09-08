@@ -6,6 +6,15 @@ After CMF 1.5.4
       in the list of events for the day starting at midnight.
       (http://www.zope.org/Collectors/CMF/246)
 
+  Others
+
+    - CMFCatalogAware: refactoring. Defines now 2 methods,
+      _getCatalogTool() and _getWorkflowTool(), that are used to find
+      the catalog and workflow tool. It's now possible to override
+      these methods using inheritence for a given content type to
+      specify another catalog or workflow tool the content type can
+      use
+
 CMF 1.5.4 (2005/09/04)
 
   Bug Fixes

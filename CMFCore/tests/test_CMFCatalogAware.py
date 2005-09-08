@@ -29,6 +29,7 @@ from zExceptions import NotFound
 from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
 from Products.ZCatalog import CatalogBrains
+from Products.CMFCore.WorkflowTool import WorkflowTool
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.CMFCore.tests.base.testcase import LogInterceptor
 
@@ -106,6 +107,7 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
         self.root.site = SimpleFolder('site')
         self.site = self.root.site
         self.site._setObject('portal_catalog', DummyCatalog())
+        self.site._setObject('portal_workflow', WorkflowTool())
         self.site.foo = TheClass('foo')
 
     def tearDown(self):
@@ -218,6 +220,14 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
         self.failIf(foo.notified)
         self.failIf(missing.notified)
         self.assertEqual( len(self.logged), 1 ) # logging because no raise
+
+    def test_catalog_tool(self):
+        foo = self.site.foo
+        self.assertEqual(foo._getCatalogTool(), self.site.portal_catalog)
+
+    def test_workflow_tool(self):
+        foo = self.site.foo
+        self.assertEqual(foo._getWorkflowTool(), self.site.portal_workflow)
 
     # FIXME: more tests needed
 

@@ -37,6 +37,16 @@ class CMFCatalogAware(Base):
 
     security = ClassSecurityInfo()
 
+    # The following methods can be overriden using inheritence so that
+    # it's possible to specifiy another catalog tool or workflow tool
+    # for a given content type
+
+    def _getCatalogTool(self):
+        return getToolByName(self, 'portal_catalog', None)
+
+    def _getWorkflowTool(self):
+        return getToolByName(self, 'portal_workflow', None)
+
     # Cataloging methods
     # ------------------
 
@@ -45,7 +55,7 @@ class CMFCatalogAware(Base):
         """
             Index the object in the portal catalog.
         """
-        catalog = getToolByName(self, 'portal_catalog', None)
+        catalog = self._getCatalogTool()
         if catalog is not None:
             catalog.indexObject(self)
 
@@ -54,7 +64,7 @@ class CMFCatalogAware(Base):
         """
             Unindex the object from the portal catalog.
         """
-        catalog = getToolByName(self, 'portal_catalog', None)
+        catalog = self._getCatalogTool()
         if catalog is not None:
             catalog.unindexObject(self)
 
@@ -72,7 +82,7 @@ class CMFCatalogAware(Base):
             # Update the modification date.
             if hasattr(aq_base(self), 'notifyModified'):
                 self.notifyModified()
-        catalog = getToolByName(self, 'portal_catalog', None)
+        catalog = self._getCatalogTool()
         if catalog is not None:
             catalog.reindexObject(self, idxs=idxs)
 
@@ -88,10 +98,13 @@ class CMFCatalogAware(Base):
         is a useful optimization if the object itself has just been
         fully reindexed, as there's no need to reindex its security twice.
         """
-        catalog = getToolByName(self, 'portal_catalog', None)
+        catalog = self._getCatalogTool()
         if catalog is None:
             return
         path = '/'.join(self.getPhysicalPath())
+
+        # XXX if _getCatalogTool() is overriden we will have to change
+        # this method for the sub-objects.
         for brain in catalog.unrestrictedSearchResults(path=path):
             brain_path = brain.getPath()
             if brain_path == path and skip_self:
@@ -119,7 +132,7 @@ class CMFCatalogAware(Base):
         """
             Notify the workflow that self was just created.
         """
-        wftool = getToolByName(self, 'portal_workflow', None)
+        wftool = self._getWorkflowTool()
         if wftool is not None:
             wftool.notifyCreated(self)
 
@@ -234,7 +247,7 @@ class CMFCatalogAware(Base):
             Tab displaying the current workflows for the content object.
         """
         ob = self
-        wftool = getToolByName(self, 'portal_workflow', None)
+        wftool = self._getWorkflowTool()
         # XXX None ?
         if wftool is not None:
             wf_ids = wftool.getChainFor(ob)

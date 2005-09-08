@@ -386,6 +386,11 @@ class ExportConfiguratorBase(Implicit):
         if isinstance(prop, tuple):
             prop_value = ''
             prop_elements = prop
+        elif isinstance(prop, list):
+            # Backward compat for old instances that stored
+            # properties as list.
+            prop_value = ''
+            prop_elements = tuple(prop)
         else:
             prop_value = prop
             prop_elements = ()

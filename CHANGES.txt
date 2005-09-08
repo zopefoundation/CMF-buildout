@@ -15,6 +15,9 @@ After CMF 1.5.4
       specify another catalog or workflow tool the content type can
       use
 
+    - CMFSetup: allow export of properties of old objects that were
+      stored as lists (instead of tuples now).
+
 CMF 1.5.4 (2005/09/04)
 
   Bug Fixes

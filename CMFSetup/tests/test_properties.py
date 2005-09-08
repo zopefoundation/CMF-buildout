@@ -42,6 +42,8 @@ _NORMAL_EXPORT = """\
   <property name="foo" type="string">Foo</property>
   <property name="bar" type="tokens">
    <element value="Bar"/></property>
+  <property name="moo" type="tokens">
+   <element value="Moo"/></property>
 </site>
 """
 
@@ -65,8 +67,10 @@ class _SitePropertiesSetup(BaseRegistryTests):
 
         if bar > 0:
             site._setProperty( 'bar', (), 'tokens' )
+            site._setProperty( 'moo', (), 'tokens' )
         if bar > 1:
             site._updateProperty( 'bar', ('Bar',) )
+            site.moo = ['Moo']
 
         return site
 
@@ -90,6 +94,11 @@ class SitePropertiesConfiguratorTests(_SitePropertiesSetup):
                      { 'id': 'bar',
                        'value': '',
                        'elements': ('Bar',),
+                       'type': 'tokens',
+                       'select_variable': None },
+                     { 'id': 'moo',
+                       'value': '',
+                       'elements': ('Moo',),
                        'type': 'tokens',
                        'select_variable': None } ]
 
@@ -129,7 +138,7 @@ class SitePropertiesConfiguratorTests(_SitePropertiesSetup):
         configurator = self._makeOne(site)
         site_info = configurator.parseXML(_NORMAL_EXPORT)
 
-        self.assertEqual( len( site_info['properties'] ), 2 )
+        self.assertEqual( len( site_info['properties'] ), 3 )
 
         info = site_info['properties'][0]
         self.assertEqual( info['id'], 'foo' )
@@ -180,7 +189,7 @@ class Test_importSiteProperties(_SitePropertiesSetup):
 
         site = self._initSite()
 
-        self.assertEqual( len( site.propertyIds() ), 2 )
+        self.assertEqual( len( site.propertyIds() ), 3 )
         self.failUnless( 'foo' in site.propertyIds() )
         self.assertEqual( site.getProperty('foo'), 'Foo' )
         self.failUnless( 'bar' in site.propertyIds() )
@@ -198,7 +207,7 @@ class Test_importSiteProperties(_SitePropertiesSetup):
 
         site = self._initSite()
 
-        self.assertEqual( len( site.propertyIds() ), 2 )
+        self.assertEqual( len( site.propertyIds() ), 3 )
         self.failUnless( 'foo' in site.propertyIds() )
         self.assertEqual( site.getProperty('foo'), 'Foo' )
         self.failUnless( 'bar' in site.propertyIds() )
@@ -216,7 +225,7 @@ class Test_importSiteProperties(_SitePropertiesSetup):
 
         site = self._initSite()
 
-        self.assertEqual( len( site.propertyIds() ), 2 )
+        self.assertEqual( len( site.propertyIds() ), 3 )
         self.failUnless( 'foo' in site.propertyIds() )
         self.assertEqual( site.getProperty('foo'), 'Foo' )
         self.failUnless( 'bar' in site.propertyIds() )
@@ -228,7 +237,7 @@ class Test_importSiteProperties(_SitePropertiesSetup):
         from Products.CMFSetup.properties import importSiteProperties
         importSiteProperties(context)
 
-        self.assertEqual( len( site.propertyIds() ), 2 )
+        self.assertEqual( len( site.propertyIds() ), 3 )
         self.failUnless( 'foo' in site.propertyIds() )
         self.assertEqual( site.getProperty('foo'), 'Foo' )
         self.failUnless( 'bar' in site.propertyIds() )
@@ -246,7 +255,7 @@ class Test_importSiteProperties(_SitePropertiesSetup):
         from Products.CMFSetup.properties import importSiteProperties
         importSiteProperties(context)
 
-        self.assertEqual( len( site.propertyIds() ), 2 )
+        self.assertEqual( len( site.propertyIds() ), 3 )
         self.failUnless( 'foo' in site.propertyIds() )
         self.assertEqual( site.getProperty('foo'), 'Foo' )
         self.failUnless( 'bar' in site.propertyIds() )
@@ -264,7 +273,7 @@ class Test_importSiteProperties(_SitePropertiesSetup):
         from Products.CMFSetup.properties import importSiteProperties
         importSiteProperties(context)
 
-        self.assertEqual( len( site.propertyIds() ), 2 )
+        self.assertEqual( len( site.propertyIds() ), 3 )
         self.failUnless( 'foo' in site.propertyIds() )
         self.assertEqual( site.getProperty('foo'), 'Foo' )
         self.failUnless( 'bar' in site.propertyIds() )

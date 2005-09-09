@@ -33,7 +33,7 @@ from CMFCorePermissions import ViewManagementScreens
 from CMFCorePermissions import View
 from CMFCorePermissions import FTPAccess
 from FSObject import FSObject
-from utils import _setCacheHeaders
+from utils import _setCacheHeaders, _checkConditionalGET
 
 xml_detect_re = re.compile('^\s*<\?xml\s+')
 
@@ -120,6 +120,13 @@ class FSPageTemplate(FSObject, Script, PageTemplate):
 
     def pt_render(self, source=0, extra_context={}):
         self._updateFromFS()  # Make sure the template has been loaded.
+
+        if not source:
+            # If we have a conditional get, set status 304 and return
+            # no content
+            if _checkConditionalGET(self, extra_context):
+                return ''
+        
         result = FSPageTemplate.inheritedAttribute('pt_render')(
                                 self, source, extra_context
                                 )

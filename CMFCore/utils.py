@@ -18,23 +18,26 @@ import operator
 from types import StringType, UnicodeType
 from copy import deepcopy
 
-from Globals import package_home
-from Globals import HTMLFile
-from Globals import ImageFile
-from Globals import InitializeClass
-from Globals import MessageDialog
-
-from ExtensionClass import Base
-from Acquisition import Implicit
-from Acquisition import aq_base, aq_get, aq_inner, aq_parent
-
 from AccessControl import ClassSecurityInfo
 from AccessControl import ModuleSecurityInfo
 from AccessControl import getSecurityManager
 from AccessControl.Permission import Permission
 from AccessControl.PermissionRole import rolesForPermissionOn
 from AccessControl.Role import gather_permissions
-
+from Acquisition import aq_base
+from Acquisition import aq_get
+from Acquisition import aq_inner
+from Acquisition import aq_parent
+from Acquisition import Implicit
+from DateTime import DateTime
+from ExtensionClass import Base
+from Globals import HTMLFile
+from Globals import ImageFile
+from Globals import InitializeClass
+from Globals import MessageDialog
+from Globals import package_home
+from OFS.misc_ import misc_ as misc_images
+from OFS.misc_ import Misc_ as MiscImage
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
 from OFS.PropertySheets import PropertySheets
@@ -46,6 +49,7 @@ except ImportError:
     UNIQUE = 2
 from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
+from thread import allocate_lock
 
 
 security = ModuleSecurityInfo( 'Products.CMFCore.utils' )
@@ -307,10 +311,139 @@ def _modifyPermissionMappings(ob, map):
             something_changed = 1
     return something_changed
 
+
+# Parse a string of etags from an If-None-Match header
+# Code follows ZPublisher.HTTPRequest.parse_cookie
+parse_etags_lock=allocate_lock()
+def parse_etags(text,
+                result=None,
+                etagre_quote = re.compile('(\s*\"([^\"]*)\"\s*,{0,1})'), # quoted etags (assumed separated by whitespace + a comma)
+                etagre_noquote = re.compile('(\s*([^,]*)\s*,{0,1})'),    # non-quoted etags (assumed separated by whitespace + a comma)
+                acquire=parse_etags_lock.acquire,
+                release=parse_etags_lock.release,
+                ):
+
+    if result is None: result=[]
+    if not len(text):
+        return result
+
+    acquire()
+    try:
+        m = etagre_quote.match(text)
+        if m:
+            # Match quoted etag (spec-observing client)
+            l     = len(m.group(1))
+            value = m.group(2)
+        else:
+            # Match non-quoted etag (lazy client)
+            m = etagre_noquote.match(text)
+            if m:
+                l     = len(m.group(1))
+                value = m.group(2)
+            else:
+                return result
+    finally: release()
+
+    if value:
+        result.append(value)
+    return apply(parse_etags,(text[l:],result))
+
+
+def _checkConditionalGET(obj, extra_context):
+    """A conditional GET is done using one or both of the request
+       headers:
+
+       If-Modified-Since: Date
+       If-None-Match: list ETags (comma delimited, sometimes quoted)
+
+       If both conditions are present, both must be satisfied.
+       
+       This method checks the caching policy manager to see if
+       a content object's Last-modified date and ETag satisfy
+       the conditional GET headers.
+
+       Returns the tuple (last_modified, etag) if the conditional
+       GET requirements are met and None if not.
+
+       It is possible for one of the tuple elements to be None.
+       For example, if there is no If-None-Match header and
+       the caching policy does not specify an ETag, we will
+       just return (last_modified, None).
+       """
+
+    REQUEST = getattr(obj, 'REQUEST', None)
+    if REQUEST is None:
+        return False
+
+    if_modified_since = REQUEST.get_header('If-Modified-Since', None)
+    if_none_match = REQUEST.get_header('If-None-Match', None)
+
+    if if_modified_since is None and if_none_match is None:
+        # not a conditional GET
+        return False
+
+    manager = getToolByName(obj, 'caching_policy_manager', None)
+    ret = manager.getModTimeAndETag(aq_parent(obj), obj.getId(), extra_context)
+    if ret is None:
+        # no appropriate policy or 304s not enabled
+        return  False 
+
+    (content_mod_time, content_etag) = ret
+    if content_mod_time:
+        mod_time_secs = content_mod_time.timeTime()
+    else:
+        mod_time_secs = None
+    
+    if if_modified_since:
+        # from CMFCore/FSFile.py:
+        if_modified_since = if_modified_since.split(';')[0]
+        # Some proxies seem to send invalid date strings for this
+        # header. If the date string is not valid, we ignore it
+        # rather than raise an error to be generally consistent
+        # with common servers such as Apache (which can usually
+        # understand the screwy date string as a lucky side effect
+        # of the way they parse it).
+        try:
+            if_modified_since=long(DateTime(if_modified_since).timeTime())
+        except:
+            if_mod_since=None
+                
+    client_etags = None
+    if if_none_match:
+        client_etags = parse_etags(if_none_match)
+
+    if not if_modified_since and not client_etags:
+        # not a conditional GET, or headers are messed up
+        return False
+
+    if if_modified_since:
+        if not content_mod_time or mod_time_secs < 0 or mod_time_secs > if_modified_since:
+            return False
+        
+    if client_etags:
+        if not content_etag or (content_etag not in client_etags and '*' not in client_etags):
+            return False
+    else:
+        # If we generate an ETag, don't validate the conditional GET unless the client supplies an ETag
+        # This may be more conservative than the spec requires, but we are already _way_ more conservative.
+        if content_etag:
+            return False
+
+    response = REQUEST.RESPONSE
+    if content_mod_time:
+        response.setHeader('Last-modified', str(content_mod_time))
+    if content_etag:
+        response.setHeader('ETag', content_etag, literal=1)
+    response.setStatus(304)
+            
+    return True
+    
+
 security.declarePrivate('_setCacheHeaders')
 def _setCacheHeaders(obj, extra_context):
     """Set cache headers according to cache policy manager for the obj."""
     REQUEST = getattr(obj, 'REQUEST', None)
+
     if REQUEST is not None:
         content = aq_parent(obj)
         manager = getToolByName(obj, 'caching_policy_manager', None)

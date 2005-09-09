@@ -63,10 +63,10 @@ class DynamicTypeTests(TestCase):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IDynamicType
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import IDynamicType
 
         verifyClass(IDynamicType, DynamicType)
 

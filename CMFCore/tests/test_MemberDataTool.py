@@ -86,11 +86,11 @@ class MemberDataToolTests(TestCase):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IActionProvider
+            from Products.CMFCore.interfaces import IMemberDataTool
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import IActionProvider
-        from Products.CMFCore.interfaces import IMemberDataTool
         from Products.CMFCore.MemberDataTool import MemberDataTool
 
         verifyClass(IActionProvider, MemberDataTool)
@@ -123,10 +123,10 @@ class MemberDataTests(TestCase):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IMemberData
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import IMemberData
         from Products.CMFCore.MemberDataTool import MemberData
 
         verifyClass(IMemberData, MemberData)

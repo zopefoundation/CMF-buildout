@@ -88,12 +88,12 @@ class DublinCoreTests(SecurityTest):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import ICatalogableDublinCore
+            from Products.CMFCore.interfaces import IDublinCore
+            from Products.CMFCore.interfaces import IMutableDublinCore
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import ICatalogableDublinCore
-        from Products.CMFCore.interfaces import IDublinCore
-        from Products.CMFCore.interfaces import IMutableDublinCore
         from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 
         verifyClass(ICatalogableDublinCore, DefaultDublinCoreImpl)

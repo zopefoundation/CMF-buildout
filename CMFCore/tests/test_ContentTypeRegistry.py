@@ -43,11 +43,12 @@ class MajorMinorPredicateTests( TestCase ):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces \
+                    import IContentTypeRegistryPredicate
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.ContentTypeRegistry import MajorMinorPredicate
-        from Products.CMFCore.interfaces import IContentTypeRegistryPredicate
 
         verifyClass(IContentTypeRegistryPredicate, MajorMinorPredicate)
 
@@ -103,11 +104,12 @@ class ExtensionPredicateTests( TestCase ):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces \
+                    import IContentTypeRegistryPredicate
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.ContentTypeRegistry import ExtensionPredicate
-        from Products.CMFCore.interfaces import IContentTypeRegistryPredicate
 
         verifyClass(IContentTypeRegistryPredicate, ExtensionPredicate)
 
@@ -159,12 +161,13 @@ class MimeTypeRegexPredicateTests( TestCase ):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces \
+                    import IContentTypeRegistryPredicate
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.ContentTypeRegistry \
                 import MimeTypeRegexPredicate
-        from Products.CMFCore.interfaces import IContentTypeRegistryPredicate
 
         verifyClass(IContentTypeRegistryPredicate, MimeTypeRegexPredicate)
 
@@ -208,11 +211,12 @@ class NameRegexPredicateTests( TestCase ):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces \
+                    import IContentTypeRegistryPredicate
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.ContentTypeRegistry import NameRegexPredicate
-        from Products.CMFCore.interfaces import IContentTypeRegistryPredicate
 
         verifyClass(IContentTypeRegistryPredicate, NameRegexPredicate)
 
@@ -259,11 +263,11 @@ class ContentTypeRegistryTests( TestCase ):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IContentTypeRegistry
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.ContentTypeRegistry import ContentTypeRegistry
-        from Products.CMFCore.interfaces import IContentTypeRegistry
 
         verifyClass(IContentTypeRegistry, ContentTypeRegistry)
 

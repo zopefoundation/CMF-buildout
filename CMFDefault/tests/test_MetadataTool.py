@@ -142,11 +142,11 @@ class TestMetadataTool( TestCase ):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IActionProvider
+            from Products.CMFCore.interfaces import IMetadataTool
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import IActionProvider
-        from Products.CMFCore.interfaces import IMetadataTool
 
         verifyClass(IActionProvider, MetadataTool)
         verifyClass(IMetadataTool, MetadataTool)

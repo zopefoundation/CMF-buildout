@@ -53,11 +53,11 @@ class ActionInfoTests(TestCase):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IActionInfo
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.ActionInformation import ActionInfo
-        from Products.CMFCore.interfaces import IActionInfo
 
         verifyClass(IActionInfo, ActionInfo)
 

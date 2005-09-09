@@ -92,11 +92,11 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IActionProvider
+            from Products.CMFCore.interfaces import ITypesTool
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import IActionProvider
-        from Products.CMFCore.interfaces import ITypesTool
         from Products.CMFCore.TypesTool import TypesTool
 
         verifyClass(IActionProvider, TypesTool)
@@ -524,10 +524,10 @@ class FTIDataTests( TypeInfoTests ):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import ITypeInformation
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import ITypeInformation
         from Products.CMFCore.TypesTool import FactoryTypeInformation
 
         verifyClass(ITypeInformation, FactoryTypeInformation)
@@ -563,10 +563,10 @@ class STIDataTests( TypeInfoTests ):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import ITypeInformation
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import ITypeInformation
         from Products.CMFCore.TypesTool import ScriptableTypeInformation
 
         verifyClass(ITypeInformation, ScriptableTypeInformation)

@@ -46,11 +46,11 @@ class IndexableObjectWrapperTests(TestCase):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IIndexableObjectWrapper
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.CatalogTool import IndexableObjectWrapper
-        from Products.CMFCore.interfaces import IIndexableObjectWrapper
 
         verifyClass(IIndexableObjectWrapper, IndexableObjectWrapper)
 
@@ -78,12 +78,12 @@ class CatalogToolTests(SecurityTest):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IActionProvider
+            from Products.CMFCore.interfaces import ICatalogTool
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.CatalogTool import CatalogTool
-        from Products.CMFCore.interfaces import IActionProvider
-        from Products.CMFCore.interfaces import ICatalogTool
 
         verifyClass(IActionProvider, CatalogTool)
         verifyClass(ICatalogTool, CatalogTool)

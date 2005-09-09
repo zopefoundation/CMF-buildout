@@ -170,11 +170,11 @@ class TestTopic(SecurityTest):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IDynamicType
+            from Products.CMFCore.interfaces import IFolderish
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import IDynamicType
-        from Products.CMFCore.interfaces import IFolderish
         from Products.CMFTopic.Topic import Topic
 
         verifyClass(IDynamicType, Topic)

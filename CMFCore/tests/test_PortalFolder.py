@@ -149,11 +149,11 @@ class PortalFolderTests(SecurityTest):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IDynamicType
+            from Products.CMFCore.interfaces import IFolderish
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import IDynamicType
-        from Products.CMFCore.interfaces import IFolderish
         from Products.CMFCore.PortalFolder import PortalFolder
 
         verifyClass(IDynamicType, PortalFolder)

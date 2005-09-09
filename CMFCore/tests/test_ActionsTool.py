@@ -63,12 +63,12 @@ class ActionsToolTests( SecurityRequestTest ):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IActionProvider
+            from Products.CMFCore.interfaces import IActionsTool
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.ActionsTool import ActionsTool
-        from Products.CMFCore.interfaces import IActionProvider
-        from Products.CMFCore.interfaces import IActionsTool
 
         verifyClass(IActionProvider, ActionsTool)
         verifyClass(IActionsTool, ActionsTool)

@@ -282,11 +282,11 @@ class CachingPolicyManagerTests(TestCase):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import ICachingPolicyManager
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.CachingPolicyManager import CachingPolicyManager
-        from Products.CMFCore.interfaces import ICachingPolicyManager
 
         verifyClass(ICachingPolicyManager, CachingPolicyManager)
 

@@ -37,10 +37,10 @@ class SkinsContainerTests(TestCase):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import ISkinsContainer
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import ISkinsContainer
         from Products.CMFCore.SkinsContainer import SkinsContainer
 
         verifyClass(ISkinsContainer, SkinsContainer)
@@ -70,12 +70,12 @@ class SkinsToolTests(TestCase):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IActionProvider
+            from Products.CMFCore.interfaces import ISkinsContainer
+            from Products.CMFCore.interfaces import ISkinsTool
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import IActionProvider
-        from Products.CMFCore.interfaces import ISkinsContainer
-        from Products.CMFCore.interfaces import ISkinsTool
         from Products.CMFCore.SkinsTool import SkinsTool
 
         verifyClass(IActionProvider, SkinsTool)

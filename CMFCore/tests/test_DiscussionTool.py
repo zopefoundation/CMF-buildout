@@ -40,12 +40,12 @@ class DiscussionToolTests(TestCase):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IActionProvider
+            from Products.CMFCore.interfaces import IOldstyleDiscussionTool
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.DiscussionTool import DiscussionTool
-        from Products.CMFCore.interfaces import IActionProvider
-        from Products.CMFCore.interfaces import IOldstyleDiscussionTool
 
         verifyClass(IActionProvider, DiscussionTool)
         verifyClass(IOldstyleDiscussionTool, DiscussionTool)
@@ -64,11 +64,11 @@ class OldDiscussableTests(TestCase):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IOldstyleDiscussable
         except ImportError:
             # BBB: for Zope 2.7
             return
         from Products.CMFCore.DiscussionTool import OldDiscussable
-        from Products.CMFCore.interfaces import IOldstyleDiscussable
 
         verifyClass(IOldstyleDiscussable, OldDiscussable)
 

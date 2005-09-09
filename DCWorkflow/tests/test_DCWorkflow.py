@@ -52,10 +52,10 @@ class DCWorkflowDefinitionTests(TestCase):
     def test_z3interfaces(self):
         try:
             from zope.interface.verify import verifyClass
+            from Products.CMFCore.interfaces import IWorkflowDefinition
         except ImportError:
             # BBB: for Zope 2.7
             return
-        from Products.CMFCore.interfaces import IWorkflowDefinition
         from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 
         verifyClass(IWorkflowDefinition, DCWorkflowDefinition)

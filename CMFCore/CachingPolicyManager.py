@@ -167,6 +167,10 @@ class CachingPolicy:
         if s_max_age_secs is not None:
             s_max_age_secs = int( s_max_age_secs )
 
+        etag_expr = None
+        if etag_func:
+            etag_expr = Expression( text=etag_func )
+
         self._policy_id = policy_id
         self._predicate = Expression( text=predicate )
         self._mtime_func = Expression( text=mtime_func )
@@ -180,7 +184,7 @@ class CachingPolicy:
         self._private = int( private )
         self._no_transform = int( no_transform )
         self._vary = vary
-        self._etag_func = Expression( text=etag_func )
+        self._etag_func = etag_expr
         self._enable_304s = int ( enable_304s )
 
     def getPolicyId( self ):

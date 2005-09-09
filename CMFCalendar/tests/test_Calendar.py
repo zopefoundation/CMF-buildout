@@ -40,6 +40,7 @@ try:
 except ImportError:
     # BBB: for Zope 2.7
     from Products.CMFCore.utils import transaction
+from Products.CMFCore import Skinnable
 
 
 class CalendarTests(unittest.TestCase):
@@ -86,6 +87,7 @@ class CalendarRequestTests(unittest.TestCase, WarningInterceptor):
 
     def setUp(self):
         self._trap_warning_output()
+        self._oldSkindata = Skinnable.SKINDATA.copy()
         transaction.begin()
 
         app = self.app = makerequest(Zope2.app())
@@ -123,6 +125,7 @@ class CalendarRequestTests(unittest.TestCase, WarningInterceptor):
         noSecurityManager()
         transaction.abort()
         self.app._p_jar.close()
+        Skinnable.SKINDATA = self._oldSkindata
         self._free_warning_output()
 
     def _testURL(self,url,params=None):

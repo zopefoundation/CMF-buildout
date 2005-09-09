@@ -30,6 +30,7 @@ from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 from Products.Transience.Transience import TransientObjectContainer
 from Testing.makerequest import makerequest
 import transaction
+from Products.CMFCore import Skinnable
 
 
 class CalendarTests(unittest.TestCase):
@@ -75,6 +76,7 @@ class CalendarTests(unittest.TestCase):
 class CalendarRequestTests(unittest.TestCase):
 
     def setUp(self):
+        self._oldSkindata = Skinnable.SKINDATA.copy()
         transaction.begin()
 
         app = self.app = makerequest(Zope2.app())
@@ -101,6 +103,7 @@ class CalendarRequestTests(unittest.TestCase):
         noSecurityManager()
         transaction.abort()
         self.app._p_jar.close()
+        Skinnable.SKINDATA = self._oldSkindata
 
     def _testURL(self,url,params=None):
         Site = self.Site

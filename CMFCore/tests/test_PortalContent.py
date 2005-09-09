@@ -26,7 +26,7 @@ Zope2.startup()
 
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
-from AccessControl.User import UnrestrictedUser
+from AccessControl.User import SimpleUser
 from Acquisition import aq_base
 try:
     import transaction
@@ -34,7 +34,7 @@ except ImportError:
     # BBB: for Zope 2.7
     from Products.CMFCore.utils import transaction
 
-from Products.CMFCore.tests.base.testcase import RequestTest
+from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 
 
 class PortalContentTests(TestCase):
@@ -64,56 +64,64 @@ class PortalContentTests(TestCase):
         verifyClass(IDynamicType, PortalContent)
 
 
-class TestContentCopyPaste(RequestTest):
+class TestContentCopyPaste(SecurityRequestTest):
 
     # Tests related to http://www.zope.org/Collectors/CMF/205
     # Copy/pasting a content item must set ownership to pasting user
 
-    def setUp(self):
-        RequestTest.setUp(self)
-        try:
-            newSecurityManager(None, UnrestrictedUser('manager', '', ['Manager'], []))
-            self.root.manage_addProduct['CMFDefault'].manage_addCMFSite('cmf')
-            self.site = self.root.cmf
-            transaction.commit(1) # Make sure we have _p_jars
-        except:
-            self.tearDown()
-            raise
+    def _initFolders(self):
+        from OFS.Folder import Folder
 
-    def tearDown(self):
-        noSecurityManager()
-        RequestTest.tearDown(self)
+        FOLDER_IDS = ( 'acl_users', 'folder1', 'folder2' )
+
+        for folder_id in FOLDER_IDS:
+            if folder_id not in self.root.objectIds():
+                self.root._setObject( folder_id, Folder( folder_id ) )
+
+        # Hack, we need a _p_mtime for the file, so we make sure that it
+        # has one. We use a subtransaction, which means we can rollback
+        # later and pretend we didn't touch the ZODB.
+        #transaction.commit(1)
+
+        return [ self.root._getOb( folder_id ) for folder_id in FOLDER_IDS ]
+
+    def _initContent(self, folder, id):
+        from Products.CMFCore.PortalContent import PortalContent
+
+        c = PortalContent()
+        c._setId(id)
+        c.meta_type = 'File'
+        folder._setObject(id, c)
+        return folder._getOb(id)
 
     def test_CopyPasteSetsOwnership(self):
         # Copy/pasting a File should set new ownership including local roles
 
-        # First, add two users to the user folder, a member and a manager
-        # and create a member area for the member
-        uf = self.site.acl_users
-        uf._doAddUser('member', 'secret', ['Member'], [])
-        uf._doAddUser('manager1', 'secret', ['Manager'], [])
-        member = uf.getUser('member').__of__(uf)
-        manager1 = uf.getUser('manager1').__of__(uf)
-        self.site.portal_membership.createMemberArea('member')
-        member_area = self.site.Members.member
+        acl_users, folder1, folder2 = self._initFolders()
+        acl_users._doAddUser('user1', '', ('Member',), ())
+        user1 = acl_users.getUserById('user1').__of__(acl_users)
+        acl_users._doAddUser('user2', '', ('Member',), ())
+        user2 = acl_users.getUserById('user2').__of__(acl_users)
 
-        # Switch to the manager user context and plant a content item into
-        # the member user's member area
-        newSecurityManager(None, manager1)
-        member_area.invokeFactory('File', id='test_file')
-        self.site.portal_workflow.doActionFor(member_area.test_file, 'publish')
+        newSecurityManager(None, user1)
+        content = self._initContent(folder1, 'content')
+        content.manage_setLocalRoles(user1.getId(), ['Owner'])
 
-        # Switch to "member" context now and try to copy and paste the
-        # content item created by "manager1"
-        newSecurityManager(None, member)
-        cb = member_area.manage_copyObjects(['test_file'])
-        member_area.manage_pasteObjects(cb)
+        newSecurityManager(None, user2)
+        cb = folder1.manage_copyObjects(['content'])
+        folder2.manage_pasteObjects(cb)
 
         # Now test executable ownership and "owner" local role
         # "member" should have both.
-        file_ob = member_area.copy_of_test_file
-        self.assertEqual(aq_base(file_ob.getOwner()), aq_base(member))
-        self.assert_('Owner' in file_ob.get_local_roles_for_userid('member'))
+        moved = folder2._getOb('content')
+        self.assertEqual(aq_base(moved.getOwner()), aq_base(user2))
+
+        local_roles = moved.get_local_roles()
+        self.assertEqual(len(local_roles), 1)
+        userid, roles = local_roles[0]
+        self.assertEqual(userid, user2.getId())
+        self.assertEqual(len(roles), 1)
+        self.assertEqual(roles[0], 'Owner')
 
 
 def test_suite():

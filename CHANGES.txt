@@ -2,6 +2,8 @@ After CMF 1.5.4
 
   Bug Fixes
 
+    - Collector #381:  CMFCore unit tests depended on CMFDefault / workflow.
+
     - CalendarTool: If an event ends at exactly midnight, don't show it
       in the list of events for the day starting at midnight.
       (http://www.zope.org/Collectors/CMF/246)

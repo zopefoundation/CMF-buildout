@@ -20,6 +20,12 @@ if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
 
 try:
+    True
+except NameError:
+    True = 1
+    False = 0
+
+try:
     ZTC_available = True
     from Testing import ZopeTestCase
     from Testing.ZopeTestCase import Functional

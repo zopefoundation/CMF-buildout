@@ -51,6 +51,11 @@ from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
 from thread import allocate_lock
 
+try:
+    True
+except NameError:
+    True = 1
+    False = 0
 
 security = ModuleSecurityInfo( 'Products.CMFCore.utils' )
 

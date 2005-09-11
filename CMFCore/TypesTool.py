@@ -839,12 +839,24 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
         return rval
 
     security.declareProtected(AccessContentsInformation, 'listContentTypes')
-    def listContentTypes(self, container=None):
+    def listContentTypes(self, container=None, by_metatype=0):
         """ List type info IDs.
+
+        Passing 'by_metatype' is deprecated (type information may not
+        correspond 1:1 to an underlying meta_type). This argument will be
+        removed when CMFCore/dtml/catalogFind.dtml doesn't need it anymore.
         """
         typenames = {}
         for t in self.listTypeInfo( container ):
-            name = t.getId()
+
+            if by_metatype:
+                warn('TypeInformation.listContentTypes(by_metatype=1) is '
+                     'deprecated.',
+                     DeprecationWarning)
+                name = t.Metatype()
+            else:
+                name = t.getId()
+
             if name:
                 typenames[ name ] = None
 

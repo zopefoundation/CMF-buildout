@@ -128,11 +128,15 @@ class portal_types(Interface):
             the user's permissions.
         """
 
-    def listContentTypes(container=None):
+    def listContentTypes(container=None, by_metatype=0):
         """ List type info IDs.
 
         If 'container' is passed, then filter the list to include only types
         which are addable in 'container'.
+
+        Passing 'by_metatype' is deprecated (type information may not
+        correspond 1:1 to an underlying meta_type). This argument will be
+        removed when CMFCore/dtml/catalogFind.dtml doesn't need it anymore.
         """
 
     def constructContent(contentType, container, id, RESPONSE=None

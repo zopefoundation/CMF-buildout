@@ -48,19 +48,8 @@ class SyndicationTool (UniqueObject, SimpleItem, ActionProviderBase):
 
     id = 'portal_syndication'
     meta_type = 'Default Syndication Tool'
-    _actions = ( ActionInformation(
-                    id='syndication'
-                  , title='Syndication'
-                  , action=Expression(
-                        text='string:${folder_url}/synPropertiesForm')
-                  , condition=Expression(
-                        text='python: folder is object')
-                  , permissions=(ManageProperties,)
-                  , category='object'
-                  , visible=1
-                  )
-               ,
-               )
+    _actions = ()
+    security = ClassSecurityInfo()
 
     #Default Sitewide Values
     isAllowed = 0
@@ -68,8 +57,6 @@ class SyndicationTool (UniqueObject, SimpleItem, ActionProviderBase):
     syUpdateFrequency = 1
     syUpdateBase = DateTime()
     max_items = 15
-
-    security = ClassSecurityInfo()
 
     #ZMI Methods
     manage_options = ( ActionProviderBase.manage_options

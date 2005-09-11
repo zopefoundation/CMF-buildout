@@ -48,19 +48,7 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
 
     id = 'portal_discussion'
     meta_type = 'Default Discussion Tool'
-    _actions = (ActionInformation(id='reply'
-                                , title='Reply'
-                                , action=Expression(
-                text='string:${object_url}/discussion_reply_form')
-                                , condition=Expression(
-                text='python: object is not None and ' +
-                'portal.portal_discussion.isDiscussionAllowedFor(object)')
-                                , permissions=(ReplyToItem,)
-                                , category='object'
-                                , visible=1
-                                 )
-               ,
-               )
+    _actions = ()
 
     security = ClassSecurityInfo()
 

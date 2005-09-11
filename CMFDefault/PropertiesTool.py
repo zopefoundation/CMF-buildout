@@ -36,19 +36,7 @@ class PropertiesTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     id = 'portal_properties'
     meta_type = 'Default Properties Tool'
-    _actions = (ActionInformation(id='configPortal'
-                            , title='Reconfigure Portal'
-                            , description='Reconfigure the portal'
-                            , action=Expression(
-            text='string:${portal_url}/reconfig_form')
-                            , permissions=(ManagePortal,)
-                            , category='global'
-                            , condition=None
-                            , visible=1
-                             )
-               ,
-               )
-
+    _actions = ()
     security = ClassSecurityInfo()
 
     manage_options = ( ActionProviderBase.manage_options +

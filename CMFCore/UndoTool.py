@@ -41,18 +41,7 @@ class UndoTool (UniqueObject, SimpleItem, ActionProviderBase):
 
     id = 'portal_undo'
     meta_type = 'CMF Undo Tool'
-    _actions = (ActionInformation(id='undo'
-                                , title='Undo'
-                                , action=Expression(
-               text='string:${portal_url}/undo_form')
-                                , condition=Expression(
-               text='member')
-                                , permissions=(ListUndoableChanges,)
-                                , category='global'
-                                , visible=1
-                                 )
-               ,
-               )
+    _actions = ()
 
     security = ClassSecurityInfo()
 

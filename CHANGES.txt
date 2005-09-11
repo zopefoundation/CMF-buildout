@@ -83,8 +83,6 @@ HEAD only (unreleased)
       superceded by "new-style" action information objects stored inside
       the Actions Tool.
 
-    - TypesTool: Removed deprecated by_metatype argument of listContentTypes.
-
     - Some simplifications to the slurp_release release helper script and
       updates to the RELEASE.txt release instructions.
 

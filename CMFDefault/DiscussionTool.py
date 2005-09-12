@@ -21,9 +21,7 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 
-from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
-from Products.CMFCore.Expression import Expression
 from Products.CMFCore.interfaces.Discussions \
         import DiscussionResponse as IDiscussionResponse
 from Products.CMFCore.interfaces.portal_discussion \
@@ -41,6 +39,7 @@ from utils import _dtmldir
 
 
 class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
+
     """ Links content to discussions.
     """
 
@@ -48,7 +47,6 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
 
     id = 'portal_discussion'
     meta_type = 'Default Discussion Tool'
-    _actions = ()
 
     security = ClassSecurityInfo()
 

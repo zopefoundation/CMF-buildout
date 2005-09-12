@@ -21,13 +21,10 @@ from Globals import InitializeClass
 from OFS.ObjectManager import IFAwareObjectManager
 from OFS.OrderedFolder import OrderedFolder
 
-from ActionInformation import ActionInformation
 from ActionProviderBase import ActionProviderBase
-from Expression import Expression
 from interfaces.portal_actions import ActionCategory as IActionCategory
 from interfaces.portal_actions import ActionProvider as IActionProvider
 from interfaces.portal_actions import portal_actions as IActionsTool
-from permissions import ListFolderContents
 from permissions import ManagePortal
 from utils import _dtmldir
 from utils import UniqueObject
@@ -35,6 +32,7 @@ from utils import UniqueObject
 
 class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
                   ActionProviderBase):
+
     """
         Weave together the various sources of "actions" which are apropos
         to the current user and context.
@@ -46,29 +44,7 @@ class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
     id = 'portal_actions'
     meta_type = 'CMF Actions Tool'
     _product_interfaces = (IActionCategory,)
-    _actions = (ActionInformation(id='folderContents'
-                                , title='Folder contents'
-                                , action=Expression(
-               text='string:${folder_url}/folder_contents')
-                                , condition=Expression(
-               text='python: folder is not object')
-                                , permissions=(ListFolderContents,)
-                                , category='folder'
-                                , visible=1
-                                 )
-               ,
-               )
-
-    action_providers = ( 'portal_membership'
-                       , 'portal_actions'
-                       , 'portal_registration'
-                       , 'portal_types'
-                       , 'portal_discussion'
-                       , 'portal_undo'
-                       , 'portal_syndication'
-                       , 'portal_workflow'
-                       , 'portal_properties'
-                       )
+    action_providers = ('portal_types', 'portal_workflow', 'portal_actions')
 
     security = ClassSecurityInfo()
 

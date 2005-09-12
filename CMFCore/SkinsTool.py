@@ -56,6 +56,7 @@ def modifiedOptions():
 
 
 class SkinsTool(UniqueObject, SkinsContainer, Folder, ActionProviderBase):
+
     """ This tool is used to supply skins to a portal.
     """
 
@@ -64,8 +65,6 @@ class SkinsTool(UniqueObject, SkinsContainer, Folder, ActionProviderBase):
 
     id = 'portal_skins'
     meta_type = 'CMF Skins Tool'
-    _actions = ()
-
     allow_any = 0
     cookie_persistence = 0
     default_skin = ''

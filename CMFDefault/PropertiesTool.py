@@ -15,20 +15,19 @@
 $Id$
 """
 
-from OFS.SimpleItem import SimpleItem
+from AccessControl import ClassSecurityInfo
 from Acquisition import aq_inner, aq_parent
 from Globals import InitializeClass, DTMLFile
-from AccessControl import ClassSecurityInfo
+from OFS.SimpleItem import SimpleItem
 
-from Products.CMFCore.utils import UniqueObject
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
-from Products.CMFCore.ActionInformation import ActionInformation
-from Products.CMFCore.Expression import Expression
 from Products.CMFCore.interfaces.portal_properties \
         import portal_properties as IPropertiesTool
+from Products.CMFCore.utils import UniqueObject
 
 from permissions import ManagePortal
 from utils import _dtmldir
+
 
 class PropertiesTool(UniqueObject, SimpleItem, ActionProviderBase):
 
@@ -36,12 +35,12 @@ class PropertiesTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     id = 'portal_properties'
     meta_type = 'Default Properties Tool'
-    _actions = ()
+
     security = ClassSecurityInfo()
 
     manage_options = ( ActionProviderBase.manage_options +
                       ({ 'label' : 'Overview', 'action' : 'manage_overview' }
-                     , 
+                      ,
                      ) + SimpleItem.manage_options
                      )
 
@@ -69,6 +68,5 @@ class PropertiesTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     def smtp_server(self):
         return self.MailHost.smtp_host
-
 
 InitializeClass(PropertiesTool)

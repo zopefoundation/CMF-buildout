@@ -20,7 +20,6 @@ from AccessControl.PermissionRole import rolesForPermissionOn
 from DateTime import DateTime
 from Globals import DTMLFile
 from Globals import InitializeClass
-from Products.ZCatalog.ZCatalog import LOG
 from Products.ZCatalog.ZCatalog import ZCatalog
 from Products.ZCTextIndex.HTMLSplitter import HTMLWordSplitter
 from Products.ZCTextIndex.Lexicon import CaseNormalizer
@@ -78,6 +77,7 @@ class IndexableObjectWrapper:
 
 
 class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
+
     """ This is a ZCatalog that filters catalog queries.
     """
 
@@ -86,7 +86,6 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
 
     id = 'portal_catalog'
     meta_type = 'CMF Catalog'
-    _actions = ()
 
     security = ClassSecurityInfo()
 

@@ -23,15 +23,15 @@ from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 
 from ActionProviderBase import ActionProviderBase
+from interfaces.portal_url import portal_url as IURLTool
 from permissions import ManagePortal
 from permissions import View
 from utils import _dtmldir
 from utils import UniqueObject
 
-from interfaces.portal_url import portal_url as IURLTool
-
 
 class URLTool(UniqueObject, SimpleItem, ActionProviderBase):
+
     """ CMF URL Tool.
     """
 
@@ -39,7 +39,6 @@ class URLTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     id = 'portal_url'
     meta_type = 'CMF URL Tool'
-    _actions = ()
 
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)

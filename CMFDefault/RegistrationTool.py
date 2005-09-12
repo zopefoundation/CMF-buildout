@@ -20,13 +20,10 @@ import re
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 
-from Products.CMFCore.ActionInformation import ActionInformation
-from Products.CMFCore.Expression import Expression
 from Products.CMFCore.RegistrationTool import RegistrationTool as BaseTool
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 
-from permissions import AddPortalMember
 from permissions import ManagePortal
 from utils import MessageID as _
 
@@ -39,7 +36,7 @@ class RegistrationTool(BaseTool):
     __implements__ = BaseTool.__implements__
 
     meta_type = 'Default Registration Tool'
-    _actions = ()
+
     security = ClassSecurityInfo()
 
     #

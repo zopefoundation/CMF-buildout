@@ -39,7 +39,9 @@ from utils import UniqueObject
 _marker = []  # Create a new marker object.
 
 
-class MemberDataTool (UniqueObject, SimpleItem, PropertyManager, ActionProviderBase):
+class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
+                     ActionProviderBase):
+
     """ This tool wraps user objects, making them act as Member objects.
     """
 
@@ -47,8 +49,6 @@ class MemberDataTool (UniqueObject, SimpleItem, PropertyManager, ActionProviderB
 
     id = 'portal_memberdata'
     meta_type = 'CMF Member Data Tool'
-    _actions = ()
-
     _v_temps = None
     _properties = ()
 
@@ -235,9 +235,12 @@ InitializeClass(MemberDataTool)
 
 
 class CleanupTemp:
+
     """Used to cleanup _v_temps at the end of the request."""
+
     def __init__(self, tool):
         self._tool = tool
+
     def __del__(self):
         try:
             del self._tool._v_temps

@@ -22,9 +22,7 @@ from Acquisition import aq_parent
 from Globals import DTMLFile
 from Globals import InitializeClass
 
-from Products.CMFCore.ActionInformation import ActionInformation as AI
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
-from Products.CMFCore.Expression import Expression
 from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import _getAuthenticatedUser
@@ -52,14 +50,15 @@ Default page for %s
 
 
 class MembershipTool( BaseTool ):
+
     """ Implement 'portal_membership' interface using "stock" policies.
     """
 
     __implements__ = (IMembershipTool, ActionProviderBase.__implements__)
 
     meta_type = 'Default Membership Tool'
-    _actions = ()
     membersfolder_id = 'Members'
+
     security = ClassSecurityInfo()
 
     #

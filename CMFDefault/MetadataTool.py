@@ -35,6 +35,7 @@ from utils import _dtmldir
 
 
 class MetadataElementPolicy( SimpleItem ):
+
     """
         Represent a type-specific policy about a particular DCMI element.
     """
@@ -125,9 +126,11 @@ DEFAULT_ELEMENT_SPECS = ( ( 'Title', 0 )
 
 
 class ElementSpec( SimpleItem ):
+
     """
         Represent all the tool knows about a single metadata element.
     """
+
     security = ClassSecurityInfo()
 
     #
@@ -205,7 +208,6 @@ class MetadataTool( UniqueObject, SimpleItem, ActionProviderBase ):
 
     id = 'portal_metadata'
     meta_type = 'Default Metadata Tool'
-    _actions = ()
 
     #
     #   Default values.
@@ -519,7 +521,6 @@ class MetadataTool( UniqueObject, SimpleItem, ActionProviderBase ):
                           'Metadata element %s is required.' % element
 
         # TODO:  Call initial_values_hook, if present
-
 
     security.declareProtected(View, 'validateMetadata')
     def validateMetadata( self, content ):

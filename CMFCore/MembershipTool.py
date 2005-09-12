@@ -47,6 +47,7 @@ from utils import UniqueObject
 
 
 class MembershipTool(UniqueObject, Folder, ActionProviderBase):
+
     """ This tool accesses member data through an acl_users object.
 
     It can be replaced with something that accesses member data in a
@@ -57,8 +58,6 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
 
     id = 'portal_membership'
     meta_type = 'CMF Membership Tool'
-    _actions = ()
-
     memberareaCreationFlag = 1
 
     security = ClassSecurityInfo()

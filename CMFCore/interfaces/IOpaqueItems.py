@@ -15,11 +15,11 @@
 $Id$
 """
 
-from Interface import Attribute
 from Interface import Interface
 
 
 class ICallableOpaqueItem(Interface):
+
     """Interface for callable opaque items.
 
     Opaque items are subelements that are contained using something that
@@ -33,26 +33,28 @@ class ICallableOpaqueItem(Interface):
     def __init__(obj, id):
         """Return the opaque item and assign it to 'obj' as attr with 'id'.
         """
-    
+
     def __call__():
         """Return the opaque items value.
         """
-    
+
     def getId():
         """Return the id of the opaque item.
         """
 
 class ICallableOpaqueItemEvents(Interface):
+
     """CMF specific events upon copying, renaming and deletion.
     """
+
     def manage_afterClone(item):
         """After clone event hook.
         """
-    
+
     def manage_beforeDelete(item, container):
         """Before delete event hook.
         """
-    
+
     def manage_afterAdd(item, container):
         """After add event hook.
         """

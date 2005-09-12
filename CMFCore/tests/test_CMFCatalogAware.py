@@ -18,16 +18,13 @@ $Id$
 import unittest
 import Testing
 
-import Zope2
-Zope2.startup()
-
-from zExceptions import NotFound
 from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
-from Products.ZCatalog import CatalogBrains
-from Products.CMFCore.WorkflowTool import WorkflowTool
+
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
+from Products.CMFCore.exceptions import NotFound
 from Products.CMFCore.tests.base.testcase import LogInterceptor
+from Products.CMFCore.WorkflowTool import WorkflowTool
 
 CMF_SECURITY_INDEXES = CMFCatalogAware._cmf_security_indexes
 
@@ -86,7 +83,6 @@ class DummyCatalog(SimpleItem):
                 continue
             res.append(self.brain_class(ob, obpath))
         return res
-
 
 class TheClass(CMFCatalogAware, Folder):
     def __init__(self, id):
@@ -197,4 +193,4 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

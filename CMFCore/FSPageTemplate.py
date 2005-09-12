@@ -15,22 +15,21 @@
 $Id$
 """
 
-import re, sys
+import re
 
 import Globals
-from DocumentTemplate.DT_Util import html_quote
 from AccessControl import getSecurityManager, ClassSecurityInfo
 from OFS.Cache import Cacheable
-from Shared.DC.Scripts.Script import Script
 from Products.PageTemplates.PageTemplate import PageTemplate
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate, Src
+from Shared.DC.Scripts.Script import Script
 
-from permissions import FTPAccess
-from permissions import View
-from permissions import ViewManagementScreens
 from DirectoryView import registerFileExtension
 from DirectoryView import registerMetaType
 from FSObject import FSObject
+from permissions import FTPAccess
+from permissions import View
+from permissions import ViewManagementScreens
 from utils import _setCacheHeaders
 from utils import expandpath
 
@@ -39,7 +38,9 @@ _marker = []  # Create a new marker object.
 
 
 class FSPageTemplate(FSObject, Script, PageTemplate):
-    "Wrapper for Page Template"
+
+    """Wrapper for Page Template.
+    """
 
     meta_type = 'Filesystem Page Template'
 

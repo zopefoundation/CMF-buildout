@@ -15,18 +15,15 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from DateTime import DateTime
 
-from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.testcase import RequestTest
 
 
-class TestEvent(TestCase):
+class TestEvent(unittest.TestCase):
 
     def _makeOne(self, id, *args, **kw):
         from Products.CMFCalendar.Event import Event
@@ -140,10 +137,10 @@ class EventPUTTests(RequestTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(TestEvent),
-        makeSuite(EventPUTTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(TestEvent),
+        unittest.makeSuite(EventPUTTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

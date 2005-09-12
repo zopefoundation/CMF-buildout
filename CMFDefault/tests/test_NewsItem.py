@@ -15,20 +15,17 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Products.CMFCore.tests.base.content import BASIC_HTML
 from Products.CMFCore.tests.base.content import BASIC_STRUCTUREDTEXT
 from Products.CMFCore.tests.base.content import DOCTYPE
 from Products.CMFCore.tests.base.content import ENTITY_IN_TITLE
-from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.testcase import RequestTest
 
 
-class NewsItemTests(TestCase):
+class NewsItemTests(unittest.TestCase):
 
     def _makeOne(self, id, *args, **kw):
         from Products.CMFDefault.NewsItem import NewsItem
@@ -189,10 +186,10 @@ class NewsItemPUTTests(RequestTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(NewsItemTests),
-        makeSuite(NewsItemPUTTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(NewsItemTests),
+        unittest.makeSuite(NewsItemPUTTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

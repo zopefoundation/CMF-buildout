@@ -14,15 +14,13 @@
 
 $Id: test_FSDTMLMethod.py 37061 2005-06-15 14:17:41Z tseaver $
 """
-from unittest import TestSuite, makeSuite, main
+
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from os.path import join as path_join
 
 from OFS.Folder import Folder
-from Products.PageTemplates.TALES import Undefined
 from Products.StandardCacheManagers import RAMCacheManager
 
 from Products.CMFCore.FSDTMLMethod import FSDTMLMethod
@@ -118,10 +116,10 @@ class FSDTMLMethodCustomizationTests( SecurityTest, FSDTMLMaker ):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(FSDTMLMethodTests),
-        makeSuite(FSDTMLMethodCustomizationTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(FSDTMLMethodTests),
+        unittest.makeSuite(FSDTMLMethodCustomizationTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

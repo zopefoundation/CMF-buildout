@@ -17,7 +17,6 @@ $Id$
 
 from warnings import warn
 
-from Globals import HTMLFile
 from Globals import InitializeClass
 
 from Products.CMFCore.PortalObject import PortalObjectBase
@@ -64,9 +63,8 @@ factory_type_information = ( Document.factory_type_information
                            )
 
 
-class CMFSite ( PortalObjectBase
-              , DefaultDublinCoreImpl
-              ):
+class CMFSite(PortalObjectBase, DefaultDublinCoreImpl):
+
     """
         The *only* function this class should have is to help in the setup
         of a new CMFSite.  It should not assist in the functionality at all.

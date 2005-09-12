@@ -15,21 +15,17 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
-from AccessControl.User import UnrestrictedUser
 from Acquisition import aq_base
-import transaction
 
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 
 
-class PortalContentTests(TestCase):
+class PortalContentTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -113,10 +109,10 @@ class TestContentCopyPaste(SecurityRequestTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(PortalContentTests),
-        makeSuite(TestContentCopyPaste),
+    return unittest.TestSuite((
+        unittest.makeSuite(PortalContentTests),
+        unittest.makeSuite(TestContentCopyPaste),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

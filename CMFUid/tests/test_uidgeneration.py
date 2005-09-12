@@ -15,15 +15,11 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from BTrees.Length import Length
 from Interface.Verify import verifyObject
-
-from Products.CMFCore.tests.base.dummy import DummyContent
 
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
@@ -36,18 +32,18 @@ class UniqueIdGeneratorTests(SecurityTest):
     def setUp(self):
         SecurityTest.setUp(self)
         self.root._setObject('portal_uidgenerator', UniqueIdGeneratorTool())
-    
+
     def test_interface(self):
         generator = self.root.portal_uidgenerator
         verifyObject(IUniqueIdGenerator, generator)
-        
+
     def test_returnedUidsAreValidAndDifferent(self):
         generator = self.root.portal_uidgenerator
         uid1 = generator()
         uid2 = generator()
         self.failIfEqual(uid1, uid2)
         self.failIfEqual(uid1, None)
-        
+
     def test_converter(self):
         generator = self.root.portal_uidgenerator
         uid = generator()
@@ -67,10 +63,11 @@ class UniqueIdGeneratorTests(SecurityTest):
         self.failUnless(isinstance(generator._uid_counter, int))
         self.failIfEqual(uid1, uid2)
 
+
 def test_suite():
-    return TestSuite((
-        makeSuite(UniqueIdGeneratorTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(UniqueIdGeneratorTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

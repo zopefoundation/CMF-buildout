@@ -20,24 +20,25 @@ $Id$
 import Missing
 
 import zLOG
-from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
-from Acquisition import Implicit, aq_base
-
+from Acquisition import aq_base
+from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 
-from Products.CMFCore.utils import getToolByName, UniqueObject
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.permissions import ManagePortal
+from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import UniqueObject
 
-from Products.CMFUid.interfaces import IUniqueIdHandler
 from Products.CMFUid.interfaces import IUniqueIdBrainQuery
+from Products.CMFUid.interfaces import IUniqueIdHandler
 from Products.CMFUid.interfaces import IUniqueIdUnrestrictedQuery
 from Products.CMFUid.interfaces import UniqueIdError
 
 UID_ATTRIBUTE_NAME = 'cmf_uid'
 
 class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
+
     __doc__ = __doc__ # copy from module
 
     __implements__ = (
@@ -51,16 +52,16 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
     id = 'portal_uidhandler'
     alternative_id = "portal_standard_uidhandler"
     meta_type = 'Unique Id Handler Tool'
-    
+
     # make the uid attribute name available for the unit tests
     # not meant to be altered as long you don't know what you do!!!
     UID_ATTRIBUTE_NAME = UID_ATTRIBUTE_NAME
-    
+
     # make the exception class available through the tool
     UniqueIdError = UniqueIdError
-    
+
     security = ClassSecurityInfo()
-    
+
     def _reindexObject(self, obj):
         # add uid index and colums to catalog if not yet done
         UID_ATTRIBUTE_NAME = self.UID_ATTRIBUTE_NAME
@@ -68,7 +69,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         if UID_ATTRIBUTE_NAME not in catalog.indexes():
             catalog.addIndex(UID_ATTRIBUTE_NAME, 'FieldIndex')
             catalog.addColumn(UID_ATTRIBUTE_NAME)
-        
+
         # reindex
         catalog.reindexObject(obj)
 
@@ -79,7 +80,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         anno_tool = getToolByName(self, 'portal_uidannotation')
         annotation = anno_tool(obj, self.UID_ATTRIBUTE_NAME)
         annotation.setUid(uid)
-        
+
         # reindex the object
         self._reindexObject(obj)
 
@@ -93,9 +94,9 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
             generator = getToolByName(self, 'portal_uidgenerator')
             uid = generator()
             self._setUid(obj, uid)
-            
+
         return uid
-    
+
     security.declareProtected(ManagePortal, 'unregister')
     def unregister(self, obj):
         """See IUniqueIdSet.
@@ -104,26 +105,25 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         if getattr(aq_base(obj), UID_ATTRIBUTE_NAME, None) is None:
             raise UniqueIdError, \
                   "No unique id available to be unregistered on '%s'" % obj
-            
+
         # delete the uid and reindex
         delattr(obj, UID_ATTRIBUTE_NAME)
         self._reindexObject(obj)
-    
-    
+
     security.declarePublic('queryUid')
     def queryUid(self, obj, default=None):
         """See IUniqueIdQuery.
         """
         uid = getattr(aq_base(obj), self.UID_ATTRIBUTE_NAME, None)
         # If 'obj' is a content object the 'uid' attribute is usually a
-        # callable object. If 'obj' is a catalog brain the uid attribute 
+        # callable object. If 'obj' is a catalog brain the uid attribute
         # is non callable and possibly equals the 'Missing.MV' value.
         if uid is Missing.MV or uid is None:
             return default
         if callable(uid):
             return uid()
         return uid
-    
+
     security.declarePublic('getUid')
     def getUid(self, obj):
         """See IUniqueIdQuery.
@@ -132,7 +132,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         if uid is None:
             raise UniqueIdError, "No unique id available on '%s'" % obj
         return uid
-    
+
     security.declarePrivate('setUid')
     def setUid(self, obj, uid, check_uniqueness=True):
         """See IUniqueIdSet.
@@ -140,7 +140,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         # None is the only value a unique id shall never have!
         if uid is None:
             raise UniqueIdError, "It's forbidden to set a unique id to 'None'."
-        
+
         # check for uniqueness if enabled
         if check_uniqueness:
             result = self.queryObject(uid)
@@ -149,21 +149,21 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
                     uid = uid()
                 raise UniqueIdError, \
                       "The unique id '%s' is already in use" % uid
-        
+
         # everything is ok: set it!
         self._setUid(obj, uid)
-    
+
     def _queryBrain(self, uid, searchMethodName, default=None):
         """This helper method does the "hard work" of querying the catalog
            and interpreting the results.
         """
         if uid is None:
             return default
-        
+
         # convert the uid to the right format
         generator = getToolByName(self, 'portal_uidgenerator')
         uid = generator.convert(uid)
-        
+
         catalog = getToolByName(self, 'portal_catalog')
         searchMethod = getattr(catalog, searchMethodName)
         result = searchMethod({self.UID_ATTRIBUTE_NAME: uid})
@@ -179,21 +179,21 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
             zLOG.LOG("CMUid ASSERT:", zLOG.INFO,
                      "Uups, %s objects have '%s' as uid!!!" % \
                      (len_result, uid))
-        
+
         return result[0]
-    
+
     security.declarePublic('queryBrain')
     def queryBrain(self, uid, default=None):
         """See IUniqueIdBrainQuery.
         """
         return self._queryBrain(uid, 'searchResults', default)
-        
+
     def _getBrain(self, uid, queryBrainMethod):
         brain = queryBrainMethod(uid, default=None)
         if brain is None:
             raise UniqueIdError, "No object found with '%s' as uid." % uid
         return brain
-    
+
     security.declarePublic('getBrain')
     def getBrain(self, uid):
         """See IUniqueIdBrainQuery.
@@ -214,25 +214,25 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
             return self.getObject(uid)
         except UniqueIdError:
             return default
-    
+
     security.declarePrivate('unrestrictedQueryBrain')
     def unrestrictedQueryBrain(self, uid, default=None):
         """See IUniqueIdUnrestrictedQuery.
         """
         return self._queryBrain(uid, 'unrestrictedSearchResults', default)
-        
+
     security.declarePrivate('unrestrictedGetBrain')
     def unrestrictedGetBrain(self, uid):
         """See IUniqueIdUnrestrictedQuery.
         """
         return self._getBrain(uid, self.unrestrictedQueryBrain)
-        
+
     security.declarePrivate('unrestrictedGetObject')
     def unrestrictedGetObject(self, uid):
         """See IUniqueIdUnrestrictedQuery.
         """
         return self.unrestrictedGetBrain(uid).getObject()
-    
+
     security.declarePrivate('unrestrictedQueryObject')
     def unrestrictedQueryObject(self, uid, default=None):
         """See IUniqueIdUnrestrictedQuery.
@@ -241,5 +241,5 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
             return self.unrestrictedGetObject(uid)
         except UniqueIdError:
             return default
-    
+
 InitializeClass(UniqueIdHandlerTool)

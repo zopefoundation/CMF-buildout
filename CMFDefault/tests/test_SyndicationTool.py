@@ -1,11 +1,33 @@
-from unittest import TestCase, TestSuite, makeSuite, main
+##############################################################################
+#
+# Copyright (c) 2005 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+""" Unit tests for SyndicationTool module.
+
+$Id$
+"""
+
+import unittest
+import Testing
 
 from DateTime.DateTime import DateTime
+
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
+
 class Dummy:
+
     def getId(self):
         return 'dummy'
+
 
 class SyndicationToolTests(SecurityTest):
 
@@ -171,10 +193,9 @@ class SyndicationToolTests(SecurityTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(SyndicationToolTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(SyndicationToolTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
-
+    unittest.main(defaultTest='test_suite')

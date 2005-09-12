@@ -21,17 +21,16 @@ from interfaces import BASE, EXTENSION
 from permissions import ManagePortal
 from registry import _profile_registry as profile_registry
 
+
 security = ModuleSecurityInfo( 'Products.CMFSetup' )
 security.declareProtected( ManagePortal, 'profile_registry' )
 
 def initialize( context ):
 
-    from Products.CMFCore.utils import ToolInit, registerIcon
+    from Products.CMFCore.utils import ToolInit
     from tool import SetupTool
-
 
     ToolInit( 'CMF Setup Tool'
             , tools=[ SetupTool ]
             , icon='www/tool.png'
             ).initialize( context )
-

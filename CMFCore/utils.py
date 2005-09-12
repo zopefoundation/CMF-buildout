@@ -320,13 +320,15 @@ def _modifyPermissionMappings(ob, map):
 # Parse a string of etags from an If-None-Match header
 # Code follows ZPublisher.HTTPRequest.parse_cookie
 parse_etags_lock=allocate_lock()
-def parse_etags(text,
-                result=None,
-                etagre_quote = re.compile('(\s*\"([^\"]*)\"\s*,{0,1})'), # quoted etags (assumed separated by whitespace + a comma)
-                etagre_noquote = re.compile('(\s*([^,]*)\s*,{0,1})'),    # non-quoted etags (assumed separated by whitespace + a comma)
-                acquire=parse_etags_lock.acquire,
-                release=parse_etags_lock.release,
-                ):
+def parse_etags( text
+               , result=None
+                # quoted etags (assumed separated by whitespace + a comma)
+               , etagre_quote = re.compile('(\s*\"([^\"]*)\"\s*,{0,1})')
+                # non-quoted etags (assumed separated by whitespace + a comma)
+               , etagre_noquote = re.compile('(\s*([^,]*)\s*,{0,1})')
+               , acquire=parse_etags_lock.acquire
+               , release=parse_etags_lock.release
+               ):
 
     if result is None: result=[]
     if not len(text):
@@ -422,15 +424,20 @@ def _checkConditionalGET(obj, extra_context):
         return False
 
     if if_modified_since:
-        if not content_mod_time or mod_time_secs < 0 or mod_time_secs > if_modified_since:
+        if ( not content_mod_time or 
+             mod_time_secs < 0 or 
+             mod_time_secs > if_modified_since ):
             return False
         
     if client_etags:
-        if not content_etag or (content_etag not in client_etags and '*' not in client_etags):
+        if ( not content_etag or 
+             (content_etag not in client_etags and '*' not in client_etags) ):
             return False
     else:
-        # If we generate an ETag, don't validate the conditional GET unless the client supplies an ETag
-        # This may be more conservative than the spec requires, but we are already _way_ more conservative.
+        # If we generate an ETag, don't validate the conditional GET unless 
+        # the client supplies an ETag
+        # This may be more conservative than the spec requires, but we are 
+        # already _way_ more conservative.
         if content_etag:
             return False
 

@@ -17,14 +17,18 @@ Provides support for accessing unique ids on content object.
 $Id$
 """
 
+import os
+
 import Missing
 
 import zLOG
 from Globals import InitializeClass
+from Globals import package_home
 from AccessControl import ClassSecurityInfo
 from Acquisition import Implicit, aq_base
 
 from OFS.SimpleItem import SimpleItem
+from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 from Products.CMFCore.utils import getToolByName, UniqueObject
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
@@ -36,6 +40,8 @@ from Products.CMFUid.interfaces import IUniqueIdUnrestrictedQuery
 from Products.CMFUid.interfaces import UniqueIdError
 
 UID_ATTRIBUTE_NAME = 'cmf_uid'
+
+_wwwdir = os.path.join( package_home( globals() ), 'www' )
 
 class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
     __doc__ = __doc__ # copy from module
@@ -49,6 +55,15 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
     )
 
     id = 'portal_uidhandler'
+
+    manage_options = ( ActionProviderBase.manage_options
+                     + ( {'label':'Query',
+                          'action':'manage_queryObject'}
+                       ,
+                       )
+                     + SimpleItem.manage_options
+                     )
+
     alternative_id = "portal_standard_uidhandler"
     meta_type = 'Unique Id Handler Tool'
     
@@ -60,7 +75,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
     UniqueIdError = UniqueIdError
     
     security = ClassSecurityInfo()
-    
+
     def _reindexObject(self, obj):
         # add uid index and colums to catalog if not yet done
         UID_ATTRIBUTE_NAME = self.UID_ATTRIBUTE_NAME
@@ -241,5 +256,8 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
             return self.unrestrictedGetObject(uid)
         except UniqueIdError:
             return default
-    
+
+    security.declareProtected(ManagePortal, 'manage_queryObject')
+    manage_queryObject = PageTemplateFile('queryUID.pt', _wwwdir)
+ 
 InitializeClass(UniqueIdHandlerTool)

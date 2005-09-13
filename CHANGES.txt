@@ -10,6 +10,9 @@ After CMF 1.5.4
 
   Others
 
+    - Collector #383:  Added tab to 'portal_uidhandler' tool to allow
+      querying objects given UID.
+
     - CMFCatalogAware: refactoring. Defines now 2 methods,
       _getCatalogTool() and _getWorkflowTool(), that are used to find
       the catalog and workflow tool. It's now possible to override

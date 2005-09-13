@@ -8,6 +8,21 @@ After CMF 1.5.4
       in the list of events for the day starting at midnight.
       (http://www.zope.org/Collectors/CMF/246)
 
+  Features
+
+    - CMFCore.CachingPolicyManager: Caching policies can now control all the 
+      Cache-Control tokens defined in the HTTP 1.1 spec (s-maxage, public, 
+      private, no-transform).  When no-cache is enabled, a Pragma: no-cache 
+      header is also sent for HTTP 1.0 clients. Thanks go to Geoff Davis
+      for contributing the necessary patches.
+
+    - CMFCore.FSPageTemplate:  These now have the option to return a status 
+      304 and no content when a conditional GET is sent.  This is a potential 
+      significant win for sites. This behavior is activated on the
+      CachingPolicyManager by using policies that set suitable ETag headers
+      when delivering the content. Geoff Davis invested the time to add
+      this feature.
+
   Others
 
     - Collector #383:  Added tab to 'portal_uidhandler' tool to allow

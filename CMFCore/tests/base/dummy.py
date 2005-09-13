@@ -49,6 +49,32 @@ class DummyObject(Implicit):
         return self._id
 
 
+class DummyType(DummyObject):
+    """ A Dummy Type object """
+
+    def __init__(self, id='Dummy Content', title='Dummy Content', actions=()):
+        """ To fake out some actions, pass in a sequence of tuples where the
+        first element represents the ID or alias of the action and the
+        second element is the path to the object to be invoked, such as 
+        a page template.
+        """
+
+        self.id = id
+        self.title = title
+        self._actions = {}
+
+        self._setActions(actions)
+
+    def _setActions(self, actions=()):
+        for action_id, action_path in actions:
+            self._actions[action_id] = action_path
+
+    def Title(self):
+        return self.title
+
+    def queryMethodID(self, alias, default=None, context=None):
+        return self._actions.get(alias, default)
+
 class DummyContent( PortalContent, Item ):
     """
     A Dummy piece of PortalContent
@@ -277,11 +303,13 @@ class DummyTool(Implicit,ActionProviderBase):
     Action Provider
     """
 
-    _actions = ( DummyObject()
-               , DummyObject()
-               )
-
     root = 'DummyTool'
+
+    view_actions = ( ('', 'dummy_view')
+                   , ('view', 'dummy_view')
+                   , ('(Default)', 'dummy_view')
+                   )
+
 
     def __init__(self, anon=1):
         self.anon = anon
@@ -309,10 +337,12 @@ class DummyTool(Implicit,ActionProviderBase):
 
     # TypesTool
     def listTypeInfo(self, container=None):
-        return ( DummyObject('Dummy Content'), )
+        typ = 'Dummy Content'
+        return ( DummyType(typ, title=typ, actions=self.view_actions), )
 
     def getTypeInfo(self, contentType):
-        return ( DummyObject('Dummy Content'), )
+        typ = 'Dummy Content'
+        return DummyType(typ, title=typ, actions=self.view_actions)
 
     # WorkflowTool
     test_notified = None

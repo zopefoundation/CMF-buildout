@@ -96,6 +96,10 @@ class CachingPolicy:
             the "Cache-control" header will be set using 'max_age_secs',
             if passed;  it should be an integer value in seconds.
 
+          - The "s-maxage" token of the "Cache-control" header will be
+            set using 's_max_age_secs', if passed;  it should be an integer
+            value in seconds.
+
           - The "Vary" HTTP response headers will be set if a value is 
             provided. The Vary header is described in RFC 2616. In essence,
             it instructs caches that respect this header (such as Squid
@@ -117,6 +121,14 @@ class CachingPolicy:
              'no_store=1' argument => "no-store" token
 
              'must_revalidate=1' argument => "must-revalidate" token
+
+             'proxy_revalidate=1' argument => "proxy-revalidate" token
+             
+             'public=1' argument => "public" token
+             
+             'private=1' argument => "private" token
+
+             'no_transform=1' argument => "no-transform" token
     """
 
     def __init__( self
@@ -129,6 +141,12 @@ class CachingPolicy:
                 , must_revalidate=0
                 , vary=''
                 , etag_func=''
+                , s_max_age_secs=None
+                , proxy_revalidate=0
+                , public=0
+                , private=0
+                , no_transform=0
+                , enable_304s=0
                 ):
 
         if not predicate:
@@ -140,15 +158,24 @@ class CachingPolicy:
         if max_age_secs is not None:
             max_age_secs = int( max_age_secs )
 
+        if s_max_age_secs is not None:
+            s_max_age_secs = int( s_max_age_secs )
+
         self._policy_id = policy_id
         self._predicate = Expression( text=predicate )
         self._mtime_func = Expression( text=mtime_func )
         self._max_age_secs = max_age_secs
+        self._s_max_age_secs = s_max_age_secs
         self._no_cache = int( no_cache )
         self._no_store = int( no_store )
         self._must_revalidate = int( must_revalidate )
+        self._proxy_revalidate = int( proxy_revalidate )
+        self._public = int( public )
+        self._private = int( private )
+        self._no_transform = int( no_transform )
         self._vary = vary
         self._etag_func = Expression( text=etag_func )
+        self._enable_304s = int ( enable_304s )
 
     def getPolicyId( self ):
         """
@@ -170,6 +197,11 @@ class CachingPolicy:
         """
         return self._max_age_secs
 
+    def getSMaxAgeSecs( self ):
+        """
+        """
+        return getattr(self, '_s_max_age_secs', None)
+
     def getNoCache( self ):
         """
         """
@@ -184,6 +216,26 @@ class CachingPolicy:
         """
         """
         return self._must_revalidate
+
+    def getProxyRevalidate( self ):
+        """
+        """
+        return getattr(self, '_proxy_revalidate', 0)
+
+    def getPublic( self ):
+        """
+        """
+        return getattr(self, '_public', 0)
+
+    def getPrivate( self ):
+        """
+        """
+        return getattr(self, '_private', 0)
+
+    def getNoTransform( self ):
+        """
+        """
+        return getattr(self, '_no_transform', 0)
 
     def getVary( self ):
         """
@@ -201,6 +253,15 @@ class CachingPolicy:
 
         return etag_func_text
 
+    def getEnable304s(self):
+        """
+        """
+        return getattr(self, '_enable_304s', 0)
+
+    def testPredicate(self, expr_context):
+        """ Does this request match our predicate?"""
+        return self._predicate(expr_context)
+
     def getHeaders( self, expr_context ):
         """
             Does this request match our predicate?  If so, return a
@@ -209,7 +270,7 @@ class CachingPolicy:
         """
         headers = []
 
-        if self._predicate( expr_context ):
+        if self.testPredicate( expr_context ):
 
             mtime = self._mtime_func( expr_context )
 
@@ -223,20 +284,37 @@ class CachingPolicy:
 
             control = []
 
-            if self._max_age_secs is not None:
+            if self.getMaxAgeSecs() is not None:
                 now = expr_context.vars[ 'time' ]
                 exp_time_str = rfc1123_date(now.timeTime() + self._max_age_secs)
                 headers.append( ( 'Expires', exp_time_str ) )
                 control.append( 'max-age=%d' % self._max_age_secs )
+                
+            if self.getSMaxAgeSecs() is not None:
+                control.append( 's-maxage=%d' % self._s_max_age_secs )
 
-            if self._no_cache:
+            if self.getNoCache():
                 control.append( 'no-cache' )
+                # The following is for HTTP 1.0 clients
+                headers.append(('Pragma', 'no-cache'))
 
-            if self._no_store:
+            if self.getNoStore():
                 control.append( 'no-store' )
 
-            if self._must_revalidate:
+            if self.getPublic():
+                control.append( 'public' )
+
+            if self.getPrivate():
+                control.append( 'private' )
+
+            if self.getMustRevalidate():
                 control.append( 'must-revalidate' )
+
+            if self.getProxyRevalidate():
+                control.append( 'proxy-revalidate' )
+
+            if self.getNoTransform():
+                control.append( 'no-transform' )
 
             if control:
                 headers.append( ( 'Cache-control', ', '.join( control ) ) )
@@ -248,6 +326,7 @@ class CachingPolicy:
                 headers.append( ( 'ETag', self._etag_func( expr_context ) ) )
 
         return headers
+
 
 
 class CachingPolicyManager( SimpleItem ):
@@ -297,19 +376,30 @@ class CachingPolicyManager( SimpleItem ):
     security.declareProtected( ManagePortal, 'addPolicy' )
     def addPolicy( self
                  , policy_id
-                 , predicate        # TALES expr (def. 'python:1')
-                 , mtime_func       # TALES expr (def. 'object/modified')
-                 , max_age_secs     # integer, seconds (def. 0)
-                 , no_cache         # boolean (def. 0)
-                 , no_store         # boolean (def. 0)
-                 , must_revalidate  # boolean (def. 0)
-                 , vary             # string value
-                 , etag_func        # TALES expr (def. '')
+                 , predicate           # TALES expr (def. 'python:1')
+                 , mtime_func          # TALES expr (def. 'object/modified')
+                 , max_age_secs        # integer, seconds (def. 0)
+                 , no_cache            # boolean (def. 0)
+                 , no_store            # boolean (def. 0)
+                 , must_revalidate     # boolean (def. 0)
+                 , vary                # string value
+                 , etag_func           # TALES expr (def. '')
                  , REQUEST=None
+                 , s_max_age_secs=None # integer, seconds (def. None)
+                 , proxy_revalidate=0  # boolean (def. 0)
+                 , public=0            # boolean (def. 0)
+                 , private=0           # boolean (def. 0)
+                 , no_transform=0      # boolean (def. 0)
+                 , enable_304s=0       # boolean (def. 0)
                  ):
         """
             Add a caching policy.
         """
+        if s_max_age_secs is None or str(s_max_age_secs).strip() == '':
+            s_max_age_secs = None
+        else:
+            s_max_age_secs = int(s_max_age_secs)
+
         self._addPolicy( policy_id
                        , predicate
                        , mtime_func
@@ -319,6 +409,12 @@ class CachingPolicyManager( SimpleItem ):
                        , must_revalidate
                        , vary
                        , etag_func
+                       , s_max_age_secs
+                       , proxy_revalidate
+                       , public
+                       , private
+                       , no_transform
+                       , enable_304s
                        )
         if REQUEST is not None: 
             REQUEST[ 'RESPONSE' ].redirect( self.absolute_url()
@@ -330,19 +426,30 @@ class CachingPolicyManager( SimpleItem ):
     security.declareProtected( ManagePortal, 'updatePolicy' )
     def updatePolicy( self
                     , policy_id
-                    , predicate         # TALES expr (def. 'python:1')
-                    , mtime_func        # TALES expr (def. 'object/modified')
-                    , max_age_secs      # integer, seconds
-                    , no_cache          # boolean (def. 0)
-                    , no_store          # boolean (def. 0)
-                    , must_revalidate   # boolean (def. 0)
-                    , vary              # string value
-                    , etag_func         # TALES expr (def. '')
+                    , predicate           # TALES expr (def. 'python:1')
+                    , mtime_func          # TALES expr (def. 'object/modified')
+                    , max_age_secs        # integer, seconds (def. 0)
+                    , no_cache            # boolean (def. 0)
+                    , no_store            # boolean (def. 0)
+                    , must_revalidate     # boolean (def. 0)
+                    , vary                # string value
+                    , etag_func           # TALES expr (def. '')
                     , REQUEST=None
+                    , s_max_age_secs=None # integer, seconds (def. 0)
+                    , proxy_revalidate=0  # boolean (def. 0)
+                    , public=0            # boolean (def. 0)
+                    , private=0           # boolean (def. 0)
+                    , no_transform=0      # boolean (def. 0)
+                    , enable_304s=0       # boolean (def. 0)
                     ):
         """
             Update a caching policy.
         """
+        if s_max_age_secs is None or str(s_max_age_secs).strip() == '':
+            s_max_age_secs = None
+        else:
+            s_max_age_secs = int(s_max_age_secs)
+
         self._updatePolicy( policy_id
                           , predicate
                           , mtime_func
@@ -352,6 +459,12 @@ class CachingPolicyManager( SimpleItem ):
                           , must_revalidate
                           , vary
                           , etag_func
+                          , s_max_age_secs
+                          , proxy_revalidate
+                          , public
+                          , private
+                          , no_transform
+                          , enable_304s
                           )
         if REQUEST is not None: 
             REQUEST[ 'RESPONSE' ].redirect( self.absolute_url()
@@ -422,6 +535,12 @@ class CachingPolicyManager( SimpleItem ):
                   , must_revalidate
                   , vary
                   , etag_func
+                  , s_max_age_secs=None
+                  , proxy_revalidate=0
+                  , public=0
+                  , private=0
+                  , no_transform=0
+                  , enable_304s=0
                   ):
         """
             Add a policy to our registry.
@@ -443,6 +562,12 @@ class CachingPolicyManager( SimpleItem ):
                                                    , must_revalidate
                                                    , vary
                                                    , etag_func
+                                                   , s_max_age_secs
+                                                   , proxy_revalidate
+                                                   , public
+                                                   , private
+                                                   , no_transform
+                                                   , enable_304s
                                                    )
         idlist = list( self._policy_ids )
         idlist.append( policy_id )
@@ -459,6 +584,12 @@ class CachingPolicyManager( SimpleItem ):
                      , must_revalidate
                      , vary
                      , etag_func
+                     , s_max_age_secs=None
+                     , proxy_revalidate=0
+                     , public=0
+                     , private=0
+                     , no_transform=0
+                     , enable_304s=0
                      ):
         """
             Update a policy in our registry.
@@ -475,6 +606,12 @@ class CachingPolicyManager( SimpleItem ):
                                                    , must_revalidate
                                                    , vary
                                                    , etag_func
+                                                   , s_max_age_secs
+                                                   , proxy_revalidate
+                                                   , public
+                                                   , private
+                                                   , no_transform
+                                                   , enable_304s
                                                    )
 
     security.declarePrivate( '_reorderPolicy' )
@@ -524,6 +661,31 @@ class CachingPolicyManager( SimpleItem ):
                 return headers
 
         return ()
+
+    security.declareProtected( View, 'getModTimeAndETag' )
+    def getModTimeAndETag( self, content, view_method, keywords, time=None):
+        """ Return the modification time and ETag for the content object,
+            view method, and keywords as the tuple (modification_time, etag)
+            (where modification_time is a DateTime) or None.
+        """
+        context = createCPContext( content, view_method, keywords, time=time )
+        for policy_id, policy in self.listPolicies():
+            if policy.getEnable304s() and policy.testPredicate(context):
+                headers = policy.getHeaders(context)
+                if headers:
+                    content_etag = None
+                    content_mod_time = None
+                    for key, value in headers:
+                        lk = key.lower()
+                        if lk == 'etag':
+                            content_etag = value
+                        elif lk == 'last-modified':
+                            last_modified = DateTime(value)
+                    return (last_modified, content_etag)
+        return None
+
+
+
 
 InitializeClass( CachingPolicyManager )
 

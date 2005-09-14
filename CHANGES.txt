@@ -25,6 +25,9 @@ After CMF 1.5.4
 
   Others
 
+    - Collectors #384:  Added '__traceback_info__' to FSDTMLMethod's
+      call-stack etnry.
+
     - Collector #383:  Added tab to 'portal_uidhandler' tool to allow
       querying objects given UID.
 

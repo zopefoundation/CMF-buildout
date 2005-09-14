@@ -121,6 +121,7 @@ class FSDTMLMethod(RestrictedDTML, RoleManager, FSObject, Globals.HTML):
         kw['document_id']   =self.getId()
         kw['document_title']=self.title
 
+        __traceback_info__ = self._filepath
         security=getSecurityManager()
         security.addContext(self)
         try:

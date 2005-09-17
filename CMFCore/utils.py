@@ -399,6 +399,9 @@ def _checkConditionalGET(obj, extra_context):
         return False
 
     manager = getToolByName(obj, 'caching_policy_manager', None)
+    if manager is None:
+        return False
+
     ret = manager.getModTimeAndETag(aq_parent(obj), obj.getId(), extra_context)
     if ret is None:
         # no appropriate policy or 304s not enabled

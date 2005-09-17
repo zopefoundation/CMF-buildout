@@ -25,11 +25,17 @@ from Products.CMFCore.tests.base.testcase import TransactionalTest
 
 class MembershipTests( TransactionalTest ):
 
-    def test_join( self ):
+    def _makePortal(self):
+        # Create a portal instance suitable for testing
         factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
         factory('site', 'CMFDefault:default', snapshot=False)
-        site = self.root.site
+
+        return self.root.site
+
+    def test_join( self ):
+        site = self._makePortal()
         member_id = 'test_user'
+
         site.portal_registration.addMember( member_id
                                           , 'zzyyzz'
                                           , properties={ 'username': member_id
@@ -39,10 +45,27 @@ class MembershipTests( TransactionalTest ):
         u = site.acl_users.getUser(member_id)
         self.failUnless(u)
 
+    def test_join_memberproperties(self):
+        # Make sure the member data wrapper carries correct properties
+        # after joining
+        site = self._makePortal()
+        member_id = 'test_user'
+
+        site.portal_registration.addMember( member_id
+                                          , 'zzyyzz'
+                                          , properties={ 'username': member_id
+                                                       , 'email' : 'foo@bar.com'
+                                                       }
+                                          )
+
+        m = site.portal_membership.getMemberById('test_user')
+        self.assertEqual(m.getProperty('email'), 'foo@bar.com')
+        self.assertEqual(m.getMemberId(), member_id)
+        self.assertEqual(m.getRoles(), ('Member', 'Authenticated'))
+
     def test_join_without_email( self ):
-        factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
-        factory('site', 'CMFDefault:default', snapshot=False)
-        site = self.root.site
+        site = self._makePortal()
+
         self.assertRaises(ValueError,
                           site.portal_registration.addMember,
                           'test_user',
@@ -51,9 +74,7 @@ class MembershipTests( TransactionalTest ):
                           )
 
     def test_join_with_variable_id_policies( self ):
-        factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
-        factory('site', 'CMFDefault:default', snapshot=False)
-        site = self.root.site
+        site = self._makePortal()
         member_id = 'test.user'
 
         # Test with the default policy: Names with "." should fail
@@ -67,7 +88,6 @@ class MembershipTests( TransactionalTest ):
                           )
 
         # Now change the policy to allow "."
-        #import pdb; pdb.set_trace()
         new_pattern = "^[A-Za-z][A-Za-z0-9_\.]*$"
         site.portal_registration.manage_editIDPattern(new_pattern)
         site.portal_registration.addMember( member_id

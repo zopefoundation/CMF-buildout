@@ -76,6 +76,11 @@ HEAD only (unreleased)
 
   Others
 
+    - Refactored and extended CMFDefault.tests.test_join so it can be easily 
+      subclassed and reused for alternative membership implementations. All
+      that is needed is to ovverride _createPortal to return a portal with
+      the desired non-default membership-related tools installed.
+
     - Remove all "old-style" actions from tools that still carried them 
       (CMFDefault.MembershipTool, CMFDefault.PropertiesTool, 
       CMFDefault.RegistrationTool, CMFDefault.SyndicationTool,

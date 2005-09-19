@@ -175,14 +175,12 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
         """ Delete data contents of all members not listet in acl_users.
         """
         membertool= getToolByName(self, 'portal_membership')
-        members   = self._members
+        members = self._members
         user_list = membertool.listMemberIds()
 
-        for tuple in members.items():
-            member_name = tuple[0]
-            member_obj  = tuple[1]
-            if member_name not in user_list:
-                del members[member_name]
+        for member_id in list(members.keys()):
+            if member_id not in user_list:
+                del members[member_id]
 
     security.declarePrivate('wrapUser')
     def wrapUser(self, u):

@@ -2,6 +2,9 @@ After CMF 1.4.8
 
   Bug Fixes
 
+    - CMFCore.MemberDataTool: Fixed the pruneMemberData functionality in the
+      ZMI: Now it is enough to press the button once.
+
     - DCWorkflow Guard check now uses utils._checkPermission instead of Zope's
       checkPermission (allows using proxy roles)
 

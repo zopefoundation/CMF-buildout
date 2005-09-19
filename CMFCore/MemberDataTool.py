@@ -139,14 +139,12 @@ class MemberDataTool (UniqueObject, SimpleItem, PropertyManager, ActionProviderB
         and delete anything not in acl_users
         '''
         membertool= getToolByName(self, 'portal_membership')
-        members   = self._members
+        members = self._members
         user_list = membertool.listMemberIds()
 
-        for tuple in members.items():
-            member_name = tuple[0]
-            member_obj  = tuple[1]
-            if member_name not in user_list:
-                del members[member_name]
+        for member_id in list(members.keys()):
+            if member_id not in user_list:
+                del members[member_id]
 
     security.declarePrivate('wrapUser')
     def wrapUser(self, u):
@@ -187,6 +185,17 @@ class MemberDataTool (UniqueObject, SimpleItem, PropertyManager, ActionProviderB
         entries.
         '''
         self._members[id] = aq_base(m)
+
+    security.declarePrivate('deleteMemberData')
+    def deleteMemberData(self, member_id):
+        """ Delete member data of specified member.
+        """
+        members = self._members
+        if members.has_key(member_id):
+            del members[member_id]
+            return 1
+        else:
+            return 0
 
 InitializeClass(MemberDataTool)
 

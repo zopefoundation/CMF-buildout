@@ -2,6 +2,9 @@ After CMF 1.5.4
 
   Bug Fixes
 
+    - CMFCore.MemberDataTool: Fixed the pruneMemberData functionality in the
+      ZMI: Now it is enough to press the button once.
+
     - Collector #381:  CMFCore unit tests depended on CMFDefault / workflow.
 
     - CalendarTool: If an event ends at exactly midnight, don't show it

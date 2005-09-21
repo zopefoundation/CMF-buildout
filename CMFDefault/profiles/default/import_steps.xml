@@ -1,5 +1,19 @@
 <?xml version="1.0"?>
 <import-steps>
+ <import-step id="cookie_authentication" version="20050903-01"
+              handler="Products.CMFSetup.cookieauth.importCookieCrumbler"
+              title="Cookie Authentication">
+  <dependency step="toolset"/>
+  
+  
+  
+  Import cookie crumbler settings
+ 
+ 
+  
+ 
+ </import-step>
+
  <import-step id="actions" version="20040630-01"
               handler="Products.CMFSetup.actions.importActionProviders"
               title="Action Providers">
@@ -97,6 +111,19 @@
   
   
   Import workflow tool's workflow definitions and supporting scripts.
+ 
+ 
+  
+ 
+ </import-step>
+ <import-step id="mailhost" version="20050803-01"
+              handler="Products.CMFSetup.mailhost.importMailHost"
+              title="MailHost">
+  <dependency step="toolset"/>
+  
+  
+  
+  Import mailhost settings
  
  
   

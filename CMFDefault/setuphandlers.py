@@ -37,9 +37,7 @@ def importVarious(context):
         return 'Various settings: Nothing to import.'
 
     gen = PortalGenerator()
-    gen.setupMailHost(site)
     gen.setupUserFolder(site)
-    gen.setupCookieAuth(site)
     gen.setupMembersFolder(site)
     gen.setupMimetypes(site)
 

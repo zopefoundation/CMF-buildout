@@ -82,11 +82,11 @@ CMFSetup Product README
 
             o action title / icon bindings
 
-      - (_) 'cookie_authentication'
+      - (x) 'cookie_authentication'
 
             o tool properties
 
-      - (_) 'MailHost'
+      - (x) 'MailHost'
 
             o tool properties
 

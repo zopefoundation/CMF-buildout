@@ -1,5 +1,16 @@
 <?xml version="1.0"?>
 <export-steps>
+ <export-step id="cookieauth"
+              handler="Products.CMFSetup.cookieauth.exportCookieCrumbler"
+              title="Cookie Authentication">
+  
+  
+  
+  Export cookie crumbler settings
+ 
+ 
+ 
+ </export-step>
  <export-step id="actions"
               handler="Products.CMFSetup.actions.exportActionProviders"
               title="Action Providers">
@@ -88,4 +99,17 @@
  
  
  </export-step>
+
+ <export-step id="mailhost"
+              handler="Products.CMFSetup.mailhost.exportMailHost"
+              title="MailHost">
+  
+  
+  
+  Export the mailhost's settings and properties
+ 
+ 
+ 
+ </export-step>
+
 </export-steps>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<mailhost xmlns:tal="http://xml.zope.org/namespaces/tal"
+          id="some_id"
+          tal:define="mh_info here/getMailHostInfo"
+          tal:attributes="xmlns:i18n string:http://xml.zope.org/namespaces/i18n;
+                          i18n:domain mh_info/i18n_domain;
+                          id mh_info/id;
+                          smtp_host mh_info/smtp_host;
+                          smtp_port mh_info/smtp_port;
+                          smtp_uid mh_info/smtp_uid;
+                          smtp_pwd mh_info/smtp_pwd;" />
+

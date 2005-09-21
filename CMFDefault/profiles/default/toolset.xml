@@ -29,4 +29,8 @@
            class="Products.CMFCore.URLTool.URLTool"/>
  <required tool_id="portal_workflow"
            class="Products.CMFCore.WorkflowTool.WorkflowTool"/>
+ <required tool_id="MailHost"
+           class="Products.MailHost.MailHost.MailHost"/>
+ <required tool_id="cookie_authentication"
+           class="Products.CMFCore.CookieCrumbler.CookieCrumbler"/>
 </tool-setup>

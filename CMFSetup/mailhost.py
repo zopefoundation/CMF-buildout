@@ -90,8 +90,8 @@ class MailHostExportConfigurator(ExportConfiguratorBase):
         config['id'] = mh.getId()
         config['smtp_host'] = mh.smtp_host
         config['smtp_port'] = int(mh.smtp_port)
-        config['smtp_uid'] = mh.smtp_uid
-        config['smtp_pwd'] = mh.smtp_pwd
+        config['smtp_uid'] = getattr(mh, 'smtp_uid', '')
+        config['smtp_pwd'] = getattr(mh, 'smtp_pwd', '')
         config['i18n_domain'] = ''
 
         return config

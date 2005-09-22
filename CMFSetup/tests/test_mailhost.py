@@ -51,8 +51,6 @@ class DummyMailHost:
 
     smtp_port='25'
     smtp_host="localhost.localdomain"
-    smtp_uid=""
-    smtp_pwd=""
     id='MailHost'
 
     def getId(self):

@@ -116,7 +116,7 @@ class CookieCrumblerImportConfigurator(ImportConfiguratorBase):
 
     def _getImportMapping(self):
 
-        return {'cc':
+        return {'cookiecrumbler':
                   { 'auth_cookie': {},
                     'name_cookie': {},
                     'pw_cookie': {},

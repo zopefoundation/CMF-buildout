@@ -26,6 +26,7 @@ from OFS.Folder import Folder
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 from Products.CMFCore.utils import UniqueObject
+from Products.CMFCore.utils import ImmutableId
 from Products.CMFCore.utils import getToolByName
 
 from interfaces import EXTENSION
@@ -93,15 +94,19 @@ def importToolset( context ):
         tool_class = _resolveDottedName( info[ 'class' ] )
 
         existing = getToolByName( site, tool_id, None )
+        new_tool = tool_class()
+
+        if not isinstance( new_tool, ImmutableId ):
+            new_tool._setId( tool_id )
 
         if existing is None:
-            site._setObject( tool_id, tool_class() )
+            site._setObject( tool_id, new_tool )
 
         else:
             unwrapped = aq_base( existing )
             if not isinstance( unwrapped, tool_class ):
                 site._delObject( tool_id )
-                site._setObject( tool_id, tool_class() )
+                site._setObject( tool_id, new_tool )
 
     return 'Toolset imported.'
 

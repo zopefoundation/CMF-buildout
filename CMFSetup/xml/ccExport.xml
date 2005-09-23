@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<cc xmlns:tal="http://xml.zope.org/namespaces/tal"
+<cookiecrumbler xmlns:tal="http://xml.zope.org/namespaces/tal"
     tal:define="cc_info context/getCookieCrumblerInfo"
     tal:attributes="auth_cookie cc_info/auth_cookie;
                     name_cookie cc_info/name_cookie;

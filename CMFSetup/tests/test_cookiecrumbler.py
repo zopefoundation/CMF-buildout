@@ -28,7 +28,7 @@ from common import DummyImportContext
 
 _DEFAULT_EXPORT = """\
 <?xml version="1.0"?>
-<cc auth_cookie="__ac" cache_header_value="private"
+<cookiecrumbler auth_cookie="__ac" cache_header_value="private"
     name_cookie="__ac_name" log_username="1"
     persist_cookie="__ac_persistent"
     pw_cookie="__ac_password" local_cookie_path="0"
@@ -38,7 +38,7 @@ _DEFAULT_EXPORT = """\
 
 _CHANGED_EXPORT = """\
 <?xml version="1.0"?>
-<cc auth_cookie="value1" cache_header_value="value2"
+<cookiecrumbler auth_cookie="value1" cache_header_value="value2"
     name_cookie="value3" log_username="0"
     persist_cookie="value4"
     pw_cookie="value5" local_cookie_path="1"

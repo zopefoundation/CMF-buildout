@@ -730,6 +730,24 @@ class Test_exportToolset( _ToolsetSetup
 
 class Test_importToolset( _ToolsetSetup ):
 
+    def test_tool_ids( self ):
+        # The tool import mechanism used to rely on the fact that all tools
+        # have unique IDs set at the class level and that you can call their
+        # constructor with no arguments. However, there might be tools 
+        # that need IDs set.
+        from Products.CMFSetup.tool import TOOLSET_XML
+        from Products.CMFSetup.tool import importToolset
+
+        site = self._initSite()
+        context = DummyImportContext( site )
+        context._files[ TOOLSET_XML ] = _REQUIRED_TOOLSET_XML
+
+        importToolset( context )
+
+        for tool_id in ( 'mandatory', 'obligatory' ):
+            tool = getattr( site, tool_id )
+            self.assertEqual( tool.getId(), tool_id )
+
     def test_forbidden_tools( self ):
 
         from Products.CMFSetup.tool import TOOLSET_XML
@@ -842,6 +860,7 @@ class DummyTool( Folder ):
 class AnotherDummyTool( Folder ):
 
     pass
+
 
 _EMPTY_TOOLSET_XML = """\
 <?xml version="1.0"?>

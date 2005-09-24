@@ -34,6 +34,9 @@ import CachingPolicyManager
 import CMFBTreeFolder
 import utils
 
+from interfaces import IAction
+from interfaces import IActionCategory
+from interfaces import ITypeInformation
 from permissions import AddPortalFolders
 from permissions import ManagePortal
 
@@ -132,7 +135,8 @@ def initialize(context):
         constructors=(ActionInformation.manage_addActionCategoryForm,
                       ActionInformation.manage_addActionCategory),
         icon='images/cmf_action_category.gif',
-        visibility=None)
+        visibility=None,
+        interfaces=(IActionCategory,))
 
     context.registerClass(
         ActionInformation.Action,
@@ -140,21 +144,24 @@ def initialize(context):
         constructors=(ActionInformation.manage_addActionForm,
                       ActionInformation.manage_addAction),
         icon='images/cmf_action.gif',
-        visibility=None)
+        visibility=None,
+        interfaces=(IAction,))
 
     context.registerClass(
         TypesTool.FactoryTypeInformation,
         permission=ManagePortal,
         constructors=( TypesTool.manage_addFactoryTIForm, ),
         icon='images/typeinfo.gif',
-        visibility=None)
+        visibility=None,
+        interfaces=(ITypeInformation,))
 
     context.registerClass(
         TypesTool.ScriptableTypeInformation,
         permission=ManagePortal,
         constructors=( TypesTool.manage_addScriptableTIForm, ),
         icon='images/typeinfo.gif',
-        visibility=None)
+        visibility=None,
+        interfaces=(ITypeInformation,))
 
     utils.registerIcon(FSDTMLMethod.FSDTMLMethod,
                        'images/fsdtml.gif', globals())

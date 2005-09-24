@@ -19,8 +19,9 @@ from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
+from Products.CMFCore.interfaces import IActionProvider
 from Products.CMFCore.interfaces.portal_actions \
-        import ActionProvider as IActionProvider
+        import ActionProvider as z2IActionProvider
 from Products.CMFCore.utils import getToolByName
 
 from permissions import ManagePortal
@@ -174,8 +175,10 @@ def exportActionProviders( context ):
 
 
 class ActionProvidersConfigurator(ConfiguratorBase):
+
     """ Synthesize XML description of site's action providers.
     """
+
     security = ClassSecurityInfo()
 
     security.declareProtected( ManagePortal, 'listProviderInfo' )
@@ -193,7 +196,8 @@ class ActionProvidersConfigurator(ConfiguratorBase):
 
             provider = getToolByName( self._site, provider_id )
 
-            if not IActionProvider.isImplementedBy( provider ):
+            if not IActionProvider.providedBy(provider) and \
+                    not z2IActionProvider.isImplementedBy(provider):
                 continue
 
             if provider_id == 'portal_actions':

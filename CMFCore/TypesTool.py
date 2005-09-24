@@ -657,7 +657,7 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
 
     id = 'portal_types'
     meta_type = 'CMF Types Tool'
-    _product_interfaces = (z2ITypeInformation,)
+    _product_interfaces = (ITypeInformation,)
 
     security = ClassSecurityInfo()
 

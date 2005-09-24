@@ -64,8 +64,6 @@ createZope3Bridge(ICallableOpaqueItemEvents, IOpaqueItems,
                   'ICallableOpaqueItemEvents')
 createZope3Bridge(IActionsTool, portal_actions, 'portal_actions')
 createZope3Bridge(IActionProvider, portal_actions, 'ActionProvider')
-createZope3Bridge(IActionCategory, portal_actions, 'ActionCategory')
-createZope3Bridge(IAction, portal_actions, 'Action')
 createZope3Bridge(IActionInfo, portal_actions, 'ActionInfo')
 createZope3Bridge(ICatalogTool, portal_catalog, 'portal_catalog')
 createZope3Bridge(IIndexableObjectWrapper, portal_catalog,

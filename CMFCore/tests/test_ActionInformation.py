@@ -39,14 +39,6 @@ class ActionCategoryTests(TestCase):
 
         return ActionCategory(*args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.ActionInformation import ActionCategory
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionCategory as IActionCategory
-
-        verifyClass(IActionCategory, ActionCategory)
-
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
         from Products.CMFCore.ActionInformation import ActionCategory
@@ -71,14 +63,6 @@ class ActionTests(TestCase):
         from Products.CMFCore.ActionInformation import Action
 
         return Action(*args, **kw)
-
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.ActionInformation import Action
-        from Products.CMFCore.interfaces.portal_actions \
-                import Action as IAction
-
-        verifyClass(IAction, Action)
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
@@ -320,14 +304,6 @@ class ActionInformationTests(TransactionalTest):
         from Products.CMFCore.ActionInformation import ActionInformation
 
         return ActionInformation(*args, **kw)
-
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.ActionInformation import ActionInformation
-        from Products.CMFCore.interfaces.portal_actions \
-                import Action as IAction
-
-        verifyClass(IAction, ActionInformation)
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass

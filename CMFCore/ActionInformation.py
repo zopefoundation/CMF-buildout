@@ -31,8 +31,6 @@ from Expression import Expression
 from interfaces import IAction
 from interfaces import IActionCategory
 from interfaces import IActionInfo
-from interfaces.portal_actions import Action as z2IAction
-from interfaces.portal_actions import ActionCategory as z2IActionCategory
 from interfaces.portal_actions import ActionInfo as z2IActionInfo
 from permissions import View
 from utils import _checkPermission
@@ -44,15 +42,16 @@ from utils import SimpleItemWithProperties
 _unchanged = [] # marker
 
 class ActionCategory(IFAwareObjectManager, OrderedFolder):
+
     """ Group of Action objects.
     """
 
     implements(IActionCategory)
-    __implements__ = (z2IActionCategory, OrderedFolder.__implements__)
+    __implements__ = OrderedFolder.__implements__
 
     meta_type = 'CMF Action Category'
 
-    _product_interfaces = (z2IActionCategory, z2IAction)
+    _product_interfaces = (IActionCategory, IAction)
 
     security = ClassSecurityInfo()
 
@@ -63,9 +62,9 @@ class ActionCategory(IFAwareObjectManager, OrderedFolder):
         actions = []
 
         for obj in self.objectValues():
-            if z2IActionCategory.isImplementedBy(obj):
+            if IActionCategory.providedBy(obj):
                 actions.extend( obj.listActions() )
-            elif z2IAction.isImplementedBy(obj):
+            elif IAction.providedBy(obj):
                 actions.append(obj)
 
         return tuple(actions)
@@ -86,11 +85,11 @@ def manage_addActionCategory(self, id, REQUEST=None):
 
 
 class Action(SimpleItemWithProperties):
+
     """ Reference to an action.
     """
 
     implements(IAction)
-    __implements__ = z2IAction
 
     meta_type = 'CMF Action'
     i18n_domain = 'cmf_default'
@@ -182,6 +181,7 @@ def manage_addAction(self, id, REQUEST=None):
 
 
 class ActionInfo(UserDict):
+
     """ A lazy dictionary for Action infos.
     """
 
@@ -273,7 +273,6 @@ class ActionInformation( SimpleItem ):
     """
 
     implements(IAction)
-    __implements__ = z2IAction
 
     _isActionInformation = 1
     __allow_access_to_unprotected_subobjects__ = 1

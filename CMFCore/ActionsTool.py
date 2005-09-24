@@ -23,8 +23,9 @@ from OFS.OrderedFolder import OrderedFolder
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
+from interfaces import IActionCategory
+from interfaces import IActionProvider
 from interfaces import IActionsTool
-from interfaces.portal_actions import ActionCategory as z2IActionCategory
 from interfaces.portal_actions import ActionProvider as z2IActionProvider
 from interfaces.portal_actions import portal_actions as z2IActionsTool
 from permissions import ManagePortal
@@ -46,7 +47,7 @@ class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
 
     id = 'portal_actions'
     meta_type = 'CMF Actions Tool'
-    _product_interfaces = (z2IActionCategory,)
+    _product_interfaces = (IActionCategory,)
     action_providers = ('portal_types', 'portal_workflow', 'portal_actions')
 
     security = ClassSecurityInfo()
@@ -157,12 +158,14 @@ class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
         # Include actions from specific tools.
         for provider_name in self.listActionProviders():
             provider = getattr(self, provider_name)
-            if z2IActionProvider.isImplementedBy(provider):
+            if IActionProvider.providedBy(provider) or \
+                    z2IActionProvider.isImplementedBy(provider):
                 actions.extend( provider.listActionInfos(object=object) )
 
         # Include actions from object.
         if object is not None:
-            if z2IActionProvider.isImplementedBy(object):
+            if IActionProvider.providedBy(object) or \
+                    z2IActionProvider.isImplementedBy(object):
                 actions.extend( object.listActionInfos(object=object) )
 
         # Reorganize the actions by category.

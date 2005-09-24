@@ -23,6 +23,7 @@ from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
+from Products.CMFCore.interfaces import IDiscussionResponse
 from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.interfaces.Discussions \
         import DiscussionResponse as z2IDiscussionResponse
@@ -89,7 +90,8 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
         if not self.isDiscussionAllowedFor( content ):
             raise DiscussionNotAllowed
 
-        if not z2IDiscussionResponse.isImplementedBy(content) and \
+        if not IDiscussionResponse.providedBy(content) and \
+                not z2IDiscussionResponse.isImplementedBy(content) and \
                 getattr( aq_base(content), 'talkback', None ) is None:
             # Discussion Items use the DiscussionItemContainer object of the
             # related content item, so only create one for other content items

@@ -55,8 +55,8 @@ HEAD only (unreleased)
       snapshot and re-import Actions using the portal_setup tool.
 
     - TypesTool: TypeInformation classes are now pluggable.
-      Any class that implements the TypeInformation interface and is
-      a registered meta type can now be used in the TypesTool.
+      Any class registered for ITypeInformation can now be used in the
+      TypesTool.
 
   Bug Fixes
 

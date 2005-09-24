@@ -23,6 +23,9 @@ from Products.CMFCore.PortalObject import PortalObjectBase
 from Products.CMFCore import PortalFolder
 from Products.CMFCore.TypesTool import FactoryTypeInformation
 from Products.CMFCore.utils import getToolByName
+
+# This SkinnedFolder import is a workaround for circular imports in CMFTopic
+import Products.CMFDefault.SkinnedFolder
 from Products.CMFTopic import Topic
 from Products.CMFTopic import topic_globals
 

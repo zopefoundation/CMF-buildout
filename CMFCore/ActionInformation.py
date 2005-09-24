@@ -25,11 +25,15 @@ from OFS.OrderedFolder import OrderedFolder
 from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from zope.i18nmessageid import MessageID
+from zope.interface import implements
 
 from Expression import Expression
-from interfaces.portal_actions import Action as IAction
-from interfaces.portal_actions import ActionCategory as IActionCategory
-from interfaces.portal_actions import ActionInfo as IActionInfo
+from interfaces import IAction
+from interfaces import IActionCategory
+from interfaces import IActionInfo
+from interfaces.portal_actions import Action as z2IAction
+from interfaces.portal_actions import ActionCategory as z2IActionCategory
+from interfaces.portal_actions import ActionInfo as z2IActionInfo
 from permissions import View
 from utils import _checkPermission
 from utils import _wwwdir
@@ -43,11 +47,12 @@ class ActionCategory(IFAwareObjectManager, OrderedFolder):
     """ Group of Action objects.
     """
 
-    __implements__ = (IActionCategory, OrderedFolder.__implements__)
+    implements(IActionCategory)
+    __implements__ = (z2IActionCategory, OrderedFolder.__implements__)
 
     meta_type = 'CMF Action Category'
 
-    _product_interfaces = (IActionCategory, IAction)
+    _product_interfaces = (z2IActionCategory, z2IAction)
 
     security = ClassSecurityInfo()
 
@@ -58,9 +63,9 @@ class ActionCategory(IFAwareObjectManager, OrderedFolder):
         actions = []
 
         for obj in self.objectValues():
-            if IActionCategory.isImplementedBy(obj):
+            if z2IActionCategory.isImplementedBy(obj):
                 actions.extend( obj.listActions() )
-            elif IAction.isImplementedBy(obj):
+            elif z2IAction.isImplementedBy(obj):
                 actions.append(obj)
 
         return tuple(actions)
@@ -84,7 +89,8 @@ class Action(SimpleItemWithProperties):
     """ Reference to an action.
     """
 
-    __implements__ = IAction
+    implements(IAction)
+    __implements__ = z2IAction
 
     meta_type = 'CMF Action'
     i18n_domain = 'cmf_default'
@@ -179,7 +185,8 @@ class ActionInfo(UserDict):
     """ A lazy dictionary for Action infos.
     """
 
-    __implements__ = IActionInfo
+    implements(IActionInfo)
+    __implements__ = z2IActionInfo
 
     __allow_access_to_unprotected_subobjects__ = 1
 
@@ -265,7 +272,8 @@ class ActionInformation( SimpleItem ):
     of the site.  They can be filtered via their conditions.
     """
 
-    __implements__ = IAction
+    implements(IAction)
+    __implements__ = z2IAction
 
     _isActionInformation = 1
     __allow_access_to_unprotected_subobjects__ = 1

@@ -19,18 +19,22 @@ from urllib import quote
 
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
+from zope.interface import implements
 
-from interfaces.Dynamic import DynamicType as IDynamicType
+from interfaces import IDynamicType
+from interfaces.Dynamic import DynamicType as z2IDynamicType
 from utils import getToolByName
 
 
 class DynamicType:
+
     """
     Mixin for portal content that allows the object to take on
     a dynamic type property.
     """
 
-    __implements__ = IDynamicType
+    implements(IDynamicType)
+    __implements__ = z2IDynamicType
 
     portal_type = None
 

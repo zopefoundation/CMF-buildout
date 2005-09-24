@@ -25,10 +25,12 @@ from DocumentTemplate.DT_Util import TemplateDict
 from Globals import InitializeClass
 from OFS.Folder import Folder
 from OFS.ObjectManager import bad_id
+from zope.interface import implements
 
 # CMFCore
+from Products.CMFCore.interfaces import IWorkflowDefinition
 from Products.CMFCore.interfaces.portal_workflow \
-        import WorkflowDefinition as IWorkflowDefinition
+        import WorkflowDefinition as z2IWorkflowDefinition
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import ObjectDeleted
 from Products.CMFCore.WorkflowCore import ObjectMoved
@@ -53,14 +55,16 @@ def checkId(id):
     return 1
 
 
-class DCWorkflowDefinition (WorkflowUIMixin, Folder):
+class DCWorkflowDefinition(WorkflowUIMixin, Folder):
+
     '''
     This class is the workflow engine and the container for the
     workflow definition.
     UI methods are in WorkflowUIMixin.
     '''
 
-    __implements__ = IWorkflowDefinition
+    implements(IWorkflowDefinition)
+    __implements__ = z2IWorkflowDefinition
 
     meta_type = 'Workflow'
     title = 'DC Workflow Definition'

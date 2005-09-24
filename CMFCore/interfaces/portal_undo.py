@@ -15,24 +15,6 @@
 $Id$
 """
 
-from Interface import Attribute
-from Interface import Interface
-
-
-class portal_undo(Interface):
-    '''Provides access to Zope undo functions.
-    '''
-    id = Attribute('id', 'Must be set to "portal_undo"')
-
-    # permission: 'Undo changes'
-    def listUndoableTransactionsFor(object,
-                                    first_transaction=None,
-                                    last_transaction=None,
-                                    PrincipiaUndoBatchSize=None):
-        '''Lists all transaction IDs the user is allowed to undo.
-        '''
-
-    # permission: 'Undo changes'
-    def undo(object, transaction_info):
-        '''Performs an undo operation.
-        '''
+# BBB: module will be removed in CMF 2.2
+#      zope2 interfaces created on runtime:
+#      - portal_undo

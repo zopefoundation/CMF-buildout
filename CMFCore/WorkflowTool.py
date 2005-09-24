@@ -24,9 +24,11 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from Globals import PersistentMapping
 from OFS.Folder import Folder
+from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
-from interfaces.portal_workflow import portal_workflow as IWorkflowTool
+from interfaces import IWorkflowTool
+from interfaces.portal_workflow import portal_workflow as z2IWorkflowTool
 from permissions import ManagePortal
 from utils import _dtmldir
 from utils import getToolByName
@@ -60,12 +62,15 @@ class WorkflowInformation:
 
 
 class WorkflowTool(UniqueObject, Folder, ActionProviderBase):
+
     """ Mediator tool, mapping workflow objects
     """
+
+    implements(IWorkflowTool)
+    __implements__ = (z2IWorkflowTool, ActionProviderBase.__implements__)
+
     id = 'portal_workflow'
     meta_type = 'CMF Workflow Tool'
-    __implements__ = (IWorkflowTool,
-                      ActionProviderBase.__implements__)
 
     _chains_by_type = None  # PersistentMapping
     _default_chain = ('default_workflow',)

@@ -26,13 +26,15 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.OrderSupport import OrderSupport
 from OFS.Folder import Folder
+from zope.interface import implements
 
 from CMFCatalogAware import CMFCatalogAware
 from DynamicType import DynamicType
 from exceptions import AccessControl_Unauthorized
 from exceptions import BadRequest
 from exceptions import zExceptions_Unauthorized
-from interfaces.Folderish import Folderish as IFolderish
+from interfaces import IFolderish
+from interfaces.Folderish import Folderish as z2IFolderish
 from permissions import AddPortalContent
 from permissions import AddPortalFolders
 from permissions import ChangeLocalRoles
@@ -97,11 +99,13 @@ factory_type_information = (
 
 
 class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
+
     """Base class for portal folder
     """
     meta_type = 'Portal Folder Base'
 
-    __implements__ = (IFolderish, DynamicType.__implements__,
+    implements(IFolderish)
+    __implements__ = (z2IFolderish, DynamicType.__implements__,
                       Folder.__implements__)
 
     security = ClassSecurityInfo()

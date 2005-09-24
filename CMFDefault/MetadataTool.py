@@ -21,10 +21,12 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from Globals import PersistentMapping
 from OFS.SimpleItem import SimpleItem
+from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
+from Products.CMFCore.interfaces import IMetadataTool
 from Products.CMFCore.interfaces.portal_metadata \
-        import portal_metadata as IMetadataTool
+        import portal_metadata as z2IMetadataTool
 from Products.CMFCore.utils import UniqueObject
 
 from exceptions import MetadataError
@@ -204,7 +206,8 @@ InitializeClass( ElementSpec )
 
 class MetadataTool( UniqueObject, SimpleItem, ActionProviderBase ):
 
-    __implements__ = (IMetadataTool, ActionProviderBase.__implements__)
+    implements(IMetadataTool)
+    __implements__ = (z2IMetadataTool, ActionProviderBase.__implements__)
 
     id = 'portal_metadata'
     meta_type = 'Default Metadata Tool'

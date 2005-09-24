@@ -21,10 +21,17 @@ from DateTime.DateTime import DateTime
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.PropertyManager import PropertyManager
+from zope.interface import implements
 
-from Products.CMFCore.interfaces.DublinCore import CatalogableDublinCore
-from Products.CMFCore.interfaces.DublinCore import DublinCore
-from Products.CMFCore.interfaces.DublinCore import MutableDublinCore
+from Products.CMFCore.interfaces import ICatalogableDublinCore
+from Products.CMFCore.interfaces import IDublinCore
+from Products.CMFCore.interfaces import IMutableDublinCore
+from Products.CMFCore.interfaces.DublinCore \
+        import CatalogableDublinCore as z2ICatalogableDublinCore
+from Products.CMFCore.interfaces.DublinCore \
+        import DublinCore as z2IDublinCore
+from Products.CMFCore.interfaces.DublinCore \
+        import MutableDublinCore as z2IMutableDublinCore
 from Products.CMFCore.utils import getToolByName
 
 from permissions import ModifyPortalContent
@@ -38,11 +45,16 @@ _marker=[]
 # For http://www.zope.org/Collectors/CMF/325
 # We only really need this once, at startup.
 _zone = DateTime().timezone()
-    
+
+
 class DefaultDublinCoreImpl( PropertyManager ):
+
     """ Mix-in class which provides Dublin Core methods.
     """
-    __implements__ = DublinCore, CatalogableDublinCore, MutableDublinCore
+
+    implements(IDublinCore, ICatalogableDublinCore, IMutableDublinCore)
+    __implements__ = (z2IDublinCore, z2ICatalogableDublinCore,
+                      z2IMutableDublinCore)
 
     security = ClassSecurityInfo()
 

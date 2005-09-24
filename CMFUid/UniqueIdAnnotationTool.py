@@ -17,13 +17,14 @@ Provides support for managing unique id annotations.
 $Id$
 """
 
-from Globals import InitializeClass, Persistent
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base, aq_inner, aq_parent
 from Acquisition import Implicit
-
+from Globals import InitializeClass
+from Globals import Persistent
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
+from zope.interface import implements
 
 from Products.CMFCore.utils import getToolByName, UniqueObject
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
@@ -33,12 +34,11 @@ from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
 
 
 class UniqueIdAnnotation(Persistent, Implicit):
+
     """Unique id object used as annotation on (content) objects.
     """
 
-    __implements__ = (
-        IUniqueIdAnnotation,
-    )
+    implements(IUniqueIdAnnotation)
 
     def __init__(self, obj, id):
         """See IUniqueIdAnnotation.
@@ -106,11 +106,13 @@ class UniqueIdAnnotation(Persistent, Implicit):
 InitializeClass(UniqueIdAnnotation)
 
 
-class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager, ActionProviderBase):
+class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager,
+                             ActionProviderBase):
+
     __doc__ = __doc__ # copy from module
 
+    implements(IUniqueIdAnnotationManagement)
     __implements__ = (
-        IUniqueIdAnnotationManagement,
         ActionProviderBase.__implements__,
         SimpleItem.__implements__,
     )

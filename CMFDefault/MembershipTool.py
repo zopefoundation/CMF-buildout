@@ -21,6 +21,7 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Globals import DTMLFile
 from Globals import InitializeClass
+from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
@@ -29,8 +30,9 @@ from Products.CMFCore.utils import _getAuthenticatedUser
 from Products.CMFCore.utils import getToolByName
 
 from Document import addDocument
+from interfaces import IMembershipTool
 from interfaces.portal_membership \
-        import portal_membership as IMembershipTool
+        import portal_membership as z2IMembershipTool
 from permissions import ListPortalMembers
 from permissions import ManagePortal
 from permissions import ManageUsers
@@ -54,7 +56,8 @@ class MembershipTool( BaseTool ):
     """ Implement 'portal_membership' interface using "stock" policies.
     """
 
-    __implements__ = (IMembershipTool, ActionProviderBase.__implements__)
+    implements(IMembershipTool)
+    __implements__ = (z2IMembershipTool, ActionProviderBase.__implements__)
 
     meta_type = 'Default Membership Tool'
     membersfolder_id = 'Members'

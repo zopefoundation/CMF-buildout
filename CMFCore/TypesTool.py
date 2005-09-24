@@ -30,13 +30,17 @@ from OFS.ObjectManager import IFAwareObjectManager
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from zLOG import LOG, ERROR
 from zope.i18nmessageid import MessageID
+from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
 from exceptions import AccessControl_Unauthorized
 from exceptions import BadRequest
 from exceptions import zExceptions_Unauthorized
-from interfaces.portal_types import ContentTypeInformation as ITypeInformation
-from interfaces.portal_types import portal_types as ITypesTool
+from interfaces import ITypeInformation
+from interfaces import ITypesTool
+from interfaces.portal_types \
+        import ContentTypeInformation as z2ITypeInformation
+from interfaces.portal_types import portal_types as z2ITypesTool
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from permissions import View
@@ -54,6 +58,7 @@ _marker = []  # Create a new marker.
 
 
 class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
+
     """
     Base class for information about a content type.
     """
@@ -444,11 +449,13 @@ InitializeClass( TypeInformation )
 
 
 class FactoryTypeInformation(TypeInformation):
+
     """
     Portal content factory.
     """
 
-    __implements__ = ITypeInformation
+    implements(ITypeInformation)
+    __implements__ = z2ITypeInformation
 
     meta_type = 'Factory-based Type Information'
     security = ClassSecurityInfo()
@@ -560,11 +567,13 @@ def manage_addFactoryTIForm(self, REQUEST):
 
 
 class ScriptableTypeInformation( TypeInformation ):
+
     """
     Invokes a script rather than a factory to create the content.
     """
 
-    __implements__ = ITypeInformation
+    implements(ITypeInformation)
+    __implements__ = z2ITypeInformation
 
     meta_type = 'Scriptable Type Information'
     security = ClassSecurityInfo()
@@ -638,15 +647,17 @@ allowedTypes = [
 
 class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
                 ActionProviderBase):
+
     """
         Provides a configurable registry of portal content types.
     """
 
-    __implements__ = (ITypesTool, ActionProviderBase.__implements__)
+    implements(ITypesTool)
+    __implements__ = (z2ITypesTool, ActionProviderBase.__implements__)
 
     id = 'portal_types'
     meta_type = 'CMF Types Tool'
-    _product_interfaces = (ITypeInformation,)
+    _product_interfaces = (z2ITypeInformation,)
 
     security = ClassSecurityInfo()
 

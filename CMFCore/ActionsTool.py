@@ -20,11 +20,13 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.ObjectManager import IFAwareObjectManager
 from OFS.OrderedFolder import OrderedFolder
+from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
-from interfaces.portal_actions import ActionCategory as IActionCategory
-from interfaces.portal_actions import ActionProvider as IActionProvider
-from interfaces.portal_actions import portal_actions as IActionsTool
+from interfaces import IActionsTool
+from interfaces.portal_actions import ActionCategory as z2IActionCategory
+from interfaces.portal_actions import ActionProvider as z2IActionProvider
+from interfaces.portal_actions import portal_actions as z2IActionsTool
 from permissions import ManagePortal
 from utils import _dtmldir
 from utils import UniqueObject
@@ -38,12 +40,13 @@ class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
         to the current user and context.
     """
 
-    __implements__ = (IActionsTool, OrderedFolder.__implements__,
+    implements(IActionsTool)
+    __implements__ = (z2IActionsTool, OrderedFolder.__implements__,
                       ActionProviderBase.__implements__)
 
     id = 'portal_actions'
     meta_type = 'CMF Actions Tool'
-    _product_interfaces = (IActionCategory,)
+    _product_interfaces = (z2IActionCategory,)
     action_providers = ('portal_types', 'portal_workflow', 'portal_actions')
 
     security = ClassSecurityInfo()
@@ -154,12 +157,12 @@ class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
         # Include actions from specific tools.
         for provider_name in self.listActionProviders():
             provider = getattr(self, provider_name)
-            if IActionProvider.isImplementedBy(provider):
+            if z2IActionProvider.isImplementedBy(provider):
                 actions.extend( provider.listActionInfos(object=object) )
 
         # Include actions from object.
         if object is not None:
-            if IActionProvider.isImplementedBy(object):
+            if z2IActionProvider.isImplementedBy(object):
                 actions.extend( object.listActionInfos(object=object) )
 
         # Reorganize the actions by category.

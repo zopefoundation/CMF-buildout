@@ -15,6 +15,7 @@
 $Id$
 """
 
+import transaction
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
@@ -22,7 +23,7 @@ from DocumentTemplate.DT_Util import html_quote
 from Globals import DTMLFile
 from Globals import InitializeClass
 from StructuredText.StructuredText import HTML
-import transaction
+from zope.interface import implements
 
 from Products.CMFCore.PortalContent import PortalContent
 from Products.CMFCore.utils import contributorsplitter
@@ -31,8 +32,10 @@ from Products.CMFCore.utils import keywordsplitter
 from DublinCore import DefaultDublinCoreImpl
 from exceptions import EditingConflict
 from exceptions import ResourceLockedError
-from interfaces.Document import IDocument
-from interfaces.Document import IMutableDocument
+from interfaces import IDocument
+from interfaces import IMutableDocument
+from interfaces.Document import IDocument as z2IDocument
+from interfaces.Document import IMutableDocument as z2IMutableDocument
 from permissions import ModifyPortalContent
 from permissions import View
 from utils import _dtmldir
@@ -84,9 +87,11 @@ def addDocument(self, id, title='', description='', text_format='',
 
 
 class Document(PortalContent, DefaultDublinCoreImpl):
+
     """ A Document - Handles both StructuredText and HTML """
 
-    __implements__ = (IDocument, IMutableDocument,
+    implements(IDocument, IMutableDocument)
+    __implements__ = (z2IDocument, z2IMutableDocument,
                       PortalContent.__implements__,
                       DefaultDublinCoreImpl.__implements__)
 

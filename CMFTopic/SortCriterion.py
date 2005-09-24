@@ -1,34 +1,41 @@
 ##############################################################################
 #
 # Copyright (c) 2001 Zope Corporation and Contributors. All Rights Reserved.
-# 
+#
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
-# 
+#
 ##############################################################################
 """ Allow topic to specify sorting.
 
 $Id$
 """
-from Globals import InitializeClass
-from AccessControl import ClassSecurityInfo
 
-from permissions import View
-from permissions import ChangeTopics
+from AccessControl import ClassSecurityInfo
+from Globals import InitializeClass
+from zope.interface import implements
+
 from AbstractCriterion import AbstractCriterion
+from interfaces import Criterion as z2ICriterion
+from interfaces import ICriterion
+from permissions import ChangeTopics
+from permissions import View
 from Topic import Topic
-from interfaces import Criterion
+
 
 class SortCriterion( AbstractCriterion ):
+
     """
         Represent a mock criterion, to allow spelling the sort order
         and reversal items in a catalog query.
     """
-    __implements__ = ( Criterion, )
+
+    implements(ICriterion)
+    __implements__ = z2ICriterion
 
     meta_type = 'Sort Criterion'
 

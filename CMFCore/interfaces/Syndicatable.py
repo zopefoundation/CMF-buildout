@@ -15,19 +15,6 @@
 $Id$
 """
 
-from Interface import Interface
-
-
-class Syndicatable(Interface):
-    """\
-    Returns back a list of objects which implements the DublinCore.
-    """
-
-    def synContentValues(self):
-        """
-        Returns a list of results which is to be Syndicated.  For example, the normal call
-        contentValues (on PortalFolders) returns a list of subObjects of the current object
-        (i.e. objectValues with filtering applied).  For the case of a Topic, one would
-        return a sequence of objects from a catalog query, not the subObjects of the Topic.
-        What is returned must implement the DublinCore.
-        """
+# BBB: module will be removed in CMF 2.2
+#      zope2 interfaces created on runtime:
+#      - Syndicatable

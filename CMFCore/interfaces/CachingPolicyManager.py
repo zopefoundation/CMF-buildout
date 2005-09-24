@@ -15,21 +15,6 @@
 $Id$
 """
 
-from Interface import Attribute
-from Interface import Interface
-
-
-class CachingPolicyManager(Interface):
-    """
-        Manage HTTP cache policies for skin methods.
-    """
-    id = Attribute( 'id', 'Must be set to "caching_policy_manager"' )
-
-    def getHTTPCachingHeaders( content, view_method, keywords, time=None ):
-        """
-            Update HTTP caching headers in REQUEST based on 'content',
-            'view_method', and 'keywords'.
-
-            If 'time' is supplied, use it instead of the current time
-            (for reliable testing).
-        """
+# BBB: module will be removed in CMF 2.2
+#      zope2 interfaces created on runtime:
+#      - CachingPolicyManager

@@ -22,8 +22,8 @@ class ConformsToISetupContext:
 
     def test_ISetupContext_conformance( self ):
 
-        from Products.CMFSetup.interfaces import ISetupContext
-        from Interface.Verify import verifyClass
+        from Products.GenericSetup.interfaces import ISetupContext
+        from zope.interface.verify import verifyClass
 
         verifyClass( ISetupContext, self._getTargetClass() )
 
@@ -31,8 +31,8 @@ class ConformsToIImportContext:
 
     def test_IImportContext_conformance( self ):
 
-        from Products.CMFSetup.interfaces import IImportContext
-        from Interface.Verify import verifyClass
+        from Products.GenericSetup.interfaces import IImportContext
+        from zope.interface.verify import verifyClass
 
         verifyClass( IImportContext, self._getTargetClass() )
 
@@ -40,8 +40,8 @@ class ConformsToIExportContext:
 
     def test_IExportContext_conformance( self ):
 
-        from Products.CMFSetup.interfaces import IExportContext
-        from Interface.Verify import verifyClass
+        from Products.GenericSetup.interfaces import IExportContext
+        from zope.interface.verify import verifyClass
 
         verifyClass( IExportContext, self._getTargetClass() )
 
@@ -49,8 +49,8 @@ class ConformsToIStepRegistry:
 
     def test_IStepRegistry_conformance( self ):
 
-        from Products.CMFSetup.interfaces import IStepRegistry
-        from Interface.Verify import verifyClass
+        from Products.GenericSetup.interfaces import IStepRegistry
+        from zope.interface.verify import verifyClass
 
         verifyClass( IStepRegistry, self._getTargetClass() )
 
@@ -58,8 +58,8 @@ class ConformsToIImportStepRegistry:
 
     def test_IImportStepRegistry_conformance( self ):
 
-        from Products.CMFSetup.interfaces import IImportStepRegistry
-        from Interface.Verify import verifyClass
+        from Products.GenericSetup.interfaces import IImportStepRegistry
+        from zope.interface.verify import verifyClass
 
         verifyClass( IImportStepRegistry, self._getTargetClass() )
 
@@ -67,8 +67,8 @@ class ConformsToIExportStepRegistry:
 
     def test_IExportStepRegistry_conformance( self ):
 
-        from Products.CMFSetup.interfaces import IExportStepRegistry
-        from Interface.Verify import verifyClass
+        from Products.GenericSetup.interfaces import IExportStepRegistry
+        from zope.interface.verify import verifyClass
 
         verifyClass( IExportStepRegistry, self._getTargetClass() )
 
@@ -76,8 +76,8 @@ class ConformsToIToolsetRegistry:
 
     def test_IToolsetRegistry_conformance( self ):
 
-        from Products.CMFSetup.interfaces import IToolsetRegistry
-        from Interface.Verify import verifyClass
+        from Products.GenericSetup.interfaces import IToolsetRegistry
+        from zope.interface.verify import verifyClass
 
         verifyClass( IToolsetRegistry, self._getTargetClass() )
 
@@ -85,8 +85,8 @@ class ConformsToIProfileRegistry:
 
     def test_IProfileRegistry_conformance( self ):
 
-        from Products.CMFSetup.interfaces import IProfileRegistry
-        from Interface.Verify import verifyClass
+        from Products.GenericSetup.interfaces import IProfileRegistry
+        from zope.interface.verify import verifyClass
 
         verifyClass( IProfileRegistry, self._getTargetClass() )
 
@@ -94,7 +94,7 @@ class ConformsToISetupTool:
 
     def test_ISetupTool_conformance( self ):
 
-        from Products.CMFSetup.interfaces import ISetupTool
-        from Interface.Verify import verifyClass
+        from Products.GenericSetup.interfaces import ISetupTool
+        from zope.interface.verify import verifyClass
 
         verifyClass( ISetupTool, self._getTargetClass() )

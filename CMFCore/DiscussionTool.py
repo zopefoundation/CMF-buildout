@@ -19,15 +19,18 @@ from OFS.SimpleItem import SimpleItem
 from Globals import InitializeClass, DTMLFile
 from Acquisition import Implicit
 from AccessControl import ClassSecurityInfo
+from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from permissions import ReplyToItem
 from permissions import View
-from interfaces.Discussions import OldDiscussable as IOldDiscussable
+from interfaces import IOldstyleDiscussable
+from interfaces import IOldstyleDiscussionTool
+from interfaces.Discussions import OldDiscussable as z2IOldstyleDiscussable
 from interfaces.portal_discussion \
-        import oldstyle_portal_discussion as IOldstyleDiscussionTool
+        import oldstyle_portal_discussion as z2IOldstyleDiscussionTool
 from utils import _dtmldir
 from utils import getToolByName
 from utils import UniqueObject
@@ -38,7 +41,8 @@ class OldDiscussable(Implicit):
         Adapter for PortalContent to implement "old-style" discussions.
     """
 
-    __implements__ = IOldDiscussable
+    implements(IOldstyleDiscussable)
+    __implements__ = z2IOldstyleDiscussable
 
     _isDiscussable = 1
 
@@ -112,9 +116,10 @@ class OldDiscussable(Implicit):
         return ""
 
 
-class DiscussionTool (UniqueObject, SimpleItem, ActionProviderBase):
+class DiscussionTool(UniqueObject, SimpleItem, ActionProviderBase):
 
-    __implements__ = (IOldstyleDiscussionTool,
+    implements(IOldstyleDiscussionTool)
+    __implements__ = (z2IOldstyleDiscussionTool,
                       ActionProviderBase.__implements__)
 
     id = 'portal_discussion'

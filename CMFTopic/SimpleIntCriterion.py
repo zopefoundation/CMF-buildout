@@ -17,20 +17,25 @@ $Id$
 
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
+from zope.interface import implements
 
-from permissions import View
-from permissions import ChangeTopics
 from AbstractCriterion import AbstractCriterion
-from interfaces import Criterion
+from interfaces import Criterion as z2ICriterion
+from interfaces import ICriterion
+from permissions import ChangeTopics
+from permissions import View
 from Topic import Topic
 
 
 class SimpleIntCriterion( AbstractCriterion ):
+
     """
         Represent a simple field-match for an integer value, including
         catalog range searches.
     """
-    __implements__ = ( Criterion, )
+
+    implements(ICriterion)
+    __implements__ = z2ICriterion
 
     meta_type = 'Integer Criterion'
 

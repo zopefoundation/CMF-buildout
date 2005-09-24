@@ -22,10 +22,12 @@ from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
+from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
+from interfaces import IRegistrationTool
 from interfaces.portal_registration \
-        import portal_registration as IRegistrationTool
+        import portal_registration as z2IRegistrationTool
 from permissions import AddPortalMember
 from permissions import MailForgottenPassword
 from permissions import ManagePortal
@@ -42,7 +44,8 @@ class RegistrationTool(UniqueObject, SimpleItem, ActionProviderBase):
     """ Create and modify users by making calls to portal_membership.
     """
 
-    __implements__ = (IRegistrationTool, ActionProviderBase.__implements__)
+    implements(IRegistrationTool)
+    __implements__ = (z2IRegistrationTool, ActionProviderBase.__implements__)
 
     id = 'portal_registration'
     meta_type = 'CMF Registration Tool'

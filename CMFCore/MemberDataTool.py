@@ -23,11 +23,15 @@ from Globals import InitializeClass
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
 from ZPublisher.Converters import type_converters
+from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
 from exceptions import BadRequest
-from interfaces.portal_memberdata import MemberData as IMemberData
-from interfaces.portal_memberdata import portal_memberdata as IMemberDataTool
+from interfaces import IMemberData
+from interfaces import IMemberDataTool
+from interfaces.portal_memberdata import MemberData as z2IMemberData
+from interfaces.portal_memberdata \
+        import portal_memberdata as z2IMemberDataTool
 from permissions import ManagePortal
 from permissions import SetOwnProperties
 from permissions import ViewManagementScreens
@@ -45,7 +49,8 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
     """ This tool wraps user objects, making them act as Member objects.
     """
 
-    __implements__ = (IMemberDataTool, ActionProviderBase.__implements__)
+    implements(IMemberDataTool)
+    __implements__ = (z2IMemberDataTool, ActionProviderBase.__implements__)
 
     id = 'portal_memberdata'
     meta_type = 'CMF Member Data Tool'
@@ -247,9 +252,10 @@ class CleanupTemp:
             pass
 
 
-class MemberData (SimpleItem):
+class MemberData(SimpleItem):
 
-    __implements__ = IMemberData
+    implements(IMemberData)
+    __implements__ = z2IMemberData
 
     security = ClassSecurityInfo()
 

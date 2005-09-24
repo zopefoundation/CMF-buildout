@@ -29,7 +29,9 @@ from utils import _dtmldir
 from utils import _getAuthenticatedUser
 from utils import getToolByName
 
-from interfaces.IOpaqueItems import ICallableOpaqueItem
+from interfaces import ICallableOpaqueItem
+from interfaces.IOpaqueItems \
+        import ICallableOpaqueItem as z2ICallableOpaqueItem
 
 class CMFCatalogAware(Base):
     """Mix-in for notifying portal_catalog and portal_workflow
@@ -162,7 +164,8 @@ class CMFCatalogAware(Base):
         self_base = aq_base(self)
         for name in self_base.__dict__.keys():
             obj = getattr(self_base, name)
-            if ICallableOpaqueItem.isImplementedBy(obj):
+            if ICallableOpaqueItem.providedBy(obj) \
+                    or z2ICallableOpaqueItem.isImplementedBy(obj):
                 items.append((obj.getId(), obj))
 
         return tuple(items)

@@ -15,40 +15,39 @@
 $Id$
 """
 
-from unittest import TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
-
-from Interface.Verify import verifyObject
 
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
-from Products.CMFUid.interfaces import IUniqueIdAnnotation
-from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
-
 
 UID_ATTRNAME = 'cmf_uid'
 
-class UniqueIdAnnotationTests(SecurityTest):
 
-    def setUp(self):
+class UniqueIdAnnotationToolTests(SecurityTest):
+
+    def _getTargetClass(self):
         from Products.CMFUid.UniqueIdAnnotationTool \
                 import UniqueIdAnnotationTool
 
+        return UniqueIdAnnotationTool
+
+    def setUp(self):
         SecurityTest.setUp(self)
-        self.root._setObject('portal_uidannotation', UniqueIdAnnotationTool())
+        self.root._setObject('portal_uidannotation', self._getTargetClass()())
         self.root._setObject('dummy', DummyContent(id='dummy'))
 
-    def test_interface(self):
-        dummy = self.root.dummy
-        anno_tool = self.root.portal_uidannotation
-        annotation = anno_tool(dummy, UID_ATTRNAME)
+    def test_z3interfaces(self):
+        from zope.interface.verify import verifyClass
+        from Products.CMFUid.interfaces import IUniqueIdAnnotation
+        from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
+        from Products.CMFUid.UniqueIdAnnotationTool \
+                import UniqueIdAnnotation
 
-        verifyObject(IUniqueIdAnnotationManagement, anno_tool)
-        verifyObject(IUniqueIdAnnotation, annotation)
+        verifyClass(IUniqueIdAnnotationManagement, self._getTargetClass())
+        verifyClass(IUniqueIdAnnotation, UniqueIdAnnotation)
 
     def test_setAndGetUid(self):
         dummy = self.root.dummy
@@ -136,9 +135,9 @@ class UniqueIdAnnotationTests(SecurityTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(UniqueIdAnnotationTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(UniqueIdAnnotationToolTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

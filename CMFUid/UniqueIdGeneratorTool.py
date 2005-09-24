@@ -21,6 +21,7 @@ from AccessControl import ClassSecurityInfo
 from BTrees.Length import Length
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
+from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.utils import UniqueObject
@@ -28,14 +29,15 @@ from Products.CMFUid.interfaces import IUniqueIdGenerator
 
 
 class UniqueIdGeneratorTool(UniqueObject, SimpleItem, ActionProviderBase):
+
     """Generator of unique ids.
     
     This is a dead simple implementation using a counter. May cause
     ConflictErrors under high load and the values are predictable.
     """
 
+    implements(IUniqueIdGenerator)
     __implements__ = (
-        IUniqueIdGenerator,
         ActionProviderBase.__implements__,
         SimpleItem.__implements__,
     )

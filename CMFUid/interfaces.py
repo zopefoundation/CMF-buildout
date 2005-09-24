@@ -19,10 +19,11 @@ are kept separate.
 $Id$
 """
 
-from Interface import Interface
+from zope.interface import Interface
+from zope.interface import Attribute
 
-from Products.CMFCore.interfaces.IOpaqueItems import ICallableOpaqueItem
-from Products.CMFCore.interfaces.IOpaqueItems import ICallableOpaqueItemEvents
+from Products.CMFCore.interfaces import ICallableOpaqueItem
+from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
 
 
 class UniqueIdError(Exception):

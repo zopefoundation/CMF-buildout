@@ -18,20 +18,10 @@ $Id$
 import unittest
 import Testing
 
-from Interface.Verify import verifyObject
-
-from Products.CMFCore.CatalogTool import CatalogTool
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.testcase import SecurityTest
-
-from Products.CMFUid.interfaces import IUniqueIdBrainQuery
-from Products.CMFUid.interfaces import IUniqueIdHandler
-from Products.CMFUid.interfaces import IUniqueIdUnrestrictedQuery
-from Products.CMFUid.UniqueIdAnnotationTool import UniqueIdAnnotationTool
-from Products.CMFUid.UniqueIdGeneratorTool import UniqueIdGeneratorTool
-from Products.CMFUid.UniqueIdHandlerTool import UniqueIdHandlerTool
 
 
 def removeUnnecessaryIndexes(catalog):
@@ -49,22 +39,35 @@ class DummyUid:
 
 class UniqueIdHandlerTests(SecurityTest):
 
+    def _getTargetClass(self):
+        from Products.CMFUid.UniqueIdHandlerTool import UniqueIdHandlerTool
+
+        return UniqueIdHandlerTool
+
     def setUp(self):
+        from Products.CMFCore.CatalogTool import CatalogTool
+        from Products.CMFUid.UniqueIdAnnotationTool \
+                import UniqueIdAnnotationTool
+        from Products.CMFUid.UniqueIdGeneratorTool \
+                import UniqueIdGeneratorTool
         SecurityTest.setUp(self)
         self.root._setObject('portal_catalog', CatalogTool())
         self.root._setObject('portal_uidgenerator', UniqueIdGeneratorTool())
         self.root._setObject('portal_uidannotation', UniqueIdAnnotationTool())
-        self.root._setObject('portal_uidhandler', UniqueIdHandlerTool())
+        self.root._setObject('portal_uidhandler', self._getTargetClass()())
         self.root._setObject('dummy', DummyContent(id='dummy'))
         self.root._setObject('dummy2', DummyContent(id='dummy2'))
 
         removeUnnecessaryIndexes(self.root.portal_catalog)
 
-    def test_interface(self):
-        handler = self.root.portal_uidhandler
-        verifyObject(IUniqueIdHandler, handler)
-        verifyObject(IUniqueIdBrainQuery, handler)
-        verifyObject(IUniqueIdUnrestrictedQuery, handler)
+    def test_z3interfaces(self):
+        from zope.interface.verify import verifyClass
+        from Products.CMFUid.interfaces import IUniqueIdBrainQuery
+        from Products.CMFUid.interfaces import IUniqueIdHandler
+        from Products.CMFUid.interfaces import IUniqueIdUnrestrictedQuery
+        verifyClass(IUniqueIdHandler, self._getTargetClass())
+        verifyClass(IUniqueIdBrainQuery, self._getTargetClass())
+        verifyClass(IUniqueIdUnrestrictedQuery, self._getTargetClass())
 
     def test_getUidOfNotYetRegisteredObject(self):
         handler = self.root.portal_uidhandler

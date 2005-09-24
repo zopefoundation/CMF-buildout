@@ -16,8 +16,8 @@ Provides support for accessing unique ids on content object.
 
 $Id$
 """
-import os
 
+import os
 import Missing
 
 import zLOG
@@ -27,6 +27,7 @@ from Globals import InitializeClass
 from Globals import package_home
 from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.permissions import ManagePortal
@@ -42,14 +43,14 @@ UID_ATTRIBUTE_NAME = 'cmf_uid'
 
 _wwwdir = os.path.join( package_home( globals() ), 'www' )
 
+
 class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     __doc__ = __doc__ # copy from module
 
+    implements(IUniqueIdHandler, IUniqueIdBrainQuery,
+               IUniqueIdUnrestrictedQuery)
     __implements__ = (
-        IUniqueIdHandler,
-        IUniqueIdBrainQuery,
-        IUniqueIdUnrestrictedQuery,
         ActionProviderBase.__implements__,
         SimpleItem.__implements__,
     )

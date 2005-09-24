@@ -19,20 +19,22 @@ from Globals import InitializeClass
 from Acquisition import aq_base
 from OFS.SimpleItem import SimpleItem
 from AccessControl import ClassSecurityInfo
-from webdav.WriteLockInterface import WriteLockInterface
+from webdav.WriteLockInterface import WriteLockInterface as z2IWriteLock
+from zope.interface import implements
 
-from interfaces.Contentish import Contentish
-from DynamicType import DynamicType
 from CMFCatalogAware import CMFCatalogAware
+from DynamicType import DynamicType
 from exceptions import NotFound
 from exceptions import ResourceLockedError
+from interfaces import IContentish
+from interfaces.Contentish import Contentish as z2IContentish
 from permissions import FTPAccess
 from permissions import View
 
 
 class PortalContent(DynamicType, CMFCatalogAware, SimpleItem):
-    """
-        Base class for portal objects.
+
+    """ Base class for portal objects.
 
         Provides hooks for reviewing, indexing, and CMF UI.
 
@@ -40,9 +42,8 @@ class PortalContent(DynamicType, CMFCatalogAware, SimpleItem):
         interfaces/DublinCore.py.
     """
 
-    __implements__ = (Contentish,
-                      WriteLockInterface,
-                      DynamicType.__implements__)
+    implements(IContentish)
+    __implements__ = (z2IContentish, z2IWriteLock, DynamicType.__implements__)
 
     isPortalContent = 1
     _isPortalContent = 1  # More reliable than 'isPortalContent'.

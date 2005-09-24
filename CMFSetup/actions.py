@@ -19,7 +19,8 @@ from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
-from Products.CMFCore.ActionProviderBase import IActionProvider
+from Products.CMFCore.interfaces.portal_actions \
+        import ActionProvider as IActionProvider
 from Products.CMFCore.utils import getToolByName
 
 from permissions import ManagePortal

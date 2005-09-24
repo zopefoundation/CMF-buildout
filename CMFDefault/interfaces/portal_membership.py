@@ -15,20 +15,6 @@
 $Id$
 """
 
-from Products.CMFCore.interfaces.portal_membership \
-        import portal_membership as BaseInterface
-
-
-class portal_membership(BaseInterface):
-    """ Declare product-specific APIs for CMFDefault's tool.
-    """
-
-    def setMembersFolderById(id=''):
-        """ Set the members folder object by its id.
-
-        The members folder has to be in the same container as the membership
-        tool. id is the id of an existing folder. If id is empty, member areas
-        are disabled.
-
-        Permission -- Manage portal
-        """
+# BBB: module will be removed in CMF 2.2
+#      zope2 interfaces created on runtime:
+#      - portal_membership

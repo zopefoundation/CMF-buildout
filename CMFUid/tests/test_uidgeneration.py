@@ -19,23 +19,27 @@ import unittest
 import Testing
 
 from BTrees.Length import Length
-from Interface.Verify import verifyObject
 
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
-from Products.CMFUid.interfaces import IUniqueIdGenerator
-from Products.CMFUid.UniqueIdGeneratorTool import UniqueIdGeneratorTool
 
+class UniqueIdGeneratorToolTests(SecurityTest):
 
-class UniqueIdGeneratorTests(SecurityTest):
+    def _getTargetClass(self):
+        from Products.CMFUid.UniqueIdGeneratorTool \
+                import UniqueIdGeneratorTool
+
+        return UniqueIdGeneratorTool
 
     def setUp(self):
         SecurityTest.setUp(self)
-        self.root._setObject('portal_uidgenerator', UniqueIdGeneratorTool())
+        self.root._setObject('portal_uidgenerator', self._getTargetClass()())
 
-    def test_interface(self):
-        generator = self.root.portal_uidgenerator
-        verifyObject(IUniqueIdGenerator, generator)
+    def test_z3interfaces(self):
+        from zope.interface.verify import verifyClass
+        from Products.CMFUid.interfaces import IUniqueIdGenerator
+
+        verifyClass(IUniqueIdGenerator, self._getTargetClass())
 
     def test_returnedUidsAreValidAndDifferent(self):
         generator = self.root.portal_uidgenerator
@@ -66,7 +70,7 @@ class UniqueIdGeneratorTests(SecurityTest):
 
 def test_suite():
     return unittest.TestSuite((
-        unittest.makeSuite(UniqueIdGeneratorTests),
+        unittest.makeSuite(UniqueIdGeneratorToolTests),
         ))
 
 if __name__ == '__main__':

@@ -18,15 +18,18 @@ $Id$
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 from Globals import InitializeClass
+from zope.interface import implements
 
 from exceptions import SkinPathError
-from interfaces.portal_skins import SkinsContainer as ISkinsContainer
+from interfaces import ISkinsContainer
+from interfaces.portal_skins import SkinsContainer as z2ISkinsContainer
 from permissions import AccessContentsInformation
 
 
 class SkinsContainer:
 
-    __implements__ = ISkinsContainer
+    implements(ISkinsContainer)
+    __implements__ = z2ISkinsContainer
 
     security = ClassSecurityInfo()
 

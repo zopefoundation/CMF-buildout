@@ -23,14 +23,15 @@ Zope2.startup()
 import os
 import time
 from StringIO import StringIO
+from tarfile import TarFile
+from tarfile import TarInfo
 
 from DateTime.DateTime import DateTime
 from OFS.Folder import Folder
 from OFS.Image import File
 
-from Products.CMFCore.tests.base.testcase import SecurityRequestTest
-
 from common import FilesystemTestBase
+from common import SecurityRequestTest
 from common import TarballTester
 from common import _makeTestFile
 from conformance import ConformsToISetupContext
@@ -55,7 +56,7 @@ class DirectoryImportContextTests( FilesystemTestBase
 
     def _getTargetClass( self ):
 
-        from Products.CMFSetup.context import DirectoryImportContext
+        from Products.GenericSetup.context import DirectoryImportContext
         return DirectoryImportContext
 
     def test_readDataFile_nonesuch( self ):
@@ -322,7 +323,7 @@ class DirectoryExportContextTests( FilesystemTestBase
 
     def _getTargetClass( self ):
 
-        from Products.CMFSetup.context import DirectoryExportContext
+        from Products.GenericSetup.context import DirectoryExportContext
         return DirectoryExportContext
 
     def test_writeDataFile_simple( self ):
@@ -383,6 +384,299 @@ class DirectoryExportContextTests( FilesystemTestBase
         self.assertEqual( open( fqname, 'rb' ).read(), digits )
 
 
+class TarballImportContextTests( SecurityRequestTest
+                               , ConformsToISetupContext
+                               , ConformsToIImportContext
+                               ):
+
+    def _getTargetClass( self ):
+
+        from Products.GenericSetup.context import TarballImportContext
+        return TarballImportContext
+
+    def _makeOne( self, file_dict={}, mod_time=None, *args, **kw ):
+
+        archive_stream = StringIO()
+        archive = TarFile.open('test.tar.gz', 'w:gz', archive_stream)
+
+        def _addOneMember(path, data, modtime):
+            stream = StringIO(v)
+            info = TarInfo(k)
+            info.size = len(v)
+            info.mtime = mod_time
+            archive.addfile(info, stream)
+
+        def _addMember(path, data, modtime):
+            from tarfile import DIRTYPE
+            elements = path.split('/')
+            parents = filter(None, [elements[x] for x in range(len(elements))])
+            for parent in parents:
+                info = TarInfo()
+                info.name = parent
+                info.size = 0
+                info.mtime = mod_time
+                info.type = DIRTYPE
+                archive.addfile(info, StringIO())
+            _addOneMember(path, data, modtime)
+
+        file_items = file_dict.items() or [('dummy', '')] # empty archive barfs
+
+        if mod_time is None:
+            mod_time = time.time()
+
+        for k, v in file_items:
+            _addMember(k, v, mod_time)
+
+        archive.close()
+        bits = archive_stream.getvalue()
+
+        site = DummySite( 'site' ).__of__( self.root )
+        site._setObject( 'setup_tool', Folder( 'setup_tool' ) )
+        tool = site._getOb( 'setup_tool' )
+
+        ctx = self._getTargetClass()( tool, bits, *args, **kw )
+
+        return site, tool, ctx.__of__( tool )
+
+    def test_ctorparms( self ):
+
+        ENCODING = 'latin-1'
+        site, tool, ctx = self._makeOne( encoding=ENCODING
+                                       , should_purge=True
+                                       )
+
+        self.assertEqual( ctx.getEncoding(), ENCODING )
+        self.assertEqual( ctx.shouldPurge(), True )
+
+    def test_empty( self ):
+
+        site, tool, ctx = self._makeOne()
+
+        self.assertEqual( ctx.getSite(), site )
+        self.assertEqual( ctx.getEncoding(), None )
+        self.assertEqual( ctx.shouldPurge(), False )
+
+        # These methods are all specified to return 'None' for non-existing
+        # paths / entities
+        self.assertEqual( ctx.isDirectory( 'nonesuch/path' ), None )
+        self.assertEqual( ctx.listDirectory( 'nonesuch/path' ), None )
+
+    def test_readDataFile_nonesuch( self ):
+
+        FILENAME = 'nonesuch.txt'
+
+        site, tool, ctx = self._makeOne()
+
+        self.assertEqual( ctx.readDataFile( FILENAME ), None )
+        self.assertEqual( ctx.readDataFile( FILENAME, 'subdir' ), None )
+
+    def test_readDataFile_simple( self ):
+
+        from string import printable
+
+        FILENAME = 'simple.txt'
+
+        site, tool, ctx = self._makeOne( { FILENAME: printable } )
+
+        self.assertEqual( ctx.readDataFile( FILENAME ), printable )
+
+    def test_readDataFile_subdir( self ):
+
+        from string import printable
+
+        FILENAME = 'subdir.txt'
+        SUBDIR = 'subdir'
+
+        site, tool, ctx = self._makeOne( { '%s/%s' % (SUBDIR, FILENAME):
+                                            printable } )
+
+        self.assertEqual( ctx.readDataFile( FILENAME, SUBDIR ), printable )
+
+    def test_getLastModified_nonesuch( self ):
+
+        FILENAME = 'nonesuch.txt'
+
+        site, tool, ctx = self._makeOne()
+
+        self.assertEqual( ctx.getLastModified( FILENAME ), None )
+
+    def test_getLastModified_simple( self ):
+
+        from string import printable
+
+        FILENAME = 'simple.txt'
+        WHEN = DateTime( '2004-01-01T00:00:00Z' )
+
+        site, tool, ctx = self._makeOne( { FILENAME : printable }
+                                       , mod_time=WHEN )
+
+        self.assertEqual( ctx.getLastModified( FILENAME ), WHEN )
+
+    def test_getLastModified_subdir( self ):
+
+        from string import printable
+
+        FILENAME = 'subdir.txt'
+        SUBDIR = 'subdir'
+        PATH = '%s/%s' % ( SUBDIR, FILENAME )
+        WHEN = DateTime( '2004-01-01T00:00:00Z' )
+
+        site, tool, ctx = self._makeOne( { PATH: printable }
+                                       , mod_time=WHEN )
+
+        self.assertEqual( ctx.getLastModified( PATH ), WHEN )
+
+    def test_getLastModified_directory( self ):
+
+        from string import printable
+
+        FILENAME = 'subdir.txt'
+        SUBDIR = 'subdir'
+        PATH = '%s/%s' % ( SUBDIR, FILENAME )
+        WHEN = DateTime( '2004-01-01T00:00:00Z' )
+
+        site, tool, ctx = self._makeOne( { PATH: printable }
+                                       , mod_time=WHEN
+                                       )
+
+        self.assertEqual( ctx.getLastModified( SUBDIR ), WHEN )
+
+    def test_isDirectory_nonesuch( self ):
+
+        FILENAME = 'nonesuch.txt'
+
+        site, tool, ctx = self._makeOne()
+
+        self.assertEqual( ctx.isDirectory( FILENAME ), None )
+
+    def test_isDirectory_simple( self ):
+
+        from string import printable
+
+        FILENAME = 'simple.txt'
+
+        site, tool, ctx = self._makeOne( { FILENAME: printable } )
+
+        self.assertEqual( ctx.isDirectory( FILENAME ), False )
+
+    def test_isDirectory_nested( self ):
+
+        from string import printable
+
+        SUBDIR = 'subdir'
+        FILENAME = 'nested.txt'
+        PATH = '%s/%s' % ( SUBDIR, FILENAME )
+
+        site, tool, ctx = self._makeOne( { PATH: printable } )
+
+        self.assertEqual( ctx.isDirectory( PATH ), False )
+
+    def test_isDirectory_subdir( self ):
+
+        from string import printable
+
+        SUBDIR = 'subdir'
+        FILENAME = 'nested.txt'
+        PATH = '%s/%s' % ( SUBDIR, FILENAME )
+
+        site, tool, ctx = self._makeOne( { PATH: printable } )
+
+        self.assertEqual( ctx.isDirectory( SUBDIR ), True )
+
+    def test_listDirectory_nonesuch( self ):
+
+        SUBDIR = 'nonesuch/path'
+
+        site, tool, ctx = self._makeOne()
+
+        self.assertEqual( ctx.listDirectory( SUBDIR ), None )
+
+    def test_listDirectory_root( self ):
+
+        from string import printable
+
+        FILENAME = 'simple.txt'
+
+        site, tool, ctx = self._makeOne( { FILENAME: printable } )
+
+        self.assertEqual( len( ctx.listDirectory( None ) ), 1 )
+        self.failUnless( FILENAME in ctx.listDirectory( None ) )
+
+    def test_listDirectory_simple( self ):
+
+        from string import printable
+
+        FILENAME = 'simple.txt'
+
+        site, tool, ctx = self._makeOne( { FILENAME: printable } )
+
+        self.assertEqual( ctx.listDirectory( FILENAME ), None )
+
+    def test_listDirectory_nested( self ):
+
+        from string import printable
+
+        SUBDIR = 'subdir'
+        FILENAME = 'nested.txt'
+        PATH = '%s/%s' % ( SUBDIR, FILENAME )
+
+        site, tool, ctx = self._makeOne( { PATH: printable } )
+
+        self.assertEqual( ctx.listDirectory( PATH ), None )
+
+    def test_listDirectory_single( self ):
+
+        from string import printable
+
+        SUBDIR = 'subdir'
+        FILENAME = 'nested.txt'
+        PATH = '%s/%s' % ( SUBDIR, FILENAME )
+
+        site, tool, ctx = self._makeOne( { PATH: printable } )
+
+        names = ctx.listDirectory( SUBDIR )
+        self.assertEqual( len( names ), 1 )
+        self.failUnless( FILENAME in names )
+
+    def test_listDirectory_multiple( self ):
+
+        from string import printable, uppercase
+
+        SUBDIR = 'subdir'
+        FILENAME1 = 'nested.txt'
+        PATH1 = '%s/%s' % ( SUBDIR, FILENAME1 )
+        FILENAME2 = 'another.txt'
+        PATH2 = '%s/%s' % ( SUBDIR, FILENAME2 )
+
+        site, tool, ctx = self._makeOne( { PATH1: printable
+                                         , PATH2: uppercase
+                                         } )
+                                             
+        names = ctx.listDirectory( SUBDIR )
+        self.assertEqual( len( names ), 2 )
+        self.failUnless( FILENAME1 in names )
+        self.failUnless( FILENAME2 in names )
+
+    def test_listDirectory_skip( self ):
+
+        from string import printable, uppercase
+
+        SUBDIR = 'subdir'
+        FILENAME1 = 'nested.txt'
+        PATH1 = '%s/%s' % ( SUBDIR, FILENAME1 )
+        FILENAME2 = 'another.txt'
+        PATH2 = '%s/%s' % ( SUBDIR, FILENAME2 )
+
+        site, tool, ctx = self._makeOne( { PATH1: printable
+                                         , PATH2: uppercase
+                                         } )
+
+        names = ctx.listDirectory( SUBDIR, skip=( FILENAME1, ) )
+        self.assertEqual( len( names ), 1 )
+        self.failIf( FILENAME1 in names )
+        self.failUnless( FILENAME2 in names )
+
+
 class TarballExportContextTests( FilesystemTestBase
                                , TarballTester
                                , ConformsToISetupContext
@@ -393,7 +687,7 @@ class TarballExportContextTests( FilesystemTestBase
 
     def _getTargetClass( self ):
 
-        from Products.CMFSetup.context import TarballExportContext
+        from Products.GenericSetup.context import TarballExportContext
         return TarballExportContext
 
     def test_writeDataFile_simple( self ):
@@ -453,7 +747,7 @@ class SnapshotExportContextTests( SecurityRequestTest
 
     def _getTargetClass( self ):
 
-        from Products.CMFSetup.context import SnapshotExportContext
+        from Products.GenericSetup.context import SnapshotExportContext
         return SnapshotExportContext
 
     def _makeOne( self, *args, **kw ):
@@ -472,8 +766,8 @@ class SnapshotExportContextTests( SecurityRequestTest
         png_file.close()
 
         site = DummySite( 'site' ).__of__( self.root )
-        site.portal_setup = DummyTool( 'portal_setup' )
-        tool = site.portal_setup
+        site.setup_tool = DummyTool( 'setup_tool' )
+        tool = site.setup_tool
         ctx = self._makeOne( tool, 'simple' )
 
         ctx.writeDataFile( FILENAME, png_data, _CONTENT_TYPE )
@@ -498,8 +792,8 @@ class SnapshotExportContextTests( SecurityRequestTest
         _CONTENT_TYPE = 'text/plain'
 
         site = DummySite( 'site' ).__of__( self.root )
-        site.portal_setup = DummyTool( 'portal_setup' )
-        tool = site.portal_setup
+        site.setup_tool = DummyTool( 'setup_tool' )
+        tool = site.setup_tool
         ctx = self._makeOne( tool, 'simple' )
 
         ctx.writeDataFile( FILENAME, digits, _CONTENT_TYPE )
@@ -524,8 +818,8 @@ class SnapshotExportContextTests( SecurityRequestTest
         _XML = """<?xml version="1.0"?><simple />"""
 
         site = DummySite( 'site' ).__of__( self.root )
-        site.portal_setup = DummyTool( 'portal_setup' )
-        tool = site.portal_setup
+        site.setup_tool = DummyTool( 'setup_tool' )
+        tool = site.setup_tool
         ctx = self._makeOne( tool, 'simple' )
 
         ctx.writeDataFile( FILENAME, _XML, _CONTENT_TYPE )
@@ -550,8 +844,8 @@ class SnapshotExportContextTests( SecurityRequestTest
         _XML = u"""<?xml version="1.0"?><simple />"""
 
         site = DummySite( 'site' ).__of__( self.root )
-        site.portal_setup = DummyTool( 'portal_setup' )
-        tool = site.portal_setup
+        site.setup_tool = DummyTool( 'setup_tool' )
+        tool = site.setup_tool
         ctx = self._makeOne( tool, 'simple' )
 
         ctx.writeDataFile( FILENAME, _XML, _CONTENT_TYPE )
@@ -576,8 +870,8 @@ class SnapshotExportContextTests( SecurityRequestTest
         _HTML = """<html><body><h1>HTML</h1></body></html>"""
 
         site = DummySite( 'site' ).__of__( self.root )
-        site.portal_setup = DummyTool( 'portal_setup' )
-        tool = site.portal_setup
+        site.setup_tool = DummyTool( 'setup_tool' )
+        tool = site.setup_tool
         ctx = self._makeOne( tool, 'simple' )
 
         ctx.writeDataFile( FILENAME, _HTML, _CONTENT_TYPE, 'sub1' )
@@ -602,8 +896,8 @@ class SnapshotExportContextTests( SecurityRequestTest
         _HTML = """<html><body><h1>HTML</h1></body></html>"""
 
         site = DummySite( 'site' ).__of__( self.root )
-        site.portal_setup = DummyTool( 'portal_setup' )
-        tool = site.portal_setup
+        site.setup_tool = DummyTool( 'setup_tool' )
+        tool = site.setup_tool
         ctx = self._makeOne( tool, 'simple' )
 
         ctx.writeDataFile( FILENAME, _HTML, _CONTENT_TYPE, 'sub1/sub2' )
@@ -628,8 +922,8 @@ class SnapshotExportContextTests( SecurityRequestTest
         from string import digits
 
         site = DummySite( 'site' ).__of__( self.root )
-        site.portal_setup = DummyTool( 'portal_setup' )
-        tool = site.portal_setup
+        site.setup_tool = DummyTool( 'setup_tool' )
+        tool = site.setup_tool
         ctx = self._makeOne( tool, 'multiple' )
 
         ctx.writeDataFile( 'foo.txt', printable, 'text/plain' )
@@ -650,14 +944,14 @@ class SnapshotImportContextTests( SecurityRequestTest
 
     def _getTargetClass( self ):
 
-        from Products.CMFSetup.context import SnapshotImportContext
+        from Products.GenericSetup.context import SnapshotImportContext
         return SnapshotImportContext
 
     def _makeOne( self, context_id, *args, **kw ):
 
         site = DummySite( 'site' ).__of__( self.root )
-        site._setObject( 'portal_setup', Folder( 'portal_setup' ) )
-        tool = site._getOb( 'portal_setup' )
+        site._setObject( 'setup_tool', Folder( 'setup_tool' ) )
+        tool = site._getOb( 'setup_tool' )
 
         tool._setObject( 'snapshots', Folder( 'snapshots' ) )
         tool.snapshots._setObject( context_id, Folder( context_id ) )
@@ -979,6 +1273,7 @@ def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite( DirectoryImportContextTests ),
         unittest.makeSuite( DirectoryExportContextTests ),
+        unittest.makeSuite( TarballImportContextTests ),
         unittest.makeSuite( TarballExportContextTests ),
         unittest.makeSuite( SnapshotExportContextTests ),
         unittest.makeSuite( SnapshotImportContextTests ),

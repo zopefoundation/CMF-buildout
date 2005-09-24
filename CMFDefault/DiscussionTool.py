@@ -20,12 +20,14 @@ from Acquisition import aq_base
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
+from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
+from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.interfaces.Discussions \
-        import DiscussionResponse as IDiscussionResponse
+        import DiscussionResponse as z2IDiscussionResponse
 from Products.CMFCore.interfaces.portal_discussion \
-        import portal_discussion as IDiscussionTool
+        import portal_discussion as z2IDiscussionTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import UniqueObject
 
@@ -43,7 +45,8 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
     """ Links content to discussions.
     """
 
-    __implements__ = (IDiscussionTool, ActionProviderBase.__implements__)
+    implements(IDiscussionTool)
+    __implements__ = (z2IDiscussionTool, ActionProviderBase.__implements__)
 
     id = 'portal_discussion'
     meta_type = 'Default Discussion Tool'
@@ -86,7 +89,7 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
         if not self.isDiscussionAllowedFor( content ):
             raise DiscussionNotAllowed
 
-        if not IDiscussionResponse.isImplementedBy(content) and \
+        if not z2IDiscussionResponse.isImplementedBy(content) and \
                 getattr( aq_base(content), 'talkback', None ) is None:
             # Discussion Items use the DiscussionItemContainer object of the
             # related content item, so only create one for other content items

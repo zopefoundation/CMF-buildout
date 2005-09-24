@@ -15,31 +15,6 @@
 $Id$
 """
 
-from Interface import Attribute
-from Interface import Interface
-
-
-class portal_properties(Interface):
-    """ CMF Properties Tool interface.
-
-    This interface provides access to "portal-wide" properties.
-    """
-    id = Attribute('id', 'Must be set to "portal_properties"')
-
-    def editProperties(props):
-        """ Change portal settings.
-
-        Permission -- Manage portal
-        """
-
-    def title():
-        """ Get portal title.
-
-        Returns -- String
-        """
-
-    def smtp_server():
-        """ Get local SMTP server.
-
-        Returns -- String
-        """
+# BBB: module will be removed in CMF 2.2
+#      zope2 interfaces created on runtime:
+#      - portal_properties

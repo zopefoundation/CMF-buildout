@@ -18,7 +18,7 @@
 
   <!-- Define a default template with css-oriented slots -->
   <browser:page
-      for="*"
+      for="Products.CMFCore.interfaces.IDynamicType"
       template="five_template.pt"
       name="five_template"
       permission="zope.Public"

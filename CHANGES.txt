@@ -2,6 +2,14 @@ HEAD only (unreleased)
 
   New Features
 
+    - CMFSetup: Split off GenericSetup.
+      GenericSetup allows to use CMFSetup functionality outside CMF. See the
+      README.txt of GenericSetup for details.
+
+    - Interfaces: Converted all interfaces to zope 3 style interfaces.
+      Most interfaces are bridged back to zope 2 style interfaces to provide
+      backwards compatibility.
+
     - The features of CMFonFive have been folder into CMFCore and
       CMFDefault:
 

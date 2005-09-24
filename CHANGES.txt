@@ -2,6 +2,19 @@ HEAD only (unreleased)
 
   New Features
 
+    - The features of CMFonFive have been folder into CMFCore and
+      CMFDefault:
+
+      * Zope 3 menus (browser:menu) are bridged to CMF actions using the
+        portal_fiveactions tool. Any menuItem registered will be
+        accessible though the portal_actions tool, where the menu for
+        which the item was registered will be used as the action
+        category.
+
+      * The Zope 3 'cmf' skin layer provides integration between the
+        Zope3 standard macros and the CMF main template, by redefining
+        five_template.pt.
+
     - TypeInformation and newstyle Actions: Added i18n support.
       If 'i18n_domain' is specified, 'title' and 'description' are returned as
       MassageID objects instead of strings. This allows to use different i18n

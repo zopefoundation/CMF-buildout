@@ -1,0 +1,28 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="cmf">
+
+  <browser:layer
+      name="cmf"
+      />
+
+  <browser:skin
+      name="cmf"
+      layers="cmf default"
+      />
+
+  <browser:defaultSkin
+      name="cmf"
+      />
+
+  <!-- Define a default template with css-oriented slots -->
+  <browser:page
+      for="*"
+      template="five_template.pt"
+      name="five_template"
+      permission="zope.Public"
+      layer="cmf"
+      />
+
+</configure>

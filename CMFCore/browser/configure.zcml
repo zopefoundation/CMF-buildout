@@ -1,0 +1,13 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  i18n_domain="cmf"
+  >
+
+  <!-- Set up default menus as action categories. -->
+  <browser:menu
+    id="object"
+    title="Object menu"
+    />
+
+</configure>

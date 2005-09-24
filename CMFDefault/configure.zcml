@@ -4,4 +4,6 @@
 
   <include package=".browser"/>
 
+  <include package=".skin"/>
+
 </configure>

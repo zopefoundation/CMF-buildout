@@ -2,6 +2,9 @@ After CMF 1.5.4
 
   Bug Fixes
 
+    - CMFCore.DynamicType/ActionProviderBase: If an action cannot be looked
+      up, provide a more helpful debugging message for the error log.
+
     - CMFCore.MemberDataTool: Fixed the pruneMemberData functionality in the
       ZMI: Now it is enough to press the button once.
 

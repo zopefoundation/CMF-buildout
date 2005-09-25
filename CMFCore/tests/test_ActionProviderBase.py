@@ -281,6 +281,16 @@ class ActionProviderBaseTests(SecurityRequestTest):
                            apb.getActionInfo,
                            'object/an_id', check_visibility=1 )
 
+        # The following is nasty, but I want to make sure the ValueError
+        # carries some useful information
+        INVALID_ID = 'invalid_id'
+        try:
+            rval = apb.getActionInfo('object/%s' % INVALID_ID)
+        except ValueError, e:
+            message = e.args[0]
+            detail = '"%s" does not offer action "%s"' % (message, INVALID_ID)
+            self.failUnless(message.find(INVALID_ID) != -1, detail)
+
 
 def test_suite():
     return TestSuite((

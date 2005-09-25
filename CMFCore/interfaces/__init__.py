@@ -17,10 +17,8 @@ $Id$
 
 from _content import *
 from _tools import *
+from _exportimport import *
 
-# BBB: will be removed in CMF 2.2
-#      create zope2 interfaces
-from Interface.bridge import createZope3Bridge
 import CachingPolicyManager
 import Contentish
 import ContentTypeRegistry
@@ -44,6 +42,9 @@ import portal_url
 import portal_workflow
 import Syndicatable
 
+# BBB: will be removed in CMF 2.2
+#      create zope2 interfaces
+from Interface.bridge import createZope3Bridge
 createZope3Bridge(ICachingPolicyManager, CachingPolicyManager,
                   'CachingPolicyManager')
 createZope3Bridge(IContentish, Contentish, 'Contentish')

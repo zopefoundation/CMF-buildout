@@ -541,6 +541,9 @@ class IFolderish(Interface):
         o Permission -- List folder contents
         """
 
+class ISiteRoot(IFolderish):
+    """ Marker interface for the object which serves as the root of a site.
+    """
 
 #
 #   IOpaqueItems interfaces

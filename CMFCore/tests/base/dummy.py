@@ -51,6 +51,7 @@ class DummyObject(Implicit):
 
 class DummyType(DummyObject):
     """ A Dummy Type object """
+    _isTypeInformation = True
 
     def __init__(self, id='Dummy Content', title='Dummy Content', actions=()):
         """ To fake out some actions, pass in a sequence of tuples where the
@@ -59,7 +60,7 @@ class DummyType(DummyObject):
         a page template.
         """
 
-        self.id = id
+        self.id = self._id = id
         self.title = title
         self._actions = {}
 

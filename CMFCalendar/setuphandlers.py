@@ -17,6 +17,7 @@ $Id$
 
 from Products.CMFCore.utils import getToolByName
 
+from exceptions import CatalogError
 from exceptions import MetadataError
 
 
@@ -27,7 +28,26 @@ def importVarious(context):
     are implemented for these steps.
     """
     site = context.getSite()
+    ctool = getToolByName(site, 'portal_catalog')
     mdtool = getToolByName(site, 'portal_metadata')
+
+    # Set up a catalog indexes and metadata
+    try:
+        ctool.addIndex('start', 'DateIndex')
+    except CatalogError:
+        pass
+    try:
+        ctool.addIndex('end', 'DateIndex')
+    except CatalogError:
+        pass
+    try:
+        ctool.addColumn('start')
+    except CatalogError:
+        pass
+    try:
+        ctool.addColumn('end')
+    except CatalogError:
+        pass
 
     # Set up a MetadataTool element policy for events
     try:

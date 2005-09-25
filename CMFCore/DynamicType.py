@@ -79,7 +79,9 @@ class DynamicType:
             return ti.getActionInfo(action_chain, self, check_visibility,
                                     check_condition)
         else:
-            raise ValueError('No Action meets the given specification.')
+            msg = 'Action "%s" not available for %s' % (
+                        action_chain, '/'.join(self.getPhysicalPath()))
+            raise ValueError(msg) 
 
     # Support for dynamic icons
 

@@ -124,7 +124,13 @@ class ActionProviderBase:
                                             check_permissions=False,
                                             check_condition=check_condition)
         if not action_infos:
-            raise ValueError('No Action meets the given specification.')
+            if object is None:
+                provider = self
+            else:
+                provider = object
+            msg = 'Action "%s" not available for %s' % (
+                        action_chain, '/'.join(provider.getPhysicalPath()))
+            raise ValueError(msg)
         for ai in action_infos:
             if ai['allowed']:
                 return ai

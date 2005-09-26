@@ -9,7 +9,7 @@
       title="CMF menu" />
 
   <browser:menuItem
-      for="Products.Five.testing.simplecontent.ISimpleContent"
+      for="Products.Five.tests.testing.simplecontent.ISimpleContent"
       menu="mymenu"
       title="Public Test Menu Item"
       action="public.html"
@@ -18,7 +18,7 @@
       />
 
   <browser:menuItem
-      for="Products.Five.testing.simplecontent.ISimpleContent"
+      for="Products.Five.tests.testing.simplecontent.ISimpleContent"
       menu="mymenu"
       title="Protected Test Menu Item"
       action="protected.html"

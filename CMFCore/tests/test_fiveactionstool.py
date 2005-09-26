@@ -45,7 +45,7 @@ def test_fiveactionstool():
 
     Let's create some simple content object providing ISimpleContent:
 
-      >>> from Products.Five.testing.simplecontent import SimpleContent
+      >>> from Products.Five.tests.testing.simplecontent import SimpleContent
       >>> foo = SimpleContent('foo', 'Foo')
 
     Now we'll load a configuration file specifying some menu and menu

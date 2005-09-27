@@ -159,7 +159,7 @@ class SiteStructureExporterTests(PlacelessSetup,
 
     def _setUpAdapters(self):
         from zope.app.tests import ztapi
-        from OFS.Image import File
+        #from OFS.Image import File
         from zope.interface import classImplements
 
         from Products.CMFCore.interfaces import IFilesystemExporter
@@ -169,13 +169,14 @@ class SiteStructureExporterTests(PlacelessSetup,
         from Products.CMFCore.interfaces import IINIAware
 
         from Products.CMFCore.exportimport import \
-                StructureFolderWalkingAdapter
+             StructureFolderWalkingAdapter
         from Products.CMFCore.exportimport import \
-                CSVAwareFileAdapter
+             CSVAwareFileAdapter
         from Products.CMFCore.exportimport import \
-                INIAwareFileAdapter
-        from Products.CMFCore.exportimport import \
-                OFSFileAdapter
+             INIAwareFileAdapter
+        
+        #from Products.CMFCore.exportimport import \
+        #        OFSFileAdapter
 
         ztapi.provideAdapter(IFolderish,
                              IFilesystemExporter, 
@@ -703,8 +704,8 @@ Description = This is a test
 
 class INIAwareFileAdapterTests(unittest.TestCase,
                                ConformsToIFilesystemExporter,
-                               ConformsToIFilesystemImporter,
-                              ):
+                               ConformsToIFilesystemImporter
+                               ):
 
     def _getTargetClass(self):
         from Products.CMFCore.exportimport import INIAwareFileAdapter

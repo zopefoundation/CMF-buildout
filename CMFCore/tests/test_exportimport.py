@@ -1,8 +1,23 @@
+##############################################################################
+#
+# Copyright (c) 2004 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
 """ Unit tests for Products.CMFCore.exportimport
 
 $Id$
 """
+
 import unittest
+import Testing
+
 from csv import reader
 from ConfigParser import ConfigParser
 from StringIO import StringIO
@@ -29,7 +44,7 @@ class SiteStructureExporterTests(PlacelessSetup,
 
     def _makeSetupTool(self):
         from Products.GenericSetup.tool import SetupTool
-        return SetupTool()
+        return SetupTool('portal_setup')
 
     def _setUpAdapters(self):
         from zope.app.tests import ztapi
@@ -853,5 +868,3 @@ def test_suite():
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')
-
-

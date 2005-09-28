@@ -1,5 +1,16 @@
 <?xml version="1.0"?>
 <export-steps>
+ <export-step id="actions"
+              handler="Products.CMFSetup.actions.exportActionProviders"
+              title="Action Providers">
+  
+  
+  
+  Export actions tool's action providers and their actions.
+ 
+ 
+ 
+ </export-step>
  <export-step id="cookieauth"
               handler="Products.CMFSetup.cookieauth.exportCookieCrumbler"
               title="Cookie Authentication">
@@ -11,13 +22,13 @@
  
  
  </export-step>
- <export-step id="actions"
-              handler="Products.CMFSetup.actions.exportActionProviders"
-              title="Action Providers">
+ <export-step id="mailhost"
+              handler="Products.CMFSetup.mailhost.exportMailHost"
+              title="MailHost">
   
   
   
-  Export actions tool's action providers and their actions.
+  Export the mailhost's settings and properties
  
  
  
@@ -34,7 +45,7 @@
  
  </export-step>
  <export-step id="rolemap"
-              handler="Products.CMFSetup.rolemap.exportRolemap"
+              handler="Products.GenericSetup.rolemap.exportRolemap"
               title="Role / Permission Map">
   
   
@@ -56,7 +67,7 @@
  
  </export-step>
  <export-step id="step_registries"
-              handler="Products.CMFSetup.tool.exportStepRegistries"
+              handler="Products.GenericSetup.tool.exportStepRegistries"
               title="Step Registries">
   
   
@@ -67,7 +78,7 @@
  
  </export-step>
  <export-step id="toolset"
-              handler="Products.CMFSetup.tool.exportToolset"
+              handler="Products.GenericSetup.tool.exportToolset"
               title="Required Tools">
   
   
@@ -99,17 +110,4 @@
  
  
  </export-step>
-
- <export-step id="mailhost"
-              handler="Products.CMFSetup.mailhost.exportMailHost"
-              title="MailHost">
-  
-  
-  
-  Export the mailhost's settings and properties
- 
- 
- 
- </export-step>
-
 </export-steps>

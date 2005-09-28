@@ -18,4 +18,13 @@ $Id$
 from Products.GenericSetup.tool import exportStepRegistries
 from Products.GenericSetup.tool import importToolset
 from Products.GenericSetup.tool import exportToolset
-from Products.GenericSetup.tool import SetupTool
+from Products.GenericSetup.tool import SetupTool as BaseTool
+
+
+class SetupTool(BaseTool):
+
+    #BBB: for setup tools created with CMF 1.5
+    id = 'portal_setup'
+
+    def __init__(self, id='portal_setup'):
+        BaseTool.__init__(self, id)

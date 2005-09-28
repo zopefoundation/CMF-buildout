@@ -1,6 +1,20 @@
 <?xml version="1.0"?>
 <import-steps>
- <import-step id="cookie_authentication" version="20050903-01"
+ <import-step id="actions" version="20040630-01"
+              handler="Products.CMFSetup.actions.importActionProviders"
+              title="Action Providers">
+  <dependency step="toolset"/>
+  
+  
+  
+  Import actions tool's action providers and their actions.
+ 
+ 
+  
+ 
+ </import-step>
+ <import-step id="cookie_authentication"
+              version="20050903-01"
               handler="Products.CMFSetup.cookieauth.importCookieCrumbler"
               title="Cookie Authentication">
   <dependency step="toolset"/>
@@ -13,15 +27,14 @@
   
  
  </import-step>
-
- <import-step id="actions" version="20040630-01"
-              handler="Products.CMFSetup.actions.importActionProviders"
-              title="Action Providers">
+ <import-step id="mailhost" version="20050803-01"
+              handler="Products.CMFSetup.mailhost.importMailHost"
+              title="MailHost">
   <dependency step="toolset"/>
   
   
   
-  Import actions tool's action providers and their actions.
+  Import mailhost settings
  
  
   
@@ -40,7 +53,7 @@
  
  </import-step>
  <import-step id="rolemap" version="20040523-01"
-              handler="Products.CMFSetup.rolemap.importRolemap"
+              handler="Products.GenericSetup.rolemap.importRolemap"
               title="Role / Permission Map">
 
   
@@ -65,7 +78,7 @@
  
  </import-step>
  <import-step id="toolset" version="20040630-01"
-              handler="Products.CMFSetup.tool.importToolset"
+              handler="Products.GenericSetup.tool.importToolset"
               title="Required tools">
 
   
@@ -111,19 +124,6 @@
   
   
   Import workflow tool's workflow definitions and supporting scripts.
- 
- 
-  
- 
- </import-step>
- <import-step id="mailhost" version="20050803-01"
-              handler="Products.CMFSetup.mailhost.importMailHost"
-              title="MailHost">
-  <dependency step="toolset"/>
-  
-  
-  
-  Import mailhost settings
  
  
   

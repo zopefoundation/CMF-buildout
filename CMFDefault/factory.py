@@ -18,12 +18,14 @@ $Id$
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 from Products.CMFCore.utils import getToolByName
-from Products.CMFSetup import EXTENSION
-from Products.CMFSetup import profile_registry
-from Products.CMFSetup.tool import SetupTool
+from Products.GenericSetup import EXTENSION
+from Products.GenericSetup import profile_registry
+from Products.GenericSetup.tool import SetupTool
 
 from Portal import CMFSite
 from utils import _wwwdir
+
+_TOOL_ID = 'portal_setup'
 
 
 def addConfiguredSiteForm(dispatcher):
@@ -51,9 +53,8 @@ def addConfiguredSite(dispatcher, site_id, profile_id, snapshot=True,
     dispatcher._setObject( site_id, site )
     site = dispatcher._getOb( site_id )
 
-    setup_tool = SetupTool()
-    site._setObject( 'portal_setup', setup_tool )
-    setup_tool = getToolByName( site, 'portal_setup' )
+    site._setObject(_TOOL_ID, SetupTool(_TOOL_ID))
+    setup_tool = getToolByName(site, _TOOL_ID)
 
     setup_tool.setImportContext( 'profile-%s' % profile_id )
     setup_tool.runAllImportSteps()

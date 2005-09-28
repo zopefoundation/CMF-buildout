@@ -74,3 +74,23 @@ class IINIAware(Interface):
         o 'stream_or_text' must be either a string, or else a stream
           directly parseable by ConfigParser.
         """
+
+class IDAVAware(Interface):
+    """ Interface for objects which handle their own FTP / DAV operations.
+    """
+    def getId():
+        """ Return the Zope id of the object.
+        """
+
+    def manage_FTPget():
+        """ Return a string representing the object as a file.
+        """
+
+    def PUT(REQUEST, RESPONSE):
+        """ Parse file content and update the object.
+
+        o 'REQUEST' will have a 'get' method, which will have the 
+          content object in its "BODY" key.  It will also have 'get_header'
+          method, whose headers (e.g., "Content-Type") may affect the
+          processing of the body.
+        """

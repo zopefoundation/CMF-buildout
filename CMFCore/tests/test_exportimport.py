@@ -602,7 +602,7 @@ Description = This is a test
 
 class INIAwareFileAdapterTests(unittest.TestCase,
                                ConformsToIFilesystemExporter,
-                               ConformsToIFilesystemImporter
+                               ConformsToIFilesystemImporter,
                                ):
 
     def _getTargetClass(self):
@@ -638,6 +638,41 @@ class INIAwareFileAdapterTests(unittest.TestCase,
         parser.readfp(StringIO(text))
         self.assertEqual(parser.get('DEFAULT', 'title'), 'Title: ini_file')
         self.assertEqual(parser.get('DEFAULT', 'description'), 'abc')
+
+
+class DAVAwareFileAdapterTests(unittest.TestCase,
+                               ConformsToIFilesystemExporter,
+                               ConformsToIFilesystemImporter,
+                               ):
+
+    def _getTargetClass(self):
+        from Products.CMFCore.exportimport import DAVAwareFileAdapter
+        return DAVAwareFileAdapter
+
+    def _makeOne(self, context, *args, **kw):
+        return self._getTargetClass()(context, *args, **kw)
+
+    def test_export_dav_file(self):
+        dav_file = _makeDAVAware('dav_file.html')
+        adapter = self._makeOne(dav_file)
+        context = DummyExportContext(None)
+        adapter.export(context, 'subpath/to')
+
+        self.assertEqual(len(context._wrote), 1)
+        filename, text, content_type = context._wrote[0]
+        self.assertEqual(filename, 'subpath/to/dav_file.html')
+        self.assertEqual(content_type, 'text/plain')
+        self.assertEqual(text.strip(), dav_file.manage_FTPget().strip())
+
+    def test_import_dav_file(self):
+        VALUES = ('Title: dav_file', 'Description: abc', 'body goes here')
+        dav_file = _makeDAVAware('dav_file.html')
+        adapter = self._makeOne(dav_file)
+        context = DummyImportContext(None)
+        context._files['subpath/to/dav_file.html'] = KNOWN_DAV % VALUES
+
+        adapter.import_(context, 'subpath/to')
+        text = dav_file._was_put == KNOWN_DAV % VALUES
 
 
 TEST_CSV_AWARE = 'Test CSV Aware'
@@ -702,6 +737,43 @@ def _makeINIAware(id):
             self._was_put = text
 
     aware = _TestINIAware()
+    aware._setId(id)
+
+    return aware
+
+
+TEST_DAV_AWARE = 'Test DAV Aware'
+KNOWN_DAV = """\
+Title: %s
+Description: %s
+
+%s
+"""
+
+def _makeDAVAware(id):
+    from OFS.SimpleItem import SimpleItem
+    from zope.interface import implements
+    from Products.CMFCore.interfaces import IDynamicType
+    from Products.CMFCore.interfaces import IDAVAware
+
+    class _TestDAVAware(SimpleItem):
+        implements(IDynamicType, IDAVAware)
+        _was_put = None
+        title = 'DAV title'
+        description = 'DAV description'
+        body = 'DAV body'
+        portal_type = TEST_DAV_AWARE
+
+        def getPortalTypeName(self):
+            return self.portal_type
+
+        def manage_FTPget(self):
+            return KNOWN_DAV % (self.title, self.description, self.body)
+
+        def PUT(self, REQUEST, RESPONSE):
+            self._was_put = REQUEST.get('BODY', '')
+
+    aware = _TestDAVAware()
     aware._setId(id)
 
     return aware
@@ -776,6 +848,7 @@ def test_suite():
     suite.addTest(unittest.makeSuite(Test_globpattern))
     suite.addTest(unittest.makeSuite(CSVAwareFileAdapterTests))
     suite.addTest(unittest.makeSuite(INIAwareFileAdapterTests))
+    suite.addTest(unittest.makeSuite(DAVAwareFileAdapterTests))
     return suite
 
 if __name__ == '__main__':

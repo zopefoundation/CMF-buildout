@@ -2,6 +2,10 @@ HEAD only (unreleased)
 
   New Features
 
+    - CMFCore.exportimport:  Added framework and interfaces for exporting
+      and importing content using the export / import contexts provided by
+      GenericSetup.
+
     - CMFSetup: Split off GenericSetup.
       GenericSetup allows to use CMFSetup functionality outside CMF. See the
       README.txt of GenericSetup for details.

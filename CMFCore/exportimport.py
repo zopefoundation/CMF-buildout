@@ -259,3 +259,55 @@ class INIAwareFileAdapter(object):
                                 'no .ini file for %s/%s' % (subdir, cid))
         else:
             self.context.put_ini(data)
+
+
+class FauxDAVRequest:
+
+    def __init__(self, **kw):
+        self._data = {}
+        self._headers = {}
+        self._data.update(kw)
+
+    def get(self, key, default=None):
+        return self._data.get(key, default)
+
+    def get_header(self, key, default=None):
+        return self._headers.get(key, default)
+
+class FauxDAVResponse:
+    pass
+
+class DAVAwareFileAdapter(object):
+    """ Exporter/importer for content who handle their own FTP / DAV PUTs.
+    """
+    implements(IFilesystemExporter, IFilesystemImporter)
+
+    def __init__(self, context):
+        self.context = context
+
+    def export(self, export_context, subdir):
+        """ See IFilesystemExporter.
+        """
+        export_context.writeDataFile('%s' % self.context.getId(),
+                                     self.context.manage_FTPget(),
+                                     'text/plain',
+                                     subdir,
+                                    )
+
+    def listExportableItems(self):
+        """ See IFilesystemExporter.
+        """
+        return ()
+
+    def import_(self, import_context, subdir):
+        """ See IFilesystemImporter.
+        """
+        cid = self.context.getId()
+        data = import_context.readDataFile('%s' % cid, subdir)
+        if data is None:
+            import_context.note('SGAIFA',
+                                'no .ini file for %s/%s' % (subdir, cid))
+        else:
+            request = FauxDAVRequest(body=data)
+            response = FauxDAVResponse()
+            self.context.PUT(request, response)

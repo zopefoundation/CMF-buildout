@@ -268,6 +268,9 @@ class FauxDAVRequest:
         self._headers = {}
         self._data.update(kw)
 
+    def __getitem__(self, key):
+        return self._data[key]
+
     def get(self, key, default=None):
         return self._data.get(key, default)
 
@@ -275,7 +278,10 @@ class FauxDAVRequest:
         return self._headers.get(key, default)
 
 class FauxDAVResponse:
-    pass
+    def setHeader(self, key, value, lock=False):
+        pass  # stub this out to mollify webdav.Resource
+    def setStatus(self, value, reason=None):
+        pass  # stub this out to mollify webdav.Resource
 
 class DAVAwareFileAdapter(object):
     """ Exporter/importer for content who handle their own FTP / DAV PUTs.
@@ -308,6 +314,6 @@ class DAVAwareFileAdapter(object):
             import_context.note('SGAIFA',
                                 'no .ini file for %s/%s' % (subdir, cid))
         else:
-            request = FauxDAVRequest(body=data)
+            request = FauxDAVRequest(BODY=data, BODYFILE=data)
             response = FauxDAVResponse()
             self.context.PUT(request, response)

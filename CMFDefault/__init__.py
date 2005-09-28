@@ -22,6 +22,7 @@ from Products.CMFCore.utils import ToolInit
 from Products.CMFCore.utils import ContentInit
 from Products.CMFCore.utils import registerIcon
 from Products.CMFSetup import BASE
+from Products.CMFSetup import EXTENSION
 from Products.CMFSetup import profile_registry
 
 import factory
@@ -115,6 +116,13 @@ def initialize( context ):
                                      'profiles/default',
                                      'CMFDefault',
                                      BASE)
+
+    profile_registry.registerProfile('sample_content',
+                                     'Sample CMFDefault Content',
+                                     'Content for a sample CMFSite.',
+                                     'profiles/sample_content',
+                                     'CMFDefault',
+                                     EXTENSION)
 
     context.registerClass( Portal.CMFSite
                          , constructors=(factory.addConfiguredSiteForm,

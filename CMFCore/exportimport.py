@@ -1,24 +1,5 @@
 """ CMFCore filesystem exporter / importer adapters.
 
-Filesystem Representation of Site Structure
-===========================================
-
-"Folderish" Types
------------------
-
-Folderish instances are mapped to directories within the 'structure'
-portion of the profile, where the folder's relative path within the site
-corresponds to the path of its directory under 'structure'.
-
-The subobjects of a folderish instance are enumerated in the '.objects' file
-in the corresponding directory.  This file is a CSV file, with one row per
-subobject, with the following wtructure::
-
-  "<subobject id>","<subobject portal_type>"
-
-Subobjects themselves are represented as individual files or subdirectories
-within the parent's directory.
-
 $Id$
 """
 from csv import excel
@@ -54,17 +35,25 @@ def importSiteStructure(context):
     IFilesystemImporter(context.getSite()).import_(context, 'structure')
 
 
-_FSDUMP_OPTION_PATTERN = re.compile( r'(\w+):\w+=(.*)')
-
-class excel_colon(excel):
-    delimiter = ':'
-
-register_dialect('excel_colon', excel_colon)
-
 #
 #   Filesystem export/import adapters
 #
 class StructureFolderWalkingAdapter(object):
+    """ Tree-walking exporter for "folderish" types.
+
+    Folderish instances are mapped to directories within the 'structure'
+    portion of the profile, where the folder's relative path within the site
+    corresponds to the path of its directory under 'structure'.
+
+    The subobjects of a folderish instance are enumerated in the '.objects'
+    file in the corresponding directory.  This file is a CSV file, with one
+    row per subobject, with the following wtructure::
+
+     "<subobject id>","<subobject portal_type>"
+
+    Subobjects themselves are represented as individual files or
+    subdirectories within the parent's directory.
+    """
 
     implements(IFilesystemExporter, IFilesystemImporter)
 
@@ -189,8 +178,24 @@ class StructureFolderWalkingAdapter(object):
 
         return content
 
-class CSVAwareFileAdapter(object):
 
+def _globtest(globpattern, namelist):
+    """ Filter names in 'namelist', returning those which match 'globpattern'.
+    """
+    import re
+    pattern = globpattern.replace(".", r"\.")       # mask dots
+    pattern = pattern.replace("*", r".*")           # change glob sequence
+    pattern = pattern.replace("?", r".")            # change glob char
+    pattern = '|'.join(pattern.split())             # 'or' each line
+
+    compiled = re.compile(pattern)
+
+    return filter(compiled.match, namelist)
+
+
+class CSVAwareFileAdapter(object):
+    """ Adapter for content whose "natural" representation is CSV.
+    """
     implements(IFilesystemExporter, IFilesystemImporter)
 
     def __init__(self, context):
@@ -223,7 +228,8 @@ class CSVAwareFileAdapter(object):
             self.context.put_csv(stream)
 
 class INIAwareFileAdapter(object):
-
+    """ Exporter/importer for content whose "natural" representation is CSV.
+    """
     implements(IFilesystemExporter, IFilesystemImporter)
 
     def __init__(self, context):
@@ -253,17 +259,3 @@ class INIAwareFileAdapter(object):
                                 'no .ini file for %s/%s' % (subdir, cid))
         else:
             self.context.put_ini(data)
-
-
-def _globtest(globpattern, namelist):
-    """ Filter names in 'namelist', returning those which match 'globpattern'.
-    """
-    import re
-    pattern = globpattern.replace(".", r"\.")       # mask dots
-    pattern = pattern.replace("*", r".*")           # change glob sequence
-    pattern = pattern.replace("?", r".")            # change glob char
-    pattern = '|'.join(pattern.split())             # 'or' each line
-
-    compiled = re.compile(pattern)
-
-    return filter(compiled.match, namelist)

@@ -15,132 +15,6 @@ from Products.GenericSetup.tests.common import DummyImportContext
 from conformance import ConformsToIFilesystemExporter
 from conformance import ConformsToIFilesystemImporter
 
-TEST_CSV_AWARE = 'Test CSV Aware'
-KNOWN_CSV = """\
-one,two,three
-four,five,six
-"""
-
-def _makeCSVAware(id):
-    from OFS.SimpleItem import SimpleItem
-    from zope.interface import implements
-    from Products.CMFCore.interfaces import IDynamicType
-    from Products.CMFCore.interfaces import ICSVAware
-
-    class _TestCSVAware(SimpleItem):
-        implements(IDynamicType, ICSVAware)
-        _was_put = None
-        portal_type = TEST_CSV_AWARE
-
-        def getPortalTypeName(self):
-            return self.portal_type
-
-        def as_csv(self):
-            return KNOWN_CSV
-
-        def put_csv(self, text):
-            self._was_put = text
-
-    aware = _TestCSVAware()
-    aware._setId(id)
-
-    return aware
-
-TEST_INI_AWARE = 'Test INI Aware'
-KNOWN_INI = """\
-[DEFAULT]
-title = %s
-description = %s
-"""
-
-def _makeINIAware(id):
-    from OFS.SimpleItem import SimpleItem
-    from zope.interface import implements
-    from Products.CMFCore.interfaces import IDynamicType
-    from Products.CMFCore.interfaces import IINIAware
-
-    class _TestINIAware(SimpleItem):
-        implements(IDynamicType, IINIAware)
-        _was_put = None
-        title = 'INI title'
-        description = 'INI description'
-        portal_type = TEST_INI_AWARE
-
-        def getPortalTypeName(self):
-            return self.portal_type
-
-        def as_ini(self):
-            return KNOWN_INI % (self.title, self.description)
-
-        def put_ini(self, text):
-            self._was_put = text
-
-    aware = _TestINIAware()
-    aware._setId(id)
-
-    return aware
-
-TEST_CONTENT = 'Test Content'
-
-def _makeItem(self):
-    from OFS.SimpleItem import SimpleItem
-    from zope.interface import implements
-    from Products.CMFCore.interfaces import IDynamicType
-
-    class _TestContent(SimpleItem):
-        implements(IDynamicType)
-        portal_type = TEST_CONTENT
-
-        def getPortalTypeName(self):
-            return self.portal_type
-
-    aware = _TestContent()
-    aware._setId(id)
-
-    return aware
-
-TEST_FOLDER = 'Test Folder'
-
-def _makeFolder(id, site_folder=False):
-    from zope.interface import directlyProvides
-    from zope.interface import providedBy
-    from Products.CMFCore.PortalFolder import PortalFolder
-    from Products.CMFCore.interfaces import ISiteRoot
-    from Products.CMFCore.TypesTool import TypesTool
-    from Products.CMFCore.tests.base.dummy import DummyType
-
-    class _TypeInfo(DummyType):
-        def _getId(self):
-            return self._id
-        def constructInstance(self, container, id, *args, **kw):
-            portal_type = self._getId()
-            if portal_type == TEST_FOLDER:
-                content = PortalFolder(id)
-            elif portal_type == TEST_CONTENT:
-                content = _makeItem()
-                content._setId(id)
-            elif portal_type == TEST_INI_AWARE:
-                content = _makeINIAware(id)
-            elif portal_type == TEST_CSV_AWARE:
-                content = _makeCSVAware(id)
-            else:
-                raise ValueError, 'Ugh'
-            content.portal_type = portal_type
-            container._setObject(id, content)
-            return container._getOb(id)
-
-    folder = PortalFolder(id)
-    folder.portal_type = TEST_FOLDER
-    if site_folder:
-        directlyProvides(folder, ISiteRoot + providedBy(folder))
-        tool = folder.portal_types = TypesTool()
-        tool._setObject(TEST_CSV_AWARE, _TypeInfo(TEST_CSV_AWARE))
-        tool._setObject(TEST_INI_AWARE, _TypeInfo(TEST_INI_AWARE))
-        tool._setObject(TEST_CONTENT, _TypeInfo(TEST_CONTENT))
-        tool._setObject(TEST_FOLDER, _TypeInfo(TEST_FOLDER))
-
-    return folder
-
 class SiteStructureExporterTests(PlacelessSetup,
                                  unittest.TestCase,
                                 ):
@@ -630,6 +504,30 @@ class SiteStructureExporterTests(PlacelessSetup,
         self.assertEqual(site.foo.objectIds()[1], 'baz')
 
 
+class Test_globpattern(unittest.TestCase):
+
+    NAMELIST = ('foo', 'bar', 'baz', 'bam', 'qux', 'quxx', 'quxxx')
+
+    def _checkResults(self, globpattern, namelist, expected):
+        from Products.CMFCore.exportimport import _globtest
+        found = _globtest(globpattern, namelist)
+        self.assertEqual(len(found), len(expected))
+        for found_item, expected_item in zip(found, expected):
+            self.assertEqual(found_item, expected_item)
+
+    def test_star(self):
+        self._checkResults('*', self.NAMELIST, self.NAMELIST)
+
+    def test_simple(self):
+        self._checkResults('b*', self.NAMELIST,
+                            [x for x in self.NAMELIST if x.startswith('b')])
+
+    def test_multiple(self):
+        self._checkResults('b*\n*x', self.NAMELIST,
+                            [x for x in self.NAMELIST
+                                if x.startswith('b') or x.endswith('x')])
+
+
 class CSVAwareFileAdapterTests(unittest.TestCase,
                                ConformsToIFilesystemExporter,
                                ConformsToIFilesystemImporter,
@@ -741,36 +639,143 @@ class INIAwareFileAdapterTests(unittest.TestCase,
         self.assertEqual(parser.get('DEFAULT', 'title'), 'Title: ini_file')
         self.assertEqual(parser.get('DEFAULT', 'description'), 'abc')
 
-class Test_globpattern(unittest.TestCase):
 
-    NAMELIST = ('foo', 'bar', 'baz', 'bam', 'qux', 'quxx', 'quxxx')
+TEST_CSV_AWARE = 'Test CSV Aware'
+KNOWN_CSV = """\
+one,two,three
+four,five,six
+"""
 
-    def _checkResults(self, globpattern, namelist, expected):
-        from Products.CMFCore.exportimport import _globtest
-        found = _globtest(globpattern, namelist)
-        self.assertEqual(len(found), len(expected))
-        for found_item, expected_item in zip(found, expected):
-            self.assertEqual(found_item, expected_item)
+def _makeCSVAware(id):
+    from OFS.SimpleItem import SimpleItem
+    from zope.interface import implements
+    from Products.CMFCore.interfaces import IDynamicType
+    from Products.CMFCore.interfaces import ICSVAware
 
-    def test_star(self):
-        self._checkResults('*', self.NAMELIST, self.NAMELIST)
+    class _TestCSVAware(SimpleItem):
+        implements(IDynamicType, ICSVAware)
+        _was_put = None
+        portal_type = TEST_CSV_AWARE
 
-    def test_simple(self):
-        self._checkResults('b*', self.NAMELIST,
-                            [x for x in self.NAMELIST if x.startswith('b')])
+        def getPortalTypeName(self):
+            return self.portal_type
 
-    def test_multiple(self):
-        self._checkResults('b*\n*x', self.NAMELIST,
-                            [x for x in self.NAMELIST
-                                if x.startswith('b') or x.endswith('x')])
+        def as_csv(self):
+            return KNOWN_CSV
+
+        def put_csv(self, text):
+            self._was_put = text
+
+    aware = _TestCSVAware()
+    aware._setId(id)
+
+    return aware
+
+
+TEST_INI_AWARE = 'Test INI Aware'
+KNOWN_INI = """\
+[DEFAULT]
+title = %s
+description = %s
+"""
+
+def _makeINIAware(id):
+    from OFS.SimpleItem import SimpleItem
+    from zope.interface import implements
+    from Products.CMFCore.interfaces import IDynamicType
+    from Products.CMFCore.interfaces import IINIAware
+
+    class _TestINIAware(SimpleItem):
+        implements(IDynamicType, IINIAware)
+        _was_put = None
+        title = 'INI title'
+        description = 'INI description'
+        portal_type = TEST_INI_AWARE
+
+        def getPortalTypeName(self):
+            return self.portal_type
+
+        def as_ini(self):
+            return KNOWN_INI % (self.title, self.description)
+
+        def put_ini(self, text):
+            self._was_put = text
+
+    aware = _TestINIAware()
+    aware._setId(id)
+
+    return aware
+
+
+TEST_CONTENT = 'Test Content'
+
+def _makeItem(self):
+    from OFS.SimpleItem import SimpleItem
+    from zope.interface import implements
+    from Products.CMFCore.interfaces import IDynamicType
+
+    class _TestContent(SimpleItem):
+        implements(IDynamicType)
+        portal_type = TEST_CONTENT
+
+        def getPortalTypeName(self):
+            return self.portal_type
+
+    aware = _TestContent()
+    aware._setId(id)
+
+    return aware
+
+
+TEST_FOLDER = 'Test Folder'
+
+def _makeFolder(id, site_folder=False):
+    from zope.interface import directlyProvides
+    from zope.interface import providedBy
+    from Products.CMFCore.PortalFolder import PortalFolder
+    from Products.CMFCore.interfaces import ISiteRoot
+    from Products.CMFCore.TypesTool import TypesTool
+    from Products.CMFCore.tests.base.dummy import DummyType
+
+    class _TypeInfo(DummyType):
+        def _getId(self):
+            return self._id
+        def constructInstance(self, container, id, *args, **kw):
+            portal_type = self._getId()
+            if portal_type == TEST_FOLDER:
+                content = PortalFolder(id)
+            elif portal_type == TEST_CONTENT:
+                content = _makeItem()
+                content._setId(id)
+            elif portal_type == TEST_INI_AWARE:
+                content = _makeINIAware(id)
+            elif portal_type == TEST_CSV_AWARE:
+                content = _makeCSVAware(id)
+            else:
+                raise ValueError, 'Ugh'
+            content.portal_type = portal_type
+            container._setObject(id, content)
+            return container._getOb(id)
+
+    folder = PortalFolder(id)
+    folder.portal_type = TEST_FOLDER
+    if site_folder:
+        directlyProvides(folder, ISiteRoot + providedBy(folder))
+        tool = folder.portal_types = TypesTool()
+        tool._setObject(TEST_CSV_AWARE, _TypeInfo(TEST_CSV_AWARE))
+        tool._setObject(TEST_INI_AWARE, _TypeInfo(TEST_INI_AWARE))
+        tool._setObject(TEST_CONTENT, _TypeInfo(TEST_CONTENT))
+        tool._setObject(TEST_FOLDER, _TypeInfo(TEST_FOLDER))
+
+    return folder
 
 
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(SiteStructureExporterTests))
+    suite.addTest(unittest.makeSuite(Test_globpattern))
     suite.addTest(unittest.makeSuite(CSVAwareFileAdapterTests))
     suite.addTest(unittest.makeSuite(INIAwareFileAdapterTests))
-    suite.addTest(unittest.makeSuite(Test_globpattern))
     return suite
 
 if __name__ == '__main__':

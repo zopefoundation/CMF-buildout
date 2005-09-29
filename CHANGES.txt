@@ -2,6 +2,18 @@ HEAD only (unreleased)
 
   New Features
 
+    - CMFSetup and GenericSetup: Added catalog tool setup handlers.
+      This includes node adapters for PluginIndexes, ZCTextIndex and ZCatalog.
+      Support for additional indexes can be added by providing INodeExporter
+      and INodeImporter adapters. All indexes are cleared by this handler, so
+      please make sure to re-catalog existing content if necessary.
+
+    - GenericSetup.utils: Added new sub-framework for XML im- and export.
+      Instead of using ConfiguratorBase configurators should now implement
+      INodeExporter and INodeImporter. These node adapters should subclass
+      from NodeAdapterBase and mix in ObjectManagerHelpers and / or
+      PropertyManagerHelpers if needed.
+
     - CMFCore.exportimport:  Added framework and interfaces for exporting
       and importing content using the export / import contexts provided by
       GenericSetup.

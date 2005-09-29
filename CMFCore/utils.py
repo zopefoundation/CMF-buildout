@@ -398,9 +398,9 @@ def _checkConditionalGET(obj, extra_context):
         # no appropriate policy or 304s not enabled
         return False 
 
-    (content_mod_time, content_etag) = ret
+    (content_mod_time, content_etag, set_last_modified_header) = ret
     if content_mod_time:
-        mod_time_secs = content_mod_time.timeTime()
+        mod_time_secs = long(content_mod_time.timeTime())
     else:
         mod_time_secs = None
     
@@ -445,7 +445,7 @@ def _checkConditionalGET(obj, extra_context):
             return False
 
     response = REQUEST.RESPONSE
-    if content_mod_time:
+    if content_mod_time and set_last_modified_header:
         response.setHeader('Last-modified', str(content_mod_time))
     if content_etag:
         response.setHeader('ETag', content_etag, literal=1)

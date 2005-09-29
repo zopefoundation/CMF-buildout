@@ -49,13 +49,13 @@ class DummyContent2:
     __allow_access_to_unprotected_subobjects__ = 1
 
     def __init__(self, modified ):
-        self.modified = modified 
+        self.modified = modified
 
     def Type( self ):
         return 'Dummy'
 
     def modified( self ):
-        return self.modified 
+        return self.modified
 
 
 class CachingPolicyTests( TestCase ):
@@ -73,9 +73,8 @@ class CachingPolicyTests( TestCase ):
         from Products.CMFCore.CachingPolicyManager import createCPContext
         return createCPContext( DummyContent2(self._epoch)
                               , 'foo_view', kw, self._epoch )
-        
-    def test_empty( self ):
 
+    def test_empty( self ):
         policy = self._makePolicy( 'empty' )
         context = self._makeContext()
         headers = policy.getHeaders( context )
@@ -159,7 +158,7 @@ class CachingPolicyTests( TestCase ):
         headers = policy.getHeaders( context )
 
         self.assertEqual( len( headers ), 0 )
-        
+
     def test_mtimeFunc( self ):
 
         policy = self._makePolicy( 'mtimeFunc'
@@ -171,7 +170,7 @@ class CachingPolicyTests( TestCase ):
         self.assertEqual( headers[0][0], 'Last-modified' )
         self.assertEqual( headers[0][1]
                         , rfc1123_date(ACCLARK.timeTime()) )
-        
+
     def test_mtimeFuncNone( self ):
 
         policy = self._makePolicy( 'mtimeFuncNone'
@@ -180,7 +179,7 @@ class CachingPolicyTests( TestCase ):
         headers = policy.getHeaders( context )
 
         self.assertEqual( len( headers ), 0 )
-        
+
     def test_maxAge( self ):
 
         policy = self._makePolicy( 'aged', max_age_secs=86400 )
@@ -196,7 +195,7 @@ class CachingPolicyTests( TestCase ):
                         , rfc1123_date((self._epoch+1).timeTime()) )
         self.assertEqual( headers[2][0].lower() , 'cache-control' )
         self.assertEqual( headers[2][1] , 'max-age=86400' )
-        
+
     def test_sMaxAge( self ):
 
         policy = self._makePolicy( 's_aged', s_max_age_secs=86400 )
@@ -238,7 +237,7 @@ class CachingPolicyTests( TestCase ):
                         , rfc1123_date(self._epoch.timeTime()) )
         self.assertEqual( headers[1][0].lower() , 'cache-control' )
         self.assertEqual( headers[1][1] , 'no-store' )
-        
+
     def test_mustRevalidate( self ):
 
         policy = self._makePolicy( 'mustRevalidate', must_revalidate=1 )
@@ -307,6 +306,45 @@ class CachingPolicyTests( TestCase ):
         self.assertEqual( headers[1][0].lower() , 'cache-control' )
         self.assertEqual( headers[1][1] , 'no-transform' )
         self.assertEqual(policy.getNoTransform(), 1)
+
+    def test_lastModified( self ):
+
+        policy = self._makePolicy( 'lastModified', last_modified=0 )
+        context = self._makeContext()
+        headers = policy.getHeaders( context )
+
+        self.assertEqual( len( headers ), 0 )
+        self.assertEqual(policy.getLastModified(), 0)
+
+    def test_preCheck( self ):
+
+        policy = self._makePolicy( 'preCheck', pre_check=1 )
+        context = self._makeContext()
+        headers = policy.getHeaders( context )
+
+        self.assertEqual( len( headers ), 2 )
+        self.assertEqual( headers[0][0].lower() , 'last-modified' )
+        self.assertEqual( headers[0][1]
+                        , rfc1123_date(self._epoch.timeTime()) )
+        self.assertEqual( headers[1][0].lower() , 'cache-control' )
+        self.assertEqual( headers[1][1] , 'pre-check=1' )
+        self.assertEqual(policy.getPreCheck(), 1)
+        self.assertEqual(policy.getPostCheck(), None)
+
+    def test_postCheck( self ):
+
+        policy = self._makePolicy( 'postCheck', post_check=1 )
+        context = self._makeContext()
+        headers = policy.getHeaders( context )
+
+        self.assertEqual( len( headers ), 2 )
+        self.assertEqual( headers[0][0].lower() , 'last-modified' )
+        self.assertEqual( headers[0][1]
+                        , rfc1123_date(self._epoch.timeTime()) )
+        self.assertEqual( headers[1][0].lower() , 'cache-control' )
+        self.assertEqual( headers[1][1] , 'post-check=1' )
+        self.assertEqual(policy.getPostCheck(), 1)
+        self.assertEqual(policy.getPreCheck(), None)
 
     def test_ETag( self ):
 
@@ -388,12 +426,12 @@ class CachingPolicyManagerTests( TestCase ):
                          , 'xyzzy', None, None, None, None, None, None, '', '', None, None, None, None, None )
         self.assertRaises( KeyError, mgr._removePolicy, 'xyzzy' )
         self.assertRaises( KeyError, mgr._reorderPolicy, 'xyzzy', -1 )
-    
+
     def test_addAndUpdatePolicy( self ):
 
         mgr = self._makeOne()
         mgr.addPolicy( 'first', 'python:1', 'mtime', 1, 0, 1, 0, 'vary',
-                       'etag', None, 2, 1, 0, 1, 0 )
+                       'etag', None, 2, 1, 0, 1, 0, 1, 0, 2, 3 )
         p = mgr._policies['first']
         self.assertEqual(p.getPolicyId(), 'first')
         self.assertEqual(p.getPredicate(), 'python:1')
@@ -409,8 +447,13 @@ class CachingPolicyManagerTests( TestCase ):
         self.assertEqual(p.getPublic(), 0)
         self.assertEqual(p.getPrivate(), 1)
         self.assertEqual(p.getNoTransform(), 0)
-        
-        mgr.updatePolicy( 'first', 'python:0', 'mtime2', 2, 1, 0, 1, 'vary2', 'etag2', None, 1, 0, 1, 0, 1 )
+        self.assertEqual(p.getEnable304s(), 1)
+        self.assertEqual(p.getLastModified(), 0)
+        self.assertEqual(p.getPreCheck(), 2)
+        self.assertEqual(p.getPostCheck(), 3)
+
+        mgr.updatePolicy( 'first', 'python:0', 'mtime2', 2, 1, 0, 1, 'vary2',
+                          'etag2', None, 1, 0, 1, 0, 1, 0, 1, 3, 2 )
         p = mgr._policies['first']
         self.assertEqual(p.getPolicyId(), 'first')
         self.assertEqual(p.getPredicate(), 'python:0')
@@ -426,6 +469,10 @@ class CachingPolicyManagerTests( TestCase ):
         self.assertEqual(p.getPublic(), 1)
         self.assertEqual(p.getPrivate(), 0)
         self.assertEqual(p.getNoTransform(), 1)
+        self.assertEqual(p.getEnable304s(), 0)
+        self.assertEqual(p.getLastModified(), 1)
+        self.assertEqual(p.getPreCheck(), 3)
+        self.assertEqual(p.getPostCheck(), 2)
 
     def test_reorder( self ):
 
@@ -561,7 +608,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         self.portal = DummySite(id='portal').__of__(self.root)
         self.portal._setObject('portal_types', DummyTool())
 
-        # This is a FSPageTemplate that will be used as the View for 
+        # This is a FSPageTemplate that will be used as the View for
         # our content objects. It doesn't matter what it returns.
         path = os.path.join(self.skin_path_name, 'testPT2.pt')
         self.portal._setObject('dummy_view', FSPageTemplate('dummy_view', path))
@@ -575,7 +622,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         newSecurityManager(None, user)
         owner_auth = '%s:%s' % (portal_owner, password)
         self.auth_header = "Basic %s" % base64.encodestring(owner_auth)
-        
+
         self.portal._setObject('doc1', DummyContent('doc1'))
         self.portal._setObject('doc2', DummyContent('doc2'))
         self.portal._setObject('doc3', DummyContent('doc3'))
@@ -599,7 +646,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
                       etag_func = '',
                       enable_304s = 1)
 
-        # This policy only applies to doc2. It will emit an ETag with 
+        # This policy only applies to doc2. It will emit an ETag with
         # the constant value "abc" and also enable if-modified-since handling.
         cpm.addPolicy(policy_id = 'policy_etag',
                       predicate = 'python:object.getId()=="doc2"',
@@ -673,7 +720,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         # want the full rendering. This must return a 304 response.
         request.environ['IF_MODIFIED_SINCE'] = rfc1123_date(doc1.modified_date)
         request.environ['HTTP_AUTHORIZATION'] = self.auth_header
-        doc1.dummy_view() 
+        doc1.dummy_view()
         self.assertEqual(response.getStatus(), 304)
         self._cleanup()
 
@@ -685,7 +732,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         self.assertEqual(response.getStatus(), 200)
         self._cleanup()
 
-        # We are asking for an ETag as well as modifications after doc2 has 
+        # We are asking for an ETag as well as modifications after doc2 has
         # been created. Both won't match and wwe get the full rendering.
         request.environ['IF_NONE_MATCH'] = '"123"'
         request.environ['IF_MODIFIED_SINCE'] = rfc1123_date(doc1.modified_date)
@@ -693,7 +740,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         doc1.dummy_view()
         self.assertEqual(response.getStatus(), 200)
         self._cleanup()
-        
+
 
     def testConditionalGETETag(self):
         yesterday = DateTime() - 1
@@ -736,8 +783,8 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         doc2.dummy_view()
         self.assertEqual(response.getStatus(), 304)
         self._cleanup()
-        
-        # We specify an ETag and a modification time condition that dooes not 
+
+        # We specify an ETag and a modification time condition that dooes not
         # match, so we get the full rendering
         request.environ['IF_MODIFIED_SINCE'] = rfc1123_date(doc2.modified_date)
         request.environ['IF_NONE_MATCH'] = '"123"'
@@ -755,7 +802,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         doc2.dummy_view()
         self.assertEqual(response.getStatus(), 200)
         self._cleanup()
-        
+
         # Now we pass an ETag that matches the policy and a modified time
         # condition that is not fulfilled. It is safe to serve a 304.
         request.environ['IF_MODIFIED_SINCE'] = rfc1123_date(doc2.modified_date)
@@ -765,7 +812,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         self.assertEqual(response.getStatus(), 304)
         self._cleanup()
 
-        
+
     def testConditionalGETDisabled(self):
         yesterday = DateTime() - 1
         doc3 = self.portal.doc3
@@ -779,7 +826,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         doc3.dummy_view()
         self.assertEqual(response.getStatus(), 200)
         self._cleanup()
-        
+
         # Now both the ETag and the modified condition would trigger a 304
         # response *if* 304-handling was enabled. It is not in our policy, so
         # we get the full rendering again.
@@ -790,7 +837,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         self.assertEqual(response.getStatus(), 200)
         self._cleanup()
 
-        
+
 def test_suite():
     return TestSuite((
         makeSuite(CachingPolicyTests),

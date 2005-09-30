@@ -12,7 +12,7 @@
 ##############################################################################
 """ CMFSetup:  Mailhost import/export
 
-$Id: mailhost.py 36704 2004-12-14 20:56:58Z yuppie $
+$Id$
 """
 
 from AccessControl import ClassSecurityInfo

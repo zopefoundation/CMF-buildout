@@ -12,7 +12,7 @@
 ##############################################################################
 """ MailHost properties export / import unit tests.
 
-$Id: test_mailhost.py 37061 2005-06-15 14:17:41Z tseaver $
+$Id$
 """
 import unittest
 import Testing

@@ -18,8 +18,8 @@ $Id$
 from sys import modules
 
 from Products.CMFCore import utils
-from Products.CMFSetup import EXTENSION
-from Products.CMFSetup import profile_registry
+from Products.GenericSetup import EXTENSION
+from Products.GenericSetup import profile_registry
 
 import UniqueIdAnnotationTool
 import UniqueIdGeneratorTool

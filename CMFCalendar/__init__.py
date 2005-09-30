@@ -20,8 +20,8 @@ import sys
 import utils
 from Products.CMFCore import utils
 from Products.CMFCore.DirectoryView import registerDirectory
-from Products.CMFSetup import EXTENSION
-from Products.CMFSetup import profile_registry
+from Products.GenericSetup import EXTENSION
+from Products.GenericSetup import profile_registry
 
 import Event
 import CalendarTool

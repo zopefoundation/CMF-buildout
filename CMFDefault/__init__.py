@@ -21,9 +21,9 @@ from Products.CMFCore.utils import initializeBasesPhase2
 from Products.CMFCore.utils import ToolInit
 from Products.CMFCore.utils import ContentInit
 from Products.CMFCore.utils import registerIcon
-from Products.CMFSetup import BASE
-from Products.CMFSetup import EXTENSION
-from Products.CMFSetup import profile_registry
+from Products.GenericSetup import BASE
+from Products.GenericSetup import EXTENSION
+from Products.GenericSetup import profile_registry
 
 import factory
 import utils

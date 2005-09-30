@@ -1,4 +1,5 @@
-Zope >= 2.8.1
+Zope >= 2.8.2
+Five >= 1.2
 CMFCore
 CMFDefault
-CMFSetup
+GenericSetup

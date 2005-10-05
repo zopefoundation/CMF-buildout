@@ -17,18 +17,19 @@ $Id$
 
 from base64 import encodestring, decodestring
 from urllib import quote, unquote
-import sys
 
 from Acquisition import aq_inner, aq_parent
 from DateTime import DateTime
-from AccessControl import getSecurityManager, ClassSecurityInfo, Permissions
+from AccessControl import ClassSecurityInfo, Permissions
 from ZPublisher import BeforeTraverse
 import Globals
 from Globals import HTMLFile
-from zLOG import LOG, ERROR
 from ZPublisher.HTTPRequest import HTTPRequest
 from OFS.Folder import Folder
 from zExceptions import Redirect
+from zope.interface import implements
+
+from interfaces import ICookieCrumbler
 
 
 # Constants.
@@ -40,15 +41,19 @@ ModifyCookieCrumblers = 'Modify Cookie Crumblers'
 ViewManagementScreens = Permissions.view_management_screens
 
 
-class CookieCrumblerDisabled (Exception):
-    """Cookie crumbler should not be used for a certain request"""
+class CookieCrumblerDisabled(Exception):
+
+    """Cookie crumbler should not be used for a certain request.
+    """
 
 
-class CookieCrumbler (Folder):
-    '''
-    Reads cookies during traversal and simulates the HTTP
-    authentication headers.
-    '''
+class CookieCrumbler(Folder):
+
+    """Reads cookies during traversal and simulates the HTTP auth headers.
+    """
+
+    implements(ICookieCrumbler)
+
     meta_type = 'Cookie Crumbler'
 
     security = ClassSecurityInfo()
@@ -89,9 +94,9 @@ class CookieCrumbler (Folder):
     auto_login_page = 'login_form'
     unauth_page = ''
     logout_page = 'logged_out'
-    local_cookie_path = 0
+    local_cookie_path = False
     cache_header_value = 'private'
-    log_username = 1
+    log_username = True
 
     security.declarePrivate('delRequestVar')
     def delRequestVar(self, req, name):

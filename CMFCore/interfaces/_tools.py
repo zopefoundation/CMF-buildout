@@ -371,6 +371,15 @@ class IContentTypeRegistry(Interface):
 
 
 #
+#   Cookie crumbler interfaces.
+#
+class ICookieCrumbler(Interface):
+
+    """Reads cookies during traversal and simulates the HTTP auth headers.
+    """
+
+
+#
 #   Discussion tool interfaces.
 #
 class IOldstyleDiscussionTool(Interface):

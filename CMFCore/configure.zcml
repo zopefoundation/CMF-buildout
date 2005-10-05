@@ -9,4 +9,16 @@
     file="exportimport.zcml"
     />
 
+  <adapter
+      factory=".nodeadapters.CookieCrumblerNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeExporter"
+      for=".interfaces.ICookieCrumbler"
+      />
+
+  <adapter
+      factory=".nodeadapters.CookieCrumblerNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeImporter"
+      for=".interfaces.ICookieCrumbler"
+      />
+
 </configure>

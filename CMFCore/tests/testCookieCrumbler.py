@@ -17,7 +17,6 @@ $Id$
 
 import base64
 from cStringIO import StringIO
-import sys
 import unittest
 import urllib
 
@@ -29,7 +28,6 @@ from AccessControl.User import UserFolder
 from AccessControl.SecurityManagement import noSecurityManager
 from ZPublisher.HTTPRequest import HTTPRequest
 from ZPublisher.HTTPResponse import HTTPResponse
-from ZPublisher.BaseRequest import RequestContainer
 
 from Products.CMFCore.CookieCrumbler \
      import CookieCrumbler, manage_addCC, Redirect
@@ -95,6 +93,11 @@ class CookieCrumblerTests (unittest.TestCase):
     def tearDown(self):
         noSecurityManager()
 
+    def test_z3interfaces(self):
+        from zope.interface.verify import verifyClass
+        from Products.CMFCore.interfaces import ICookieCrumbler
+
+        verifyClass(ICookieCrumbler, CookieCrumbler)
 
     def testNoCookies(self):
         # verify the cookie crumbler doesn't break when no cookies are given

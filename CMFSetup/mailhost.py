@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2004 Zope Corporation and Contributors. All Rights Reserved.
+# Copyright (c) 2005 Zope Corporation and Contributors. All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
@@ -10,7 +10,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-""" CMFSetup:  Mailhost import/export
+"""Mailhost setup handlers.
 
 $Id$
 """
@@ -33,38 +33,34 @@ from utils import CONVERTER, DEFAULT, KEY
 #
 _FILENAME = 'mailhost.xml'
 
-def importMailHost( context ):
 
+def importMailHost(context):
     """ Import mailhost settings from an XML file.
     """
     site = context.getSite()
-    encoding = context.getEncoding()
 
+    mailhost = getToolByName(site, 'MailHost')
     if context.shouldPurge():
         # steps to follow to remove old settings
         pass
 
-    text = context.readDataFile( _FILENAME )
+    body = context.readDataFile(_FILENAME)
+    if body is None:
+        return 'Mailhost: Nothing to import.'
 
-    if text is not None:
+    mhc = MailHostImportConfigurator(site)
+    mh_info = mhc.parseXML(body)
 
-        mhc = MailHostImportConfigurator( site, encoding )
-        mh_info = mhc.parseXML( text )
-
-        # now act on the settings we've retrieved
-        mh = getToolByName(site, 'MailHost')
-
-        mh.smtp_host = mh_info['smtp_host']
-        mh.smtp_port = mh_info['smtp_port']
-        mh.smtp_uid = mh_info['smtp_uid']
-        mh.smtp_pwd = mh_info['smtp_pwd']
+    # now act on the settings we've retrieved
+    mailhost.smtp_host = mh_info['smtp_host']
+    mailhost.smtp_port = int(mh_info['smtp_port'])
+    mailhost.smtp_uid = mh_info['smtp_uid']
+    mailhost.smtp_pwd = mh_info['smtp_pwd']
 
     return 'Mailhost settings imported.'
 
-
-def exportMailHost( context ):
-
-    """ Export mailhost properties as an XML file
+def exportMailHost(context):
+    """ Export mailhost settings as an XML file.
     """
     site = context.getSite()
     mhc = MailHostExportConfigurator( site ).__of__( site )
@@ -72,12 +68,14 @@ def exportMailHost( context ):
 
     context.writeDataFile( _FILENAME, text, 'text/xml' )
 
-    return 'MailHost properties exported.'
+    return 'MailHost settings exported.'
 
 
 class MailHostExportConfigurator(ExportConfiguratorBase):
+
     """ Synthesize XML description of mailhost properties.
     """
+
     security = ClassSecurityInfo()
 
     security.declareProtected( ManagePortal, 'getMailHostInfo' )
@@ -92,7 +90,6 @@ class MailHostExportConfigurator(ExportConfiguratorBase):
         config['smtp_port'] = int(mh.smtp_port)
         config['smtp_uid'] = getattr(mh, 'smtp_uid', '')
         config['smtp_pwd'] = getattr(mh, 'smtp_pwd', '')
-        config['i18n_domain'] = ''
 
         return config
 
@@ -108,27 +105,12 @@ class MailHostImportConfigurator(ImportConfiguratorBase):
     def _getImportMapping(self):
 
         return {
-          'mailhost':
-            { 'i18n:domain':{},
-              'id':         {},
-              'smtp_host':  {},
-              'smtp_port':  {},
-              'smtp_uid':   {},
-              'smtp_pwd':   {},
-              'xmlns:i18n': {} },
-          }
+          'object':
+            { 'name':      {KEY: 'id'},
+              'meta_type': {},
+              'smtp_host': {},
+              'smtp_port': {},
+              'smtp_uid':  {},
+              'smtp_pwd':  {} } }
 
 InitializeClass(MailHostImportConfigurator)
-
-# BBB: will be removed in CMF 1.7
-class MailHostConfigurator(MailHostImportConfigurator
-                          ,MailHostExportConfigurator
-                          ):
-
-    def __init__(self, site, encoding=None):
-        MailHostImportConfigurator.__init__(self, site, encoding=None)
-        MailHostExportConfigurator.__init__(self, site, encoding=None)
-
-InitializeClass(MailHostConfigurator)
-
-

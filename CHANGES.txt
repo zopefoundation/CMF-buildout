@@ -2,6 +2,9 @@ HEAD only (unreleased)
 
   New Features
 
+    - ActionsTool: Improved add form for 'CMF Action' objects.
+      Presettings can now be loaded from Action settings in setup profiles.
+
     - CMFSetup and GenericSetup: Added catalog tool setup handlers.
       This includes node adapters for PluginIndexes, ZCTextIndex and ZCatalog.
       Support for additional indexes can be added by providing INodeExporter

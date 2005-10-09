@@ -16,6 +16,23 @@
  </tr>
  <tr>
   <td>
+   <div class="form-label">Presettings</div>
+  </td>
+  <td>
+   <select name="settings_id">
+    <option value="" selected="selected">(None)</option>
+    <optgroup label="PROFILE_TITLE"
+       tal:repeat="profile options/profiles"
+       tal:attributes="label profile/title">
+     <option value="SETTINGS_ID"
+             tal:repeat="action_path profile/action_paths"
+             tal:attributes="value string:${profile/id}/${action_path}"
+             tal:content="action_path">ACTION PATH</option></optgroup>
+   </select>
+  </td>
+ </tr>
+ <tr>
+  <td>
    &nbsp;
   </td>
   <td>

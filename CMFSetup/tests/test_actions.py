@@ -20,13 +20,19 @@ import Testing
 import Zope2
 Zope2.startup()
 
+import Products
 from Acquisition import Implicit
 from Acquisition import aq_parent
 from OFS.Folder import Folder
 from OFS.OrderedFolder import OrderedFolder
+from Products.Five import zcml
+from zope.app.tests.placelesssetup import PlacelessSetup
+from zope.interface import implements
+
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces.portal_actions \
     import ActionProvider as IActionProvider
+from Products.CMFCore.interfaces import IActionsTool
 
 from common import BaseRegistryTests
 from common import DummyExportContext
@@ -53,6 +59,10 @@ class DummyMembershipTool( DummyTool ):
 
 class DummyActionsTool( DummyTool ):
 
+    implements(IActionsTool)
+    id = 'portal_actions'
+    meta_type = 'CMF Actions Tool'
+
     def __init__( self ):
 
         self._providers = []
@@ -69,11 +79,10 @@ class DummyActionsTool( DummyTool ):
 
         self._providers = [ x for x in self._providers if x != provider_name ]
 
-class _ActionSetup( BaseRegistryTests ):
+class _ActionSetup(PlacelessSetup, BaseRegistryTests):
 
     def _initSite( self, foo=2, bar=2 ):
-
-        self.root.site = Folder( id='site' )
+        self.root.site = Folder(id='site')
         site = self.root.site
 
         site.portal_membership = DummyMembershipTool()
@@ -111,148 +120,38 @@ class _ActionSetup( BaseRegistryTests ):
 
         return site
 
-class ActionProvidersConfiguratorTests( _ActionSetup ):
+    def setUp(self):
+        PlacelessSetup.setUp(self)
+        BaseRegistryTests.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.CMFCore)
 
-    def _getTargetClass( self ):
-
-        from Products.CMFSetup.actions import ActionProvidersConfigurator
-        return ActionProvidersConfigurator
-
-    def test_listProviderInfo_normal( self ):
-
-        site = self._initSite()
-
-        EXPECTED = [ { 'id' : 'portal_actions'
-                     , 'actions' : []
-                     }
-                   , { 'id' : 'portal_foo'
-                     , 'actions' : [ { 'id' : 'foo'
-                                     , 'title' : 'Foo'
-                                     , 'description' : ''
-                                     , 'action' : 'string:${object_url}/foo'
-                                     , 'condition' : 'python:1'
-                                     , 'permissions' : ()
-                                     , 'category' : 'dummy'
-                                     , 'visible' : True
-                                     }
-                                   ]
-                     }
-                   , { 'id' : 'portal_bar'
-                     , 'actions' : [ { 'id' : 'bar'
-                                     , 'title' : 'Bar'
-                                     , 'description' : ''
-                                     , 'action' : 'string:${object_url}/bar'
-                                     , 'condition' : 'python:0'
-                                     , 'permissions' : ('Manage portal',)
-                                     , 'category' : 'dummy'
-                                     , 'visible' : False
-                                     }
-                                   ]
-                     }
-                   ]
-
-        configurator = self._makeOne( site )
-
-        info_list = configurator.listProviderInfo()
-        self.assertEqual( len( info_list ), len( EXPECTED ) )
-
-        for found, expected in zip( info_list, EXPECTED ):
-            self.assertEqual( found, expected )
-
-    def test_generateXML_empty( self ):
-
-        site = self._initSite( 0, 0 )
-        configurator = self._makeOne( site ).__of__( site )
-        self._compareDOM( configurator.generateXML(), _EMPTY_EXPORT )
-
-    def test_generateXML_normal( self ):
-
-        site = self._initSite()
-        configurator = self._makeOne( site ).__of__( site )
-        self._compareDOM( configurator.generateXML(), _NORMAL_EXPORT )
-
-
-    def test_parseXML_empty( self ):
-
-        site = self._initSite( 0, 0 )
-        configurator = self._makeOne( site )
-
-        tool_info = configurator.parseXML( _EMPTY_EXPORT )
-        self.assertEqual( len(tool_info), 3 )
-
-        self.assertEqual( len( tool_info[ 'providers' ] ), 1 )
-
-        info = tool_info[ 'providers' ][ 0 ]
-        self.assertEqual( info[ 'id' ], 'portal_actions' )
-        self.assertEqual( len( info[ 'actions' ] ), 0 )
-
-    def test_parseXML_normal( self ):
-
-        site = self._initSite( 1, 1 )
-
-        configurator = self._makeOne( site )
-        tool_info = configurator.parseXML( _NORMAL_EXPORT )
-        self.assertEqual( len(tool_info), 3 )
-
-        self.assertEqual( len( tool_info['providers'] ), 3 )
-
-        info = tool_info[ 'providers' ][ 0 ]
-        self.assertEqual( info[ 'id' ], 'portal_actions' )
-        self.assertEqual( len( info[ 'actions' ] ), 0 )
-
-        info = tool_info[ 'providers' ][ 1 ]
-        self.assertEqual( info[ 'id' ], 'portal_foo' )
-        self.assertEqual( len( info[ 'actions' ] ), 1 )
-
-        action = info[ 'actions' ][ 0 ]
-        self.assertEqual( action[ 'id' ], 'foo' )
-        self.assertEqual( action[ 'title' ], 'Foo' )
-        self.assertEqual( action[ 'action' ]
-                        , 'string:${object_url}/foo' )
-        self.assertEqual( action[ 'condition' ], 'python:1' )
-        self.assertEqual( action[ 'permissions' ], () )
-        self.assertEqual( action[ 'category' ], 'dummy' )
-        self.assertEqual( action[ 'visible' ], True )
-
-        info = tool_info[ 'providers' ][ 2 ]
-        self.assertEqual( info[ 'id' ], 'portal_bar' )
-        self.assertEqual( len( info[ 'actions' ] ), 1 )
-
-        action = info[ 'actions' ][ 0 ]
-        self.assertEqual( action[ 'id' ], 'bar' )
-        self.assertEqual( action[ 'title' ], 'Bar' )
-        self.assertEqual( action[ 'action' ]
-                        , 'string:${object_url}/bar' )
-        self.assertEqual( action[ 'condition' ], 'python:0' )
-        self.assertEqual( action[ 'permissions' ], ('Manage portal',) )
-        self.assertEqual( action[ 'category' ], 'dummy' )
-        self.assertEqual( action[ 'visible' ], False )
-
-
+    def tearDown(self):
+        BaseRegistryTests.tearDown(self)
+        PlacelessSetup.tearDown(self)
 
 _EMPTY_EXPORT = """\
 <?xml version="1.0"?>
-<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <action-provider id="portal_actions">
- </action-provider>
-</actions-tool>
+<object meta_type="CMF Actions Tool" name="portal_actions" \
+xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <action-provider name="portal_actions"/>
+</object>
 """
 
 _NORMAL_EXPORT = """\
 <?xml version="1.0"?>
-<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <action-provider id="portal_actions">
- </action-provider>
- <action-provider id="portal_foo">
+<object meta_type="CMF Actions Tool" name="portal_actions" \
+xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <action-provider name="portal_actions"/>
+ <action-provider name="portal_foo">
   <action action_id="foo"
           title="Foo"
           url_expr="string:${object_url}/foo"
           condition_expr="python:1"
           category="dummy"
-          visible="True">
-  </action>
-</action-provider>
- <action-provider id="portal_bar">
+          visible="True"/>
+ </action-provider>
+ <action-provider name="portal_bar">
   <action action_id="bar"
           title="Bar"
           url_expr="string:${object_url}/bar"
@@ -262,57 +161,58 @@ _NORMAL_EXPORT = """\
    <permission>Manage portal</permission>
   </action>
  </action-provider>
-</actions-tool>
+</object>
 """
 
 _NEWSYTLE_EXPORT = """\
 <?xml version="1.0"?>
-<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <action-provider id="portal_actions">
- </action-provider>
+<object meta_type="CMF Actions Tool" name="portal_actions" \
+xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <action-provider name="portal_actions"/>
  <object name="dummy" meta_type="CMF Action Category">
   <property name="title"></property>
- <object name="foo" meta_type="CMF Action">
-  <property name="title">Foo</property>
-  <property name="description"></property>
-  <property name="url_expr">string:${object_url}/foo</property>
-  <property name="icon_expr"></property>
-  <property name="available_expr">python:1</property>
-  <property name="permissions"></property>
-  <property name="visible">True</property>
+  <object name="foo" meta_type="CMF Action">
+   <property name="title">Foo</property>
+   <property name="description"></property>
+   <property name="url_expr">string:${object_url}/foo</property>
+   <property name="icon_expr"></property>
+   <property name="available_expr">python:1</property>
+   <property name="permissions"></property>
+   <property name="visible">True</property>
+  </object>
+  <object name="bar" meta_type="CMF Action">
+   <property name="title">Bar</property>
+   <property name="description"></property>
+   <property name="url_expr">string:${object_url}/bar</property>
+   <property name="icon_expr"></property>
+   <property name="available_expr">python:0</property>
+   <property name="permissions">
+    <element value="Manage portal"/>
+   </property>
+   <property name="visible">False</property>
+  </object>
  </object>
- <object name="bar" meta_type="CMF Action">
-  <property name="title">Bar</property>
-  <property name="description"></property>
-  <property name="url_expr">string:${object_url}/bar</property>
-  <property name="icon_expr"></property>
-  <property name="available_expr">python:0</property>
-  <property name="permissions">
-   <element value="Manage portal" /></property>
-  <property name="visible">False</property>
- </object>
- </object>
-</actions-tool>
+</object>
 """
 
 _I18N_IMPORT = """\
 <?xml version="1.0"?>
-<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <action-provider id="portal_actions">
- </action-provider>
+<object meta_type="CMF Actions Tool" name="portal_actions" \
+xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <action-provider name="portal_actions"/>
  <object name="dummy" meta_type="CMF Action Category">
   <property name="title"></property>
- <object name="foo" meta_type="CMF Action" i18n:domain="foo_domain">
-  <property name="title" i18n:translate="">Foo</property>
-  <property name="description" i18n:translate=""></property>
-  <property name="url_expr">string:${object_url}/foo</property>
-  <property name="icon_expr"></property>
-  <property name="available_expr">python:1</property>
-  <property name="permissions"></property>
-  <property name="visible">True</property>
+  <object name="foo" meta_type="CMF Action" i18n:domain="foo_domain">
+   <property name="title" i18n:translate="">Foo</property>
+   <property name="description" i18n:translate=""></property>
+   <property name="url_expr">string:${object_url}/foo</property>
+   <property name="icon_expr"></property>
+   <property name="available_expr">python:1</property>
+   <property name="permissions"></property>
+   <property name="visible">True</property>
+  </object>
  </object>
- </object>
-</actions-tool>
+</object>
 """
 
 _INSERT_IMPORT = """\
@@ -581,7 +481,6 @@ class Test_importActionProviders( _ActionSetup ):
 
 def test_suite():
     return unittest.TestSuite((
-        unittest.makeSuite( ActionProvidersConfiguratorTests ),
         unittest.makeSuite( Test_exportActionProviders ),
         unittest.makeSuite( Test_importActionProviders ),
         ))

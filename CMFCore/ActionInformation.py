@@ -16,6 +16,7 @@ $Id$
 """
 
 from UserDict import UserDict
+from xml.dom.minidom import parseString
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base, aq_inner, aq_parent
@@ -26,6 +27,8 @@ from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from zope.i18nmessageid import MessageID
 from zope.interface import implements
+
+from Products.GenericSetup.interfaces import INodeImporter
 
 from Expression import Expression
 from interfaces import IAction
@@ -168,12 +171,80 @@ class Action(SimpleItemWithProperties):
 
 InitializeClass(Action)
 
-manage_addActionForm = PageTemplateFile( 'addAction.zpt', _wwwdir)
 
-def manage_addAction(self, id, REQUEST=None):
+def manage_addActionForm(self):
+    """Form for adding a new CMF Action object.
+    """
+    profiles = []
+
+    stool = getToolByName(self, 'portal_setup', None)
+    if stool:
+        for info in stool.listContextInfos():
+            action_paths = []
+            context = stool._getImportContext(info['id'])
+            body = context.readDataFile('actions.xml')
+            if body is None:
+                continue
+            root = parseString(body).documentElement
+            for node in root.childNodes:
+                if node.nodeName != 'object':
+                    continue
+                action_paths += _extractChildren(node)
+            action_paths.sort()
+            profiles.append({'id': info['id'],
+                             'title': info['title'],
+                             'action_paths': tuple(action_paths)})
+
+    template = PageTemplateFile('addAction.zpt', _wwwdir).__of__(self)
+    return template(profiles=tuple(profiles))
+
+def _extractChildren(node):
+    action_paths = []
+    category_id = node.getAttribute('name')
+    for child in node.childNodes:
+        if child.nodeName != 'object':
+            continue
+        if child.getAttribute('meta_type') == Action.meta_type:
+            action_id = child.getAttribute('name')
+            action_paths.append(action_id)
+        else:
+            action_paths += _extractChildren(child)
+    return [ ('%s/%s' % (category_id, path)) for path in action_paths ]
+
+def manage_addAction(self, id, settings_id='', REQUEST=None):
     """Add a new CMF Action object with ID *id*.
     """
+    settings_node = None
+    if settings_id:
+        stool = getToolByName(self, 'portal_setup', None)
+        if stool:
+            path = settings_id.split('/')
+            context = stool._getImportContext(path.pop(0))
+            body = context.readDataFile('actions.xml')
+            if body is not None:
+                root = parseString(body).documentElement
+                for node in root.childNodes:
+                    if node.nodeName != 'object':
+                        continue
+                    for obj_id in path:
+                        for child in node.childNodes:
+                            if child.nodeName != 'object':
+                                continue
+                            if child.getAttribute('name') != obj_id:
+                                continue
+                            if child.getAttribute(
+                                             'meta_type') == Action.meta_type:
+                                settings_node = child
+                            else:
+                                node = child
+                            break
+                    if settings_node:
+                        if not id:
+                            id = obj_id
+                        break
     obj = Action(id)
+    if settings_node:
+        INodeImporter(obj).importNode(settings_node)
     self._setObject(id, obj)
 
     if REQUEST:

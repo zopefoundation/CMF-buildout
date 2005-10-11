@@ -2,7 +2,11 @@ Installing CMF 1.5.0beta
 
   Requirements
 
-    - Zope v. 2.7.0 and later
+    - Zope v. 2.8.2 or later
+
+    - Five v. 1.2 or later (installing a newer version of Five in
+      $INSTANCE_HOME/Products is sufficient to "shadow" the version which
+      ships with Zope).
 
   Assumptions
 

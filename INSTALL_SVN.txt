@@ -11,9 +11,11 @@ Overview
     - See the note below [1] if you want to export or check out
       the sources for a specific version from Subversion.
 
- *Please note that current versions of the CMF (1.5 and later) require Zope 
- 2.7.0 or later.  Also, please note that earlier versions of the CMF (< 1.5) 
- may not be completely compatible with more recent versions of Zope (>= 2.8).*
+ * Please note that the trunk version of the CMF requires Zope 
+   2.8.2 or later, as well as a more recent version of the Five product
+   (1.2. or later) than the one which sships with Zope.  Installing the
+   later version of Five in $INSTANCE_HOME/Products is sufficient to
+   "shadow" the older version in $SOFTWARE_HOME/Products.
 
   * For help with Subversion in general, see "Version Control with 
     Subversion" at http://svnbook.red-bean.com/
@@ -51,6 +53,10 @@ Installation
       $ ln -s /tmp/CMF-head/CMFCore .
       $ ln -s /tmp/CMF-head/CMFDefault .
       $ ln -s /tmp/CMF-head/CMFTopic .
+      $ ln -s /tmp/CMF-head/GenericSetup .
+      $ ln -s /tmp/CMF-head/CMFSetup .
+      $ ln -s /tmp/CMF-head/CMFActionIcons .
+      $ ln -s /tmp/CMF-head/CMFUID .
       $ ln -s /tmp/CMF-head/DCWorkflow .
       ...
 
@@ -66,6 +72,14 @@ Installation
       - CMFDefault
 
       - CMFTopic
+
+      - GenericSetup
+
+      - CMFSetup
+
+      - CMFActionIcons
+
+      - CMFUID
 
       - DCWorkflow
 

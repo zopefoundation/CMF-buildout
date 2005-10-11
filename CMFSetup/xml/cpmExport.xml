@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<caching-policies xmlns:tal="http://xml.zope.org/namespaces/tal">
+ <caching-policy
+    policy_id="POLICY_ID"
+    predicate="PREDICATE"
+    mtime_func="MTIME_FUNC"
+    vary="VARY"
+    etag_func="ETAG_FUNC"
+    max_age_secs="MAX_AGE_SECS"
+    s_max_age_secs="S_MAX_AGE_SECS"
+    pre_check="PRE_CHECK"
+    post_check="POST_CHECK"
+    last_modified="LAST_MODIFIED"
+    no_cache="NO_CACHE"
+    no_store="NO_STORE"
+    must_revalidate="MUST_REVALIDATE"
+    proxy_revalidate="PROXY_REVALIDATE"
+    no_transform="NO_TRANSFORM"
+    public="PUBLIC"
+    private="PRIVATE"
+    enable_304s="ENABLE_304S"
+    tal:repeat="info context/listPolicyInfo"
+    tal:attributes="policy_id info/policy_id;
+                    predicate info/predicate;
+                    mtime_func info/mtime_func;
+                    vary info/vary;
+                    etag_func info/etag_func;
+                    max_age_secs info/max_age_secs;
+                    s_max_age_secs info/s_max_age_secs;
+                    pre_check info/pre_check;
+                    post_check info/post_check;
+                    last_modified info/last_modified;
+                    no_cache info/no_cache;
+                    no_store info/no_store;
+                    must_revalidate info/must_revalidate;
+                    proxy_revalidate info/proxy_revalidate;
+                    no_transform info/no_transform;
+                    public info/public;
+                    private info/private;
+                    enable_304s info/enable_304s;
+                   "
+    />
+</caching-policies>

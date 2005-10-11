@@ -233,6 +233,10 @@ class ImportConfiguratorBase(Implicit):
 
         return val.lower() in ('true', 'yes', '1')
 
+    def _convertToInteger(self, val):
+
+        return int(val.strip())
+
     def _convertToUnique(self, val):
 
         assert len(val) == 1

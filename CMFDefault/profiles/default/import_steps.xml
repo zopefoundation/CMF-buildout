@@ -129,4 +129,16 @@
   
  
  </import-step>
+ <import-step id="caching_policy_mgr" version="20051011-01"
+              handler="Products.CMFSetup.cachingpolicymgr.importCachingPolicyManager"
+              title="Caching Policies">
+  <dependency step="toolset"/>
+  
+  
+  
+  Import cacing policy manager's policies.
+ 
+ 
+ 
+ </import-step>
 </import-steps>

@@ -110,4 +110,15 @@
  
  
  </export-step>
+ <export-step id="caching_policy_mgr"
+              handler="Products.CMFSetup.cachingpolicymgr.exportCachingPolicyManager"
+              title="Caching Policies">
+  
+  
+  
+  Export cacing policy manager's policies.
+ 
+ 
+ 
+ </export-step>
 </export-steps>

@@ -71,7 +71,6 @@ class CachingPolicyTests(TestCase):
                               , 'foo_view', kw, self._epoch )
 
     def test_empty( self ):
-
         policy = self._makePolicy( 'empty' )
         context = self._makeContext()
         headers = policy.getHeaders( context )
@@ -304,6 +303,45 @@ class CachingPolicyTests(TestCase):
         self.assertEqual( headers[1][1] , 'no-transform' )
         self.assertEqual(policy.getNoTransform(), 1)
 
+    def test_lastModified( self ):
+
+        policy = self._makePolicy( 'lastModified', last_modified=0 )
+        context = self._makeContext()
+        headers = policy.getHeaders( context )
+
+        self.assertEqual( len( headers ), 0 )
+        self.assertEqual(policy.getLastModified(), 0)
+
+    def test_preCheck( self ):
+
+        policy = self._makePolicy( 'preCheck', pre_check=1 )
+        context = self._makeContext()
+        headers = policy.getHeaders( context )
+
+        self.assertEqual( len( headers ), 2 )
+        self.assertEqual( headers[0][0].lower() , 'last-modified' )
+        self.assertEqual( headers[0][1]
+                        , rfc1123_date(self._epoch.timeTime()) )
+        self.assertEqual( headers[1][0].lower() , 'cache-control' )
+        self.assertEqual( headers[1][1] , 'pre-check=1' )
+        self.assertEqual(policy.getPreCheck(), 1)
+        self.assertEqual(policy.getPostCheck(), None)
+
+    def test_postCheck( self ):
+
+        policy = self._makePolicy( 'postCheck', post_check=1 )
+        context = self._makeContext()
+        headers = policy.getHeaders( context )
+
+        self.assertEqual( len( headers ), 2 )
+        self.assertEqual( headers[0][0].lower() , 'last-modified' )
+        self.assertEqual( headers[0][1]
+                        , rfc1123_date(self._epoch.timeTime()) )
+        self.assertEqual( headers[1][0].lower() , 'cache-control' )
+        self.assertEqual( headers[1][1] , 'post-check=1' )
+        self.assertEqual(policy.getPostCheck(), 1)
+        self.assertEqual(policy.getPreCheck(), None)
+
     def test_ETag( self ):
 
         # With an empty etag_func, no ETag should be produced
@@ -392,7 +430,7 @@ class CachingPolicyManagerTests(TestCase):
     def test_addAndUpdatePolicy( self ):
 
         mgr = self._makeOne()
-        mgr.addPolicy( 'first', 'python:1', 'mtime', 1, 0, 1, 0, 'vary', 'etag', None, 2, 1, 0, 1, 0 )
+        mgr.addPolicy( 'first', 'python:1', 'mtime', 1, 0, 1, 0, 'vary', 'etag', None, 2, 1, 0, 1, 0, 1, 0, 2, 3 )
         p = mgr._policies['first']
         self.assertEqual(p.getPolicyId(), 'first')
         self.assertEqual(p.getPredicate(), 'python:1')
@@ -408,8 +446,12 @@ class CachingPolicyManagerTests(TestCase):
         self.assertEqual(p.getPublic(), 0)
         self.assertEqual(p.getPrivate(), 1)
         self.assertEqual(p.getNoTransform(), 0)
+        self.assertEqual(p.getEnable304s(), 1)
+        self.assertEqual(p.getLastModified(), 0)
+        self.assertEqual(p.getPreCheck(), 2)
+        self.assertEqual(p.getPostCheck(), 3)
         
-        mgr.updatePolicy( 'first', 'python:0', 'mtime2', 2, 1, 0, 1, 'vary2', 'etag2', None, 1, 0, 1, 0, 1 )
+        mgr.updatePolicy( 'first', 'python:0', 'mtime2', 2, 1, 0, 1, 'vary2', 'etag2', None, 1, 0, 1, 0, 1, 0, 1, 3, 2 )
         p = mgr._policies['first']
         self.assertEqual(p.getPolicyId(), 'first')
         self.assertEqual(p.getPredicate(), 'python:0')
@@ -425,6 +467,10 @@ class CachingPolicyManagerTests(TestCase):
         self.assertEqual(p.getPublic(), 1)
         self.assertEqual(p.getPrivate(), 0)
         self.assertEqual(p.getNoTransform(), 1)
+        self.assertEqual(p.getEnable304s(), 0)
+        self.assertEqual(p.getLastModified(), 1)
+        self.assertEqual(p.getPreCheck(), 3)
+        self.assertEqual(p.getPostCheck(), 2)
 
     def test_reorder( self ):
 
@@ -690,7 +736,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         doc1()
         self.assertEqual(response.getStatus(), 200)
         self._cleanup()
-        
+
 
     def testConditionalGETETag(self):
         yesterday = DateTime() - 1

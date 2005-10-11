@@ -2,6 +2,12 @@ HEAD only (unreleased)
 
   New Features
 
+    - CMFCore.CachingPolicyManager: Caching policies can now control all the 
+      Cache-Control tokens defined in the HTTP 1.1 spec (s-maxage, public, 
+      private, no-transform).  When no-cache is enabled, a Pragma: no-cache 
+      header is also sent for HTTP 1.0 clients. Thanks go to Geoff Davis
+      for contributing the necessary patches.
+
     - ActionsTool: Improved add form for 'CMF Action' objects.
       Presettings can now be loaded from Action settings in setup profiles.
 

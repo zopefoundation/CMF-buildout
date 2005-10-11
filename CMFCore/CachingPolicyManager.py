@@ -89,10 +89,11 @@ class CachingPolicy:
 
             'time' -- A DateTime object for the current date and time
 
-          - The "Last-modified" HTTP response header will be set using
-            'mtime_func', which is another TALES expression evaluated
+          - mtime_func is used to set the "Last-modified" HTTP response
+            header, which is another TALES expression evaluated
             against the same namespace.  If not specified explicitly,
-            uses 'object/modified'.
+            uses 'object/modified'.  mtime_func is also used in responding
+            to conditional GETs.
 
           - The "Expires" HTTP response header and the "max-age" token of
             the "Cache-control" header will be set using 'max_age_secs',
@@ -131,6 +132,25 @@ class CachingPolicy:
              'private=1' argument => "private" token
 
              'no_transform=1' argument => "no-transform" token
+
+          - The last_modified argument is used to determine whether to add a
+            Last-Modified header.  last_modified=1 by default.  There appears
+            to be a bug in IE 6 (and possibly other versions) that uses the
+            Last-Modified header plus some heuristics rather than the other
+            explicit caching headers to determine whether to render content
+            from the cache.  If you set, say, max-age=0, must-revalidate and
+            have a Last-Modified header some time in the past, IE will
+            recognize that the page in cache is stale and will request an
+            update from the server BUT if you have a Last-Modified header
+            with an older date, will then ignore the update and render from
+            the cache, so you may want to disable the Last-Modified header
+            when controlling caching using Cache-Control headers.
+
+          - The pre-check and post-check Cache-Control tokens are Microsoft
+            proprietary tokens added to IE 5+.  Documentation can be found
+            here: http://msdn.microsoft.com/workshop/author/perf/perftips.asp
+            Unfortunately these are needed to make IE behave correctly.
+
     """
 
     def __init__( self
@@ -149,6 +169,9 @@ class CachingPolicy:
                 , private=0
                 , no_transform=0
                 , enable_304s=0
+                , last_modified=1
+                , pre_check=None
+                , post_check=None
                 ):
 
         if not predicate:
@@ -158,10 +181,28 @@ class CachingPolicy:
             mtime_func = 'object/modified'
 
         if max_age_secs is not None:
-            max_age_secs = int( max_age_secs )
+            if str(max_age_secs).strip() == '':
+                max_age_secs = None
+            else:
+                max_age_secs = int( max_age_secs )
 
         if s_max_age_secs is not None:
-            s_max_age_secs = int( s_max_age_secs )
+            if str(s_max_age_secs).strip() == '':
+                s_max_age_secs = None
+            else:
+                s_max_age_secs = int( s_max_age_secs )
+
+        if pre_check is not None:
+            if str(pre_check).strip() == '':
+                pre_check = None
+            else:
+                pre_check = int(pre_check)
+            
+        if post_check is not None:
+            if str(post_check).strip() == '':
+                post_check = None
+            else:
+                post_check = int(post_check)
 
         self._policy_id = policy_id
         self._predicate = Expression( text=predicate )
@@ -178,6 +219,9 @@ class CachingPolicy:
         self._vary = vary
         self._etag_func = Expression( text=etag_func )
         self._enable_304s = int ( enable_304s )
+        self._last_modified = int( last_modified )
+        self._pre_check = pre_check
+        self._post_check = post_check
 
     def getPolicyId( self ):
         """
@@ -260,6 +304,20 @@ class CachingPolicy:
         """
         return getattr(self, '_enable_304s', 0)
 
+    def getLastModified(self):
+        """Should we set the last modified header?"""
+        return getattr(self, '_last_modified', 1)
+
+    def getPreCheck(self):
+        """
+        """
+        return getattr(self, '_pre_check', None)
+
+    def getPostCheck(self):
+        """
+        """
+        return getattr(self, '_post_check', None)
+    
     def testPredicate(self, expr_context):
         """ Does this request match our predicate?"""
         return self._predicate(expr_context)
@@ -274,15 +332,13 @@ class CachingPolicy:
 
         if self.testPredicate( expr_context ):
 
-            mtime = self._mtime_func( expr_context )
-
-            if type( mtime ) is type( '' ):
-                mtime = DateTime( mtime )
-
-            if mtime is not None:
-                mtime_flt = mtime.timeTime()
-                mtime_str = rfc1123_date(mtime_flt)
-                headers.append( ( 'Last-modified', mtime_str ) )
+            if self.getLastModified():
+                mtime = self._mtime_func( expr_context )
+                if type( mtime ) is type( '' ):
+                    mtime = DateTime( mtime )
+                if mtime is not None:
+                    mtime_str = rfc1123_date(mtime.timeTime())
+                    headers.append( ( 'Last-modified', mtime_str ) )
 
             control = []
 
@@ -317,6 +373,14 @@ class CachingPolicy:
 
             if self.getNoTransform():
                 control.append( 'no-transform' )
+
+            pre_check = self.getPreCheck()
+            if pre_check is not None:
+                control.append('pre-check=%d' % pre_check)
+
+            post_check = self.getPostCheck()
+            if post_check is not None:
+                control.append('post-check=%d' % post_check)
 
             if control:
                 headers.append( ( 'Cache-control', ', '.join( control ) ) )
@@ -394,14 +458,32 @@ class CachingPolicyManager( SimpleItem ):
                  , private=0           # boolean (def. 0)
                  , no_transform=0      # boolean (def. 0)
                  , enable_304s=0       # boolean (def. 0)
+                 , last_modified=1     # boolean (def. 1)
+                 , pre_check=None      # integer, default None
+                 , post_check=None     # integer, default None
                  ):
         """
             Add a caching policy.
         """
+        if max_age_secs is None or str(max_age_secs).strip() == '':
+            max_age_secs = None
+        else:
+            max_age_secs = int(max_age_secs)
+
         if s_max_age_secs is None or str(s_max_age_secs).strip() == '':
             s_max_age_secs = None
         else:
             s_max_age_secs = int(s_max_age_secs)
+            
+        if pre_check is None or str(pre_check).strip() == '':
+            pre_check = None
+        else:
+            pre_check = int(pre_check)
+
+        if post_check is None or str(post_check).strip() == '':
+            post_check = None
+        else:
+            post_check = int(post_check)
 
         self._addPolicy( policy_id
                        , predicate
@@ -418,6 +500,9 @@ class CachingPolicyManager( SimpleItem ):
                        , private
                        , no_transform
                        , enable_304s
+                       , last_modified
+                       , pre_check
+                       , post_check
                        )
         if REQUEST is not None: 
             REQUEST[ 'RESPONSE' ].redirect( self.absolute_url()
@@ -444,14 +529,32 @@ class CachingPolicyManager( SimpleItem ):
                     , private=0           # boolean (def. 0)
                     , no_transform=0      # boolean (def. 0)
                     , enable_304s=0       # boolean (def. 0)
+                    , last_modified=1     # boolean (def. 1)
+                    , pre_check=0         # integer, default=None
+                    , post_check=0        # integer, default=None
                     ):
         """
             Update a caching policy.
         """
+        if max_age_secs is None or str(max_age_secs).strip() == '':
+            max_age_secs = None
+        else:
+            max_age_secs = int(max_age_secs)
+
         if s_max_age_secs is None or str(s_max_age_secs).strip() == '':
             s_max_age_secs = None
         else:
             s_max_age_secs = int(s_max_age_secs)
+            
+        if pre_check is None or str(pre_check).strip() == '':
+            pre_check = None
+        else:
+            pre_check = int(pre_check)
+
+        if post_check is None or str(post_check).strip() == '':
+            post_check = None
+        else:
+            post_check = int(post_check)
 
         self._updatePolicy( policy_id
                           , predicate
@@ -468,6 +571,9 @@ class CachingPolicyManager( SimpleItem ):
                           , private
                           , no_transform
                           , enable_304s
+                          , last_modified
+                          , pre_check
+                          , post_check
                           )
         if REQUEST is not None: 
             REQUEST[ 'RESPONSE' ].redirect( self.absolute_url()
@@ -544,6 +650,9 @@ class CachingPolicyManager( SimpleItem ):
                   , private=0
                   , no_transform=0
                   , enable_304s=0
+                  , last_modified=1
+                  , pre_check=None
+                  , post_check=None
                   ):
         """
             Add a policy to our registry.
@@ -571,6 +680,9 @@ class CachingPolicyManager( SimpleItem ):
                                                    , private
                                                    , no_transform
                                                    , enable_304s
+                                                   , last_modified
+                                                   , pre_check
+                                                   , post_check
                                                    )
         idlist = list( self._policy_ids )
         idlist.append( policy_id )
@@ -593,6 +705,9 @@ class CachingPolicyManager( SimpleItem ):
                      , private=0
                      , no_transform=0
                      , enable_304s=0
+                     , last_modified=1
+                     , pre_check=None
+                     , post_check=None
                      ):
         """
             Update a policy in our registry.
@@ -615,6 +730,9 @@ class CachingPolicyManager( SimpleItem ):
                                                    , private
                                                    , no_transform
                                                    , enable_304s
+                                                   , last_modified
+                                                   , pre_check
+                                                   , post_check
                                                    )
 
     security.declarePrivate( '_reorderPolicy' )
@@ -668,26 +786,25 @@ class CachingPolicyManager( SimpleItem ):
     security.declareProtected( View, 'getModTimeAndETag' )
     def getModTimeAndETag( self, content, view_method, keywords, time=None):
         """ Return the modification time and ETag for the content object,
-            view method, and keywords as the tuple (modification_time, etag)
-            (where modification_time is a DateTime) or None.
+            view method, and keywords as the tuple (modification_time, etag,
+            set_last_modified_header), where modification_time is a DateTime,
+            or None.
         """
         context = createCPContext( content, view_method, keywords, time=time )
         for policy_id, policy in self.listPolicies():
             if policy.getEnable304s() and policy.testPredicate(context):
-                headers = policy.getHeaders(context)
-                if headers:
-                    content_etag = None
-                    content_mod_time = None
-                    for key, value in headers:
-                        lk = key.lower()
-                        if lk == 'etag':
-                            content_etag = value
-                        elif lk == 'last-modified':
-                            last_modified = DateTime(value)
-                    return (last_modified, content_etag)
+                
+                last_modified = policy._mtime_func(context)
+                if type(last_modified) is type(''):
+                    last_modified = DateTime(last_modified)
+
+                content_etag = None
+                if policy.getETagFunc():
+                    content_etag = policy._etag_func(context)
+                    
+                return (last_modified, content_etag, policy.getLastModified())
+            
         return None
-
-
 
 
 InitializeClass( CachingPolicyManager )

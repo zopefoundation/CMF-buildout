@@ -46,12 +46,26 @@ CMFSetup Product README
 
             o DCWorkflow definitions, including supporting scripts
 
-      - (_) 'portal_catalog'
+      - (x) 'cookie_authentication'
+
+            o tool properties
+
+      - (x) 'MailHost'
+
+            o tool properties
+
+      - (x) 'portal_catalog'
             (Products.CMFCore.CatalogTool.CatalogTool)
 
             o index names / types
 
             o metadata column names
+
+      - (x) folder structure
+
+      - (x) 'caching_policy_manager'
+
+            o policy settings
 
       - (_) 'portal_membership'
 
@@ -64,10 +78,6 @@ CMFSetup Product README
       - (_) 'content_type_registry'
 
             o predicate -> portal_type bindings.
-
-      - (_) 'caching_policy_manager'
-
-            o policy settings
 
       - (_) 'portal_metadata'
 
@@ -82,17 +92,7 @@ CMFSetup Product README
 
             o action title / icon bindings
 
-      - (x) 'cookie_authentication'
-
-            o tool properties
-
-      - (x) 'MailHost'
-
-            o tool properties
-
       - (_) user folder configuration
-
-      - (_) folder structure
 
   TODO
 

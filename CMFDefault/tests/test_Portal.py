@@ -20,12 +20,15 @@ import Testing
 import Zope2
 Zope2.startup()
 
+import Products
 from Acquisition import aq_base
+from Products.Five import zcml
+from zope.app.tests.placelesssetup import PlacelessSetup
 
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 
 
-class CMFSiteTests( SecurityRequestTest ):
+class CMFSiteTests(PlacelessSetup, SecurityRequestTest):
 
     def _makeSite( self, id='testsite' ):
 
@@ -43,6 +46,17 @@ class CMFSiteTests( SecurityRequestTest ):
             content.editMetadata( **kw )
 
         return content
+
+    def setUp(self):
+        PlacelessSetup.setUp(self)
+        SecurityRequestTest.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.GenericSetup)
+        zcml.load_config('configure.zcml', Products.CMFCore)
+
+    def tearDown(self):
+        SecurityRequestTest.tearDown(self)
+        PlacelessSetup.tearDown(self)
 
     def test_new( self ):
 

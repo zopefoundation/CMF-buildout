@@ -16,6 +16,8 @@ After CMF 1.5.4
 
   Features
 
+    - CMFSetup:  added support for configuring content type registry.
+
     - CMFSetup:  added support for configuring caching policy manager.
 
     - CMFSetup:  added support for configuring cookie authentication and

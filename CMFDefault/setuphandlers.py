@@ -39,6 +39,5 @@ def importVarious(context):
     gen = PortalGenerator()
     gen.setupUserFolder(site)
     gen.setupMembersFolder(site)
-    gen.setupMimetypes(site)
 
     return 'Various settings from PortalGenerator imported.'

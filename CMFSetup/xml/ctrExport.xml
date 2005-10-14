@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<content-type-registry xmlns:tal="http://xml.zope.org/namespaces/tal">
+ <predicate
+    predicate_id="PREDICATE_ID"
+    predicate_type="PREDICATE_TYPE"
+    content_type_name="CONTENT_TYPE_NAME"
+    tal:repeat="info context/listPredicateInfo"
+    tal:attributes="predicate_id info/predicate_id;
+                    predicate_type info/predicate_type;
+                    content_type_name info/content_type_name; " >
+  <argument
+    value="ARGUMENT_VALUE"
+    tal:repeat="arg info/arguments"
+    tal:attributes="value arg"
+    />
+ </predicate>
+</content-type-registry>
+

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<content-type-registry>
+ <predicate
+   predicate_id="link"
+   predicate_type="extension"
+   content_type_name="Link">
+  <argument value="url,link" />
+ </predicate>
+ <predicate
+   predicate_id="news"
+   predicate_type="extension"
+   content_type_name="News Item">
+  <argument value="news" />
+ </predicate>
+ <predicate
+   predicate_id="document"
+   predicate_type="major_minor"
+   content_type_name="Document">
+  <argument value="text" />
+  <argument value="" />
+ </predicate>
+ <predicate
+   predicate_id="image"
+   predicate_type="major_minor"
+   content_type_name="Image">
+  <argument value="image" />
+  <argument value="" />
+ </predicate>
+ <predicate
+   predicate_id="file"
+   predicate_type="major_minor"
+   content_type_name="File">
+  <argument value="application" />
+  <argument value="" />
+ </predicate>
+</content-type-registry>

@@ -67,6 +67,10 @@ CMFSetup Product README
 
             o policy settings
 
+      - (x) 'content_type_registry'
+
+            o predicate -> portal_type bindings.
+
       - (_) 'portal_membership'
 
             o "skeleton" home folder (XXX: is this in the core?)
@@ -74,10 +78,6 @@ CMFSetup Product README
       - (_) 'portal_memberdata'
 
             o member properties
-
-      - (_) 'content_type_registry'
-
-            o predicate -> portal_type bindings.
 
       - (_) 'portal_metadata'
 

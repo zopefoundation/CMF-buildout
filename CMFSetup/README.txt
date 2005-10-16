@@ -71,6 +71,11 @@ CMFSetup Product README
 
             o predicate -> portal_type bindings.
 
+      - (x) 'portal_actionicons'
+            (Products.CMFActionIcons.ActionIconsTool.ActionIconsTool)
+
+            o action title / icon bindings
+
       - (_) 'portal_membership'
 
             o "skeleton" home folder (XXX: is this in the core?)
@@ -86,11 +91,6 @@ CMFSetup Product README
             o default element policies
 
             o type-specific element policies
-
-      - (_) 'portal_actionicons'
-            (Products.CMFActionIcons.ActionIconsTool.ActionIconsTool)
-
-            o action title / icon bindings
 
       - (_) user folder configuration
 

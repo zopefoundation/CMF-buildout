@@ -63,12 +63,18 @@ def exportCachingPolicyManager(context):
     """ Export caching policy manager settings as an XML file.
     """
     site = context.getSite()
+
+    cptool = getToolByName(site, 'caching_policy_manager', None)
+    if cptool is None:
+        return 'Caching policy manager: Nothing to export.'
+
     mhc = CachingPolicyManagerExportConfigurator( site ).__of__( site )
     text = mhc.generateXML()
 
     context.writeDataFile( _FILENAME, text, 'text/xml' )
 
     return 'Caching policy manager settings exported.'
+
 
 class CachingPolicyManagerExportConfigurator(ExportConfiguratorBase):
     """ Synthesize XML description of cc properties.

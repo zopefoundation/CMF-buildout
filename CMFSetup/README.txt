@@ -54,7 +54,7 @@ CMFSetup Product README
 
             o tool properties
 
-      - (x) 'portal_catalog'
+      - (_) 'portal_catalog'
             (Products.CMFCore.CatalogTool.CatalogTool)
 
             o index names / types

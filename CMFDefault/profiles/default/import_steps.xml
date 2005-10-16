@@ -6,6 +6,19 @@
   <dependency step="toolset"/>
   Import actions tool's action providers and their actions.
  </import-step>
+ <import-step id="caching_policy_mgr" version="20051011-01"
+              handler="Products.CMFSetup.cachingpolicymgr.importCachingPolicyManager"
+              title="Caching Policies">
+  <dependency step="toolset"/>
+  Import caching policy manager's policies.
+ </import-step>
+ <import-step id="content_type_registry"
+              version="20051013-01"
+              handler="Products.CMFSetup.contenttyperegistry.importContentTypeRegistry"
+              title="Content Type Registry">
+  <dependency step="toolset"/>
+  Import content type registry's predicates and bindings.
+ </import-step>
  <import-step id="cookie_authentication"
               version="20050903-01"
               handler="Products.CMFSetup.cookieauth.importCookieCrumbler"
@@ -59,17 +72,5 @@
   <dependency step="toolset"/>
   <dependency step="typeinfo"/>
   Import workflow tool's workflow definitions and supporting scripts.
- </import-step>
- <import-step id="caching_policy_mgr" version="20051011-01"
-              handler="Products.CMFSetup.cachingpolicymgr.importCachingPolicyManager"
-              title="Caching Policies">
-  <dependency step="toolset"/>
-  Import caching policy manager's policies.
- </import-step>
- <import-step id="content_type_registry" version="20051013-01"
-              handler="Products.CMFSetup.contenttyperegistry.importContentTypeRegistry"
-              title="Content Type Registry">
-  <dependency step="toolset"/>
-  Import content type registry's predicates and bindings.
  </import-step>
 </import-steps>

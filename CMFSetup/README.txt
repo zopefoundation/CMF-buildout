@@ -54,13 +54,6 @@ CMFSetup Product README
 
             o tool properties
 
-      - (_) 'portal_catalog'
-            (Products.CMFCore.CatalogTool.CatalogTool)
-
-            o index names / types
-
-            o metadata column names
-
       - (x) folder structure
 
       - (x) 'caching_policy_manager'
@@ -70,6 +63,18 @@ CMFSetup Product README
       - (x) 'content_type_registry'
 
             o predicate -> portal_type bindings.
+
+      - (x) 'portal_actionicons'
+            (Products.CMFActionIcons.ActionIconsTool.ActionIconsTool)
+
+            o action title / icon bindings
+
+      - (_) 'portal_catalog'
+            (Products.CMFCore.CatalogTool.CatalogTool)
+
+            o index names / types
+
+            o metadata column names
 
       - (_) 'portal_membership'
 
@@ -86,11 +91,6 @@ CMFSetup Product README
             o default element policies
 
             o type-specific element policies
-
-      - (_) 'portal_actionicons'
-            (Products.CMFActionIcons.ActionIconsTool.ActionIconsTool)
-
-            o action title / icon bindings
 
       - (_) user folder configuration
 

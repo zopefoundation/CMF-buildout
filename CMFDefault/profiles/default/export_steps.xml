@@ -5,10 +5,20 @@
               title="Action Providers">
   Export actions tool's action providers and their actions.
  </export-step>
+ <export-step id="caching_policy_mgr"
+              handler="Products.CMFSetup.cachingpolicymgr.exportCachingPolicyManager"
+              title="Caching Policies">
+  Export caching policy manager's policies.
+ </export-step>
  <export-step id="catalog"
               handler="Products.CMFSetup.catalog.exportCatalogTool"
               title="Catalog Tool">
   Export catalog tool's sub-objects, indexes and columns.
+ </export-step>
+ <export-step id="content_type_registry"
+              handler="Products.CMFSetup.contenttyperegistry.exportContentTypeRegistry"
+              title="Content Type Registry">
+  Export content type registry's predicates / bindings.
  </export-step>
  <export-step id="cookieauth"
               handler="Products.CMFSetup.cookieauth.exportCookieCrumbler"
@@ -54,15 +64,5 @@
               handler="Products.CMFSetup.workflow.exportWorkflowTool"
               title="Workflow Tool">
   Export workflow tool's workflow definitions and supporting scripts.
- </export-step>
- <export-step id="caching_policy_mgr"
-              handler="Products.CMFSetup.cachingpolicymgr.exportCachingPolicyManager"
-              title="Caching Policies">
-  Export cacing policy manager's policies.
- </export-step>
- <export-step id="content_type_registry"
-              handler="Products.CMFSetup.contenttyperegistry.exportContentTypeRegistry"
-              title="Content Type Registry">
-  Export content type registry's predicates / bindings.
  </export-step>
 </export-steps>

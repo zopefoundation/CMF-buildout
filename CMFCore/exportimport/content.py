@@ -1,8 +1,20 @@
-""" CMFCore filesystem exporter / importer adapters.
+##############################################################################
+#
+# Copyright (c) 2005 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+"""Filesystem exporter / importer adapters.
 
 $Id$
 """
-from csv import excel
+
 from csv import reader
 from csv import register_dialect
 from csv import writer
@@ -10,19 +22,12 @@ from ConfigParser import ConfigParser
 import re
 from StringIO import StringIO
 
-from Acquisition import aq_inner
-from Acquisition import aq_parent
-
 from zope.interface import implements
 from zope.interface import directlyProvides
-
-from Products.GenericSetup.interfaces import ISetupTool
-from Products.GenericSetup.tool import SetupTool
 
 from Products.CMFCore.interfaces import IFilesystemExporter
 from Products.CMFCore.interfaces import IFilesystemImporter
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.utils import getToolByName
 
 #

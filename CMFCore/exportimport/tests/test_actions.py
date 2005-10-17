@@ -10,7 +10,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""CMFCore node adapter unit tests.
+"""Actions tool node adapter unit tests.
 
 $Id$
 """
@@ -20,7 +20,8 @@ import Testing
 import Zope2
 Zope2.startup()
 
-import Products
+import Products.CMFCore.exportimport
+import Products.Five
 from Products.Five import zcml
 from zope.app.tests.placelesssetup import PlacelessSetup
 
@@ -74,26 +75,11 @@ _ACTIONSTOOL_XML = """\
 </object>
 """
 
-_COOKIECRUMBLER_XML = """\
-<object name="foo_cookiecrumbler" meta_type="Cookie Crumbler">
- <property name="auth_cookie">__ac</property>
- <property name="name_cookie">__ac_name</property>
- <property name="pw_cookie">__ac_password</property>
- <property name="persist_cookie">__ac_persistent</property>
- <property name="auto_login_page">login_form</property>
- <property name="logout_page">logged_out</property>
- <property name="unauth_page"></property>
- <property name="local_cookie_path">False</property>
- <property name="cache_header_value">private</property>
- <property name="log_username">True</property>
-</object>
-"""
-
 
 class ActionNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
     def _getTargetClass(self):
-        from Products.CMFCore.nodeadapters import ActionNodeAdapter
+        from Products.CMFCore.exportimport.actions import ActionNodeAdapter
 
         return ActionNodeAdapter
 
@@ -107,7 +93,7 @@ class ActionNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
         PlacelessSetup.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
         self._obj = Action('foo_action')
         self._XML = _ACTION_XML
@@ -116,7 +102,8 @@ class ActionNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 class ActionCategoryNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
     def _getTargetClass(self):
-        from Products.CMFCore.nodeadapters import ActionCategoryNodeAdapter
+        from Products.CMFCore.exportimport.actions \
+                import ActionCategoryNodeAdapter
 
         return ActionCategoryNodeAdapter
 
@@ -130,7 +117,7 @@ class ActionCategoryNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
         PlacelessSetup.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
         self._obj = ActionCategory('foo_category')
         self._XML = _ACTIONCATEGORY_XML
@@ -139,7 +126,8 @@ class ActionCategoryNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 class ActionsToolNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
     def _getTargetClass(self):
-        from Products.CMFCore.nodeadapters import ActionsToolNodeAdapter
+        from Products.CMFCore.exportimport.actions \
+                import ActionsToolNodeAdapter
 
         return ActionsToolNodeAdapter
 
@@ -157,7 +145,7 @@ class ActionsToolNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
         PlacelessSetup.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
         site = DummySite('site')
         site._setObject('portal_actions', ActionsTool('portal_actions'))
@@ -165,30 +153,11 @@ class ActionsToolNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
         self._XML = _ACTIONSTOOL_XML
 
 
-class CookieCrumblerNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
-
-    def _getTargetClass(self):
-        from Products.CMFCore.nodeadapters import CookieCrumblerNodeAdapter
-
-        return CookieCrumblerNodeAdapter
-
-    def setUp(self):
-        from Products.CMFCore.CookieCrumbler import CookieCrumbler
-
-        PlacelessSetup.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
-        self._obj = CookieCrumbler('foo_cookiecrumbler')
-        self._XML = _COOKIECRUMBLER_XML
-
-
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(ActionNodeAdapterTests),
         unittest.makeSuite(ActionCategoryNodeAdapterTests),
         unittest.makeSuite(ActionsToolNodeAdapterTests),
-        unittest.makeSuite(CookieCrumblerNodeAdapterTests),
         ))
 
 if __name__ == '__main__':

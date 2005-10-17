@@ -2,59 +2,11 @@
     xmlns="http://namespaces.zope.org/zope">
 
   <include
-    package=".browser"
-    />
+      package=".browser"
+      />
 
   <include
-    file="exportimport.zcml"
-    />
-
-  <adapter
-      factory=".nodeadapters.ActionCategoryNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for=".interfaces.IActionCategory"
-      />
-
-  <adapter
-      factory=".nodeadapters.ActionCategoryNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for=".interfaces.IActionCategory"
-      />
-
-  <adapter
-      factory=".nodeadapters.ActionNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for=".interfaces.IAction"
-      />
-
-  <adapter
-      factory=".nodeadapters.ActionNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for=".interfaces.IAction"
-      />
-
-  <adapter
-      factory=".nodeadapters.ActionsToolNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for=".interfaces.IActionsTool"
-      />
-
-  <adapter
-      factory=".nodeadapters.ActionsToolNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for=".interfaces.IActionsTool"
-      />
-
-  <adapter
-      factory=".nodeadapters.CookieCrumblerNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for=".interfaces.ICookieCrumbler"
-      />
-
-  <adapter
-      factory=".nodeadapters.CookieCrumblerNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for=".interfaces.ICookieCrumbler"
+      package=".exportimport"
       />
 
 </configure>

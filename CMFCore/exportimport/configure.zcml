@@ -1,0 +1,103 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="cmf"
+    >
+
+  <adapter
+      factory=".actions.ActionCategoryNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeExporter"
+      for="Products.CMFCore.interfaces.IActionCategory"
+      />
+
+  <adapter
+      factory=".actions.ActionCategoryNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeImporter"
+      for="Products.CMFCore.interfaces.IActionCategory"
+      />
+
+  <adapter
+      factory=".actions.ActionNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeExporter"
+      for="Products.CMFCore.interfaces.IAction"
+      />
+
+  <adapter
+      factory=".actions.ActionNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeImporter"
+      for="Products.CMFCore.interfaces.IAction"
+      />
+
+  <adapter
+      factory=".actions.ActionsToolNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeExporter"
+      for="Products.CMFCore.interfaces.IActionsTool"
+      />
+
+  <adapter
+      factory=".actions.ActionsToolNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeImporter"
+      for="Products.CMFCore.interfaces.IActionsTool"
+      />
+
+  <adapter
+      factory=".content.StructureFolderWalkingAdapter"
+      provides="Products.CMFCore.interfaces.IFilesystemExporter"
+      for="Products.CMFCore.interfaces.IFolderish"
+      />
+
+  <adapter
+      factory=".content.StructureFolderWalkingAdapter"
+      provides="Products.CMFCore.interfaces.IFilesystemImporter"
+      for="Products.CMFCore.interfaces.IFolderish"
+      />
+
+  <adapter
+      factory=".content.CSVAwareFileAdapter"
+      provides="Products.CMFCore.interfaces.IFilesystemExporter"
+      for="Products.CMFCore.interfaces.ICSVAware"
+      />
+
+  <adapter
+      factory=".content.CSVAwareFileAdapter"
+      provides="Products.CMFCore.interfaces.IFilesystemImporter"
+      for="Products.CMFCore.interfaces.ICSVAware"
+      />
+
+  <adapter
+      factory=".content.INIAwareFileAdapter"
+      provides="Products.CMFCore.interfaces.IFilesystemExporter"
+      for="Products.CMFCore.interfaces.IINIAware"
+      />
+
+  <adapter
+      factory=".content.INIAwareFileAdapter"
+      provides="Products.CMFCore.interfaces.IFilesystemImporter"
+      for="Products.CMFCore.interfaces.IINIAware"
+      />
+
+  <adapter
+      factory=".content.DAVAwareFileAdapter"
+      provides="Products.CMFCore.interfaces.IFilesystemExporter"
+      for="Products.CMFCore.interfaces.IDAVAware"
+      />
+
+  <adapter
+      factory=".content.DAVAwareFileAdapter"
+      provides="Products.CMFCore.interfaces.IFilesystemImporter"
+      for="Products.CMFCore.interfaces.IDAVAware"
+      />
+
+  <adapter
+      factory=".cookieauth.CookieCrumblerNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeExporter"
+      for="Products.CMFCore.interfaces.ICookieCrumbler"
+      />
+
+  <adapter
+      factory=".cookieauth.CookieCrumblerNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeImporter"
+      for="Products.CMFCore.interfaces.ICookieCrumbler"
+      />
+
+</configure>

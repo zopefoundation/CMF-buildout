@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2004 Zope Corporation and Contributors. All Rights Reserved.
+# Copyright (c) 2005 Zope Corporation and Contributors. All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
@@ -10,7 +10,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-""" Unit tests for Products.CMFCore.exportimport
+"""Filesystem exporter / importer adapter unit tests.
 
 $Id$
 """
@@ -30,16 +30,17 @@ from Products.GenericSetup.tests.common import DummyImportContext
 from conformance import ConformsToIFilesystemExporter
 from conformance import ConformsToIFilesystemImporter
 
+
 class SiteStructureExporterTests(PlacelessSetup,
                                  unittest.TestCase,
                                 ):
 
     def _getExporter(self):
-        from Products.CMFCore.exportimport import exportSiteStructure
+        from Products.CMFCore.exportimport.content import exportSiteStructure
         return exportSiteStructure
 
     def _getImporter(self):
-        from Products.CMFCore.exportimport import importSiteStructure
+        from Products.CMFCore.exportimport.content import importSiteStructure
         return importSiteStructure
 
     def _makeSetupTool(self):
@@ -49,7 +50,6 @@ class SiteStructureExporterTests(PlacelessSetup,
     def _setUpAdapters(self):
         from zope.app.tests import ztapi
         #from OFS.Image import File
-        from zope.interface import classImplements
 
         from Products.CMFCore.interfaces import IFilesystemExporter
         from Products.CMFCore.interfaces import IFilesystemImporter
@@ -57,43 +57,43 @@ class SiteStructureExporterTests(PlacelessSetup,
         from Products.CMFCore.interfaces import ICSVAware
         from Products.CMFCore.interfaces import IINIAware
 
-        from Products.CMFCore.exportimport import \
+        from Products.CMFCore.exportimport.content import \
              StructureFolderWalkingAdapter
-        from Products.CMFCore.exportimport import \
+        from Products.CMFCore.exportimport.content import \
              CSVAwareFileAdapter
-        from Products.CMFCore.exportimport import \
+        from Products.CMFCore.exportimport.content import \
              INIAwareFileAdapter
-        
-        #from Products.CMFCore.exportimport import \
+
+        #from Products.CMFCore.exportimport.content import \
         #        OFSFileAdapter
 
         ztapi.provideAdapter(IFolderish,
-                             IFilesystemExporter, 
+                             IFilesystemExporter,
                              StructureFolderWalkingAdapter,
                             )
 
         ztapi.provideAdapter(IFolderish,
-                             IFilesystemImporter, 
+                             IFilesystemImporter,
                              StructureFolderWalkingAdapter,
                             )
 
         ztapi.provideAdapter(ICSVAware,
-                             IFilesystemExporter, 
+                             IFilesystemExporter,
                              CSVAwareFileAdapter,
                             )
 
         ztapi.provideAdapter(ICSVAware,
-                             IFilesystemImporter, 
+                             IFilesystemImporter,
                              CSVAwareFileAdapter,
                             )
 
         ztapi.provideAdapter(IINIAware,
-                             IFilesystemExporter, 
+                             IFilesystemExporter,
                              INIAwareFileAdapter,
                             )
 
         ztapi.provideAdapter(IINIAware,
-                             IFilesystemImporter, 
+                             IFilesystemImporter,
                              INIAwareFileAdapter,
                             )
 
@@ -524,7 +524,7 @@ class Test_globpattern(unittest.TestCase):
     NAMELIST = ('foo', 'bar', 'baz', 'bam', 'qux', 'quxx', 'quxxx')
 
     def _checkResults(self, globpattern, namelist, expected):
-        from Products.CMFCore.exportimport import _globtest
+        from Products.CMFCore.exportimport.content import _globtest
         found = _globtest(globpattern, namelist)
         self.assertEqual(len(found), len(expected))
         for found_item, expected_item in zip(found, expected):
@@ -549,7 +549,7 @@ class CSVAwareFileAdapterTests(unittest.TestCase,
                               ):
 
     def _getTargetClass(self):
-        from Products.CMFCore.exportimport import CSVAwareFileAdapter
+        from Products.CMFCore.exportimport.content import CSVAwareFileAdapter
         return CSVAwareFileAdapter
 
     def _makeOne(self, context, *args, **kw):
@@ -621,7 +621,7 @@ class INIAwareFileAdapterTests(unittest.TestCase,
                                ):
 
     def _getTargetClass(self):
-        from Products.CMFCore.exportimport import INIAwareFileAdapter
+        from Products.CMFCore.exportimport.content import INIAwareFileAdapter
         return INIAwareFileAdapter
 
     def _makeOne(self, context, *args, **kw):
@@ -661,7 +661,7 @@ class DAVAwareFileAdapterTests(unittest.TestCase,
                                ):
 
     def _getTargetClass(self):
-        from Products.CMFCore.exportimport import DAVAwareFileAdapter
+        from Products.CMFCore.exportimport.content import DAVAwareFileAdapter
         return DAVAwareFileAdapter
 
     def _makeOne(self, context, *args, **kw):

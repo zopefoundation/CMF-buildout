@@ -1,30 +1,27 @@
 <?xml version="1.0"?>
-<type-info id="Event" kind="Factory-based Type Information"
-           i18n:domain="cmf_calendar"
-           xmlns:i18n="http://xml.zope.org/namespaces/i18n">
-  <property name="title" i18n:translate="">Event</property>
-  <property name="description" i18n:translate="">Events are objects for use in Calendar topical queries on the catalog.</property>
-  <property name="content_icon">event_icon.gif</property>
-  <property name="content_meta_type">CMF Event</property>
-  <property name="product">CMFCalendar</property>
-  <property name="factory">addEvent</property>
-  <property name="immediate_view">event_edit_form</property>
-  <property name="global_allow">True</property>
-  <property name="filter_content_types">True</property>
-  <property name="allowed_content_types"></property>
-  <property name="allow_discussion">False</property>
-  <aliases>
-   <alias from="(Default)" to="event_view"/>
-   <alias from="view" to="event_view"/>
-  </aliases>
-  <action action_id="view" title="View" condition_expr=""
-          url_expr="string:${object_url}/event_view"
-          category="object" visible="True">
-   <permission>View</permission>
-  </action>
-  <action action_id="edit" title="Edit" condition_expr=""
-          url_expr="string:${object_url}/event_edit_form"
-          category="object" visible="True">
-   <permission>Change portal events</permission>
-  </action>
-</type-info>
+<object name="Event" meta_type="Factory-based Type Information"
+   i18n:domain="cmf_calendar"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="title" i18n:translate="">Event</property>
+ <property name="description"
+    i18n:translate="">Events are objects for use in Calendar topical queries on the catalog.</property>
+ <property name="content_icon">event_icon.gif</property>
+ <property name="content_meta_type">CMF Event</property>
+ <property name="product">CMFCalendar</property>
+ <property name="factory">addEvent</property>
+ <property name="immediate_view">event_edit_form</property>
+ <property name="global_allow">True</property>
+ <property name="filter_content_types">True</property>
+ <property name="allowed_content_types"/>
+ <property name="allow_discussion">False</property>
+ <alias from="(Default)" to="event_view"/>
+ <alias from="view" to="event_view"/>
+ <action title="View" action_id="view" category="object" condition_expr=""
+    url_expr="string:${object_url}/event_view" visible="True">
+  <permission value="View"/>
+ </action>
+ <action title="Edit" action_id="edit" category="object" condition_expr=""
+    url_expr="string:${object_url}/event_edit_form" visible="True">
+  <permission value="Change portal events"/>
+ </action>
+</object>

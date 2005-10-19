@@ -17,6 +17,7 @@ $Id$
 
 from sys import exc_info
 from warnings import warn
+from xml.dom.minidom import parseString
 
 import Products
 from AccessControl import ClassSecurityInfo
@@ -31,6 +32,8 @@ from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from zLOG import LOG, ERROR
 from zope.i18nmessageid import MessageID
 from zope.interface import implements
+
+from Products.GenericSetup.interfaces import INodeImporter
 
 from ActionProviderBase import ActionProviderBase
 from exceptions import AccessControl_Unauthorized
@@ -556,15 +559,6 @@ class FactoryTypeInformation(TypeInformation):
 
 InitializeClass( FactoryTypeInformation )
 
-def manage_addFactoryTIForm(self, REQUEST):
-    """ Get the add form for factory-based type infos.
-    """
-    addTIForm = DTMLFile('addTypeInfo', _dtmldir).__of__(self)
-    ttool = getToolByName(self, 'portal_types')
-    return addTIForm( self, REQUEST,
-                      add_meta_type=FactoryTypeInformation.meta_type,
-                      types=ttool.listDefaultTypeInformation() )
-
 
 class ScriptableTypeInformation( TypeInformation ):
 
@@ -623,19 +617,86 @@ class ScriptableTypeInformation( TypeInformation ):
 
 InitializeClass( ScriptableTypeInformation )
 
-def manage_addScriptableTIForm(self, REQUEST):
+
+_addTypeInfo_template = PageTemplateFile('addTypeInfo.zpt', _wwwdir)
+
+def manage_addFactoryTIForm(dispatcher, REQUEST):
+    """ Get the add form for factory-based type infos.
+    """
+    template = _addTypeInfo_template.__of__(dispatcher)
+    meta_type = FactoryTypeInformation.meta_type
+    return template(add_meta_type=meta_type,
+                    profiles=_getProfileInfo(dispatcher, meta_type))
+
+def manage_addScriptableTIForm(dispatcher, REQUEST):
     """ Get the add form for scriptable type infos.
     """
-    addTIForm = DTMLFile('addTypeInfo', _dtmldir).__of__(self)
-    ttool = getToolByName(self, 'portal_types')
-    return addTIForm( self, REQUEST,
-                      add_meta_type=ScriptableTypeInformation.meta_type,
-                      types=ttool.listDefaultTypeInformation() )
+    template = _addTypeInfo_template.__of__(dispatcher)
+    meta_type = ScriptableTypeInformation.meta_type
+    return template(add_meta_type=meta_type,
+                    profiles=_getProfileInfo(dispatcher, meta_type))
 
+def _getProfileInfo(dispatcher, meta_type):
+    profiles = []
+    stool = getToolByName(dispatcher, 'portal_setup', None)
+    if stool:
+        for info in stool.listContextInfos():
+            type_ids = []
+            context = stool._getImportContext(info['id'])
+            filenames = context.listDirectory('types')
+            if filenames is None:
+                continue
+            for filename in filenames:
+                body = context.readDataFile(filename, subdir='types')
+                if body is None:
+                    continue
+                root = parseString(body).documentElement
+                if root.getAttribute('meta_type') == meta_type:
+                    type_id = root.getAttribute('name')
+                    type_ids.append(type_id)
+            if not type_ids:
+                continue
+            type_ids.sort()
+            profiles.append({'id': info['id'],
+                             'title': info['title'],
+                             'type_ids': tuple(type_ids)})
+    return tuple(profiles)
 
-# Provide aliases for backward compatibility.
-ContentFactoryMetadata = FactoryTypeInformation
-ContentTypeInformation = ScriptableTypeInformation
+def manage_addTypeInfo(dispatcher, add_meta_type, id, settings_id='',
+                       REQUEST=None):
+    """Add a new TypeInformation object of type 'add_meta_type' with ID 'id'.
+    """
+    settings_node = None
+    if settings_id:
+        stool = getToolByName(dispatcher, 'portal_setup', None)
+        if stool:
+            profile_id, type_id = settings_id.split('/')
+            context = stool._getImportContext(profile_id)
+            filenames = context.listDirectory('types')
+            for filename in filenames or ():
+                body = context.readDataFile(filename, subdir='types')
+                if body is not None:
+                    root = parseString(body).documentElement
+                    if root.getAttribute('name') != type_id:
+                        continue
+                    if root.getAttribute('meta_type') == add_meta_type:
+                        settings_node = root
+                        if not id:
+                            id = type_id
+                        break
+    for mt in Products.meta_types:
+        if mt['name'] == add_meta_type:
+            klass = mt['instance']
+            break
+    else:
+        raise ValueError('Meta type %s is not a type class.' % add_meta_type)
+    obj = klass(id)
+    if settings_node:
+        INodeImporter(obj).importNode(settings_node)
+    dispatcher._setObject(id, obj)
+
+    if REQUEST:
+        return dispatcher.manage_main(dispatcher, REQUEST)
 
 allowedTypes = [
     'Script (Python)',

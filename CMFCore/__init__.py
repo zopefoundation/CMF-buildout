@@ -150,7 +150,8 @@ def initialize(context):
     context.registerClass(
         TypesTool.FactoryTypeInformation,
         permission=ManagePortal,
-        constructors=( TypesTool.manage_addFactoryTIForm, ),
+        constructors=(TypesTool.manage_addFactoryTIForm,
+                      TypesTool.manage_addTypeInfo),
         icon='images/typeinfo.gif',
         visibility=None,
         interfaces=(ITypeInformation,))
@@ -158,7 +159,8 @@ def initialize(context):
     context.registerClass(
         TypesTool.ScriptableTypeInformation,
         permission=ManagePortal,
-        constructors=( TypesTool.manage_addScriptableTIForm, ),
+        constructors=(TypesTool.manage_addScriptableTIForm,
+                      TypesTool.manage_addTypeInfo),
         icon='images/typeinfo.gif',
         visibility=None,
         interfaces=(ITypeInformation,))

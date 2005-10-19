@@ -2,6 +2,11 @@ HEAD only (unreleased)
 
   New Features
 
+    - TypesTool: Improved add form for type info objects.
+      Presettings can now be loaded from type info settings in setup profiles.
+      This replaces the feature that did allow to load presettings from
+      registered (oldstyle) fti data.
+
     - CMFCore.CachingPolicyManager: Caching policies can now control all the 
       Cache-Control tokens defined in the HTTP 1.1 spec (s-maxage, public, 
       private, no-transform).  When no-cache is enabled, a Pragma: no-cache 

@@ -15,135 +15,118 @@
 $Id$
 """
 
+from xml.dom.minidom import parseString
+
 import Products
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 from Products.CMFCore.utils import getToolByName
+from Products.GenericSetup.interfaces import INodeExporter
+from Products.GenericSetup.interfaces import INodeImporter
+from Products.GenericSetup.interfaces import PURGE, UPDATE
+from Products.GenericSetup.utils import PrettyDocument
 
 from permissions import ManagePortal
 from utils import _xmldir
 from utils import ImportConfiguratorBase, ExportConfiguratorBase
 from utils import CONVERTER, DEFAULT, KEY
 
+_FILENAME = 'typestool.xml'
 
-#
-#   Entry points
-#
-_TOOL_FILENAME = 'typestool.xml'
 
-def importTypesTool( context ):
-
+def importTypesTool(context):
     """ Import types tool and content types from XML files.
     """
     site = context.getSite()
-    encoding = context.getEncoding()
-
-    types_tool = getToolByName( site, 'portal_types' )
+    mode = context.shouldPurge() and PURGE or UPDATE
+    ttool = getToolByName(site, 'portal_types')
 
     if context.shouldPurge():
+        for type in ttool.objectIds():
+            ttool._delObject(type)
 
-        for type in types_tool.objectIds():
-            types_tool._delObject(type)
-
-    ttc = TypesToolImportConfigurator( site, encoding )
-    xml = context.readDataFile( _TOOL_FILENAME )
+    ttc = TypesToolImportConfigurator(site)
+    xml = context.readDataFile(_FILENAME)
     if xml is None:
         return 'Types tool: Nothing to import.'
 
-    tool_info = ttc.parseXML( xml )
-    tic = TypeInfoImportConfigurator( site, encoding )
-    old_tic = OldTypeInfoImportConfigurator( site, encoding )
+    tool_info = ttc.parseXML(xml)
 
-    for type_info in tool_info[ 'types' ]:
+    for type_info in tool_info['types']:
 
-        filename = type_info[ 'filename' ]
-        sep = filename.rfind( '/' )
+        filename = type_info['filename']
+        sep = filename.rfind('/')
         if sep == -1:
-            text = context.readDataFile( filename )
+            body = context.readDataFile( filename )
         else:
-            text = context.readDataFile( filename[sep+1:], filename[:sep] )
+            body = context.readDataFile( filename[sep+1:], filename[:sep] )
 
-        is_old = '<description>' in text
-        if is_old:
-            info = old_tic.parseXML( text )
-        else:
-            info = tic.parseXML( text )
+        if body is None:
+            continue
 
-        type_id = str(info['id'])
-        if 'kind' in info:
+        root = parseString(body).documentElement
+        ti_id = str(root.getAttribute('name'))
+        if not ti_id:
+            # BBB: for CMF 1.5 profiles
+            #      ID moved from 'id' to 'name'.
+            ti_id = str(root.getAttribute('id'))
+        if ti_id not in ttool.objectIds():
+            # BBB: for CMF 1.5 profiles
+            #     'kind' is now 'meta_type', the old 'meta_type' attribute
+            #      was replaced by a property element.
+            meta_type = str(root.getAttribute('kind'))
+            if not meta_type:
+                meta_type = str(root.getAttribute('meta_type'))
             for mt_info in Products.meta_types:
-                if mt_info['name'] == info['kind']:
-                    type_info = mt_info['instance'](type_id)
+                if mt_info['name'] == meta_type:
+                    ttool._setObject(ti_id, mt_info['instance'](ti_id))
                     break
             else:
-                raise ValueError('unknown kind \'%s\'' % info['kind'])
+                raise ValueError('unknown meta_type \'%s\'' % ti_id)
 
-            if type_id in types_tool.objectIds():
-                types_tool._delObject(type_id)
+        ti = ttool.getTypeInfo(ti_id)
+        importer = INodeImporter(ti, None)
+        if importer is None:
+            continue
 
-            types_tool._setObject(type_id, type_info)
-            type_info = types_tool._getOb(type_id)
-            type_info._updateProperty('title', info['id'])
-            type_info._updateProperty('content_meta_type', info['id'])
-            type_info._updateProperty('content_icon', '%s.png' % info['id'])
-            type_info._updateProperty('immediate_view',
-                                      '%s_edit' % info['id'])
-        else:
-            type_info = types_tool._getOb(type_id)
-
-        if is_old:
-            type_info.manage_changeProperties(**info)
-        else:
-            for prop_info in info['properties']:
-                tic.initProperty(type_info, prop_info)
-
-        if 'i18n:domain' in info:
-            type_info.i18n_domain = info['i18n:domain']
-
-        if 'actions' in info:
-            type_info._actions = info['actions']
-
-        if 'aliases' in info:
-            if not getattr(type_info, '_aliases', False):
-                aliases = info['aliases']
-            else:
-                aliases = type_info.getMethodAliases()
-                aliases.update(info['aliases'])
-            type_info.setMethodAliases(aliases)
+        importer.importNode(root, mode=mode)
 
     # XXX: YAGNI?
-    # importScriptsToContainer(types_tool, ('typestool_scripts',),
+    # importScriptsToContainer(ttool, ('typestool_scripts',),
     #                          context)
 
     return 'Types tool imported.'
 
-def exportTypesTool( context ):
-
+def exportTypesTool(context):
     """ Export types tool content types as a set of XML files.
     """
     site = context.getSite()
-    types_tool = getToolByName( site, 'portal_types' )
 
-    ttc = TypesToolExportConfigurator( site ).__of__( site )
-    tic = TypeInfoExportConfigurator( site ).__of__( site )
+    ttool = getToolByName(site, 'portal_types')
+    if ttool is None:
+        return 'Types tool: Nothing to export.'
 
+    ttc = TypesToolExportConfigurator(site).__of__(site)
     tool_xml = ttc.generateXML()
-    context.writeDataFile( _TOOL_FILENAME, tool_xml, 'text/xml' )
+    context.writeDataFile(_FILENAME, tool_xml, 'text/xml')
 
-    for type_id in types_tool.listContentTypes():
+    for ti_id in ttool.listContentTypes():
+        type_filename = '%s.xml' % ti_id.replace( ' ', '_' )
+        ti = getattr(ttool, ti_id)
 
-        type_filename = '%s.xml' % type_id.replace( ' ', '_' )
-        type_xml = tic.generateXML( type_id=type_id )
-        context.writeDataFile( type_filename
-                             , type_xml
-                             , 'text/xml'
-                             , 'types'
-                             )
+        exporter = INodeExporter(ti)
+        if exporter is None:
+            continue
+
+        doc = PrettyDocument()
+        doc.appendChild(exporter.exportNode(doc))
+        context.writeDataFile(type_filename, doc.toprettyxml(' '), 'text/xml',
+                              'types')
 
     # XXX: YAGNI?
-    # exportScriptsFromContainer(types_tool, ('typestool_scripts',))
+    # exportScriptsFromContainer(ttool, ('typestool_scripts',))
 
     return 'Types tool exported'
 
@@ -204,157 +187,6 @@ class TypesToolExportConfigurator(ExportConfiguratorBase):
         return PageTemplateFile('ticToolExport.xml', _xmldir)
 
 InitializeClass(TypesToolExportConfigurator)
-
-
-# BBB: will be removed in CMF 1.7
-class TypesToolConfigurator(TypesToolImportConfigurator,
-                            TypesToolExportConfigurator):
-    def __init__(self, site, encoding=None):
-        TypesToolImportConfigurator.__init__(self, site, encoding)
-        TypesToolExportConfigurator.__init__(self, site, encoding)
-
-InitializeClass(TypesToolConfigurator)
-
-
-# BBB: will be removed in CMF 1.7
-class OldTypeInfoImportConfigurator(ImportConfiguratorBase):
-
-    def _getImportMapping(self):
-
-        return {
-          'type-info':
-            { 'id':                   {},
-              'kind':                 {},
-              'title':                {},
-              'description':          {CONVERTER: self._convertToUnique},
-              'meta_type':            {KEY: 'content_meta_type'},
-              'icon':                 {KEY: 'content_icon'},
-              'immediate_view':       {},
-              'global_allow':         {CONVERTER: self._convertToBoolean},
-              'filter_content_types': {CONVERTER: self._convertToBoolean},
-              'allowed_content_type': {KEY: 'allowed_content_types'},
-              'allow_discussion':     {CONVERTER: self._convertToBoolean},
-              'aliases':              {CONVERTER: self._convertAliases},
-              'action':               {KEY: 'actions'},
-              'product':              {},
-              'factory':              {},
-              'constructor_path':     {},
-              'permission':           {} },
-          'allowed_content_type':
-            { '#text':                {KEY: None} },
-          'aliases':
-            { 'alias':                {KEY: None} },
-          'alias':
-            { 'from':                 {},
-              'to':                   {} },
-          'action':
-            { 'action_id':            {KEY: 'id'},
-              'title':                {},
-              'description':          {CONVERTER: self._convertToUnique},
-              'category':             {},
-              'condition_expr':       {KEY: 'condition'},
-              'permission':           {KEY: 'permissions', DEFAULT: ()},
-              'visible':              {CONVERTER: self._convertToBoolean},
-              'url_expr':             {KEY: 'action'} },
-          'permission':
-            { '#text':                {KEY: None} } }
-
-    def _convertAliases(self, val):
-
-        result = {}
-
-        for alias in val[0]:
-            result[ alias['from'] ] = alias['to']
-
-        return result
-
-InitializeClass(OldTypeInfoImportConfigurator)
-
-
-class TypeInfoImportConfigurator(ImportConfiguratorBase):
-
-    def _getImportMapping(self):
-
-        return {
-          'type-info':
-            { 'i18n:domain':          {},
-              'id':                   {},
-              'kind':                 {},
-              'aliases':              {CONVERTER: self._convertAliases},
-              'action':               {KEY: 'actions'},
-              'property':             {KEY: 'properties', DEFAULT: ()},
-              'xmlns:i18n':           {} },
-          'aliases':
-            { 'alias':                {KEY: None} },
-          'alias':
-            { 'from':                 {},
-              'to':                   {} },
-          'action':
-            { 'action_id':            {KEY: 'id'},
-              'title':                {},
-              'description':          {CONVERTER: self._convertToUnique},
-              'category':             {},
-              'condition_expr':       {KEY: 'condition'},
-              'permission':           {KEY: 'permissions', DEFAULT: ()},
-              'visible':              {CONVERTER: self._convertToBoolean},
-              'url_expr':             {KEY: 'action'} },
-          'permission':
-            { '#text':                {KEY: None} } }
-
-    def _convertAliases(self, val):
-
-        result = {}
-
-        for alias in val[0]:
-            result[ alias['from'] ] = alias['to']
-
-        return result
-
-InitializeClass(TypeInfoImportConfigurator)
-
-
-class TypeInfoExportConfigurator(ExportConfiguratorBase):
-
-    security = ClassSecurityInfo()
-
-    security.declareProtected(ManagePortal, 'getTypeInfo')
-    def getTypeInfo(self, type_id):
-        """ Return a mapping for the given type info in the site.
-
-        o These mappings are pretty much equivalent to the stock
-          'factory_type_information' elements used everywhere in the
-          CMF.
-        """
-        ti = self._getTI(type_id)
-        ti_info = self._extractObject(ti)
-        ti_info['aliases'] = ti.getMethodAliases()
-        ti_info['actions'] = [ ai.getMapping() for ai in ti.listActions() ]
-        return ti_info
-
-    security.declarePrivate('_getTI')
-    def _getTI(self, type_id):
-        """Get the TI from its id."""
-        typestool = getToolByName(self._site, 'portal_types')
-        try:
-            return typestool.getTypeInfo(str(type_id)) # gTI expects ASCII?
-        except KeyError:
-            raise ValueError("Unknown type: %s" % type_id)
-
-    def _getExportTemplate(self):
-
-        return PageTemplateFile('ticTypeExport.xml', _xmldir)
-
-InitializeClass(TypeInfoExportConfigurator)
-
-
-# BBB: will be removed in CMF 1.7
-class TypeInfoConfigurator(TypeInfoImportConfigurator,
-                           TypeInfoExportConfigurator):
-    def __init__(self, site, encoding=None):
-        TypeInfoImportConfigurator.__init__(self, site, encoding)
-        TypeInfoExportConfigurator.__init__(self, site, encoding)
-
-InitializeClass(TypeInfoConfigurator)
 
 
 def _getTypeFilename( type_id ):

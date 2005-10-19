@@ -22,6 +22,8 @@ Zope2.startup()
 
 from OFS.SimpleItem import SimpleItem
 
+from Products.CMFCore.tests.base.testcase import WarningInterceptor
+
 
 class Dummy( SimpleItem ):
 
@@ -131,7 +133,7 @@ class DummyTypesTool( SimpleItem ):
         return None
 
 
-class WorkflowToolTests(TestCase):
+class WorkflowToolTests(TestCase, WarningInterceptor):
 
     def setUp( self ):
         from Products.CMFCore.WorkflowTool import addWorkflowFactory
@@ -140,6 +142,7 @@ class WorkflowToolTests(TestCase):
     def tearDown( self ):
         from Products.CMFCore.WorkflowTool import _removeWorkflowFactory
         _removeWorkflowFactory( DummyWorkflow )
+        self._free_warning_output()
 
     def _makeOne( self, workflow_ids=() ):
         from Products.CMFCore.WorkflowTool import WorkflowTool
@@ -296,11 +299,8 @@ class WorkflowToolTests(TestCase):
         tool = self._makeWithTypesAndChain()
         dummy = DummyContent( 'dummy' )
 
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        try:
-            actions = tool.getActionsFor( dummy )
-        finally:
-            warnings.resetwarnings()
+        self._trap_warning_output()
+        actions = tool.getActionsFor( dummy )
         self.assertEqual( len( actions ), 0 )
 
     def test_getInfoFor( self ):

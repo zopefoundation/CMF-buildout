@@ -26,14 +26,24 @@ Zope2.startup()
 from Acquisition import aq_base
 
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
+from Products.CMFCore.tests.base.testcase import WarningInterceptor
 
 
-class CMFSiteTests( SecurityRequestTest ):
+class CMFSiteTests( SecurityRequestTest
+                  , WarningInterceptor
+                  ):
 
-    def _makeSite( self, id='testsite' ):
+    def setUp( self ):
+        SecurityRequestTest.setUp( self )
+        self._trap_warning_output()
+
+    def tearDown( self ):
+        self._free_warning_output()
+        SecurityRequestTest.tearDown( self )
+
+    def _makeSite( self, id='testsite'):
 
         from Products.CMFDefault.Portal import manage_addCMFSite
-
         manage_addCMFSite( self.root, id )
         return getattr( self.root, id )
 
@@ -188,6 +198,21 @@ class CMFSiteTests( SecurityRequestTest ):
         doc.edit( '<h1>Extra!</h1>' )
         self.assertEqual( _getMetadata( catalog, rid ), 'Bar' )
 
+    def test_manage_addCMFSite_emits_DeprecationWarning( self ):
+
+        # This warning is recorded in *our* globals (stacklevel=2).
+        registry = globals().get("__warningregistry__")
+
+        if registry is not None:
+            registry.clear()
+
+        # Check that a warning was raised.
+        site = self._makeSite( 'emits_warning' )
+
+        self.assertEqual( len( registry ), 1 )
+        message, category, linenoe  = registry.keys()[ 0 ]
+        self.failUnless( 'manage_addCMFSite' in message, message )
+        self.failUnless( category is DeprecationWarning, category )
 
 def _getMetadata( catalog, rid, field='Title' ):
     md = catalog.getMetadataForRID( rid )

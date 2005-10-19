@@ -54,35 +54,6 @@ import DefaultWorkflow
 # Old name that some third-party packages may need.
 ADD_CONTENT_PERMISSION = AddPortalContent
 
-
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#   N.B.:  The following symbol controls whether we "inject" the
-#          content types which formerly lived in CMFCore back into
-#          it.  While it is initially true (to allow existing portal
-#          content to load), in a future release it will be set to
-#          false;  the behavior it governs will eventually be removed
-#          altogether.  YOU HAVE BEEN WARNED!!!
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-SUPPLY_DEPRECATED_PTK_BASE_ALIASES = 0
-
-if SUPPLY_DEPRECATED_PTK_BASE_ALIASES:
-
-    #   Get the old module names aliased into sys.modules...
-    __module_aliases__ = ( ( 'Products.PTKBase.Document', Document )
-                         , ( 'Products.PTKBase.File', File )
-                         , ( 'Products.PTKBase.Image', Image )
-                         , ( 'Products.PTKBase.Link', Link )
-                         , ( 'Products.PTKBase.NewsItem', NewsItem )
-                         )
-
-    #   ...and make sure we can find them in PTKBase when we do
-    #   'manage_migrate_content()'.
-    Products.PTKBase.Document = Document
-    Products.PTKBase.File = File
-    Products.PTKBase.Image = Image
-    Products.PTKBase.Link = Link
-    Products.PTKBase.NewsItem = NewsItem
-
 contentClasses = ( Document.Document
                  , File.File
                  , Image.Image

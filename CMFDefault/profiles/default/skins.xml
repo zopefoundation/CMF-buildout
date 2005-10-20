@@ -10,11 +10,8 @@
                  directory="CMFDefault/skins/zpt_control"/>
  <skin-directory id="zpt_generic"
                  directory="CMFDefault/skins/zpt_generic"/>
- <skin-directory id="zpt_topic"
-                 directory="CMFTopic/skins/zpt_topic"/>
  <skin-path id="Basic">
   <layer name="custom"/>
-  <layer name="zpt_topic"/>
   <layer name="zpt_content"/>
   <layer name="zpt_generic"/>
   <layer name="zpt_control"/>

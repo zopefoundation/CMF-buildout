@@ -2,6 +2,9 @@ HEAD only (unreleased)
 
   New Features
 
+    - CMFDefault and CMFTopic: Split off CMFTopic profile.
+      CMFTopic support is now configured by an optional extension profile.
+
     - TypesTool: Improved add form for type info objects.
       Presettings can now be loaded from type info settings in setup profiles.
       This replaces the feature that did allow to load presettings from

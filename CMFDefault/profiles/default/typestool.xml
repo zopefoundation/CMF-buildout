@@ -11,5 +11,4 @@
  <type id="Image"/>
  <type id="Link"/>
  <type id="News Item" filename="types/News_Item.xml"/>
- <type id="Topic"/>
 </types-tool>

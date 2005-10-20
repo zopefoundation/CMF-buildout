@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<skins-tool>
+ <skin-directory id="zpt_topic"
+                 directory="CMFTopic/skins/zpt_topic"/>
+ <skin-path id="*">
+  <layer name="zpt_topic" insert-before="zpt_content"/>
+ </skin-path>
+</skins-tool>

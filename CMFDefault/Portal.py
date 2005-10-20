@@ -22,8 +22,6 @@ from Products.CMFCore.PortalObject import PortalObjectBase
 from Products.CMFCore import PortalFolder
 from Products.CMFCore.TypesTool import FactoryTypeInformation
 from Products.CMFCore.utils import getToolByName
-from Products.CMFTopic import Topic
-from Products.CMFTopic import topic_globals
 
 from DublinCore import DefaultDublinCoreImpl
 from permissions import AccessFuturePortalContent
@@ -184,6 +182,7 @@ class PortalGenerator:
 
     def setupDefaultSkins(self, p):
         from Products.CMFCore.DirectoryView import addDirectoryViews
+        from Products.CMFTopic import topic_globals
         ps = getToolByName(p, 'portal_skins')
         addDirectoryViews(ps, 'skins', globals())
         addDirectoryViews(ps, 'skins', topic_globals)
@@ -246,6 +245,7 @@ class PortalGenerator:
         wftool.setChainForPortalTypes( ('Folder', 'Topic'), () )
 
     def setup(self, p, create_userfolder):
+        from Products.CMFTopic import Topic
         self.setupTools(p)
         self.setupMailHost(p)
         if int(create_userfolder) != 0:

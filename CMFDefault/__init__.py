@@ -100,6 +100,7 @@ registerDirectory('skins', globals())
 registerDirectory('help', globals())
 
 def initialize( context ):
+    from Products import CMFTopic
 
     initializeBasesPhase2( z_bases, context )
     initializeBasesPhase2( z_tool_bases, context )

@@ -40,34 +40,8 @@ from permissions import View
 from utils import scrubHTML
 
 
-factory_type_information = (
-  { 'id'             : 'Discussion Item'
-  , 'meta_type'      : 'Discussion Item'
-  , 'description'    : """\
-Discussion Items are documents which reply to other content.
-They should *not* be addable through the standard 'folder_factories' interface.
-"""
-  , 'icon'           : 'discussionitem_icon.gif'
-  , 'product'        : '' # leave blank to suppress
-  , 'factory'        : ''
-  , 'immediate_view' : ''
-  , 'aliases'        : {'(Default)':'discussionitem_view',
-                        'view':'discussionitem_view'}
-  , 'actions'        : ( { 'id'            : 'view'
-                         , 'name'          : 'View'
-                         , 'action': 'string:${object_url}/discussionitem_view'
-                         , 'permissions'   : (View,)
-                         }
-                       ,
-                       )
-  }
-,
-)
-
-
 def addDiscussionItem(self, id, title, description, text_format, text,
                       reply_to, RESPONSE=None):
-
     """ Add a discussion item
 
     'title' is also used as the subject header
@@ -442,4 +416,4 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
 
         return [ x[0] for x in result ]
 
-InitializeClass( DiscussionItemContainer )
+InitializeClass(DiscussionItemContainer)

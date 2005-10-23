@@ -81,10 +81,6 @@ _EXTRA_CONSTRUCTORS = ( PortalFolder.manage_addPortalFolder
                       ,  CMFBTreeFolder.manage_addCMFBTreeFolder
                       )
 
-_FTI = ( PortalFolder.factory_type_information
-       + CMFBTreeFolder.factory_type_information
-       )
-
 
 # Because persistent objects may be out there which were
 # created when the module was in that product, we need
@@ -189,7 +185,6 @@ def initialize(context):
                      , content_types=_CONTENT_TYPES
                      , permission=AddPortalFolders
                      , extra_constructors=_EXTRA_CONSTRUCTORS
-                     , fti=_FTI
                      ).initialize( context )
 
     # make registerHelp work with 2 directories

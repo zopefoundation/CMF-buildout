@@ -17,54 +17,16 @@ make it more Portal-friendly.
 $Id$
 """
 
+import OFS.Image
 from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
 
 from Products.CMFCore.PortalContent import PortalContent
 
 from DublinCore import DefaultDublinCoreImpl
-from permissions import View
 from permissions import ModifyPortalContent
+from permissions import View
 
-
-factory_type_information = (
-  { 'id'             : 'File'
-  , 'meta_type'      : 'Portal File'
-  , 'description'    : """\
-File objects can contain arbitrary downloadable files.
-"""
-  , 'icon'           : 'file_icon.gif'
-  , 'product'        : 'CMFDefault'
-  , 'factory'        : 'addFile'
-  , 'immediate_view' : 'metadata_edit_form'
-  , 'aliases'        : {'(Default)':'index_html',
-                        'view':'file_view'}
-  , 'actions'        : ( { 'id'            : 'view'
-                         , 'name'          : 'View'
-                         , 'action': 'string:${object_url}/file_view'
-                         , 'permissions'   : (View,)
-                         }
-                       , { 'id'            : 'download'
-                         , 'name'          : 'Download'
-                         , 'action': 'string:${object_url}'
-                         , 'permissions'   : (View,)
-                         }
-                       , { 'id'            : 'edit'
-                         , 'name'          : 'Edit'
-                         , 'action': 'string:${object_url}/file_edit_form'
-                         , 'permissions'   : (ModifyPortalContent,)
-                         }
-                       , { 'id'            : 'metadata'
-                         , 'name'          : 'Metadata'
-                         , 'action': 'string:${object_url}/metadata_edit_form'
-                         , 'permissions'   : (ModifyPortalContent,)
-                         }
-                       )
-  }
-,
-)
-
-import OFS.Image
 
 def addFile( self
            , id
@@ -109,8 +71,8 @@ class File( OFS.Image.File
           , PortalContent
           , DefaultDublinCoreImpl
           ):
-    """
-        A Portal-managed File
+
+    """A Portal-managed File.
     """
 
     # The order of base classes is very significant in this case.
@@ -259,6 +221,4 @@ class File( OFS.Image.File
         OFS.Image.File.PUT( self, REQUEST, RESPONSE )
         self.reindexObject()
 
-
 InitializeClass(File)
-

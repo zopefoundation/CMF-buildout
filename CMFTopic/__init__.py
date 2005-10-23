@@ -57,7 +57,6 @@ def initialize( context ):
                , content_types = (Topic.Topic,)
                , permission = AddTopics
                , extra_constructors = (Topic.addTopic,)
-               , fti = Topic.factory_type_information
                ).initialize( context )
 
     profile_registry.registerProfile('default',

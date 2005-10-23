@@ -26,7 +26,6 @@ from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 from Products.CMFCore.TypesTool import TypesTool
-from Products.CMFTopic.Topic import factory_type_information as FTIDATA_TOPIC
 
 
 class FauxBrain( Implicit ):
@@ -198,8 +197,8 @@ class TestTopic(SecurityTest):
 
     def test_Nested( self ):
         self.site._setObject( 'portal_types', TypesTool() )
-        fti = FTIDATA_TOPIC[0].copy()
-        self.site.portal_types._setObject( 'Topic', FTI(**fti) )
+        self.site.portal_types._setObject('Topic', FTI(id='Topic',
+                                      product='CMFTopic', factory='addTopic'))
         topic = self._makeOne('top')
         topic._setPortalTypeName('Topic')
 

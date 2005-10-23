@@ -21,11 +21,6 @@ from DateTime import DateTime
 from Globals import DTMLFile
 from Globals import InitializeClass
 from Products.ZCatalog.ZCatalog import ZCatalog
-from Products.ZCTextIndex.HTMLSplitter import HTMLWordSplitter
-from Products.ZCTextIndex.Lexicon import CaseNormalizer
-from Products.ZCTextIndex.Lexicon import Splitter
-from Products.ZCTextIndex.Lexicon import StopWordRemover
-from Products.ZCTextIndex.ZCTextIndex import PLexicon
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
@@ -42,7 +37,6 @@ from utils import _dtmldir
 from utils import _getAuthenticatedUser
 from utils import _mergedLocalRoles
 from utils import getToolByName
-from utils import SimpleRecord
 from utils import UniqueObject
 
 
@@ -102,95 +96,6 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
 
     def __init__(self):
         ZCatalog.__init__(self, self.getId())
-        self._initIndexes()
-
-    #
-    #   Subclass extension interface
-    #
-    security.declarePublic('enumerateIndexes') # Subclass can call
-    def enumerateIndexes(self):
-        #   Return a list of ( index_name, type, extra ) tuples for the initial
-        #   index set.
-        plaintext_extra = SimpleRecord( lexicon_id='plaintext_lexicon'
-                                      , index_type='Okapi BM25 Rank'
-                                      )
-        htmltext_extra = SimpleRecord( lexicon_id='htmltext_lexicon'
-                                     , index_type='Okapi BM25 Rank'
-                                     )
-
-        return ( ('Title', 'ZCTextIndex', plaintext_extra)
-               , ('Subject', 'KeywordIndex', None)
-               , ('Description', 'ZCTextIndex', plaintext_extra)
-               , ('listCreators', 'KeywordIndex', None)
-               , ('SearchableText', 'ZCTextIndex', htmltext_extra)
-               , ('Date', 'DateIndex', None)
-               , ('Type', 'FieldIndex', None)
-               , ('created', 'DateIndex', None)
-               , ('effective', 'DateIndex', None)
-               , ('expires', 'DateIndex', None)
-               , ('modified', 'DateIndex', None)
-               , ('allowedRolesAndUsers', 'KeywordIndex', None)
-               , ('review_state', 'FieldIndex', None)
-               , ('in_reply_to', 'FieldIndex', None)
-               , ('getId', 'FieldIndex', None)
-               , ('path', 'PathIndex', None)
-               , ('portal_type', 'FieldIndex', None)
-               )
-
-    security.declarePublic('enumerateLexicons')
-    def enumerateLexicons(self):
-        return (
-                 ( 'plaintext_lexicon'
-                 , Splitter()
-                 , CaseNormalizer()
-                 , StopWordRemover()
-                 )
-               , ( 'htmltext_lexicon'
-                 , HTMLWordSplitter()
-                 , CaseNormalizer()
-                 , StopWordRemover()
-                 )
-               )
-
-    security.declarePublic('enumerateColumns')
-    def enumerateColumns(self):
-        #   Return a sequence of schema names to be cached.
-        return ( 'Subject'
-               , 'Title'
-               , 'Description'
-               , 'Type'
-               , 'review_state'
-               , 'listCreators'
-               , 'Date'
-               , 'getIcon'
-               , 'created'
-               , 'effective'
-               , 'expires'
-               , 'modified'
-               , 'CreationDate'
-               , 'EffectiveDate'
-               , 'ExpirationDate'
-               , 'ModificationDate'
-               , 'getId'
-               , 'portal_type'
-               )
-
-    def _initIndexes(self):
-        # ZCTextIndex lexicons
-        for id, splitter, normalizer, sw_remover in self.enumerateLexicons():
-            lexicon = PLexicon(id, '', splitter, normalizer, sw_remover)
-            self._setObject(id, lexicon)
-
-        # Content indexes
-        self._catalog.indexes.clear()
-        for index_name, index_type, extra in self.enumerateIndexes():
-            self.addIndex(index_name, index_type, extra=extra)
-
-        # Cached metadata
-        self._catalog.names = ()
-        self._catalog.schema.clear()
-        for column_name in self.enumerateColumns():
-            self.addColumn(column_name)
 
     #
     #   ZMI methods

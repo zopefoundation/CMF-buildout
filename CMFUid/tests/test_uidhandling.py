@@ -24,13 +24,6 @@ from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
 
-def removeUnnecessaryIndexes(catalog):
-    indexes = [id[0] for id in catalog.enumerateIndexes()]
-    columns = catalog.enumerateColumns()
-    catalog.manage_delIndex(indexes)
-    catalog.manage_delColumn(columns)
-
-
 class DummyUid:
     """A dummy uid that surely is of different type of the generated ones.
     """
@@ -57,8 +50,6 @@ class UniqueIdHandlerTests(SecurityTest):
         self.root._setObject('portal_uidhandler', self._getTargetClass()())
         self.root._setObject('dummy', DummyContent(id='dummy'))
         self.root._setObject('dummy2', DummyContent(id='dummy2'))
-
-        removeUnnecessaryIndexes(self.root.portal_catalog)
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass

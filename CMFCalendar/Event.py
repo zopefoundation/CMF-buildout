@@ -36,28 +36,6 @@ from permissions import ChangeEvents
 from permissions import ModifyPortalContent
 from permissions import View
 
-# Factory type information -- makes Events objects play nicely
-# with the Types Tool (portal_types)
-factory_type_information = (
-    {'id': 'Event',
-     'icon': 'event_icon.gif',
-     'meta_type': 'CMF Event',
-     'description': ('Events are objects for use in Calendar topical '
-                     'queries on the catalog.'),
-     'product': 'CMFCalendar',
-     'factory': 'addEvent',
-     'immediate_view': 'event_edit_form',
-     'actions': ({'id': 'view',
-                  'name': 'View',
-                  'action': 'string:${object_url}/event_view',
-                  'permissions': (View,)},
-                 {'id': 'edit',
-                  'name': 'Edit',
-                  'action': 'string:${object_url}/event_edit_form',
-                  'permissions': (ChangeEvents,)},
-                 ),                     # End Actions
-     },
-    )
 
 def addEvent(self
              , id
@@ -73,8 +51,7 @@ def addEvent(self
              , contact_phone=''
              , event_url=''
              , REQUEST=None):
-    """
-    Create an empty event.
+    """Create an empty event.
     """
     event = Event(id
                   , title
@@ -106,10 +83,12 @@ def _dateStrings( when ):
 
     return strings
 
+
 class Event(PortalContent, DefaultDublinCoreImpl):
+
+    """Events are objects for the Calendar topical query.
     """
-    Events are objects for the Calendar topical query.
-    """
+
     meta_type='CMF Event'
 
     # Declarative security
@@ -428,5 +407,4 @@ class Event(PortalContent, DefaultDublinCoreImpl):
         """ Used for FTP and apparently the ZMI now too """
         return len(self.manage_FTPget())
 
-# Intialize the Event class, setting up security.
 InitializeClass(Event)

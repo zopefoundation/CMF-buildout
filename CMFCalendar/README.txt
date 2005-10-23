@@ -17,9 +17,9 @@ CMFCalendar README
   now accompanyied by the CMFCalendar which is fully functional
   and tested.
 
+  For installing set the 'active site configuration' of your site's
+  setup tool to the CMFCalendar profile and import all steps.
+
   After installing the CMFCalendar you should notice a calendar
   appear in your CMF.  This is fully customisable to your portals
   needs.
-
-  See the INSTALL.txt file for how to get the product installed
-  within your CMF.

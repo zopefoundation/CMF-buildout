@@ -1,5 +1,4 @@
 Zope >= 2.8.2
 Five >= 1.2
 CMFCore
-CMFTopic
 GenericSetup

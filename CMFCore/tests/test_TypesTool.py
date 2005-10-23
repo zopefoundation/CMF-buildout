@@ -144,55 +144,6 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
             self.fail('CMF Collector issue #165 (Ownership bug): '
                       'Unauthorized raised' )
 
-    def test_CMFCollector_49(self):
-        #http://www.zope.org/Collectors/CMF/49
-
-        #If you have two FTIs on the file system, both with the same meta_type
-        #but with different id values, the way listDefaultTypeInformation
-        #listed them in the dropdown list made it impossible to distinguish
-        #the two because the identifier string only contained the CMF package
-        #name and the meta_type
-
-        # Extreme nastiness: Fake out a /Control_Panel/Products registry
-        # inside the fake site by putting dummy objects with a
-        # factory_type_information attribute on them...
-        import copy
-        fti1 = copy.deepcopy(FTIDATA_DUMMY)
-        fti2 = copy.deepcopy(FTIDATA_DUMMY)
-        fti2[0]['id'] = 'Other Content'
-        product1 = DummyObject('product1')
-        product1.factory_type_information = fti1 + fti2
-        self.site._setObject('product1', product1)
-        def fakeGetProducts(*ign, **igntoo):
-            return self.site
-        def fakeObjectValues(*ign, **igntoo):
-            return (self.site.product1,)
-        self.ttool._getProducts = fakeGetProducts
-        self.site.objectValues = fakeObjectValues
-
-        types = self.ttool.listDefaultTypeInformation()
-        dropdown_representation = [x[0] for x in types]
-        self.failIf(dropdown_representation[0]==dropdown_representation[1])
-
-        # Backwards-compatibility tests
-        # Make sure the old representation still works, for now
-        ti_factory = self.ttool.manage_addTypeInformation
-        ti_type = 'Factory-based Type Information'
-        new_repr = 'product1: Dummy Content (Dummy)'
-        old_repr = 'product1: Dummy'
-
-        # This one uses the new representation. We do not expect an Exception
-        ti_factory(ti_type, id='NewType1', typeinfo_name=new_repr)
-        self.failUnless('NewType1' in self.ttool.objectIds())
-
-        # Now try with the old representation, which will throw a BadRequest
-        # unless the workaround in the code is used
-        self._trap_warning_output()
-        ti_factory(ti_type, id='NewType2', typeinfo_name=old_repr)
-        self.failUnless('NewType2' in self.ttool.objectIds())
-        self.failUnless('DeprecationWarning' in
-                            self._our_stderr_stream.getvalue())
-
 
 class TypeInfoTests(TestCase):
 

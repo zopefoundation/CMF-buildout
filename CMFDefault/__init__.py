@@ -107,7 +107,6 @@ def initialize( context ):
                , content_types=contentClasses
                , permission=AddPortalContent
                , extra_constructors=contentConstructors
-               , fti=Portal.factory_type_information
                ).initialize( context )
 
     profile_registry.registerProfile('default',
@@ -126,8 +125,7 @@ def initialize( context ):
 
     context.registerClass( Portal.CMFSite
                          , constructors=(factory.addConfiguredSiteForm,
-                                         factory.addConfiguredSite,
-                                         Portal.manage_addCMFSite)
+                                         factory.addConfiguredSite)
                          , icon='images/portal.gif'
                          )
 

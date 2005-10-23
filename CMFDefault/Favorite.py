@@ -23,46 +23,13 @@ from Acquisition import aq_base
 
 from Products.CMFCore.utils import getToolByName
 
-from permissions import View
-from permissions import ModifyPortalContent
 from DublinCore import DefaultDublinCoreImpl
 from Link import Link
+from permissions import View
 
-factory_type_information = (
-  { 'id'             : 'Favorite'
-  , 'meta_type'      : 'Favorite'
-  , 'description'    : """\
-A Favorite is a Link to an intra-portal resource.
-"""
-  , 'icon'           : 'link_icon.gif'
-  , 'product'        : 'CMFDefault'
-  , 'factory'        : 'addFavorite'
-  , 'immediate_view' : 'metadata_edit_form'
-  , 'aliases'        : {'(Default)':'favorite_view',
-                        'view':'favorite_view'}
-  , 'actions'        : ( { 'id'            : 'view'
-                         , 'name'          : 'View'
-                         , 'action': 'string:${object_url}/favorite_view'
-                         , 'permissions'   : ( View, )
-                         }
-                       , { 'id'            : 'edit'
-                         , 'name'          : 'Edit'
-                         , 'action': 'string:${object_url}/link_edit_form'
-                         , 'permissions'   : ( ModifyPortalContent, )
-                         }
-                       , { 'id'            : 'metadata'
-                         , 'name'          : 'Metadata'
-                         , 'action': 'string:${object_url}/metadata_edit_form'
-                         , 'permissions'   : ( ModifyPortalContent, )
-                         }
-                       )
-  }
-,
-)
 
 def addFavorite(self, id, title='', remote_url='', description=''):
-    """
-    Add a Favorite
+    """Add a Favorite.
     """
     portal_url = getToolByName(self, 'portal_url')
     portal_obj = portal_url.getPortalObject()
@@ -73,9 +40,9 @@ def addFavorite(self, id, title='', remote_url='', description=''):
     self._setObject(id,o)
 
 
-class Favorite( Link ):
-    """
-        A Favorite (special kind of Link)
+class Favorite(Link):
+
+    """A Favorite (special kind of Link).
     """
 
     __implements__ = Link.__implements__ # redundant, but explicit
@@ -214,6 +181,5 @@ class Favorite( Link ):
 
         # save unique id of favorite
         self.remote_uid = self._getUidByUrl()
-
 
 InitializeClass(Favorite)

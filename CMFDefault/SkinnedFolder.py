@@ -22,61 +22,15 @@ from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.CMFCore.PortalFolder import PortalFolder
 
 from DublinCore import DefaultDublinCoreImpl
-from permissions import AddPortalContent
-from permissions import ListFolderContents
-from permissions import ManageProperties
 from permissions import ModifyPortalContent
 from permissions import View
 
-factory_type_information = (
-  { 'id'             : 'Skinned Folder'
-  , 'meta_type'      : 'Skinned Folder'
-  , 'description'    : """\
-Skinned folders can define custom 'view' actions.
-"""
-  , 'icon'           : 'folder_icon.gif'
-  , 'product'        : 'CMFDefault'
-  , 'factory'        : 'addSkinnedFolder'
-  , 'filter_content_types' : 0
-  , 'immediate_view' : 'folder_edit_form'
-  , 'aliases'        : {'(Default)': 'folder_view',
-                        'view': 'folder_view'}
-  , 'actions'        : ( { 'id'            : 'view'
-                         , 'name'          : 'View'
-                         , 'action': 'string:${object_url}/folder_view'
-                         , 'permissions'   : (View,)
-                         }
-                       , { 'id'            : 'edit'
-                         , 'name'          : 'Edit'
-                         , 'action': 'string:${object_url}/folder_edit_form'
-                         , 'permissions'   : (ManageProperties,)
-                         }
-                       , { 'id'            : 'folderContents'
-                         , 'name'          : 'Folder contents'
-                         , 'action': 'string:${object_url}/folder_contents'
-                         , 'permissions'   : (ListFolderContents,)
-                         }
-                       , { 'id'            : 'new'
-                         , 'name'          : 'New...'
-                         , 'action': 'string:${object_url}/folder_factories'
-                         , 'permissions'   : (AddPortalContent,)
-                         , 'visible'       : 0
-                         }
-                       , { 'id'            : 'rename_items'
-                         , 'name'          : 'Rename items'
-                         , 'action': 'string:${object_url}/folder_rename_form'
-                         , 'permissions'   : (AddPortalContent,)
-                         , 'visible'       : 0
-                         }
-                       )
-  }
-,
-)
-
 
 class SkinnedFolder(CMFCatalogAware, PortalFolder):
+
     """ Skinned Folder class. 
     """
+
     meta_type = 'Skinned Folder'
 
     security = ClassSecurityInfo()
@@ -104,7 +58,7 @@ class SkinnedFolder(CMFCatalogAware, PortalFolder):
 
     # We derive from CMFCatalogAware first, so we are cataloged too.
 
-InitializeClass( SkinnedFolder )
+InitializeClass(SkinnedFolder)
 
 
 def addSkinnedFolder( self, id, title='', description='', REQUEST=None ):

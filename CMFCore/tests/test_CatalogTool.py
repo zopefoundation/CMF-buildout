@@ -91,6 +91,7 @@ class CatalogToolTests(SecurityTest):
             argument, 'idxs', to 'catalog_object'.
         """
         tool = self._makeOne()
+        tool.addIndex('SearchableText', 'KeywordIndex')
         dummy = DummyContent(catalog=1)
 
         tool.catalog_object( dummy, '/dummy' )
@@ -98,6 +99,7 @@ class CatalogToolTests(SecurityTest):
 
     def test_search_anonymous(self):
         catalog = self._makeOne()
+        catalog.addIndex('allowedRolesAndUsers', 'KeywordIndex')
         dummy = DummyContent(catalog=1)
         catalog.catalog_object(dummy, '/dummy')
 
@@ -106,6 +108,9 @@ class CatalogToolTests(SecurityTest):
 
     def test_search_inactive(self):
         catalog = self._makeOne()
+        catalog.addIndex('allowedRolesAndUsers', 'KeywordIndex')
+        catalog.addIndex('effective', 'DateIndex')
+        catalog.addIndex('expires', 'DateIndex')
         now = DateTime()
         dummy = DummyContent(catalog=1)
         dummy._View_Permission = ('Blob',)
@@ -128,6 +133,9 @@ class CatalogToolTests(SecurityTest):
 
     def test_search_restrict_manager(self):
         catalog = self._makeOne()
+        catalog.addIndex('allowedRolesAndUsers', 'KeywordIndex')
+        catalog.addIndex('effective', 'DateIndex')
+        catalog.addIndex('expires', 'DateIndex')
         now = DateTime()
         dummy = DummyContent(catalog=1)
 
@@ -159,6 +167,9 @@ class CatalogToolTests(SecurityTest):
 
     def test_search_restrict_inactive(self):
         catalog = self._makeOne()
+        catalog.addIndex('allowedRolesAndUsers', 'KeywordIndex')
+        catalog.addIndex('effective', 'DateIndex')
+        catalog.addIndex('expires', 'DateIndex')
         now = DateTime()
         dummy = DummyContent(catalog=1)
         dummy._View_Permission = ('Blob',)
@@ -189,6 +200,9 @@ class CatalogToolTests(SecurityTest):
 
     def test_search_restrict_visible(self):
         catalog = self._makeOne()
+        catalog.addIndex('allowedRolesAndUsers', 'KeywordIndex')
+        catalog.addIndex('effective', 'DateIndex')
+        catalog.addIndex('expires', 'DateIndex')
         now = DateTime()
         dummy = DummyContent(catalog=1)
         dummy._View_Permission = ('Blob',)

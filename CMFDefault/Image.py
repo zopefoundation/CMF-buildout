@@ -16,48 +16,16 @@ Zope's built-in Image object.
 $Id$
 """
 
+import OFS.Image
 from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
 
 from Products.CMFCore.PortalContent import PortalContent
 
 from DublinCore import DefaultDublinCoreImpl
-from permissions import View
 from permissions import ModifyPortalContent
+from permissions import View
 
-factory_type_information = (
-  { 'id'             : 'Image'
-  , 'meta_type'      : 'Portal Image'
-  , 'description'    : """\
-Image objects can be embedded in Portal documents.
-"""
-  , 'icon'           : 'image_icon.gif'
-  , 'product'        : 'CMFDefault'
-  , 'factory'        : 'addImage'
-  , 'immediate_view' : 'metadata_edit_form'
-  , 'aliases'        : {'(Default)':'index_html',
-                        'view':'image_view'}
-  , 'actions'        : ( { 'id'            : 'view'
-                         , 'name'          : 'View'
-                         , 'action': 'string:${object_url}/image_view'
-                         , 'permissions'   : (View,)
-                         }
-                       , { 'id'            : 'edit'
-                         , 'name'          : 'Edit'
-                         , 'action': 'string:${object_url}/image_edit_form'
-                         , 'permissions'   : (ModifyPortalContent,)
-                         }
-                       , { 'id'            : 'metadata'
-                         , 'name'          : 'Metadata'
-                         , 'action': 'string:${object_url}/metadata_edit_form'
-                         , 'permissions'   : (ModifyPortalContent,)
-                         }
-                       )
-  }
-,
-)
-
-import OFS.Image
 
 def addImage( self
             , id
@@ -242,5 +210,3 @@ class Image( OFS.Image.Image
         self.reindexObject()
 
 InitializeClass(Image)
-
-

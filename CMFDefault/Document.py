@@ -45,50 +45,18 @@ from utils import html_headcheck
 from utils import parseHeadersBody
 from utils import SimpleHTMLParser
 
-factory_type_information = (
-  { 'id'             : 'Document'
-  , 'meta_type'      : 'Document'
-  , 'description'    : """\
-Documents contain text that can be formatted using 'Structured Text.'
-They may also contain HTML, or "plain" text.
-"""
-  , 'icon'           : 'document_icon.gif'
-  , 'product'        : 'CMFDefault'
-  , 'factory'        : 'addDocument'
-  , 'immediate_view' : 'metadata_edit_form'
-  , 'aliases'        : {'(Default)':'document_view',
-                        'view':'document_view',
-                        'gethtml':'source_html'}
-  , 'actions'        : ( { 'id'            : 'view'
-                         , 'name'          : 'View'
-                         , 'action': 'string:${object_url}/document_view'
-                         , 'permissions'   : (View,)
-                         }
-                       , { 'id'            : 'edit'
-                         , 'name'          : 'Edit'
-                         , 'action': 'string:${object_url}/document_edit_form'
-                         , 'permissions'   : (ModifyPortalContent,)
-                         }
-                       , { 'id'            : 'metadata'
-                         , 'name'          : 'Metadata'
-                         , 'action': 'string:${object_url}/metadata_edit_form'
-                         , 'permissions'   : (ModifyPortalContent,)
-                         }
-                       )
-  }
-,
-)
 
-def addDocument(self, id, title='', description='', text_format='',
-                text=''):
-    """ Add a Document """
+def addDocument(self, id, title='', description='', text_format='', text=''):
+    """Add a Document.
+    """
     o = Document(id, title, description, text_format, text)
     self._setObject(id,o)
 
 
 class Document(PortalContent, DefaultDublinCoreImpl):
 
-    """ A Document - Handles both StructuredText and HTML """
+    """A Document - Handles both StructuredText and HTML.
+    """
 
     implements(IDocument, IMutableDocument)
     __implements__ = (z2IDocument, z2IMutableDocument,

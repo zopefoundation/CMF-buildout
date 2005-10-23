@@ -37,7 +37,6 @@ from interfaces import IFolderish
 from interfaces.Folderish import Folderish as z2IFolderish
 from permissions import AddPortalContent
 from permissions import AddPortalFolders
-from permissions import ChangeLocalRoles
 from permissions import DeleteObjects
 from permissions import ListFolderContents
 from permissions import ManagePortal
@@ -47,61 +46,11 @@ from utils import _checkPermission
 from utils import getToolByName
 
 
-factory_type_information = (
-  { 'id'             : 'Folder'
-  , 'meta_type'      : 'Portal Folder'
-  , 'description'    : """ Use folders to put content in categories."""
-  , 'icon'           : 'folder_icon.gif'
-  , 'product'        : 'CMFCore'
-  , 'factory'        : 'manage_addPortalFolder'
-  , 'filter_content_types' : 0
-  , 'immediate_view' : 'folder_edit_form'
-  , 'aliases'        : {'(Default)': 'index_html',
-                        'view': 'index_html',
-                        'index.html':'index_html'}
-  , 'actions'        : ( { 'id'            : 'view'
-                         , 'name'          : 'View'
-                         , 'action': 'string:${object_url}'
-                         , 'permissions'   : (View,)
-                         }
-                       , { 'id'            : 'edit'
-                         , 'name'          : 'Edit'
-                         , 'action': 'string:${object_url}/folder_edit_form'
-                         , 'permissions'   : (ManageProperties,)
-                         }
-                       , { 'id'            : 'localroles'
-                         , 'name'          : 'Local Roles'
-                         , 'action':
-                                  'string:${object_url}/folder_localrole_form'
-                         , 'permissions'   : (ChangeLocalRoles,)
-                         }
-                       , { 'id'            : 'folderContents'
-                         , 'name'          : 'Folder contents'
-                         , 'action': 'string:${object_url}/folder_contents'
-                         , 'permissions'   : (ListFolderContents,)
-                         }
-                       , { 'id'            : 'new'
-                         , 'name'          : 'New...'
-                         , 'action': 'string:${object_url}/folder_factories'
-                         , 'permissions'   : (AddPortalContent,)
-                         , 'visible'       : 0
-                         }
-                       , { 'id'            : 'rename_items'
-                         , 'name'          : 'Rename items'
-                         , 'action': 'string:${object_url}/folder_rename_form'
-                         , 'permissions'   : (AddPortalContent,)
-                         , 'visible'       : 0
-                         }
-                       )
-  }
-,
-)
-
-
 class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
 
     """Base class for portal folder
     """
+
     meta_type = 'Portal Folder Base'
 
     implements(IFolderish)

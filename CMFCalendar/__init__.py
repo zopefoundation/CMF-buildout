@@ -55,7 +55,6 @@ def initialize( context ):
                      , content_types = contentClasses
                      , permission = AddPortalContent
                      , extra_constructors = contentConstructors
-                     , fti = Event.factory_type_information
                      ).initialize( context )
 
     profile_registry.registerProfile('default',

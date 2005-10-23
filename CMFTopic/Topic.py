@@ -22,65 +22,12 @@ from Globals import InitializeClass
 from Products.CMFDefault.SkinnedFolder import SkinnedFolder
 from Products.CMFCore.utils import getToolByName
 
-from permissions import ListFolderContents
 from permissions import View
 from permissions import AddTopics
 from permissions import ChangeTopics
 
 
-# Factory type information -- makes Topic objects play nicely
-# with the Types Tool (portal_types )
-factory_type_information = (
-  { 'id'             : 'Topic'
-  , 'icon'           : 'topic_icon.gif'
-  , 'meta_type'      : 'Portal Topic'
-  , 'description'    : 'Topics are canned queries for organizing content '
-                       'with up to date queries into the catalog.'
-  , 'product'        : 'CMFTopic'
-  , 'factory'        : 'addTopic'
-  , 'immediate_view' : 'topic_edit_form'
-  , 'allowed_content_types': ('Topic',)
-  , 'aliases'        : {'(Default)': 'topic_view',
-                        'view': 'topic_view'}
-  , 'actions'        : ( { 'id'            : 'view'
-                         , 'name'          : 'View'
-                         , 'action': 'string:${object_url}/topic_view'
-                         , 'permissions'   : (View,)
-                         }
-                       , { 'id'            : 'edit'
-                         , 'name'          : 'Edit'
-                         , 'action': 'string:${object_url}/topic_edit_form'
-                         , 'permissions'   : (ChangeTopics,)
-                         }
-                       , { 'id'            : 'criteria'
-                         , 'name'          : 'Criteria'
-                         , 'action': 'string:${object_url}/topic_criteria_form'
-                         , 'permissions'   : (ChangeTopics,)
-                         }
-                       , { 'id'            : 'folderContents'
-                         , 'name'          : 'Subtopics'
-                         , 'action': 'string:${object_url}/folder_contents'
-                         , 'permissions'   : (ListFolderContents,)
-                         }
-                       , { 'id'            : 'new'
-                         , 'name'          : 'New...'
-                         , 'action': 'string:${object_url}/folder_factories'
-                         , 'permissions'   : (AddTopics,)
-                         , 'visible'       : 0
-                         }
-                       , { 'id'            : 'rename_items'
-                         , 'name'          : 'Rename items'
-                         , 'action': 'string:${object_url}/folder_rename_form'
-                         , 'permissions'   : (AddTopics,)
-                         , 'visible'       : 0
-                         }
-                       )
-  }
-,
-)
-
 def addTopic( self, id, title='', REQUEST=None ):
-
     """ Create an empty topic.
     """
     topic = Topic( id )
@@ -92,7 +39,7 @@ def addTopic( self, id, title='', REQUEST=None ):
         REQUEST['RESPONSE'].redirect( 'manage_main' )
 
 
-class Topic( SkinnedFolder ):
+class Topic(SkinnedFolder):
 
     """ Topics are 'canned queries'
     
@@ -287,4 +234,4 @@ class Topic( SkinnedFolder ):
         """
         return "%s %s" % (self.title, self.description) 
 
-InitializeClass( Topic )
+InitializeClass(Topic)

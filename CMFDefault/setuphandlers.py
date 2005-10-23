@@ -18,11 +18,10 @@ $Id$
 from Products.CMFCore.utils import getToolByName
 
 from exceptions import BadRequest
-from Portal import PortalGenerator
 
 
 def importVarious(context):
-    """ Import various settings from PortalGenerator.
+    """ Import various settings.
 
     This provisional handler will be removed again as soon as full handlers
     are implemented for these steps.
@@ -36,8 +35,9 @@ def importVarious(context):
     except BadRequest:
         return 'Various settings: Nothing to import.'
 
-    gen = PortalGenerator()
-    gen.setupUserFolder(site)
-    gen.setupMembersFolder(site)
+    site.manage_addProduct['OFSP'].manage_addUserFolder()
+    site.manage_addPortalFolder('Members')
+    site.Members.manage_addProduct['OFSP'].manage_addDTMLMethod('index_html',
+                                        'Member list', '<dtml-return roster>')
 
     return 'Various settings from PortalGenerator imported.'

@@ -444,6 +444,7 @@ class PortalFolderMoveTests(SecurityTest):
 
         ttool = self.site._setObject( 'portal_types', TypesTool() )
         ctool = self.site._setObject( 'portal_catalog', CatalogTool() )
+        ctool.addIndex('getId', 'FieldIndex')
         self.assertEqual( len(ctool), 0 )
 
         folder = self._makeOne('folder')

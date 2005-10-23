@@ -22,39 +22,6 @@ from Document import Document
 from permissions import ModifyPortalContent
 from permissions import View
 
-factory_type_information = (
-  { 'id'             : 'News Item'
-  , 'meta_type'      : 'News Item'
-  , 'description'    : """\
-News Items contain short text articles and carry a title as well as
-an optional description.
-"""
-  , 'icon'           : 'newsitem_icon.gif'
-  , 'product'        : 'CMFDefault'
-  , 'factory'        : 'addNewsItem'
-  , 'immediate_view' : 'metadata_edit_form'
-  , 'aliases'        : {'(Default)':'newsitem_view',
-                        'view':'newsitem_view',
-                        'gethtml':'source_html'}
-  , 'actions'        : ( { 'id'            : 'view'
-                         , 'name'          : 'View'
-                         , 'action': 'string:${object_url}/newsitem_view'
-                         , 'permissions'   : (View,)
-                         }
-                       , { 'id'            : 'edit'
-                         , 'name'          : 'Edit'
-                         , 'action': 'string:${object_url}/newsitem_edit_form'
-                         , 'permissions'   : (ModifyPortalContent,)
-                         }
-                       , { 'id'            : 'metadata'
-                         , 'name'          : 'Metadata'
-                         , 'action': 'string:${object_url}/metadata_edit_form'
-                         , 'permissions'   : (ModifyPortalContent,)
-                         }
-                       )
-  }
-,
-)
 
 def addNewsItem( self
                , id
@@ -63,8 +30,7 @@ def addNewsItem( self
                , text=''
                , text_format=''
                ):
-    """
-        Add a NewsItem
+    """Add a NewsItem.
     """
     o=NewsItem( id=id
               , title=title
@@ -75,9 +41,9 @@ def addNewsItem( self
     self._setObject(id, o)
 
 
-class NewsItem( Document ):
-    """
-        A News Item
+class NewsItem(Document):
+
+    """A News Item.
     """
 
     __implements__ = Document.__implements__  # redundant, but explicit
@@ -98,4 +64,4 @@ class NewsItem( Document ):
             self.setDescription( description )
         Document.edit( self, text_format, text )
 
-InitializeClass( NewsItem )
+InitializeClass(NewsItem)

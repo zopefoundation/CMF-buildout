@@ -594,11 +594,11 @@ class ContentInit:
                 , extra_constructors=()
                 , fti=()
                 ):
+        # BBB: fti argument is ignored
         self.meta_type = meta_type
         self.content_types = content_types
         self.permission = permission
         self.extra_constructors = extra_constructors
-        self.fti = fti
 
     def initialize(self, context):
         # Add only one meta type to the folder add list.
@@ -609,9 +609,7 @@ class ContentInit:
             # manage_addContentType() can then grab it.
             , constructors = ( manage_addContentForm
                                , manage_addContent
-                               , self
-                               , ('factory_type_information', self.fti)
-                               ) + self.extra_constructors
+                               , self ) + self.extra_constructors
             , permission = self.permission
             )
 

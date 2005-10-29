@@ -200,10 +200,14 @@
         script_id="SCRIPT_ID"
         type="Script (Python)"
         filename="/path/to/SCRIPT_ID.py"
+        module=""
+        function=""
         tal:repeat="script info/script_info"
         tal:attributes="script_id script/id;
                         type script/meta_type;
                         filename script/filename;
+                        module script/module;
+                        function script/function
                        "
         />
 </dc-workflow>

@@ -196,9 +196,10 @@ def exportWorkflowTool( context ):
                                  , 'workflows/%s' % wf_dirname
                                  )
             for script_info in wf_scripts:
-                context.writeDataFile(script_info['filename'],
-                                      script_info['body'],
-                                      'text/plain')
+                if script_info['filename']:
+                    context.writeDataFile(script_info['filename'],
+                                          script_info['body'],
+                                          'text/plain')
 
     return 'Workflows exported.'
 
@@ -365,7 +366,7 @@ class WorkflowDefinitionConfigurator( Implicit ):
 
     security.declareProtected( ManagePortal, 'generateWorkflowScripts' )
     def getWorkflowScripts( self, workflow_id ):
-        """ Get workflow scripts inforation
+        """ Get workflow scripts information
         """
         workflow_tool = getToolByName( self._site, 'portal_workflow' )
         workflow = workflow_tool.getWorkflowById( workflow_id )
@@ -449,7 +450,7 @@ class WorkflowDefinitionConfigurator( Implicit ):
             worklists tracked by the workflow (see '_extractWorklists').
 
           'script_info' -- a list of mappings describing the scripts which
-            provide added business logic (wee '_extractScripts').
+            provide added business logic (see '_extractScripts').
         """
         workflow_info[ 'filename' ] = _getWorkflowFilename( workflow.getId() )
         workflow_info[ 'state_variable' ] = workflow.state_var
@@ -789,10 +790,17 @@ class WorkflowDefinitionConfigurator( Implicit ):
 
           'meta_type' -- the title of the worklist
 
-          'body' -- the text of the script
+          'body' -- the text of the script (only applicable to scripts
+            of type Script (Python))
+
+          'module' -- The module from where to load the function (only
+            applicable to External Method scripts)
+
+          'function' -- The function to load from the 'module' given
+            (Only applicable to External Method scripts)
 
           'filename' -- the name of the file to / from which the script
-            is stored / loaded
+            is stored / loaded (Script (Python) only)
         """
         result = []
 
@@ -802,10 +810,22 @@ class WorkflowDefinitionConfigurator( Implicit ):
         for k, v in items:
 
             filename = _getScriptFilename( workflow.getId(), k, v.meta_type )
+            body = ''
+            module = ''
+            function = ''
+
+            if v.meta_type == 'Script (Python)':
+                body = v.read()
+
+            if v.meta_type == 'External Method':
+                module = v.module()
+                function = v.function()
 
             info = { 'id'                   : k
                    , 'meta_type'            : v.meta_type
-                   , 'body'                 : v.read()
+                   , 'body'                 : body
+                   , 'module'               : module
+                   , 'function'             : function
                    , 'filename'             : filename
                    }
 
@@ -827,7 +847,11 @@ def _getScriptFilename( workflow_id, script_id, meta_type ):
     """ Return the name of the file which holds the script.
     """
     wf_dir = workflow_id.replace( ' ', '_' )
-    suffix = _METATYPE_SUFFIXES[ meta_type ]
+    suffix = _METATYPE_SUFFIXES.get(meta_type, None)
+
+    if suffix is None:
+        return ''
+
     return 'workflows/%s/scripts/%s.%s' % ( wf_dir, script_id, suffix )
 
 def _extractStateNodes( root, encoding=None ):
@@ -975,9 +999,20 @@ def _extractScriptNodes( root, encoding=None ):
 
     for s_node in root.getElementsByTagName( 'script' ):
 
+        try:
+            function = _getNodeAttribute( s_node, 'function' )
+        except ValueError:
+            function = ''
+
+        try:
+            module = _getNodeAttribute( s_node, 'module' )
+        except ValueError:
+            module = ''
 
         info = { 'script_id' : _getNodeAttribute( s_node, 'script_id' )
                , 'meta_type' : _getNodeAttribute( s_node, 'type' , encoding )
+               , 'function'  : function
+               , 'module'    : module
                }
 
         filename = _queryNodeAttribute( s_node, 'filename' , None, encoding )
@@ -1150,7 +1185,6 @@ from OFS.DTMLMethod import DTMLMethod
 
 _METATYPE_SUFFIXES = \
 { PythonScript.meta_type : 'py'
-, ExternalMethod.meta_type : 'em'
 , DTMLMethod.meta_type : 'dtml'
 }
 
@@ -1337,15 +1371,21 @@ def _initDCWorkflowScripts( workflow, scripts, context ):
         id = str( s_info[ 'script_id' ] ) # no unicode!
         meta_type = s_info[ 'meta_type' ]
         filename = s_info[ 'filename' ]
+        file = ''
 
-        file = context.readDataFile( filename )
+        if filename:
+            file = context.readDataFile( filename )
 
         if meta_type == PythonScript.meta_type:
             script = PythonScript( id )
             script.write( file )
 
-        #elif meta_type == ExternalMethod.meta_type:
-        #    script = ExternalMethod( id, title, module, function )
+        elif meta_type == ExternalMethod.meta_type:
+            script = ExternalMethod( id
+                                   , ''
+                                   , s_info['module']
+                                   , s_info['function']
+                                   )
 
         elif meta_type == DTMLMethod.meta_type:
             script = DTMLMethod( file, __name__=id )

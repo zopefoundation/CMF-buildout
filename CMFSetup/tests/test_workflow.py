@@ -22,6 +22,7 @@ Zope2.startup()
 
 from OFS.Folder import Folder
 from Products.PythonScripts.PythonScript import PythonScript
+from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
@@ -218,6 +219,9 @@ class _WorkflowSetup( BaseRegistryTests ):
             if v[ 0 ] == PythonScript.meta_type:
                 script = PythonScript( k )
                 script.write( v[ 1 ] )
+
+            elif v[ 0 ] == ExternalMethod.meta_type:
+                script = ExternalMethod(k,'', v[3], v[4])
 
             else:
                 raise ValueError, 'Unknown script type: %s' % v[ 0 ]
@@ -722,8 +726,12 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
             self.assertEqual( info[ 'meta_type' ], expected[ 0 ] )
             self.assertEqual( info[ 'body' ], expected[ 1 ] )
-            self.assertEqual( info[ 'filename' ]
-                            , expected[ 2 ] % WF_ID )
+
+            if info[ 'meta_type' ] == PythonScript.meta_type:
+                self.assertEqual( info[ 'filename' ]
+                                , expected[ 2 ] % WF_ID )
+            else:
+                self.assertEqual( info[ 'filename' ], expected[ 2 ] )
 
     def test_generateXML_empty( self ):
 
@@ -1246,8 +1254,11 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
             # Body is not kept as part of the workflow XML
 
-            self.assertEqual( script[ 'filename' ]
-                            , expected[ 2 ] % workflow_id )
+            if script[ 'meta_type' ] == PythonScript.meta_type:
+                self.assertEqual( script[ 'filename' ]
+                                , expected[ 2 ] % workflow_id )
+            else:
+                self.assertEqual( script[ 'filename' ], expected[ 2 ] )
 
 
 _WF_PERMISSIONS = \
@@ -1379,7 +1390,7 @@ _WF_TRANSITIONS = \
              , 'Retire objects whose expiration is past.'
              , 'expired'
              , TRIGGER_AUTOMATIC
-             , ''
+             , 'before_expire'
              , ''
              , ''
              , ''
@@ -1460,15 +1471,27 @@ _WF_SCRIPTS = \
 { 'before_open':    ( PythonScript.meta_type
                     , _BEFORE_OPEN_SCRIPT
                     , 'workflows/%s/scripts/before_open.py'
+                    , None
+                    , None
                     )
 , 'after_close':    ( PythonScript.meta_type
                     , _AFTER_CLOSE_SCRIPT
                     , 'workflows/%s/scripts/after_close.py'
+                    , None
+                    , None
                     )
 , 'after_kill':     ( PythonScript.meta_type
                     , _AFTER_KILL_SCRIPT
                     , 'workflows/%s/scripts/after_kill.py'
+                    , None
+                    , None
                     )
+, 'before_expire': ( ExternalMethod.meta_type
+                   , ''
+                   , ''
+                   , 'CMFSetup.test_method'
+                   , 'test'
+                   )
 }
 
 _EMPTY_TOOL_EXPORT = """\
@@ -1682,7 +1705,7 @@ _OLD_WORKFLOW_EXPORT = """\
     title="Expire"
     trigger="AUTOMATIC"
     new_state="expired"
-    before_script=""
+    before_script="before_expire"
     after_script="">
   <description>Retire objects whose expiration is past.</description>
   <guard>
@@ -1795,16 +1818,29 @@ _OLD_WORKFLOW_EXPORT = """\
     script_id="after_close"
     type="Script (Python)"
     filename="workflows/%(workflow_filename)s/after_close.py"
+    module=""
+    function=""
     />
  <script
     script_id="after_kill"
     type="Script (Python)"
     filename="workflows/%(workflow_filename)s/after_kill.py"
+    module=""
+    function=""
+    />
+ <script
+    script_id="before_expire"
+    type="External Method"
+    filename=""
+    module="CMFSetup.test_method"
+    function="test"
     />
  <script
     script_id="before_open"
     type="Script (Python)"
     filename="workflows/%(workflow_filename)s/before_open.py"
+    module=""
+    function=""
     />
 </dc-workflow>
 """
@@ -1912,7 +1948,7 @@ _NORMAL_WORKFLOW_EXPORT = """\
     title="Expire"
     trigger="AUTOMATIC"
     new_state="expired"
-    before_script=""
+    before_script="before_expire"
     after_script="">
   <description>Retire objects whose expiration is past.</description>
   <guard>
@@ -2025,16 +2061,29 @@ _NORMAL_WORKFLOW_EXPORT = """\
     script_id="after_close"
     type="Script (Python)"
     filename="workflows/%(workflow_filename)s/scripts/after_close.py"
+    module=""
+    function=""
     />
  <script
     script_id="after_kill"
     type="Script (Python)"
     filename="workflows/%(workflow_filename)s/scripts/after_kill.py"
+    module=""
+    function=""
+    />
+ <script
+    script_id="before_expire"
+    type="External Method"
+    filename=""
+    module="CMFSetup.test_method"
+    function="test"
     />
  <script
     script_id="before_open"
     type="Script (Python)"
     filename="workflows/%(workflow_filename)s/scripts/before_open.py"
+    module=""
+    function=""
     />
 </dc-workflow>
 """
@@ -2586,7 +2635,9 @@ class Test_importWorkflow( _WorkflowSetup
             expected = _WF_SCRIPTS[ script_id ]
 
             self.assertEqual( script.meta_type, expected[ 0 ] )
-            self.assertEqual( script.manage_FTPget(), expected[ 1 ] )
+
+            if script.meta_type == PythonScript.meta_type:
+                self.assertEqual( script.manage_FTPget(), expected[ 1 ] )
 
     def test_from_empty_dcworkflow_workflow_scripts( self ):
 
@@ -2608,7 +2659,9 @@ class Test_importWorkflow( _WorkflowSetup
             expected = _WF_SCRIPTS[ script_id ]
 
             self.assertEqual( script.meta_type, expected[ 0 ] )
-            self.assertEqual( script.manage_FTPget(), expected[ 1 ] )
+
+            if script.meta_type == PythonScript.meta_type:
+                self.assertEqual( script.manage_FTPget(), expected[ 1 ] )
 
 def test_suite():
     return unittest.TestSuite((

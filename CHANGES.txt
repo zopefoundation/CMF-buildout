@@ -16,6 +16,14 @@ After CMF 1.5.4
 
   Features
 
+    - CMFSetup: added support for importing and exporting workflow script
+      metadata for scripts that are External Methods. One very important
+      difference to other scripts remains: Since the CMFSetup machinery
+      cannot access the filesystem code for external methods it only
+      saves the data needed to instantiate the ZODBi-based External Method 
+      object. If, during an import, the filesystem-based code cannot be
+      found, the import will fail.
+
     - CMFActionIcons:  added support for exporting / importing
       action icons tool configuration (via GenericSetup).
 

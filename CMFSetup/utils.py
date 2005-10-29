@@ -447,7 +447,7 @@ def _getNodeAttribute( node, attr_name, encoding=None ):
     value = _queryNodeAttribute( node, attr_name, _marker, encoding )
 
     if value is _marker:
-        raise ValueError, 'Invaid attribute: %s' % attr_name
+        raise ValueError, 'Invalid attribute: %s' % attr_name
 
     return value
 

@@ -23,9 +23,10 @@ from Products.GenericSetup.utils import PropertyManagerHelpers
 
 from Products.CMFCore.interfaces import IAction
 from Products.CMFCore.interfaces import IActionCategory
+from Products.CMFCore.interfaces import IActionProvider
 from Products.CMFCore.interfaces import IActionsTool
 from Products.CMFCore.interfaces.portal_actions \
-        import ActionProvider as IActionProvider
+        import ActionProvider as z2IActionProvider
 from Products.CMFCore.utils import getToolByName
 
 _SPECIAL_PROVIDERS = ('portal_actions', 'portal_types', 'portal_workflow')
@@ -123,7 +124,8 @@ class ActionsToolNodeAdapter(NodeAdapterBase, ObjectManagerHelpers):
         fragment = self._doc.createDocumentFragment()
 
         provider = getToolByName(self.context, provider_id)
-        if not IActionProvider.isImplementedBy(provider):
+        if not (IActionProvider.providedBy(provider) or
+                z2IActionProvider.isImplementedBy(provider)):
             return fragment
 
         if provider_id == 'portal_actions':

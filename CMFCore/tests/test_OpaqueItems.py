@@ -19,8 +19,14 @@ import Testing
 import Zope2
 Zope2.startup()
 
+from zope.interface import implements
+
+from Products.CMFCore.interfaces import ICallableOpaqueItem
+from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
 from Products.CMFCore.interfaces.IOpaqueItems \
-    import ICallableOpaqueItem, ICallableOpaqueItemEvents
+        import ICallableOpaqueItem as z2ICallableOpaqueItem
+from Products.CMFCore.interfaces.IOpaqueItems \
+        import ICallableOpaqueItemEvents as z2ICallableOpaqueItemEvents
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.tests.base.dummy \
     import DummyContent as OriginalDummyContent
@@ -90,15 +96,17 @@ class OpaqueBase:
 class Marker(OpaqueBase):
     """ Opaque item without manage_after/before hookes but marked as callable
     """
+    implements(ICallableOpaqueItem)
     __implements__ = (
-        ICallableOpaqueItem,
+        z2ICallableOpaqueItem,
     )
 
 class Hooks(OpaqueBase):
     """ Opaque item with manage_after/before hooks but not marked as callable
     """
+    implements(ICallableOpaqueItemEvents)
     __implements__ = (
-        ICallableOpaqueItemEvents,
+        z2ICallableOpaqueItemEvents,
     )
     
     def manage_afterAdd(self, item, container):

@@ -787,6 +787,8 @@ def _makeDAVAware(id):
 
         def PUT(self, REQUEST, RESPONSE):
             self._was_put = REQUEST.get('BODY', '')
+            stream = REQUEST.get('BODYFILE', None)
+            self._was_put_as_read = stream.read()
 
     aware = _TestDAVAware()
     aware._setId(id)

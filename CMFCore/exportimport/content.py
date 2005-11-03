@@ -319,6 +319,6 @@ class DAVAwareFileAdapter(object):
             import_context.note('SGAIFA',
                                 'no .ini file for %s/%s' % (subdir, cid))
         else:
-            request = FauxDAVRequest(BODY=data, BODYFILE=data)
+            request = FauxDAVRequest(BODY=data, BODYFILE=StringIO(data))
             response = FauxDAVResponse()
             self.context.PUT(request, response)

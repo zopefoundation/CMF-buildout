@@ -94,6 +94,10 @@ HEAD only (unreleased)
 
   Bug Fixes
 
+    - CMFCore.exportimport.content:  Ensure that BODYFILE in our "faux"
+      request is a file-like object, FBO objects which expect to call its
+      'read' method.
+
     - Got rid of the "CMF Site" and "Configured CMF Site" duality in the ZMI
       add list by removing the "CMF Site" class registration in CMFDefault
       and moving the "Configured CMF Site" registration from CMFSetup into

@@ -102,10 +102,47 @@ class SkinsToolTests(TestCase):
         self.failUnless(paths.find('.svn') == -1)
 
 
+class SkinnableTests(TestCase):
+
+    def _makeOne(self):
+        from Products.CMFCore.SkinsTool import SkinsTool
+        from Products.CMFCore.Skinnable import SkinnableObjectManager
+
+        class TestSkinnableObjectManager(SkinnableObjectManager):
+            tool = SkinsTool()
+            # This is needed otherwise REQUEST is the string
+            # '<Special Object Used to Force Acquisition>'
+            REQUEST = None 
+            def getSkinsFolderName(self):
+                '''tool'''
+                return 'tool'
+        
+        return TestSkinnableObjectManager()
+    
+    def test_getCurrentSkinName(self):
+        som = self._makeOne()
+
+        pathA = ('foo, bar')
+        pathB = ('bar, foo')
+
+        som.tool.addSkinSelection('skinA', pathA)
+        som.tool.addSkinSelection('skinB', pathB)
+        
+        som.tool.manage_properties(default_skin='skinA')
+
+        # Expect the default skin name to be returned
+        self.failUnless(som.getCurrentSkinName() == 'skinA')
+
+        # after a changeSkin the new skin name should be returned
+        som.changeSkin('skinB')
+        self.failUnless(som.getCurrentSkinName() == 'skinB')
+        
+
 def test_suite():
     return TestSuite((
         makeSuite(SkinsContainerTests),
         makeSuite(SkinsToolTests),
+        makeSuite(SkinnableTests),
         ))
 
 if __name__ == '__main__':

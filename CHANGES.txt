@@ -16,6 +16,11 @@ After CMF 1.5.4
 
   Features
 
+    - CMFCore:  added 'skinname' to the thread-specific tuple created by
+      the Skinnable base class to cache the skin path lookup, to facilitate
+      querying later;  added a 'getCurrentSkinName' to the Skinnable API
+      to do the query.  Thanks to Laurent Rowe for the patch.
+
     - CMFSetup: added support for importing and exporting workflow script
       metadata for scripts that are External Methods. One very important
       difference to other scripts remains: Since the CMFSetup machinery

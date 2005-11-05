@@ -40,7 +40,7 @@ except AttributeError:
 _marker = []  # Create a new marker object.
 
 
-SKINDATA = {} # mapping thread-id -> (skinobj, ignore, resolve)
+SKINDATA = {} # mapping thread-id -> (skinobj, skinname, ignore, resolve)
 
 class SkinDataCleanup:
     """Cleanup at the end of the request."""
@@ -71,7 +71,7 @@ class SkinnableObjectManager(ObjectManager):
         if not name.startswith('_') and not name.startswith('aq_'):
             sd = SKINDATA.get(get_ident())
             if sd is not None:
-                ob, ignore, resolve = sd
+                ob, skinname, ignore, resolve = sd
                 if not ignore.has_key(name):
                     if resolve.has_key(name):
                         return resolve[name]
@@ -126,10 +126,28 @@ class SkinnableObjectManager(ObjectManager):
         skinobj = self.getSkin(skinname)
         if skinobj is not None:
             tid = get_ident()
-            SKINDATA[tid] = (skinobj, {}, {})
+            SKINDATA[tid] = (skinobj, skinname, {}, {})
             REQUEST = getattr(self, 'REQUEST', None)
             if REQUEST is not None:
                 REQUEST._hold(SkinDataCleanup(tid))
+
+    security.declarePublic('getCurrentSkinName')
+    def getCurrentSkinName(self):
+        '''Return the current skin name.
+        '''
+        sd = SKINDATA.get(get_ident())
+        if sd is not None:
+            ob, skinname, ignore, resolve = sd
+            if skinname is not None:
+                return skinname
+        # nothing here, so assume the default skin
+        sfn = self.getSkinsFolderName()
+        if sfn is not None:
+            sf = getattr(self, sfn, None)
+            if sf is not None:
+                return sf.getDefaultSkin()
+        # and if that fails...
+        return None
 
     security.declarePublic('clearCurrentSkin')
     def clearCurrentSkin(self):

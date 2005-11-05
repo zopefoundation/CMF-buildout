@@ -39,7 +39,7 @@ except ImportError:  # Zope3 > 3.0 loses services
         return zapi.getUtilitiesFor(IBrowserMenu)
 else:
 
-    from zope.app.browser.globalbrowsermenuservice import getMenu
+    from browser.globalbrowsermenuservice import getMenu
     def _listMenuIds():
         return globalBrowserMenuService._registry.keys()
 

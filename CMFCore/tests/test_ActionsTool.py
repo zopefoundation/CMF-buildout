@@ -18,6 +18,8 @@ $Id$
 import unittest
 import Testing
 
+from Products.CMFCore.ActionInformation import Action
+from Products.CMFCore.ActionInformation import ActionCategory
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.Expression import Expression
 from Products.CMFCore.MembershipTool import MembershipTool
@@ -25,7 +27,7 @@ from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.URLTool import URLTool
 
 
-class ActionsToolTests(SecurityRequestTest):
+class ActionsToolTests(unittest.TestCase):
 
     def _getTargetClass(self):
         from Products.CMFCore.ActionsTool import ActionsTool
@@ -34,17 +36,6 @@ class ActionsToolTests(SecurityRequestTest):
 
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
-
-    def setUp(self):
-        SecurityRequestTest.setUp(self)
-
-        root = self.root
-        root._setObject( 'portal_actions', self._makeOne() )
-        root._setObject( 'portal_url', URLTool() )
-        root._setObject( 'foo', URLTool() )
-        root._setObject('portal_membership', MembershipTool())
-        self.tool = root.portal_actions
-        self.tool.action_providers = ('portal_actions',)
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -64,12 +55,16 @@ class ActionsToolTests(SecurityRequestTest):
         verifyClass(IActionProvider, self._getTargetClass())
         verifyClass(IActionsTool, self._getTargetClass())
 
-    def test_actionProviders(self):
-        tool = self.tool
+    def test_listActionProviders(self):
+        tool = self._makeOne()
+        tool.action_providers = ('portal_actions',)
         self.assertEqual(tool.listActionProviders(), ('portal_actions',))
 
     def test_addActionProvider(self):
-        tool = self.tool
+        tool = self._makeOne()
+        tool.foo = 'acquirable attribute'
+        tool.portal_url = 'acquirable attribute'
+        tool.action_providers = ('portal_actions',)
         tool.addActionProvider('foo')
         self.assertEqual(tool.listActionProviders(),
                           ('portal_actions', 'foo'))
@@ -78,11 +73,46 @@ class ActionsToolTests(SecurityRequestTest):
         self.assertEqual(tool.listActionProviders(),
                           ('portal_actions', 'foo', 'portal_url'))
 
-    def test_delActionProvider(self):
-        tool = self.tool
+    def test_deleteActionProvider(self):
+        tool = self._makeOne()
+        tool.action_providers = ('portal_actions', 'foo')
         tool.deleteActionProvider('foo')
-        self.assertEqual(tool.listActionProviders(),
-                          ('portal_actions',))
+        self.assertEqual(tool.listActionProviders(), ('portal_actions',))
+
+    def test_getActionObject(self):
+        tool = self._makeOne()
+        tool._setObject('object', ActionCategory('object'))
+        tool.object._setObject('newstyle_id', Action('newstyle_id'))
+        tool.addAction('an_id', 'name', '', '', '', 'object')
+        rval = tool.getActionObject('object/an_id')
+        self.assertEqual(rval, tool._actions[0])
+        rval = tool.getActionObject('object/newstyle_id')
+        self.assertEqual(rval, None)
+        rval = tool.getActionObject('object/not_existing_id')
+        self.assertEqual(rval, None)
+        self.assertRaises(ValueError, tool.getActionObject, 'wrong_format')
+
+
+class ActionsToolSecurityRequestTests(SecurityRequestTest):
+
+    def _getTargetClass(self):
+        from Products.CMFCore.ActionsTool import ActionsTool
+
+        return ActionsTool
+
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
+
+    def setUp(self):
+        SecurityRequestTest.setUp(self)
+
+        root = self.root
+        root._setObject( 'portal_actions', self._makeOne() )
+        root._setObject( 'portal_url', URLTool() )
+        root._setObject( 'foo', URLTool() )
+        root._setObject('portal_membership', MembershipTool())
+        self.tool = root.portal_actions
+        self.tool.action_providers = ('portal_actions',)
 
     def test_listActionInformationActions(self):
         # Check that listFilteredActionsFor works for objects that return
@@ -119,6 +149,7 @@ class ActionsToolTests(SecurityRequestTest):
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(ActionsToolTests),
+        unittest.makeSuite(ActionsToolSecurityRequestTests),
         ))
 
 if __name__ == '__main__':

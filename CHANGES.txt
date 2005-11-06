@@ -94,6 +94,8 @@ HEAD only (unreleased)
 
   Bug Fixes
 
+    - ActionProviderBase: getActionObject did stumble over newstyle Actions.
+
     - CMFCore.exportimport.content:  Ensure that BODYFILE in our "faux"
       request is a file-like object, FBO objects which expect to call its
       'read' method.

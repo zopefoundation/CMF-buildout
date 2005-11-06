@@ -72,8 +72,11 @@ class ActionProviderBase:
 
         # search for action and return first one found
         for ai in self.listActions():
-            if id == ai.getId() and category == ai.getCategory():
-                return ai
+            try:
+                if id == ai.getId() and category == ai.getCategory():
+                    return ai
+            except AttributeError:
+                continue
 
         # no action found
         return None

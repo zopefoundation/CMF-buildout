@@ -65,7 +65,7 @@ class TestContentCopyPaste(SecurityRequestTest):
         # Hack, we need a _p_mtime for the file, so we make sure that it
         # has one. We use a subtransaction, which means we can rollback
         # later and pretend we didn't touch the ZODB.
-        #transaction.commit(1)
+        #transaction.savepoint(optimistic=True)
 
         return [ self.root._getOb( folder_id ) for folder_id in FOLDER_IDS ]
 

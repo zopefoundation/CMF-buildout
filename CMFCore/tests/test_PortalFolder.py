@@ -15,13 +15,12 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 import cStringIO
 
+import transaction
 from AccessControl import SecurityManager
 from AccessControl import Unauthorized
 from Acquisition import aq_base
@@ -31,7 +30,6 @@ from OFS.Application import Application
 from OFS.Image import manage_addFile
 from OFS.tests.testCopySupport import makeConnection
 from Testing.makerequest import makerequest
-import transaction
 
 from Products.CMFCore.CatalogTool import CatalogTool
 from Products.CMFCore.exceptions import BadRequest
@@ -455,7 +453,7 @@ class PortalFolderMoveTests(SecurityTest):
         self.failUnless( has_path(ctool._catalog,
                                   '/bar/site/folder/sub/foo') )
 
-        transaction.commit(1)
+        transaction.savepoint(optimistic=True)
         folder.manage_renameObject(id='sub', new_id='new_sub')
         self.assertEqual( len(ctool), 1 )
         self.failUnless( 'foo' in ctool.uniqueValuesFor('getId') )
@@ -474,7 +472,7 @@ class PortalFolderMoveTests(SecurityTest):
         sub2.all_meta_types.extend( sub2.all_meta_types )
         sub2.all_meta_types.extend( extra_meta_types() )
 
-        transaction.commit(1)
+        transaction.savepoint(optimistic=True)
         cookie = folder.manage_cutObjects(ids=['bar'])
         sub2.manage_pasteObjects(cookie)
 
@@ -524,7 +522,7 @@ class PortalFolderMoveTests(SecurityTest):
         self.failUnless( has_path(ctool._catalog, '/bar/site/sub2/dummy') )
         self.failIf( has_path(ctool._catalog, '/bar/site/sub3/dummy') )
 
-        transaction.commit(1)
+        transaction.savepoint(optimistic=True)
         cookie = sub1.manage_cutObjects( ids = ('dummy',) )
         # Waaa! force sub2 to allow paste of Dummy object.
         sub3.all_meta_types = []
@@ -542,7 +540,7 @@ class PortalFolderMoveTests(SecurityTest):
         self.failUnless( has_path(ctool._catalog, '/bar/site/sub3/dummy') )
 
 
-class ContentFilterTests( TestCase ):
+class ContentFilterTests(unittest.TestCase):
 
     def setUp( self ):
         self.dummy=DummyContent('Dummy')
@@ -845,7 +843,7 @@ class _AllowedUser( Implicit ):
     def allowed( self, object, object_roles=None ):
         return self._lambdas[ 0 ]( object, object_roles )
 
-class PortalFolderCopySupportTests( TestCase ):
+class PortalFolderCopySupportTests(unittest.TestCase):
 
     _old_policy = None
 
@@ -879,7 +877,7 @@ class PortalFolderCopySupportTests( TestCase ):
             # Hack, we need a _p_mtime for the file, so we make sure that it
             # has one. We use a subtransaction, which means we can rollback
             # later and pretend we didn't touch the ZODB.
-            transaction.commit(1)
+            transaction.savepoint(optimistic=True)
         except:
             self.connection.close()
             raise
@@ -1105,7 +1103,7 @@ class PortalFolderCopySupportTests( TestCase ):
         folder1.manage_permission( DeleteObjects, roles=(), acquire=0 )
 
         folder1._setObject( 'sub', PortalFolder( 'sub' ) )
-        transaction.commit(1) # get a _p_jar for 'sub'
+        transaction.savepoint(optimistic=True) # get a _p_jar for 'sub'
 
         FOLDER_CTOR = 'manage_addProducts/CMFCore/manage_addPortalFolder'
         folder2.all_meta_types = ( { 'name'        : 'CMF Core Content'
@@ -1277,13 +1275,13 @@ class DummyTypesTool( Implicit ):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( PortalFolderFactoryTests ),
-        makeSuite( PortalFolderTests ),
-        makeSuite( PortalFolderMoveTests ),
-        makeSuite( ContentFilterTests ),
-        makeSuite( PortalFolderCopySupportTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite(PortalFolderFactoryTests),
+        unittest.makeSuite(PortalFolderTests),
+        unittest.makeSuite(PortalFolderMoveTests),
+        unittest.makeSuite(ContentFilterTests),
+        unittest.makeSuite(PortalFolderCopySupportTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

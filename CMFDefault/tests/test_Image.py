@@ -15,10 +15,8 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from os.path import join as path_join
 from cStringIO import StringIO
@@ -42,7 +40,7 @@ TESTS_HOME = tests.__path__[0]
 TEST_JPG = path_join(TESTS_HOME, 'TestImage.jpg')
 
 
-class TestImageElement(TestCase):
+class TestImageElement(unittest.TestCase):
 
     def setUp(self):
         self.site = DummySite('site')
@@ -129,7 +127,7 @@ class TestImageCopyPaste(PlacelessSetup, RequestTest):
             self.site.invokeFactory('Folder', id='subfolder')
             self.subfolder = self.site.subfolder
             self.workflow = self.site.portal_workflow
-            transaction.commit(1) # Make sure we have _p_jars
+            transaction.savepoint(optimistic=True) # Make sure we have _p_jars
         except:
             self.tearDown()
             raise
@@ -193,11 +191,10 @@ class TestImageCopyPaste(PlacelessSetup, RequestTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(TestImageElement),
-        makeSuite(TestImageCopyPaste),
+    return unittest.TestSuite((
+        unittest.makeSuite(TestImageElement),
+        unittest.makeSuite(TestImageCopyPaste),
         ))
-    return suite
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

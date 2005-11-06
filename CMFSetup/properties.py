@@ -10,88 +10,48 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-""" Site properties setup handlers.
+"""Site properties setup handlers.
 
 $Id$
 """
 
-from AccessControl import ClassSecurityInfo
-from Globals import InitializeClass
-from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from xml.dom.minidom import parseString
 
-from permissions import ManagePortal
-from utils import _xmldir
-from utils import ConfiguratorBase
-from utils import DEFAULT, KEY
+from Products.GenericSetup.interfaces import INodeExporter
+from Products.GenericSetup.interfaces import INodeImporter
+from Products.GenericSetup.interfaces import PURGE, UPDATE
+from Products.GenericSetup.utils import PrettyDocument
 
-
-#
-#   Configurator entry points
-#
 _FILENAME = 'properties.xml'
+
 
 def importSiteProperties(context):
     """ Import site properties from an XML file.
     """
     site = context.getSite()
-    encoding = context.getEncoding()
+    mode = context.shouldPurge() and PURGE or UPDATE
 
-    if context.shouldPurge():
-
-        for prop_map in site._propertyMap():
-            prop_id = prop_map['id']
-            if 'd' in prop_map.get('mode', 'wd') and \
-                    prop_id not in ('title', 'description'):
-                site._delProperty(prop_id)
-            else:
-                if prop_map.get('type') == 'multiple selection':
-                    prop_value = ()
-                else:
-                    prop_value = ''
-                site._updateProperty(prop_id, prop_value)
-
-    xml = context.readDataFile(_FILENAME)
-    if xml is None:
+    body = context.readDataFile(_FILENAME)
+    if body is None:
         return 'Site properties: Nothing to import.'
 
-    spc = SitePropertiesConfigurator(site, encoding)
-    site_info = spc.parseXML(xml)
+    importer = INodeImporter(site, None)
+    if importer is None:
+        return 'Site properties: Import adapter misssing.'
 
-    for prop_info in site_info['properties']:
-        spc.initProperty(site, prop_info)
-
+    importer.importNode(parseString(body).documentElement, mode=mode)
     return 'Site properties imported.'
 
 def exportSiteProperties(context):
     """ Export site properties as an XML file.
     """
     site = context.getSite()
-    spc = SitePropertiesConfigurator(site).__of__(site)
 
-    xml = spc.generateXML()
-    context.writeDataFile(_FILENAME, xml, 'text/xml')
+    exporter = INodeExporter(site)
+    if exporter is None:
+        return 'Site properties: Export adapter misssing.'
 
+    doc = PrettyDocument()
+    doc.appendChild(exporter.exportNode(doc))
+    context.writeDataFile(_FILENAME, doc.toprettyxml(' '), 'text/xml')
     return 'Site properties exported.'
-
-
-class SitePropertiesConfigurator(ConfiguratorBase):
-    """ Synthesize XML description of site's properties.
-    """
-    security = ClassSecurityInfo()
-
-    security.declareProtected(ManagePortal, 'listSiteInfos')
-    def listSiteInfos(self):
-        """ Get a sequence of mappings for site properties.
-        """
-        return tuple( [ self._extractProperty(self._site, prop_map)
-                        for prop_map in self._site._propertyMap() ] )
-
-    def _getExportTemplate(self):
-
-        return PageTemplateFile('spcExport.xml', _xmldir)
-
-    def _getImportMapping(self):
-
-        return { 'site': { 'property': {KEY: 'properties', DEFAULT: () } } }
-
-InitializeClass(SitePropertiesConfigurator)

@@ -78,6 +78,9 @@ class ActionNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
     def importNode(self, node, mode=PURGE):
         """Import the object from the DOM node.
         """
+        if mode == PURGE:
+            self._purgeProperties()
+
         self._initProperties(node, mode)
 
 

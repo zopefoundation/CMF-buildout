@@ -16,6 +16,7 @@ $Id$
 """
 
 import os
+from warnings import warn
 from xml.dom.minidom import parseString as domParseString
 
 import Products
@@ -149,6 +150,9 @@ class ImportConfiguratorBase(Implicit):
 
     security.declareProtected(ManagePortal, 'initObject')
     def initObject(self, parent, o_info):
+        warn('CMFSetup.utils including ImportConfiguratorBase is deprecated. '
+             'Please use NodeAdapterBase from GenericSetup.utils instead.',
+             DeprecationWarning)
 
         obj_id = str(o_info['id'])
         if obj_id not in parent.objectIds():
@@ -189,6 +193,9 @@ class ImportConfiguratorBase(Implicit):
 
     security.declareProtected(ManagePortal, 'initProperty')
     def initProperty(self, obj, p_info):
+        warn('CMFSetup.utils including ImportConfiguratorBase is deprecated. '
+             'Please use NodeAdapterBase from GenericSetup.utils instead.',
+             DeprecationWarning)
 
         prop_id = p_info['id']
         prop_map = obj.propdict().get(prop_id, None)
@@ -250,6 +257,10 @@ class ExportConfiguratorBase(Implicit):
     def generateObjectNodes(self, obj_infos):
         """ Pseudo API.
         """
+        warn('CMFSetup.utils including ExportConfiguratorBase is deprecated. '
+             'Please use NodeAdapterBase from GenericSetup.utils instead.',
+             DeprecationWarning)
+
         lines = self._ob_nodes(objects=obj_infos).splitlines()
         return '\n'.join(lines)
 
@@ -257,10 +268,17 @@ class ExportConfiguratorBase(Implicit):
     def generatePropertyNodes(self, prop_infos):
         """ Pseudo API.
         """
+        warn('CMFSetup.utils including ExportConfiguratorBase is deprecated. '
+             'Please use NodeAdapterBase from GenericSetup.utils instead.',
+             DeprecationWarning)
+
         lines = self._prop_nodes(properties=prop_infos).splitlines()
         return '\n'.join(lines)
 
     def _extractObject(self, obj):
+        warn('CMFSetup.utils including ExportConfiguratorBase is deprecated. '
+             'Please use NodeAdapterBase from GenericSetup.utils instead.',
+             DeprecationWarning)
 
         properties = []
         subobjects = []
@@ -285,6 +303,9 @@ class ExportConfiguratorBase(Implicit):
                  'subobjects': tuple(subobjects) }
 
     def _extractProperty(self, obj, prop_map):
+        warn('CMFSetup.utils including ExportConfiguratorBase is deprecated. '
+             'Please use NodeAdapterBase from GenericSetup.utils instead.',
+             DeprecationWarning)
 
         prop_id = prop_map['id']
         prop = obj.getProperty(prop_id)

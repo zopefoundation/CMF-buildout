@@ -124,7 +124,7 @@ class _ActionSetup(PlacelessSetup, BaseRegistryTests):
         PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)

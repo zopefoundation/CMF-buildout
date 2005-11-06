@@ -23,6 +23,8 @@ Zope2.startup()
 from DateTime.DateTime import DateTime
 from OFS.Folder import Folder
 
+from Products.CMFCore.tests.base.testcase import WarningInterceptor
+
 from common import BaseRegistryTests
 
 
@@ -173,7 +175,7 @@ class DummyObject(Folder):
     _properties = ()
 
 
-class _ConfiguratorBaseTests(BaseRegistryTests):
+class _ConfiguratorBaseTests(WarningInterceptor, BaseRegistryTests):
 
     def _initSite(self, foo=2):
 
@@ -213,6 +215,14 @@ class _ConfiguratorBaseTests(BaseRegistryTests):
             site.dummy.foo_boolean0 = 0
 
         return site
+
+    def setUp(self):
+        BaseRegistryTests.setUp(self)
+        self._trap_warning_output()
+
+    def tearDown(self):
+        self._free_warning_output()
+        BaseRegistryTests.tearDown(self)
 
 
 class ExportConfiguratorBaseTests(_ConfiguratorBaseTests):

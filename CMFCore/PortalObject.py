@@ -16,21 +16,24 @@ $Id$
 """
 
 from Globals import InitializeClass
+from zope.interface import implements
 
-from PortalFolder import PortalFolder
-from Skinnable import SkinnableObjectManager
+from interfaces import ISiteRoot
 from permissions import AddPortalMember
 from permissions import SetOwnPassword
 from permissions import SetOwnProperties
 from permissions import MailForgottenPassword
 from permissions import RequestReview
 from permissions import ReviewPortalContent
+from PortalFolder import PortalFolder
+from Skinnable import SkinnableObjectManager
 
 PORTAL_SKINS_TOOL_ID = 'portal_skins'
 
 
 class PortalObjectBase(PortalFolder, SkinnableObjectManager):
 
+    implements(ISiteRoot)
     meta_type = 'Portal Site'
     _isPortalRoot = 1
 

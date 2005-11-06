@@ -101,6 +101,18 @@
       />
 
   <adapter
+      factory=".properties.PropertiesNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeExporter"
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      />
+
+  <adapter
+      factory=".properties.PropertiesNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeImporter"
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      />
+
+  <adapter
       factory=".typeinfo.TypeInformationNodeAdapter"
       provides="Products.GenericSetup.interfaces.INodeExporter"
       for="Products.CMFCore.interfaces.ITypeInformation"

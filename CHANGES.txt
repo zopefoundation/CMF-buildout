@@ -54,6 +54,9 @@ CMF 1.5.5-beta (2005/11/06)
 
   Others
 
+    - Removed deprecated 'all_cmf_tests.py' and supporting 'test_all.py'
+      from products (use 'zopectl test' to run CMF tests instead).
+
     - CMFDefault.Portal:  deprecated 'manage_addCMFSite'.
 
     - Collectors #384:  Added '__traceback_info__' to FSDTMLMethod's

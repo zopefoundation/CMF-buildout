@@ -25,9 +25,9 @@ from Products.ZCTextIndex.Lexicon import CaseNormalizer
 from Products.ZCTextIndex.Lexicon import Splitter
 from Products.ZCTextIndex.Lexicon import StopWordRemover
 from Products.ZCTextIndex.ZCTextIndex import PLexicon
-from zope.app.tests.placelesssetup import PlacelessSetup
 
 from Products.CMFCore.CatalogTool import CatalogTool
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 from common import BaseRegistryTests
 from common import DummyExportContext

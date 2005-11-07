@@ -20,12 +20,8 @@ import Testing
 import Zope2
 Zope2.startup()
 
-import Products.CMFCore.exportimport
-import Products.Five
-from Products.Five import zcml
-from zope.app.tests.placelesssetup import PlacelessSetup
-
 from Products.CMFCore.tests.base.dummy import DummySite
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.testing import NodeAdapterTestCase
 
 
@@ -90,6 +86,9 @@ class ActionNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
     def setUp(self):
         from Products.CMFCore.ActionInformation import Action
+        import Products.CMFCore.exportimport
+        import Products.Five
+        from Products.Five import zcml
 
         PlacelessSetup.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
@@ -114,6 +113,9 @@ class ActionCategoryNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
     def setUp(self):
         from Products.CMFCore.ActionInformation import ActionCategory
+        import Products.CMFCore.exportimport
+        import Products.Five
+        from Products.Five import zcml
 
         PlacelessSetup.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
@@ -142,6 +144,9 @@ class ActionsToolNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
     def setUp(self):
         from Products.CMFCore.ActionsTool import ActionsTool
+        import Products.CMFCore.exportimport
+        import Products.Five
+        from Products.Five import zcml
 
         PlacelessSetup.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)

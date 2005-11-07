@@ -21,6 +21,15 @@ from dummy import DummyFolder
 from security import AnonymousUser
 from security import PermissiveSecurityPolicy
 
+try:
+    from zope.app.testing.placelesssetup import PlacelessSetup
+    from zope.app.testing.placelesssetup import setUp as placelessSetUp
+    from zope.app.testing.placelesssetup import tearDown as placelessTearDown
+except ImportError:  # BBB, Zope3 < 3.1
+    from zope.app.tests.placelesssetup import PlacelessSetup
+    from zope.app.tests.placelesssetup import setUp as placelessSetUp
+    from zope.app.tests.placelesssetup import tearDown as placelessTearDown
+
 class LogInterceptor:
 
     _old_log_write = None

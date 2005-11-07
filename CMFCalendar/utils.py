@@ -16,10 +16,13 @@ $Id$
 """
 
 from AccessControl import ModuleSecurityInfo
-from zope.i18nmessageid import MessageIDFactory
+try:
+    from zope.i18nmessageid import MessageFactory
+except ImportError: # BBB
+    from zope.i18nmessageid import MessageIDFactory as MessageFactory
 
 
 security = ModuleSecurityInfo('Products.CMFCalendar.utils')
 
 security.declarePublic('MessageID')
-MessageID = MessageIDFactory('cmf_calendar')
+MessageID = MessageFactory('cmf_calendar')

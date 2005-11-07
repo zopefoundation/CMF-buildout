@@ -21,9 +21,9 @@ import Testing
 import Products
 from OFS.Folder import Folder
 from Products.Five import zcml
-from zope.app.tests.placelesssetup import PlacelessSetup
 
 from Products.CMFCore.CookieCrumbler import CookieCrumbler
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 from common import BaseRegistryTests
 from common import DummyExportContext

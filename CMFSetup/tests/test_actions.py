@@ -26,13 +26,13 @@ from Acquisition import aq_parent
 from OFS.Folder import Folder
 from OFS.OrderedFolder import OrderedFolder
 from Products.Five import zcml
-from zope.app.tests.placelesssetup import PlacelessSetup
 from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces.portal_actions \
     import ActionProvider as IActionProvider
 from Products.CMFCore.interfaces import IActionsTool
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 from common import BaseRegistryTests
 from common import DummyExportContext

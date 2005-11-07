@@ -23,8 +23,8 @@ Zope2.startup()
 import Products
 from Acquisition import aq_base
 from Products.Five import zcml
-from zope.app.tests.placelesssetup import PlacelessSetup
 
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 
 

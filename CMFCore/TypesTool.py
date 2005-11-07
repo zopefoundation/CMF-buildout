@@ -30,8 +30,14 @@ from OFS.Folder import Folder
 from OFS.ObjectManager import IFAwareObjectManager
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from zLOG import LOG, ERROR
-from zope.i18nmessageid import MessageID
 from zope.interface import implements
+try:
+    from zope.i18nmessageid import MessageFactory
+except ImportError: # BBB
+    from zope.i18nmessageid import MessageIDFactory as MessageFactory
+
+def MessageID(val, domain): # XXX performance?
+    return MessageFactory(domain)(val)
 
 from Products.GenericSetup.interfaces import INodeImporter
 

@@ -23,11 +23,11 @@ Zope2.startup()
 import Products
 from OFS.Folder import Folder
 from Products.Five import zcml
-from zope.app.tests.placelesssetup import PlacelessSetup
 
 from Products.CMFCore.permissions import View
 from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.permissions import ModifyPortalContent
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.TypesTool import FactoryTypeInformation
 from Products.CMFCore.TypesTool import ScriptableTypeInformation
 from Products.CMFCore.TypesTool import TypesTool

@@ -22,8 +22,7 @@ from csv import reader
 from ConfigParser import ConfigParser
 from StringIO import StringIO
 
-from zope.app.tests.placelesssetup import PlacelessSetup
-
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 

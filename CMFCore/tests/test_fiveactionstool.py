@@ -26,8 +26,9 @@ def test_fiveactionstool():
 
     Some basic setup:
 
-      >>> from zope.app.tests.placelesssetup import setUp, tearDown
-      >>> setUp()
+      >>> from Products.CMFCore.tests.base.testcase import placelessSetUp
+      >>> from Products.CMFCore.tests.base.testcase import placelessTearDown
+      >>> placelessSetUp()
 
       >>> import Products.Five
       >>> import Products.CMFCore
@@ -75,7 +76,7 @@ def test_fiveactionstool():
 
     Cleanup:
 
-      >>> tearDown()
+      >>> placelessTearDown()
     """
 
 def test_suite():

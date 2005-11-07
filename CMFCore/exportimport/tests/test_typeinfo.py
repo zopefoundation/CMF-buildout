@@ -20,11 +20,7 @@ import Testing
 import Zope2
 Zope2.startup()
 
-import Products.CMFCore.exportimport
-import Products.Five
-from Products.Five import zcml
-from zope.app.tests.placelesssetup import PlacelessSetup
-
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.testing import NodeAdapterTestCase
 
 
@@ -61,6 +57,9 @@ class TypeInformationNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
     def setUp(self):
         from Products.CMFCore.TypesTool import FactoryTypeInformation
+        import Products.CMFCore.exportimport
+        import Products.Five
+        from Products.Five import zcml
 
         PlacelessSetup.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)

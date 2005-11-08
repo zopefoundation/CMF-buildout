@@ -7,10 +7,10 @@
       name="cmf"
       />
 
-  <!-- 'default' layer is missing when run under 2.9! -->
+  <!-- 'default' layer breaks when run under 2.9! -->
   <browser:skin
       name="cmf"
-      layers="cmf"
+      layers="cmf default"
       />
 
   <browser:defaultSkin

@@ -28,10 +28,9 @@ from Products.ZCTextIndex.ZCTextIndex import PLexicon
 
 from Products.CMFCore.CatalogTool import CatalogTool
 from Products.CMFCore.tests.base.testcase import PlacelessSetup
-
-from common import BaseRegistryTests
-from common import DummyExportContext
-from common import DummyImportContext
+from Products.GenericSetup.tests.common import BaseRegistryTests
+from Products.GenericSetup.tests.common import DummyExportContext
+from Products.GenericSetup.tests.common import DummyImportContext
 
 
 class _extra:

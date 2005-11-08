@@ -14,13 +14,13 @@
 
 $Id$
 """
+
 import unittest
-#import Testing
+import Testing
 
-
-from common import BaseRegistryTests
-from common import DummyExportContext
-from common import DummyImportContext
+from Products.GenericSetup.tests.common import BaseRegistryTests
+from Products.GenericSetup.tests.common import DummyExportContext
+from Products.GenericSetup.tests.common import DummyImportContext
 
 _TEST_PREDICATES = (
  ('plain_text', 'major_minor', ('text', 'plain,javascript'), 'File'),

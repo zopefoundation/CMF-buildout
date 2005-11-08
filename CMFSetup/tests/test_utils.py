@@ -24,8 +24,7 @@ from DateTime.DateTime import DateTime
 from OFS.Folder import Folder
 
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
-
-from common import BaseRegistryTests
+from Products.GenericSetup.tests.common import BaseRegistryTests
 
 
 _NORMAL_PROPERTY_NODES = """\

@@ -28,11 +28,10 @@ from OFS.SimpleItem import Item
 from Products.CMFCore import DirectoryView
 from Products.CMFCore.utils import expandpath
 from Products.CMFCore.utils import minimalpath
-
-from common import BaseRegistryTests
-from common import DOMComparator
-from common import DummyExportContext
-from common import DummyImportContext
+from Products.GenericSetup.tests.common import BaseRegistryTests
+from Products.GenericSetup.tests.common import DOMComparator
+from Products.GenericSetup.tests.common import DummyExportContext
+from Products.GenericSetup.tests.common import DummyImportContext
 
 _TESTS_PATH = os.path.split( __file__ )[ 0 ]
 

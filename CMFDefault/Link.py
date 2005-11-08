@@ -21,7 +21,9 @@ import transaction
 from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile
 from Globals import InitializeClass
+from zope.interface import implements
 
+from Products.CMFCore.interfaces import IDAVAware
 from Products.CMFCore.PortalContent import PortalContent
 from Products.CMFCore.utils import contributorsplitter
 from Products.CMFCore.utils import keywordsplitter
@@ -52,6 +54,7 @@ class Link(PortalContent, DefaultDublinCoreImpl):
     """A Link.
     """
 
+    implements(IDAVAware)
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )

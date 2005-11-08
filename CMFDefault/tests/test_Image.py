@@ -33,14 +33,22 @@ from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFDefault import tests
-from Products.CMFDefault.File import File
-from Products.CMFDefault.Image import Image
+
+from common import ConformsToContent
 
 TESTS_HOME = tests.__path__[0]
 TEST_JPG = path_join(TESTS_HOME, 'TestImage.jpg')
 
 
-class TestImageElement(unittest.TestCase):
+class TestImageElement(ConformsToContent, unittest.TestCase):
+
+    def _getTargetClass(self):
+        from Products.CMFDefault.Image import Image
+
+        return Image
+
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
 
     def setUp(self):
         self.site = DummySite('site')
@@ -48,7 +56,7 @@ class TestImageElement(unittest.TestCase):
 
     def test_EditWithEmptyFile(self):
         # Test handling of empty file uploads
-        image = self.site._setObject( 'testimage', Image('testimage') )
+        image = self.site._setObject('testimage', self._makeOne('testimage'))
 
         testfile = open(TEST_JPG, 'rb')
         image.edit(file=testfile)
@@ -64,18 +72,9 @@ class TestImageElement(unittest.TestCase):
         assert image.get_size() > 0
         assert image.get_size() == testfilesize
 
-    def test_File_setFormat(self):
-        # Setting the DC.format must also set the content_type property
-        file = File('testfile', format='image/jpeg')
-        self.assertEqual(file.Format(), 'image/jpeg')
-        self.assertEqual(file.content_type, 'image/jpeg')
-        file.setFormat('image/gif')
-        self.assertEqual(file.Format(), 'image/gif')
-        self.assertEqual(file.content_type, 'image/gif')
- 
     def test_Image_setFormat(self):
         # Setting the DC.format must also set the content_type property
-        image = Image('testimage', format='image/jpeg')
+        image = self._makeOne('testimage', format='image/jpeg')
         self.assertEqual(image.Format(), 'image/jpeg')
         self.assertEqual(image.content_type, 'image/jpeg')
         image.setFormat('image/gif')
@@ -86,22 +85,10 @@ class TestImageElement(unittest.TestCase):
         # Test the content type after calling the constructor with the
         # file object being passed in (http://www.zope.org/Collectors/CMF/370)
         testfile = open(TEST_JPG, 'rb')
-        image = Image('testimage', file=testfile)
+        image = self._makeOne('testimage', file=testfile)
         testfile.close()
         self.assertEqual(image.Format(), 'image/jpeg')
         self.assertEqual(image.content_type, 'image/jpeg')
-
-    def test_FileContentTypeUponConstruction(self):
-        # Test the content type after calling the constructor with the
-        # file object being passed in (http://www.zope.org/Collectors/CMF/370)
-        testfile = open(TEST_JPG, 'rb')
-        # Notice the cheat? File objects lack the extra intelligence that
-        # picks content types from the actual file data, so it needs to be
-        # helped along with a file extension...
-        file = File('testfile.jpg', file=testfile)
-        testfile.close()
-        self.assertEqual(file.Format(), 'image/jpeg')
-        self.assertEqual(file.content_type, 'image/jpeg')
 
 
 class TestImageCopyPaste(PlacelessSetup, RequestTest):

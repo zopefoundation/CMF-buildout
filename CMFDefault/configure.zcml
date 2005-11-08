@@ -6,8 +6,4 @@
     package=".skin"
     />
 
-  <include
-    file="exportimport.zcml"
-    />
-
 </configure>

@@ -20,7 +20,9 @@ $Id$
 import OFS.Image
 from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
+from zope.interface import implements
 
+from Products.CMFCore.interfaces import IDAVAware
 from Products.CMFCore.PortalContent import PortalContent
 
 from DublinCore import DefaultDublinCoreImpl
@@ -67,10 +69,7 @@ def addFile( self
     self._getOb(id).manage_upload(file)
 
 
-class File( OFS.Image.File
-          , PortalContent
-          , DefaultDublinCoreImpl
-          ):
+class File(OFS.Image.File, PortalContent, DefaultDublinCoreImpl):
 
     """A Portal-managed File.
     """
@@ -88,6 +87,7 @@ class File( OFS.Image.File
     # this problem altogether. getId is the new way, accessing .id is
     # deprecated.
 
+    implements(IDAVAware)
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )

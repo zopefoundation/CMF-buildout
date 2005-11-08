@@ -24,48 +24,18 @@ from Products.CMFCore.tests.base.content import DOCTYPE
 from Products.CMFCore.tests.base.content import ENTITY_IN_TITLE
 from Products.CMFCore.tests.base.testcase import RequestTest
 
+from common import ConformsToContent
 
-class NewsItemTests(unittest.TestCase):
 
-    def _makeOne(self, id, *args, **kw):
+class NewsItemTests(ConformsToContent, unittest.TestCase):
+
+    def _getTargetClass(self):
         from Products.CMFDefault.NewsItem import NewsItem
 
-        return NewsItem(id, *args, **kw)
+        return NewsItem
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.Contentish \
-                import Contentish as IContentish
-        from Products.CMFCore.interfaces.DublinCore \
-                import CatalogableDublinCore as ICatalogableDublinCore
-        from Products.CMFCore.interfaces.DublinCore \
-                import DublinCore as IDublinCore
-        from Products.CMFCore.interfaces.DublinCore \
-                import MutableDublinCore as IMutableDublinCore
-        from Products.CMFCore.interfaces.Dynamic \
-                import DynamicType as IDynamicType
-        from Products.CMFDefault.NewsItem import NewsItem
-
-        verifyClass(ICatalogableDublinCore, NewsItem)
-        verifyClass(IContentish, NewsItem)
-        verifyClass(IDublinCore, NewsItem)
-        verifyClass(IDynamicType, NewsItem)
-        verifyClass(IMutableDublinCore, NewsItem)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
-        from Products.CMFCore.interfaces import ICatalogableDublinCore
-        from Products.CMFCore.interfaces import IContentish
-        from Products.CMFCore.interfaces import IDublinCore
-        from Products.CMFCore.interfaces import IDynamicType
-        from Products.CMFCore.interfaces import IMutableDublinCore
-        from Products.CMFDefault.NewsItem import NewsItem
-
-        verifyClass(ICatalogableDublinCore, NewsItem)
-        verifyClass(IContentish, NewsItem)
-        verifyClass(IDublinCore, NewsItem)
-        verifyClass(IDynamicType, NewsItem)
-        verifyClass(IMutableDublinCore, NewsItem)
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
 
     def test_Empty_html(self):
         d = self._makeOne('empty', text_format='html')
@@ -104,11 +74,13 @@ class NewsItemTests(unittest.TestCase):
 
 class NewsItemPUTTests(RequestTest):
 
-    def _makeOne(self, id, *args, **kw):
+    def _getTargetClass(self):
         from Products.CMFDefault.NewsItem import NewsItem
 
-        # NullResource.PUT calls the PUT method on the bare object!
-        return NewsItem(id, *args, **kw)
+        return NewsItem
+
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
 
     def test_Init(self):
         self.REQUEST['BODY'] = BASIC_STRUCTUREDTEXT

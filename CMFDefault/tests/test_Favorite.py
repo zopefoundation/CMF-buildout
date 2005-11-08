@@ -15,29 +15,33 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
-from Products.CMFDefault.Favorite import Favorite
+
+from common import ConformsToContent
 
 
-class FavoriteTests( TestCase ):
+class FavoriteTests(ConformsToContent, unittest.TestCase):
 
-    def setUp( self ):
+    def _getTargetClass(self):
+        from Products.CMFDefault.Favorite import Favorite
+
+        return Favorite
+
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
+
+    def setUp(self):
         self.site = DummySite('site')
         self.site._setObject( 'portal_membership', DummyTool() )
         self.site._setObject( 'portal_url', DummyTool() )
 
-    def _makeOne(self, id, *args, **kw):
-        return self.site._setObject( id, Favorite(id, *args, **kw) )
-
     def test_Empty( self ):
         utool = self.site.portal_url
-        f = self._makeOne( 'foo' )
+        f = self.site._setObject('foo', self._makeOne('foo'))
 
         self.assertEqual( f.getId(), 'foo' )
         self.assertEqual( f.Title(), '' )
@@ -57,7 +61,8 @@ class FavoriteTests( TestCase ):
                                        , description='Description'
                                        ).Description(), 'Description' )
 
-        baz = self._makeOne( 'baz', remote_url='portal_url' )
+        baz = self.site._setObject('foo',
+                                self._makeOne('baz', remote_url='portal_url'))
         self.assertEqual( baz.getObject(), utool )
         self.assertEqual( baz.getRemoteUrl()
                         , '%s/portal_url' % utool.root )
@@ -65,7 +70,7 @@ class FavoriteTests( TestCase ):
 
     def test_edit( self ):
         utool = self.site.portal_url
-        f = self._makeOne( 'foo' )
+        f = self.site._setObject('foo', self._makeOne('foo'))
         f.edit( 'portal_url' )
         self.assertEqual( f.getObject(), utool )
         self.assertEqual( f.getRemoteUrl()
@@ -74,7 +79,7 @@ class FavoriteTests( TestCase ):
 
     def test_editEmpty( self ):
         utool = self.site.portal_url
-        f = self._makeOne( 'gnnn' )
+        f = self.site._setObject('gnnn', self._makeOne('gnnn'))
         f.edit( '' )
         self.assertEqual( f.getObject(), self.site )
         self.assertEqual( f.getRemoteUrl(), utool.root )
@@ -82,9 +87,9 @@ class FavoriteTests( TestCase ):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( FavoriteTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite(FavoriteTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

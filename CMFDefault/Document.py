@@ -25,6 +25,7 @@ from Globals import InitializeClass
 from StructuredText.StructuredText import HTML
 from zope.interface import implements
 
+from Products.CMFCore.interfaces import IDAVAware
 from Products.CMFCore.PortalContent import PortalContent
 from Products.CMFCore.utils import contributorsplitter
 from Products.CMFCore.utils import keywordsplitter
@@ -58,7 +59,7 @@ class Document(PortalContent, DefaultDublinCoreImpl):
     """A Document - Handles both StructuredText and HTML.
     """
 
-    implements(IDocument, IMutableDocument)
+    implements(IDocument, IMutableDocument, IDAVAware)
     __implements__ = (z2IDocument, z2IMutableDocument,
                       PortalContent.__implements__,
                       DefaultDublinCoreImpl.__implements__)

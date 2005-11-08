@@ -14,28 +14,27 @@
 
 $Id$
 """
-from unittest import TestCase, TestSuite, makeSuite, main
+
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from re import compile
 
 from Products.CMFCore.tests.base.content import BASIC_RFC822
 from Products.CMFCore.tests.base.content import RFC822_W_CONTINUATION
-from Products.CMFCore.tests.base.dummy import DummySite
-from Products.CMFCore.tests.base.dummy import DummyTool
-from Products.CMFDefault.Link import Link
+
+from common import ConformsToContent
 
 
-class LinkTests(TestCase):
+class LinkTests(ConformsToContent, unittest.TestCase):
 
-    def setUp(self):
-        self.site = DummySite('site')
-        mtool = self.site._setObject( 'portal_membership', DummyTool() )
+    def _getTargetClass(self):
+        from Products.CMFDefault.Link import Link
 
-    def _makeOne(self, id, *args, **kw):
-        return self.site._setObject( id, Link(id, *args, **kw) )
+        return Link
+
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
 
     def canonTest(self, table):
         for orig, wanted in table.items():
@@ -48,7 +47,7 @@ class LinkTests(TestCase):
             self.assertEqual(d.getRemoteUrl(), wanted)
 
     def test_Empty( self ):
-        d = Link( 'foo' )
+        d = self._makeOne('foo')
         self.assertEqual( d.Title(), '' )
         self.assertEqual( d.Description(), '' )
         self.assertEqual( d.getRemoteUrl(), '' )
@@ -135,9 +134,9 @@ class LinkTests(TestCase):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(LinkTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(LinkTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

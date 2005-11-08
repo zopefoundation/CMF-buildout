@@ -17,9 +17,11 @@ $Id$
 """
 
 import OFS.Image
-from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
+from Globals import InitializeClass
+from zope.interface import implements
 
+from Products.CMFCore.interfaces import IDAVAware
 from Products.CMFCore.PortalContent import PortalContent
 
 from DublinCore import DefaultDublinCoreImpl
@@ -65,12 +67,9 @@ def addImage( self
     self._getOb(id).manage_upload(file)
 
 
-class Image( OFS.Image.Image
-           , PortalContent
-           , DefaultDublinCoreImpl
-           ):
-    """
-        A Portal-managed Image
+class Image(OFS.Image.Image, PortalContent, DefaultDublinCoreImpl):
+
+    """A Portal-managed Image.
     """
 
     # The order of base classes is very significant in this case.
@@ -86,6 +85,7 @@ class Image( OFS.Image.Image
     # this problem altogether. getId is the new way, accessing .id is
     # deprecated.
 
+    implements(IDAVAware)
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )

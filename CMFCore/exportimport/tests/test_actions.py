@@ -84,6 +84,22 @@ class ActionNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
         obj._setPropValue('url_expr', 'string:${object_url}/foo')
         obj._setPropValue('available_expr', 'python:1')
 
+    def _verifyImport(self, obj):
+        self.assertEqual(type(obj.title), str)
+        self.assertEqual(obj.title, 'Foo')
+        self.assertEqual(type(obj.description), str)
+        self.assertEqual(obj.description, '')
+        self.assertEqual(type(obj.url_expr), str)
+        self.assertEqual(obj.url_expr, 'string:${object_url}/foo')
+        self.assertEqual(type(obj.icon_expr), str)
+        self.assertEqual(obj.icon_expr, '')
+        self.assertEqual(type(obj.available_expr), str)
+        self.assertEqual(obj.available_expr, 'python:1')
+        self.assertEqual(type(obj.permissions), tuple)
+        self.assertEqual(obj.permissions, ())
+        self.assertEqual(type(obj.visible), bool)
+        self.assertEqual(obj.visible, True)
+
     def setUp(self):
         from Products.CMFCore.ActionInformation import Action
         import Products.CMFCore.exportimport
@@ -110,6 +126,10 @@ class ActionCategoryNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
         from Products.CMFCore.ActionInformation import Action
 
         obj._setObject('foo_action', Action('foo_action'))
+
+    def _verifyImport(self, obj):
+        self.assertEqual(type(obj.title), str)
+        self.assertEqual(obj.title, '')
 
     def setUp(self):
         from Products.CMFCore.ActionInformation import ActionCategory
@@ -141,6 +161,12 @@ class ActionsToolNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
         obj.action_providers = ('portal_actions',)
         obj.foo_category._setObject('foo_action', Action('foo_action'))
         obj.foo_category.foo_action.i18n_domain = 'foo_domain'
+
+    def _verifyImport(self, obj):
+        self.assertEqual(type(obj.action_providers), tuple)
+        self.assertEqual(obj.action_providers, ('portal_actions',))
+        self.assertEqual(type(obj.action_providers[0]), str)
+        self.assertEqual(obj.action_providers[0], 'portal_actions')
 
     def setUp(self):
         from Products.CMFCore.ActionsTool import ActionsTool

@@ -55,6 +55,27 @@ class TypeInformationNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
         return TypeInformationNodeAdapter
 
+    def _populate(self, obj):
+        obj.addAction('foo_action', 'Foo', 'string:${object_url}/foo',
+                      'python:1', (), 'Bar')
+
+    def _verifyImport(self, obj):
+        self.assertEqual(type(obj._aliases), dict)
+        self.assertEqual(obj._aliases, {'(Default)': 'foo', 'view': 'foo'})
+        self.assertEqual(type(obj._aliases['view']), str)
+        self.assertEqual(obj._aliases['view'], 'foo')
+        self.assertEqual(type(obj._actions), tuple)
+        self.assertEqual(type(obj._actions[0].id), str)
+        self.assertEqual(obj._actions[0].id, 'foo_action')
+        self.assertEqual(type(obj._actions[0].title), str)
+        self.assertEqual(obj._actions[0].title, 'Foo')
+        self.assertEqual(type(obj._actions[0].description), str)
+        self.assertEqual(obj._actions[0].description, '')
+        self.assertEqual(type(obj._actions[0].category), str)
+        self.assertEqual(obj._actions[0].category, 'Bar')
+        self.assertEqual(type(obj._actions[0].condition.text), str)
+        self.assertEqual(obj._actions[0].condition.text, 'python:1')
+
     def setUp(self):
         from Products.CMFCore.TypesTool import FactoryTypeInformation
         import Products.CMFCore.exportimport
@@ -67,10 +88,6 @@ class TypeInformationNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
         self._obj = FactoryTypeInformation('foo_fti')
         self._XML = _FTI_XML
-
-    def _populate(self, obj):
-        obj.addAction('foo_action', 'Foo', 'string:${object_url}/foo',
-                      'python:1', (), 'Bar')
 
 
 def test_suite():

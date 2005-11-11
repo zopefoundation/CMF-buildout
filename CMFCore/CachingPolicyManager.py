@@ -29,6 +29,7 @@ from zope.interface import implements
 from permissions import ManagePortal
 from permissions import View
 from Expression import Expression
+from interfaces import ICachingPolicy
 from interfaces import ICachingPolicyManager
 from interfaces.CachingPolicyManager \
         import CachingPolicyManager as z2ICachingPolicyManager
@@ -152,6 +153,8 @@ class CachingPolicy:
             Unfortunately these are needed to make IE behave correctly.
 
     """
+
+    implements(ICachingPolicy)
 
     def __init__( self
                 , policy_id
@@ -430,15 +433,9 @@ class CachingPolicyManager( SimpleItem ):
 
     security.declarePublic( 'listPolicies' )
     def listPolicies( self ):
+        """List '(id, (policy, typeObjectName))' tuples for all policies.
         """
-            Return a sequence of tuples,
-            '( policy_id, ( policy, typeObjectName ) )'
-            for all policies in the registry 
-        """
-        result = []
-        for policy_id in self._policy_ids:
-            result.append( ( policy_id, self._policies[ policy_id ] ) )
-        return tuple( result )
+        return tuple([ (id, self._policies[id]) for id in self._policy_ids ])
 
     security.declareProtected( ManagePortal, 'addPolicy' )
     def addPolicy( self

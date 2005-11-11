@@ -225,6 +225,92 @@ class IActionInfo(Interface):
 #
 #   Caching policy tool interfaces
 #
+class ICachingPolicy(Interface):
+
+    def getPolicyId():
+        """
+        """
+
+    def getPredicate():
+        """
+        """
+
+    def getMTimeFunc():
+        """
+        """
+
+    def getMaxAgeSecs():
+        """
+        """
+
+    def getSMaxAgeSecs():
+        """
+        """
+
+    def getNoCache():
+        """
+        """
+
+    def getNoStore():
+        """
+        """
+
+    def getMustRevalidate():
+        """
+        """
+
+    def getProxyRevalidate():
+        """
+        """
+
+    def getPublic():
+        """
+        """
+
+    def getPrivate():
+        """
+        """
+
+    def getNoTransform():
+        """
+        """
+
+    def getVary():
+        """
+        """
+
+    def getETagFunc():
+        """
+        """
+
+    def getEnable304s():
+        """
+        """
+
+    def getLastModified():
+        """Should we set the last modified header?
+        """
+
+    def getPreCheck():
+        """
+        """
+
+    def getPostCheck():
+        """
+        """
+    
+    def testPredicate(expr_context):
+        """Does this request match our predicate?
+        """
+
+    def getHeaders(expr_context):
+        """Does this request match our predicate?
+
+        If so, return a sequence of caching headers as (key, value) tuples.
+        Otherwise, return an empty sequence.
+        """
+
+
 class ICachingPolicyManager(Interface):
 
     """ Compute HTTP cache headers for skin methods.

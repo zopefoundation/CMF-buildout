@@ -457,15 +457,10 @@ class ContentTypeRegistry( SimpleItem ):
 
     security.declarePublic( 'listPredicates' )
     def listPredicates( self ):
+        """List '(id, (predicate, typeObjectName))' tuples for all predicates.
         """
-            Return a sequence of tuples,
-            '( id, ( predicate, typeObjectName ) )'
-            for all predicates in the registry
-        """
-        result = []
-        for predicate_id in self.predicate_ids:
-            result.append( ( predicate_id, self.predicates[ predicate_id ] ) )
-        return tuple( result )
+        return tuple([ (id, self.predicates[id])
+                       for id in self.predicate_ids ])
 
     security.declarePublic( 'getTypeObjectName' )
     def getTypeObjectName( self, predicate_id ):

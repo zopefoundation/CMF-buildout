@@ -18,12 +18,16 @@ $Id$
 import unittest
 import Testing
 
+import Products
+from Products.Five import zcml
+
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
 
-class _CachingPolicyManagerSetup(BaseRegistryTests):
+class _CachingPolicyManagerSetup(PlacelessSetup, BaseRegistryTests):
 
     POLICY_ID = 'policy_id'
     PREDICATE = "python:object.getId() == 'foo'"
@@ -37,44 +41,21 @@ class _CachingPolicyManagerSetup(BaseRegistryTests):
 
     _EMPTY_EXPORT = """\
 <?xml version="1.0"?>
-<caching-policies>
-</caching-policies>
+<object name="caching_policy_manager" meta_type="CMF Caching Policy Manager"/>
 """
 
     _WITH_POLICY_EXPORT = """\
 <?xml version="1.0"?>
-<caching-policies>
- <caching-policy
-    policy_id="%s"
-    predicate="%s"
-    mtime_func="%s"
-    vary="%s"
-    etag_func="%s"
-    max_age_secs="%d"
-    s_max_age_secs="%d"
-    pre_check="%d"
-    post_check="%d"
-    last_modified="False"
-    no_cache="True"
-    no_store="True"
-    must_revalidate="True"
-    proxy_revalidate="True"
-    no_transform="True"
-    public="True"
-    private="True"
-    enable_304s="True"
-    />
-</caching-policies>
-""" % (POLICY_ID,
-       PREDICATE,
-       MTIME_FUNC,
-       VARY,
-       ETAG_FUNC,
-       MAX_AGE_SECS,
-       S_MAX_AGE_SECS,
-       PRE_CHECK,
-       POST_CHECK,
-      )
+<object name="caching_policy_manager" meta_type="CMF Caching Policy Manager">
+ <caching-policy name="%s" enable_304s="True"
+    etag_func="%s" last_modified="False" max_age_secs="%d"
+    mtime_func="%s" must_revalidate="True" no_cache="True"
+    no_store="True" no_transform="True" post_check="%d" pre_check="%d"
+    predicate="%s" private="True"
+    proxy_revalidate="True" public="True" s_max_age_secs="%d" vary="%s"/>
+</object>
+""" % (POLICY_ID, ETAG_FUNC, MAX_AGE_SECS, MTIME_FUNC, POST_CHECK, PRE_CHECK,
+       PREDICATE, S_MAX_AGE_SECS, VARY)
 
     def _initSite(self, with_policy=False):
         from OFS.Folder import Folder
@@ -107,68 +88,16 @@ class _CachingPolicyManagerSetup(BaseRegistryTests):
                          )
         return site
 
-class CachingPolicyManagerExportConfiguratorTests(_CachingPolicyManagerSetup):
+    def setUp(self):
+        PlacelessSetup.setUp(self)
+        BaseRegistryTests.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
-    def _getTargetClass(self):
-        from Products.CMFSetup.cachingpolicymgr \
-                import CachingPolicyManagerExportConfigurator
+    def tearDown(self):
+        BaseRegistryTests.tearDown(self)
+        PlacelessSetup.tearDown(self)
 
-        return CachingPolicyManagerExportConfigurator
-
-    def test_generateXML_empty(self):
-        site = self._initSite(with_policy=False)
-        configurator = self._makeOne(site).__of__(site)
-
-        self._compareDOM(configurator.generateXML(), self._EMPTY_EXPORT)
-
-    def test_generateXML_with_policy(self):
-        site = self._initSite(with_policy=True)
-        configurator = self._makeOne(site).__of__(site)
-
-        self._compareDOM(configurator.generateXML(), self._WITH_POLICY_EXPORT)
-
-
-class CachingPolicyManagerImportConfiguratorTests(_CachingPolicyManagerSetup):
-
-    def _getTargetClass(self):
-        from Products.CMFSetup.cachingpolicymgr \
-                import CachingPolicyManagerImportConfigurator
-
-        return CachingPolicyManagerImportConfigurator
-
-    def test_parseXML_empty(self):
-        site = self._initSite(with_policy=False)
-        configurator = self._makeOne(site)
-        cpm_info = configurator.parseXML(self._EMPTY_EXPORT)
-
-        self.assertEqual(len(cpm_info['policies']), 0)
-
-    def test_parseXML_with_policy(self):
-        site = self._initSite(with_policy=False)
-        configurator = self._makeOne(site)
-        cpm_info = configurator.parseXML(self._WITH_POLICY_EXPORT)
-
-        self.assertEqual(len(cpm_info['policies']), 1)
-
-        info = cpm_info['policies'][0]
-        self.assertEqual(info['policy_id'], self.POLICY_ID)
-        self.assertEqual(info['predicate'], self.PREDICATE)
-        self.assertEqual(info['mtime_func'], self.MTIME_FUNC)
-        self.assertEqual(info['vary'], self.VARY)
-        self.assertEqual(info['etag_func'], self.ETAG_FUNC)
-        self.assertEqual(info['max_age_secs'], self.MAX_AGE_SECS)
-        self.assertEqual(info['s_max_age_secs'], self.S_MAX_AGE_SECS)
-        self.assertEqual(info['pre_check'], self.PRE_CHECK)
-        self.assertEqual(info['post_check'], self.POST_CHECK)
-        self.assertEqual(info['last_modified'], False)
-        self.assertEqual(info['no_cache'], True)
-        self.assertEqual(info['no_store'], True)
-        self.assertEqual(info['must_revalidate'], True)
-        self.assertEqual(info['proxy_revalidate'], True)
-        self.assertEqual(info['no_transform'], True)
-        self.assertEqual(info['public'], True)
-        self.assertEqual(info['private'], True)
-        self.assertEqual(info['enable_304s'], True)
 
 class Test_exportCachingPolicyManager(_CachingPolicyManagerSetup):
 
@@ -240,8 +169,6 @@ class Test_importCachingPolicyManager(_CachingPolicyManagerSetup):
 
 def test_suite():
     return unittest.TestSuite((
-        unittest.makeSuite(CachingPolicyManagerExportConfiguratorTests),
-        unittest.makeSuite(CachingPolicyManagerImportConfiguratorTests),
         unittest.makeSuite(Test_exportCachingPolicyManager),
         unittest.makeSuite(Test_importCachingPolicyManager),
         ))

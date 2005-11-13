@@ -18,6 +18,10 @@ $Id$
 import unittest
 import Testing
 
+import Products
+from Products.Five import zcml
+
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
@@ -29,7 +33,7 @@ _TEST_PREDICATES = (
  ('logfiles', 'name_regex', ('error_log-.*',), 'Log File'),
 )
 
-class _ContentTypeRegistrySetup(BaseRegistryTests):
+class _ContentTypeRegistrySetup(PlacelessSetup, BaseRegistryTests):
 
     MAJOR_MINOR_ID = _TEST_PREDICATES[0][0]
     MAJOR = _TEST_PREDICATES[0][2][0]
@@ -47,39 +51,30 @@ class _ContentTypeRegistrySetup(BaseRegistryTests):
 
     _EMPTY_EXPORT = """\
 <?xml version="1.0"?>
-<content-type-registry>
-</content-type-registry>
+<object name="content_type_registry" meta_type="Content Type Registry"/>
 """
 
     _WITH_POLICY_EXPORT = """\
 <?xml version="1.0"?>
-<content-type-registry>
- <predicate
-    predicate_id="%s"
-    predicate_type="major_minor"
-    content_type_name="%s">
-  <argument value="%s" />
-  <argument value="%s" />
+<object name="content_type_registry" meta_type="Content Type Registry">
+ <predicate name="%s" content_type_name="%s"
+    predicate_type="major_minor">
+  <argument value="%s"/>
+  <argument value="%s"/>
  </predicate>
- <predicate
-    predicate_id="%s"
-    predicate_type="extension"
-    content_type_name="%s">
-  <argument value="%s" />
+ <predicate name="%s" content_type_name="%s"
+    predicate_type="extension">
+  <argument value="%s"/>
  </predicate>
- <predicate
-    predicate_id="%s"
-    predicate_type="mimetype_regex"
-    content_type_name="%s">
-  <argument value="%s" />
+ <predicate name="%s" content_type_name="%s"
+    predicate_type="mimetype_regex">
+  <argument value="%s"/>
  </predicate>
- <predicate
-    predicate_id="%s"
-    predicate_type="name_regex"
-    content_type_name="%s">
-  <argument value="%s" />
+ <predicate name="%s" content_type_name="%s"
+    predicate_type="name_regex">
+  <argument value="%s"/>
  </predicate>
-</content-type-registry>
+</object>
 """ % (MAJOR_MINOR_ID,
        MAJOR_MINOR_TYPENAME,
        MAJOR,
@@ -114,83 +109,16 @@ class _ContentTypeRegistrySetup(BaseRegistryTests):
 
         return site
 
-class ContentTypeRegistryExportConfiguratorTests(_ContentTypeRegistrySetup):
+    def setUp(self):
+        PlacelessSetup.setUp(self)
+        BaseRegistryTests.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
-    def _getTargetClass(self):
-        from Products.CMFSetup.contenttyperegistry \
-                import ContentTypeRegistryExportConfigurator
+    def tearDown(self):
+        BaseRegistryTests.tearDown(self)
+        PlacelessSetup.tearDown(self)
 
-        return ContentTypeRegistryExportConfigurator
-
-    def test_generateXML_empty(self):
-        site = self._initSite(mit_predikat=False)
-        configurator = self._makeOne(site).__of__(site)
-
-        self._compareDOM(configurator.generateXML(), self._EMPTY_EXPORT)
-
-    def test_generateXML_with_policy(self):
-        site = self._initSite(mit_predikat=True)
-        configurator = self._makeOne(site).__of__(site)
-
-        self._compareDOM(configurator.generateXML(), self._WITH_POLICY_EXPORT)
-
-
-class ContentTypeRegistryImportConfiguratorTests(_ContentTypeRegistrySetup):
-
-    def _getTargetClass(self):
-        from Products.CMFSetup.contenttyperegistry \
-                import ContentTypeRegistryImportConfigurator
-
-        return ContentTypeRegistryImportConfigurator
-
-    def test_parseXML_empty(self):
-        site = self._initSite(mit_predikat=False)
-        configurator = self._makeOne(site)
-        ctr_info = configurator.parseXML(self._EMPTY_EXPORT)
-
-        self.assertEqual(len(ctr_info['predicates']), 0)
-
-    def test_parseXML_with_policy(self):
-        site = self._initSite(mit_predikat=False)
-        configurator = self._makeOne(site)
-        ctr_info = configurator.parseXML(self._WITH_POLICY_EXPORT)
-
-        self.assertEqual(len(ctr_info['predicates']), len(_TEST_PREDICATES))
-
-        info = ctr_info['predicates'][0]
-        self.assertEqual(info['predicate_id'], self.MAJOR_MINOR_ID)
-        self.assertEqual(info['predicate_type'], 'major_minor')
-        self.assertEqual(info['content_type_name'], self.MAJOR_MINOR_TYPENAME)
-        arguments = info['arguments']
-        self.assertEqual(len(arguments), 2)
-        self.assertEqual(arguments[0]['value'], self.MAJOR)
-        self.assertEqual(arguments[1]['value'], self.MINOR)
-
-        info = ctr_info['predicates'][1]
-        self.assertEqual(info['predicate_id'], self.EXTENSION_ID)
-        self.assertEqual(info['predicate_type'], 'extension')
-        self.assertEqual(info['content_type_name'], self.EXTENSION_TYPENAME)
-        arguments = info['arguments']
-        self.assertEqual(len(arguments), 1)
-        self.assertEqual(arguments[0]['value'], self.EXTENSIONS)
-
-        info = ctr_info['predicates'][2]
-        self.assertEqual(info['predicate_id'], self.MIMETYPE_REGEX_ID)
-        self.assertEqual(info['predicate_type'], 'mimetype_regex')
-        self.assertEqual(info['content_type_name'],
-                         self.MIMETYPE_REGEX_TYPENAME)
-        arguments = info['arguments']
-        self.assertEqual(len(arguments), 1)
-        self.assertEqual(arguments[0]['value'], self.MIMETYPE_REGEX)
-
-        info = ctr_info['predicates'][3]
-        self.assertEqual(info['predicate_id'], self.NAME_REGEX_ID)
-        self.assertEqual(info['predicate_type'], 'name_regex')
-        self.assertEqual(info['content_type_name'],
-                         self.NAME_REGEX_TYPENAME)
-        arguments = info['arguments']
-        self.assertEqual(len(arguments), 1)
-        self.assertEqual(arguments[0]['value'], self.NAME_REGEX)
 
 class Test_exportContentTypeRegistry(_ContentTypeRegistrySetup):
 
@@ -267,12 +195,9 @@ class Test_importContentTypeRegistry(_ContentTypeRegistrySetup):
 
 def test_suite():
     return unittest.TestSuite((
-        unittest.makeSuite(ContentTypeRegistryExportConfiguratorTests),
-        unittest.makeSuite(ContentTypeRegistryImportConfiguratorTests),
         unittest.makeSuite(Test_exportContentTypeRegistry),
         unittest.makeSuite(Test_importContentTypeRegistry),
         ))
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')
-

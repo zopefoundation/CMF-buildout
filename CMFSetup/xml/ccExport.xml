@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<object xmlns:tal="http://xml.zope.org/namespaces/tal"
+   name="ID" meta_type="Cookie Crumbler"
+   tal:define="cc_info context/getCookieCrumblerInfo"
+   tal:attributes="name cc_info/id"
+><tal:span tal:define="prop_infos cc_info/properties"
+   tal:replace="structure python: context.generatePropertyNodes(prop_infos)"/>
+</object>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<skins-tool>
+ <skin-directory id="actionicons"
+                 directory="CMFActionIcons/skins/actionicons"/>
+ <skin-path id="*">
+  <layer name="actionicons" insert-before="zpt_content"/>
+ </skin-path>
+</skins-tool>

@@ -191,7 +191,7 @@ class ActionsTool(UniqueObject, Folder, ActionProviderBase):
     def _listActionInfos(self, provider, object):
         """ for Action Providers written for CMF versions before 1.5
         """
-        warn('ActionProvider interface not up to date. In CMF 1.6 '
+        warn('ActionProvider interface not up to date. In CMF 2.0 '
              'portal_actions will ignore listActions() of \'%s\'.'
              % provider.getId(),
              DeprecationWarning)

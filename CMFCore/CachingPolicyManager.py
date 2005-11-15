@@ -48,7 +48,7 @@ def createCPContext( content, view_method, keywords, time=None ):
     if time is None:
         time = DateTime()
 
-    # The name "content" is deprecated and will go away in CMF 1.7,
+    # The name "content" is deprecated and will go away in CMF 2.0,
     # please use "object" in your policy
     data = { 'content'  : content
            , 'object'   : content

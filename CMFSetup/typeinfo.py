@@ -201,7 +201,7 @@ class TypesToolExportConfigurator(ExportConfiguratorBase):
 InitializeClass(TypesToolExportConfigurator)
 
 
-# BBB: will be removed in CMF 1.7
+# BBB: will be removed in CMF 2.0
 class TypesToolConfigurator(TypesToolImportConfigurator,
                             TypesToolExportConfigurator):
     def __init__(self, site, encoding=None):
@@ -211,7 +211,7 @@ class TypesToolConfigurator(TypesToolImportConfigurator,
 InitializeClass(TypesToolConfigurator)
 
 
-# BBB: will be removed in CMF 1.7
+# BBB: will be removed in CMF 2.0
 class OldTypeInfoImportConfigurator(ImportConfiguratorBase):
 
     def _getImportMapping(self):
@@ -359,7 +359,7 @@ class TypeInfoExportConfigurator(ExportConfiguratorBase):
 InitializeClass(TypeInfoExportConfigurator)
 
 
-# BBB: will be removed in CMF 1.7
+# BBB: will be removed in CMF 2.0
 class TypeInfoConfigurator(TypeInfoImportConfigurator,
                            TypeInfoExportConfigurator):
     def __init__(self, site, encoding=None):

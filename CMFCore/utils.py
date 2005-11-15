@@ -151,7 +151,7 @@ def _checkPermission(permission, obj):
 
 security.declarePrivate('_verifyActionPermissions')
 def _verifyActionPermissions(obj, action):
-    # _verifyActionPermissions is deprecated and will be removed in CMF 1.6.
+    # _verifyActionPermissions is deprecated and will be removed in CMF 2.0.
     # This was only used by the deprecated _getViewFor function.
     pp = action.getPermissions()
     if not pp:
@@ -182,7 +182,7 @@ def getActionContext( self ):
 security.declarePrivate('_getViewFor')
 def _getViewFor(obj, view='view'):
     warn('__call__() and view() methods using _getViewFor() as well as '
-         '_getViewFor() itself are deprecated and will be removed in CMF 1.6. '
+         '_getViewFor() itself are deprecated and will be removed in CMF 2.0. '
          'Bypass these methods by defining \'(Default)\' and \'view\' Method '
          'Aliases.',
          DeprecationWarning)
@@ -565,7 +565,7 @@ class ToolInit:
         self.tools = tools
         if product_name is not None:
             warn("The product_name parameter of ToolInit is deprecated and "
-                 "will be ignored in CMF1.6: %s" % product_name,
+                 "will be ignored in CMF 2.0: %s" % product_name,
                  DeprecationWarning, stacklevel=2)
         self.product_name = product_name
         self.icon = icon
@@ -765,7 +765,7 @@ security.declarePublic('format_stx')
 def format_stx( text, level=1 ):
     """ Render STX to HTML.
     """
-    warn('format_stx() will be removed in CMF 1.6. Please use '
+    warn('format_stx() will be removed in CMF 2.0. Please use '
          'StructuredText.StructuredText.HTML instead.',
          DeprecationWarning)
     return HTML(text, level=level, header=0)

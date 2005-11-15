@@ -269,7 +269,7 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
     def getActionById( self, id, default=_marker ):
         """ Get method ID by action ID.
         """
-        warn('getActionById() is deprecated and will be removed in CMF 1.6. '
+        warn('getActionById() is deprecated and will be removed in CMF 2.0. '
              'Please use getActionInfo()[\'url\'] if you need an URL or '
              'queryMethodID() if you need a method ID.',
              DeprecationWarning)
@@ -769,7 +769,7 @@ class TypesTool(UniqueObject, Folder, ActionProviderBase):
             info = self.listDefaultTypeInformation()
 
             # Nasty orkaround to stay backwards-compatible
-            # This workaround will disappear in CMF 1.7
+            # This workaround will disappear in CMF 2.0
             if typeinfo_name.endswith(')'):
                 # This is a new-style name. Proceed normally.
                 for (name, ft) in info:
@@ -783,7 +783,7 @@ class TypesTool(UniqueObject, Folder, ActionProviderBase):
                 # than one TypeInformation sharing the same meta_type.
                 warn('Please switch to the new format for typeinfo names '
                      '\"product_id: type_id (meta_type)\", the old '
-                     'spelling will disappear in CMF 1.7', DeprecationWarning,
+                     'spelling will disappear in CMF 2.0', DeprecationWarning,
                      stacklevel=2)
 
                 ti_prod, ti_mt = [x.strip() for x in typeinfo_name.split(':')]

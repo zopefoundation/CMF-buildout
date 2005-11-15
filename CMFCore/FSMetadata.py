@@ -159,7 +159,7 @@ class FSMetadata:
         except IOError:
             return None
         else:
-            warn('.properties objects will disappear in CMF 1.7 - Use '
+            warn('.properties objects will disappear in CMF 2.0 - Use '
                  '.metadata objects instead.', DeprecationWarning)
             lines = f.readlines()
             f.close()
@@ -189,7 +189,7 @@ class FSMetadata:
         except IOError:
             return None
         else:
-            warn('.security objects will disappear in CMF 1.7 - Use '
+            warn('.security objects will disappear in CMF 2.0 - Use '
                  '.metadata objects instead.', DeprecationWarning)
             lines = f.readlines()
             f.close()

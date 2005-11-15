@@ -172,7 +172,7 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
         meta_types.  Otherwise ensures all of the given meta types are
         contentish.
         '''
-        warn('Using the \'spec\' argument is deprecated. In CMF 1.6 '
+        warn('Using the \'spec\' argument is deprecated. In CMF 2.0 '
              'contentItems(), contentIds(), contentValues() and '
              'listFolderContents() will no longer support \'spec\'. Use the '
              '\'filter\' argument with \'portal_type\' instead.',

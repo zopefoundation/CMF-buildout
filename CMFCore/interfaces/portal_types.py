@@ -72,7 +72,7 @@ class ContentTypeInformation(Interface):
     def getActionById(id):
         """ Get method ID by action ID.
 
-        This method is deprecated and will be removed in CMF 1.6. Please use
+        This method is deprecated and will be removed in CMF 2.0. Please use
         getActionInfo()['url'] if you need an URL or queryMethodID() if you
         need a method ID.
         """

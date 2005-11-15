@@ -14,6 +14,9 @@ CMF 1.5.5-beta (2005/11/06)
       in the list of events for the day starting at midnight.
       (http://www.zope.org/Collectors/CMF/246)
 
+    - CMFSetup: fixed empty attribute parsing when an encoding is
+      defined.
+
   Features
 
     - CMFCore:  added 'skinname' to the thread-specific tuple created by

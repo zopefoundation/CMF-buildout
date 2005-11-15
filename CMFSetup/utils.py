@@ -74,7 +74,8 @@ class ImportConfiguratorBase(Implicit):
 
         for name, val in node.attributes.items():
             key = node_map[name].get( KEY, str(name) )
-            val = self._encoding and val.encode(self._encoding) or val
+            if self._encoding is not None:
+                val = val.encode(self._encoding)
             info[key] = val
 
         for child in node.childNodes:
@@ -91,7 +92,8 @@ class ImportConfiguratorBase(Implicit):
             elif '#text' in node_map:
                 key = node_map['#text'].get(KEY, 'value')
                 val = child.nodeValue.lstrip()
-                val = self._encoding and val.encode(self._encoding) or val
+                if self._encoding is not None:
+                    val = val.encode(self._encoding)
                 info[key] = info.setdefault(key, '') + val
 
         for k, v in node_map.items():

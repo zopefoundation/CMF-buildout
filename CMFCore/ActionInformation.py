@@ -383,7 +383,7 @@ class oai:
             self.folder_url = self.portal_url
             self.folder = portal
 
-        # The name "content" is deprecated and will go away in CMF 1.7!    
+        # The name "content" is deprecated and will go away in CMF 2.0!    
         self.object = self.content = object
         if object is not None:
             self.object_url = self.content_url = object.absolute_url()

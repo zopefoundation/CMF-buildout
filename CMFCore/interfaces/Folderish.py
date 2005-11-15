@@ -28,7 +28,7 @@ class Folderish(Interface):
         Provide a filtered view onto 'objectItems', allowing only
         PortalFolders and PortalContent-derivatives to show through.
 
-        The 'spec' argument is deprecated and will be removed in CMF 1.6.
+        The 'spec' argument is deprecated and will be removed in CMF 2.0.
 
         Permission -- Always available (not publishable)
 
@@ -41,7 +41,7 @@ class Folderish(Interface):
         Provide a filtered view onto 'objectIds', allowing only PortalFolders
         and PortalContent-derivatives to show through.
 
-        The 'spec' argument is deprecated and will be removed in CMF 1.6.
+        The 'spec' argument is deprecated and will be removed in CMF 2.0.
 
         Permission -- Always available (not publishable)
 
@@ -54,7 +54,7 @@ class Folderish(Interface):
         Provide a filtered view onto 'objectValues', allowing only
         PortalFolders and PortalContent-derivatives to show through.
 
-        The 'spec' argument is deprecated and will be removed in CMF 1.6.
+        The 'spec' argument is deprecated and will be removed in CMF 2.0.
 
         Permission -- Always available (not publishable)
 
@@ -67,7 +67,7 @@ class Folderish(Interface):
         Hook around 'contentValues' to let 'folder_contents' be protected.
         Duplicating skip_unauthorized behavior of dtml-in.
 
-        The 'spec' argument is deprecated and will be removed in CMF 1.6.
+        The 'spec' argument is deprecated and will be removed in CMF 2.0.
 
         Permission -- List folder contents
 

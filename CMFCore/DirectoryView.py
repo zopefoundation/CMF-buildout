@@ -47,7 +47,7 @@ def expandpath(p):
     """ utils.expandpath() wrapper for backwards compatibility.
     """
     warn('expandpath() doesn\'t belong to DirectoryView anymore and will be '
-         'removed from that module in CMF 1.6. Please import expandpath from '
+         'removed from that module in CMF 2.0. Please import expandpath from '
          'the utils module.',
          DeprecationWarning)
     return _new_expandpath(p)
@@ -519,7 +519,7 @@ def createDirectoryView(parent, minimal_fp, id=None):
         else:
             warn('createDirectoryView() expects a slash-separated path '
                  'relative to the Products path. \'%s\' will no longer work '
-                 'in CMF 1.6.' % minimal_fp,
+                 'in CMF 2.0.' % minimal_fp,
                  DeprecationWarning)
         minimal_fp = fixed_minimal_fp
     if not id:

@@ -94,6 +94,9 @@ HEAD only (unreleased)
 
   Bug Fixes
 
+    - CMFSetup: fixed empty attribute parsing when an encoding is
+      defined.
+
     - ActionProviderBase: getActionObject did stumble over newstyle Actions.
 
     - CMFCore.exportimport.content:  Ensure that BODYFILE in our "faux"

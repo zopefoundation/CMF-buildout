@@ -11,9 +11,8 @@ Overview
     - See the note below [1] if you want to export or check out
       the sources for a specific version from Subversion.
 
- *Please note that current versions of the CMF (1.5 and later) require Zope 
- 2.7.0 or later.  Also, please note that earlier versions of the CMF (< 1.5) 
- may not be completely compatible with more recent versions of Zope (>= 2.8).*
+ *Please note that current versions of the CMF (1.6 and later) require Zope 
+ 2.8.1 or later.
 
   * For help with Subversion in general, see "Version Control with 
     Subversion" at http://svnbook.red-bean.com/
@@ -74,8 +73,8 @@ Installation
   4. Create a CMF Site:
 
      From the management interface, somewhere in the "main" section of your 
-     site (*not* the Control_Panel!), select "Configured CMF Site" from the 
-     add list.  Fill out the constructor form, and click the "Add" button.
+     site (*not* the Control_Panel!), select "CMF Site" from the add list.  
+     Fill out the constructor form, and click the "Add" button.
 
 Refreshing your Checkout
 

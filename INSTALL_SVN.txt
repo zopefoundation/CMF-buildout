@@ -1,0 +1,97 @@
+Overview
+
+ This document describes the process of getting the CMF from the Subversion 
+ repository, and installing it into your Zope.  It assumes the following:
+
+  * You want to install the "latest-and-greatest" version of the CMF from 
+    a Subversion checkout.
+
+    - See "Installing CMF":INSTALL.txt to install from a tarball.
+
+    - See the note below [1] if you want to export or check out
+      the sources for a specific version from Subversion.
+
+ *Please note that current versions of the CMF (1.5 and later) require Zope 
+ 2.7.0 or later.  Also, please note that earlier versions of the CMF (< 1.5) 
+ may not be completely compatible with more recent versions of Zope (>= 2.8).*
+
+  * For help with Subversion in general, see "Version Control with 
+    Subversion" at http://svnbook.red-bean.com/
+
+  * For directions on using the Zope Subversion server, see "The Zope Public 
+    Subversion Repository", http://www.zope.org/DevHome/Subversion/FrontPage;
+    substitute 'CMF' for 'Zope'.
+
+Installation
+
+  1. Fetch the CMF package from the Zope Subversion repository::
+
+     $ cd /tmp
+     $ svn co svn://svn.zope.org/repos/main/CMF/trunk CMF-head
+
+     This checkout creates a directory, 'CMF-head', which contain several 
+     subdirectories:
+
+      - CMFCore
+
+      - CMFDefault
+
+      - CMFTopic
+
+      - CMFCalendar
+
+      - DCWorkflow
+
+     ... and several others.
+
+  2. Copy or link each of these subdirectories into the 'Products' directory of
+     your Zope server (either SOFTWARE_HOME or INSTANCE_HOME) e.g.::
+
+      $ cd /var/zope/Products
+      $ ln -s /tmp/CMF-head/CMFCore .
+      $ ln -s /tmp/CMF-head/CMFDefault .
+      $ ln -s /tmp/CMF-head/CMFTopic .
+      $ ln -s /tmp/CMF-head/DCWorkflow .
+      ...
+
+  3. Verify filesystem products:
+
+     Start or restart your Zope server.  Check to see that the following 
+     products are present in the Control_Panel / Products list;  each should 
+     show a "normal" (non-broken) icon, and should have a version number 
+     matching the release version of the snapshot:
+
+      - CMFCore
+
+      - CMFDefault
+
+      - CMFTopic
+
+      - DCWorkflow
+
+      ...
+
+  4. Create a CMF Site:
+
+     From the management interface, somewhere in the "main" section of your 
+     site (*not* the Control_Panel!), select "Configured CMF Site" from the 
+     add list.  Fill out the constructor form, and click the "Add" button.
+
+Refreshing your Checkout
+
+  To refresh an existing Subversion sandbox, you should use 'svn up'.
+
+Fetching a Previous Version
+
+.. [1]  A Subversion checkout as described above retrieves what is called 
+        the "head" (the latest revision for each file) from the "main 
+        trunk" (no unmerged branches).
+
+  Retrieving Sources for a specific release
+  
+     Sources for prior releases are tagged, using the release version 
+     number. For instance, version 1.5.2 of the CMF was tagged as 
+     '1.5.2'.  To fetch such a release from Subversion::
+  
+      $ svn co svn://svn.zope.org/repos/main/CMF/tags/1.5.2 CMF-1.5.2
+  

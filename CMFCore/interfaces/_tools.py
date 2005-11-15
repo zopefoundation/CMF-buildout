@@ -1519,7 +1519,7 @@ class IWorkflowTool(Interface):
         o Generate the list as though queried via
           'ActionsTool.listFilteredActionsFor'.
 
-        o This method is deprecated and will be removed in CMF 1.7.
+        o This method is deprecated and will be removed in CMF 2.0.
 
         o Permission:  Public
         """

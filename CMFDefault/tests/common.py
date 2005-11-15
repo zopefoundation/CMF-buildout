@@ -40,10 +40,10 @@ class ConformsToContent:
         from zope.interface.verify import verifyClass
         from Products.CMFCore.interfaces import ICatalogableDublinCore
         from Products.CMFCore.interfaces import IContentish
-        from Products.CMFCore.interfaces import IDAVAware
         from Products.CMFCore.interfaces import IDublinCore
         from Products.CMFCore.interfaces import IDynamicType
         from Products.CMFCore.interfaces import IMutableDublinCore
+        from Products.GenericSetup.interfaces import IDAVAware
 
         verifyClass(ICatalogableDublinCore, self._getTargetClass())
         verifyClass(IContentish, self._getTargetClass())

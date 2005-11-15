@@ -50,17 +50,17 @@ class SiteStructureExporterTests(PlacelessSetup,
         from zope.app.tests import ztapi
         #from OFS.Image import File
 
-        from Products.CMFCore.interfaces import IFilesystemExporter
-        from Products.CMFCore.interfaces import IFilesystemImporter
+        from Products.GenericSetup.interfaces import IFilesystemExporter
+        from Products.GenericSetup.interfaces import IFilesystemImporter
+        from Products.GenericSetup.interfaces import ICSVAware
+        from Products.GenericSetup.interfaces import IINIAware
         from Products.CMFCore.interfaces import IFolderish
-        from Products.CMFCore.interfaces import ICSVAware
-        from Products.CMFCore.interfaces import IINIAware
 
         from Products.CMFCore.exportimport.content import \
              StructureFolderWalkingAdapter
-        from Products.CMFCore.exportimport.content import \
+        from Products.GenericSetup.content import \
              CSVAwareFileAdapter
-        from Products.CMFCore.exportimport.content import \
+        from Products.GenericSetup.content import \
              INIAwareFileAdapter
 
         #from Products.CMFCore.exportimport.content import \
@@ -357,6 +357,8 @@ class SiteStructureExporterTests(PlacelessSetup,
         self.assertEqual(site.objectIds()[0], 'setup_tool')
 
     def test_import_site_with_subfolders(self):
+        from Products.GenericSetup.tests.test_content \
+            import _PROPERTIES_TEMPLATE
         self._setUpAdapters()
         FOLDER_IDS = ('foo', 'bar', 'baz')
 
@@ -518,177 +520,6 @@ class SiteStructureExporterTests(PlacelessSetup,
         self.assertEqual(site.foo.objectIds()[1], 'baz')
 
 
-class Test_globpattern(unittest.TestCase):
-
-    NAMELIST = ('foo', 'bar', 'baz', 'bam', 'qux', 'quxx', 'quxxx')
-
-    def _checkResults(self, globpattern, namelist, expected):
-        from Products.CMFCore.exportimport.content import _globtest
-        found = _globtest(globpattern, namelist)
-        self.assertEqual(len(found), len(expected))
-        for found_item, expected_item in zip(found, expected):
-            self.assertEqual(found_item, expected_item)
-
-    def test_star(self):
-        self._checkResults('*', self.NAMELIST, self.NAMELIST)
-
-    def test_simple(self):
-        self._checkResults('b*', self.NAMELIST,
-                            [x for x in self.NAMELIST if x.startswith('b')])
-
-    def test_multiple(self):
-        self._checkResults('b*\n*x', self.NAMELIST,
-                            [x for x in self.NAMELIST
-                                if x.startswith('b') or x.endswith('x')])
-
-
-class CSVAwareFileAdapterTests(unittest.TestCase,
-                               ConformsToIFilesystemExporter,
-                               ConformsToIFilesystemImporter,
-                              ):
-
-    def _getTargetClass(self):
-        from Products.CMFCore.exportimport.content import CSVAwareFileAdapter
-        return CSVAwareFileAdapter
-
-    def _makeOne(self, context, *args, **kw):
-        return self._getTargetClass()(context, *args, **kw)
-
-    def _makeCSVAware(self, sheet_id, csv=''):
-        class Foo:
-            def getId(self):
-                return self._id
-            def as_csv(self):
-                return self.csv
-            def put_csv(self, stream):
-                self.new_csv = stream.getvalue()
-
-        foo = Foo()
-        foo._id = sheet_id
-        foo.csv = csv
-        foo.new_csv = None
-
-        return foo
-
-
-    def test_export_with_known_CSV(self):
-        KNOWN_CSV = """\
-one,two,three
-four,five,six
-"""
-        sheet = self._makeCSVAware('config', KNOWN_CSV)
-
-        adapter = self._makeOne(sheet)
-        context = DummyExportContext(None)
-        adapter.export(context, 'subpath/to/sheet')
-
-        self.assertEqual(len(context._wrote), 1)
-        filename, text, content_type = context._wrote[0]
-        self.assertEqual(filename, 'subpath/to/sheet/config.csv')
-        self.assertEqual(content_type, 'text/comma-separated-values')
-
-        self.assertEqual(text.strip(), KNOWN_CSV.strip())
-
-    def test_import_with_known_CSV(self):
-        ORIG_CSV = """\
-one,two,three
-four,five,six
-"""
-        NEW_CSV = """\
-four,five,six
-one,two,three
-"""
-        sheet = self._makeCSVAware('config', ORIG_CSV)
-
-        adapter = self._makeOne(sheet)
-        context = DummyImportContext(None)
-        context._files['subpath/to/sheet/config.csv'] = NEW_CSV
-        adapter.import_(context, 'subpath/to/sheet')
-
-        self.assertEqual(sheet.new_csv.strip(), NEW_CSV.strip())
-
-
-_PROPERTIES_TEMPLATE = """
-[DEFAULT]
-Title = %s
-Description = This is a test
-"""
-
-class INIAwareFileAdapterTests(unittest.TestCase,
-                               ConformsToIFilesystemExporter,
-                               ConformsToIFilesystemImporter,
-                               ):
-
-    def _getTargetClass(self):
-        from Products.CMFCore.exportimport.content import INIAwareFileAdapter
-        return INIAwareFileAdapter
-
-    def _makeOne(self, context, *args, **kw):
-        return self._getTargetClass()(context, *args, **kw)
-
-    def test_export_ini_file(self):
-        ini_file = _makeINIAware('ini_file.html')
-        adapter = self._makeOne(ini_file)
-        context = DummyExportContext(None)
-        adapter.export(context, 'subpath/to')
-
-        self.assertEqual(len(context._wrote), 1)
-        filename, text, content_type = context._wrote[0]
-        self.assertEqual(filename, 'subpath/to/ini_file.html.ini')
-        self.assertEqual(content_type, 'text/plain')
-
-        self.assertEqual(text.strip(), ini_file.as_ini().strip())
-
-    def test_import_ini_file(self):
-        ini_file = _makeINIAware('ini_file.html')
-        adapter = self._makeOne(ini_file)
-        context = DummyImportContext(None)
-        context._files['subpath/to/ini_file.html.ini'] = (
-                        KNOWN_INI % ('Title: ini_file', 'abc'))
-
-        adapter.import_(context, 'subpath/to')
-        text = ini_file._was_put
-        parser = ConfigParser()
-        parser.readfp(StringIO(text))
-        self.assertEqual(parser.get('DEFAULT', 'title'), 'Title: ini_file')
-        self.assertEqual(parser.get('DEFAULT', 'description'), 'abc')
-
-
-class DAVAwareFileAdapterTests(unittest.TestCase,
-                               ConformsToIFilesystemExporter,
-                               ConformsToIFilesystemImporter,
-                               ):
-
-    def _getTargetClass(self):
-        from Products.CMFCore.exportimport.content import DAVAwareFileAdapter
-        return DAVAwareFileAdapter
-
-    def _makeOne(self, context, *args, **kw):
-        return self._getTargetClass()(context, *args, **kw)
-
-    def test_export_dav_file(self):
-        dav_file = _makeDAVAware('dav_file.html')
-        adapter = self._makeOne(dav_file)
-        context = DummyExportContext(None)
-        adapter.export(context, 'subpath/to')
-
-        self.assertEqual(len(context._wrote), 1)
-        filename, text, content_type = context._wrote[0]
-        self.assertEqual(filename, 'subpath/to/dav_file.html')
-        self.assertEqual(content_type, 'text/plain')
-        self.assertEqual(text.strip(), dav_file.manage_FTPget().strip())
-
-    def test_import_dav_file(self):
-        VALUES = ('Title: dav_file', 'Description: abc', 'body goes here')
-        dav_file = _makeDAVAware('dav_file.html')
-        adapter = self._makeOne(dav_file)
-        context = DummyImportContext(None)
-        context._files['subpath/to/dav_file.html'] = KNOWN_DAV % VALUES
-
-        adapter.import_(context, 'subpath/to')
-        text = dav_file._was_put == KNOWN_DAV % VALUES
-
-
 TEST_CSV_AWARE = 'Test CSV Aware'
 KNOWN_CSV = """\
 one,two,three
@@ -699,7 +530,7 @@ def _makeCSVAware(id):
     from OFS.SimpleItem import SimpleItem
     from zope.interface import implements
     from Products.CMFCore.interfaces import IDynamicType
-    from Products.CMFCore.interfaces import ICSVAware
+    from Products.GenericSetup.interfaces import ICSVAware
 
     class _TestCSVAware(SimpleItem):
         implements(IDynamicType, ICSVAware)
@@ -732,7 +563,7 @@ def _makeINIAware(id):
     from OFS.SimpleItem import SimpleItem
     from zope.interface import implements
     from Products.CMFCore.interfaces import IDynamicType
-    from Products.CMFCore.interfaces import IINIAware
+    from Products.GenericSetup.interfaces import IINIAware
 
     class _TestINIAware(SimpleItem):
         implements(IDynamicType, IINIAware)
@@ -768,7 +599,7 @@ def _makeDAVAware(id):
     from OFS.SimpleItem import SimpleItem
     from zope.interface import implements
     from Products.CMFCore.interfaces import IDynamicType
-    from Products.CMFCore.interfaces import IDAVAware
+    from Products.GenericSetup.interfaces import IDAVAware
 
     class _TestDAVAware(SimpleItem):
         implements(IDynamicType, IDAVAware)
@@ -818,10 +649,7 @@ def _makeItem(self):
 TEST_FOLDER = 'Test Folder'
 
 def _makeFolder(id, site_folder=False):
-    from zope.interface import directlyProvides
-    from zope.interface import providedBy
     from Products.CMFCore.PortalFolder import PortalFolder
-    from Products.CMFCore.interfaces import ISiteRoot
     from Products.CMFCore.TypesTool import TypesTool
     from Products.CMFCore.tests.base.dummy import DummyType
 
@@ -848,7 +676,6 @@ def _makeFolder(id, site_folder=False):
     folder = PortalFolder(id)
     folder.portal_type = TEST_FOLDER
     if site_folder:
-        directlyProvides(folder, ISiteRoot + providedBy(folder))
         tool = folder.portal_types = TypesTool()
         tool._setObject(TEST_CSV_AWARE, _TypeInfo(TEST_CSV_AWARE))
         tool._setObject(TEST_INI_AWARE, _TypeInfo(TEST_INI_AWARE))
@@ -861,10 +688,6 @@ def _makeFolder(id, site_folder=False):
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(SiteStructureExporterTests))
-    suite.addTest(unittest.makeSuite(Test_globpattern))
-    suite.addTest(unittest.makeSuite(CSVAwareFileAdapterTests))
-    suite.addTest(unittest.makeSuite(INIAwareFileAdapterTests))
-    suite.addTest(unittest.makeSuite(DAVAwareFileAdapterTests))
     return suite
 
 if __name__ == '__main__':

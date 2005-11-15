@@ -25,10 +25,10 @@ from Globals import InitializeClass
 from StructuredText.StructuredText import HTML
 from zope.interface import implements
 
-from Products.CMFCore.interfaces import IDAVAware
 from Products.CMFCore.PortalContent import PortalContent
 from Products.CMFCore.utils import contributorsplitter
 from Products.CMFCore.utils import keywordsplitter
+from Products.GenericSetup.interfaces import IDAVAware
 
 from DublinCore import DefaultDublinCoreImpl
 from exceptions import EditingConflict

@@ -137,6 +137,9 @@ HEAD only (unreleased)
 
   Others
 
+    - CMFCore and GenericSetup: Moved mechanisms for content export / import
+      to GenericSetup/content.py, and made more generic.
+
     - CMFDefault: Removed PortalGenerator and manage_addCMFSite.
 
     - Portal Types: Removed factory_type_information data.

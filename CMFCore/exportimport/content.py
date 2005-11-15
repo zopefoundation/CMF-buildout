@@ -25,19 +25,19 @@ from StringIO import StringIO
 from zope.interface import implements
 from zope.interface import directlyProvides
 
-from Products.CMFCore.interfaces import IFilesystemExporter
-from Products.CMFCore.interfaces import IFilesystemImporter
-from Products.CMFCore.interfaces import ISiteRoot
+from Products.GenericSetup.interfaces import IFilesystemExporter
+from Products.GenericSetup.interfaces import IFilesystemImporter
+from Products.GenericSetup.content import _globtest
 from Products.CMFCore.utils import getToolByName
 
 #
 #   setup_tool handlers
 #
 def exportSiteStructure(context):
-    IFilesystemExporter(context.getSite()).export(context, 'structure')
+    IFilesystemExporter(context.getSite()).export(context, 'structure', True)
 
 def importSiteStructure(context):
-    IFilesystemImporter(context.getSite()).import_(context, 'structure')
+    IFilesystemImporter(context.getSite()).import_(context, 'structure', True)
 
 
 #
@@ -65,7 +65,7 @@ class StructureFolderWalkingAdapter(object):
     def __init__(self, context):
         self.context = context
 
-    def export(self, export_context, subdir):
+    def export(self, export_context, subdir, root=False):
         """ See IFilesystemExporter.
         """
         # Enumerate exportable children
@@ -79,7 +79,7 @@ class StructureFolderWalkingAdapter(object):
         for object_id, object, ignored in exportable:
             csv_writer.writerow((object_id, object.getPortalTypeName()))
 
-        if not ISiteRoot.providedBy(self.context):
+        if not root:
             subdir = '%s/%s' % (subdir, self.context.getId())
 
         export_context.writeDataFile('.objects',
@@ -108,11 +108,11 @@ class StructureFolderWalkingAdapter(object):
             if adapter is not None:
                 adapter.export(export_context, subdir)
 
-    def import_(self, import_context, subdir):
+    def import_(self, import_context, subdir, root=False):
         """ See IFilesystemImporter.
         """
         context = self.context
-        if not ISiteRoot.providedBy(context):
+        if not root:
             subdir = '%s/%s' % (subdir, context.getId())
 
         preserve = import_context.readDataFile('.preserve', subdir)
@@ -183,142 +183,3 @@ class StructureFolderWalkingAdapter(object):
 
         return content
 
-
-def _globtest(globpattern, namelist):
-    """ Filter names in 'namelist', returning those which match 'globpattern'.
-    """
-    import re
-    pattern = globpattern.replace(".", r"\.")       # mask dots
-    pattern = pattern.replace("*", r".*")           # change glob sequence
-    pattern = pattern.replace("?", r".")            # change glob char
-    pattern = '|'.join(pattern.split())             # 'or' each line
-
-    compiled = re.compile(pattern)
-
-    return filter(compiled.match, namelist)
-
-
-class CSVAwareFileAdapter(object):
-    """ Adapter for content whose "natural" representation is CSV.
-    """
-    implements(IFilesystemExporter, IFilesystemImporter)
-
-    def __init__(self, context):
-        self.context = context
-
-    def export(self, export_context, subdir):
-        """ See IFilesystemExporter.
-        """
-        export_context.writeDataFile('%s.csv' % self.context.getId(),
-                                     self.context.as_csv(),
-                                     'text/comma-separated-values',
-                                     subdir,
-                                    )
-
-    def listExportableItems(self):
-        """ See IFilesystemExporter.
-        """
-        return ()
-
-    def import_(self, import_context, subdir):
-        """ See IFilesystemImporter.
-        """
-        cid = self.context.getId()
-        data = import_context.readDataFile('%s.csv' % cid, subdir)
-        if data is None:
-            import_context.note('CSAFA',
-                                'no .csv file for %s/%s' % (subdir, cid))
-        else:
-            stream = StringIO(data)
-            self.context.put_csv(stream)
-
-class INIAwareFileAdapter(object):
-    """ Exporter/importer for content whose "natural" representation is CSV.
-    """
-    implements(IFilesystemExporter, IFilesystemImporter)
-
-    def __init__(self, context):
-        self.context = context
-
-    def export(self, export_context, subdir):
-        """ See IFilesystemExporter.
-        """
-        export_context.writeDataFile('%s.ini' % self.context.getId(),
-                                     self.context.as_ini(),
-                                     'text/plain',
-                                     subdir,
-                                    )
-
-    def listExportableItems(self):
-        """ See IFilesystemExporter.
-        """
-        return ()
-
-    def import_(self, import_context, subdir):
-        """ See IFilesystemImporter.
-        """
-        cid = self.context.getId()
-        data = import_context.readDataFile('%s.ini' % cid, subdir)
-        if data is None:
-            import_context.note('SGAIFA',
-                                'no .ini file for %s/%s' % (subdir, cid))
-        else:
-            self.context.put_ini(data)
-
-
-class FauxDAVRequest:
-
-    def __init__(self, **kw):
-        self._data = {}
-        self._headers = {}
-        self._data.update(kw)
-
-    def __getitem__(self, key):
-        return self._data[key]
-
-    def get(self, key, default=None):
-        return self._data.get(key, default)
-
-    def get_header(self, key, default=None):
-        return self._headers.get(key, default)
-
-class FauxDAVResponse:
-    def setHeader(self, key, value, lock=False):
-        pass  # stub this out to mollify webdav.Resource
-    def setStatus(self, value, reason=None):
-        pass  # stub this out to mollify webdav.Resource
-
-class DAVAwareFileAdapter(object):
-    """ Exporter/importer for content who handle their own FTP / DAV PUTs.
-    """
-    implements(IFilesystemExporter, IFilesystemImporter)
-
-    def __init__(self, context):
-        self.context = context
-
-    def export(self, export_context, subdir):
-        """ See IFilesystemExporter.
-        """
-        export_context.writeDataFile('%s' % self.context.getId(),
-                                     self.context.manage_FTPget(),
-                                     'text/plain',
-                                     subdir,
-                                    )
-
-    def listExportableItems(self):
-        """ See IFilesystemExporter.
-        """
-        return ()
-
-    def import_(self, import_context, subdir):
-        """ See IFilesystemImporter.
-        """
-        cid = self.context.getId()
-        data = import_context.readDataFile('%s' % cid, subdir)
-        if data is None:
-            import_context.note('SGAIFA',
-                                'no .ini file for %s/%s' % (subdir, cid))
-        else:
-            request = FauxDAVRequest(BODY=data, BODYFILE=StringIO(data))
-            response = FauxDAVResponse()
-            self.context.PUT(request, response)

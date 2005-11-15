@@ -22,8 +22,8 @@ from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
 from zope.interface import implements
 
-from Products.CMFCore.interfaces import IDAVAware
 from Products.CMFCore.PortalContent import PortalContent
+from Products.GenericSetup.interfaces import IDAVAware
 
 from DublinCore import DefaultDublinCoreImpl
 from permissions import ModifyPortalContent

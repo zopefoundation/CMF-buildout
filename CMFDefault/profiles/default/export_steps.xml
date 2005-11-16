@@ -10,6 +10,11 @@
               title="Caching Policies">
   Export caching policy manager's policies.
  </export-step>
+ <export-step id="catalog"
+              handler="Products.CMFSetup.catalog.exportCatalogTool"
+              title="Catalog Tool">
+  Export catalog tool's sub-objects, indexes and columns.
+ </export-step>
  <export-step id="content_type_registry"
               handler="Products.CMFSetup.contenttyperegistry.exportContentTypeRegistry"
               title="Content Type Registry">
@@ -31,7 +36,7 @@
   Export site properties.
  </export-step>
  <export-step id="rolemap"
-              handler="Products.CMFSetup.rolemap.exportRolemap"
+              handler="Products.GenericSetup.rolemap.exportRolemap"
               title="Role / Permission Map">
   Export custom roles and non-default role-permission mappings.
  </export-step>
@@ -41,12 +46,12 @@
   Export skins tool's filesystem directory views and skin path definitions.
  </export-step>
  <export-step id="step_registries"
-              handler="Products.CMFSetup.tool.exportStepRegistries"
+              handler="Products.GenericSetup.tool.exportStepRegistries"
               title="Step Registries">
   Export current contents of import step registry and export step registry.
  </export-step>
  <export-step id="toolset"
-              handler="Products.CMFSetup.tool.exportToolset"
+              handler="Products.GenericSetup.tool.exportToolset"
               title="Required Tools">
   Export required / forbidden tools.
  </export-step>

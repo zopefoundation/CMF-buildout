@@ -21,13 +21,11 @@ from Products.CMFCore.utils import initializeBasesPhase2
 from Products.CMFCore.utils import ToolInit
 from Products.CMFCore.utils import ContentInit
 from Products.CMFCore.utils import registerIcon
-try:
-    from Products.CMFSetup import BASE
-    from Products.CMFSetup import profile_registry
-    has_profile_registry = True
-except ImportError:
-    has_profile_registry = False
+from Products.GenericSetup import BASE
+from Products.GenericSetup import EXTENSION
+from Products.GenericSetup import profile_registry
 
+import factory
 import utils
 from permissions import AddPortalContent
 
@@ -114,21 +112,25 @@ def initialize( context ):
                , content_types=contentClasses
                , permission=AddPortalContent
                , extra_constructors=contentConstructors
-               , fti=Portal.factory_type_information
                ).initialize( context )
 
-    if has_profile_registry:
-        profile_registry.registerProfile('default',
-                                         'CMFDefault Site',
-                                         'Profile for a default CMFSite.',
-                                         'profiles/default',
-                                         'CMFDefault',
-                                         BASE)
+    profile_registry.registerProfile('default',
+                                     'CMFDefault Site',
+                                     'Profile for a default CMFSite.',
+                                     'profiles/default',
+                                     'CMFDefault',
+                                     BASE)
+
+    profile_registry.registerProfile('sample_content',
+                                     'Sample CMFDefault Content',
+                                     'Content for a sample CMFSite.',
+                                     'profiles/sample_content',
+                                     'CMFDefault',
+                                     EXTENSION)
 
     context.registerClass( Portal.CMFSite
-                         , constructors=( Portal.manage_addCMFSiteForm
-                                        , Portal.manage_addCMFSite
-                                        )
+                         , constructors=(factory.addConfiguredSiteForm,
+                                         factory.addConfiguredSite)
                          , icon='portal.gif'
                          )
 

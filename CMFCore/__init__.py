@@ -31,7 +31,9 @@ import ContentTypeRegistry
 import CachingPolicyManager
 import utils
 
+from interfaces import ITypeInformation
 from permissions import AddPortalFolders
+from permissions import ManagePortal
 
 
 # Old name that some third-party packages may need.
@@ -127,6 +129,24 @@ def initialize(context):
         constructors=( CachingPolicyManager.manage_addCachingPolicyManager, ),
         icon = 'images/registry.gif'
         )
+
+    context.registerClass(
+        TypesTool.FactoryTypeInformation,
+        permission=ManagePortal,
+        constructors=(TypesTool.manage_addFactoryTIForm,
+                      TypesTool.manage_addTypeInfo),
+        icon='images/typeinfo.gif',
+        visibility=None,
+        interfaces=(ITypeInformation,))
+
+    context.registerClass(
+        TypesTool.ScriptableTypeInformation,
+        permission=ManagePortal,
+        constructors=(TypesTool.manage_addScriptableTIForm,
+                      TypesTool.manage_addTypeInfo),
+        icon='images/typeinfo.gif',
+        visibility=None,
+        interfaces=(ITypeInformation,))
 
     utils.registerIcon(FSDTMLMethod.FSDTMLMethod,
                        'images/fsdtml.gif', globals())

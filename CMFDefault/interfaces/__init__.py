@@ -12,5 +12,20 @@
 ##############################################################################
 """ CMFDefault.interfaces package.
 
-$Id$
+$Id: __init__.py 38590 2005-09-24 15:24:32Z yuppie $
 """
+
+from _content import *
+from _tools import *
+
+# BBB: will be removed in CMF 2.2
+#      create zope2 interfaces
+from Interface.bridge import createZope3Bridge
+import Document
+import portal_membership
+
+createZope3Bridge(IDocument, Document, 'IDocument')
+createZope3Bridge(IMutableDocument, Document, 'IMutableDocument')
+createZope3Bridge(IMembershipTool, portal_membership, 'portal_membership')
+
+del createZope3Bridge

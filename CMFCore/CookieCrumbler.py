@@ -30,6 +30,8 @@ from ZPublisher.HTTPRequest import HTTPRequest
 from OFS.Folder import Folder
 from zExceptions import Redirect
 
+from zope.interface import implements
+from interfaces import ICookieCrumbler
 
 # Constants.
 ATTEMPT_NONE = 0       # No attempt at authentication
@@ -50,6 +52,8 @@ class CookieCrumbler (Folder):
     authentication headers.
     '''
     meta_type = 'Cookie Crumbler'
+
+    implements(ICookieCrumbler)
 
     security = ClassSecurityInfo()
     security.declareProtected(ModifyCookieCrumblers, 'manage_editProperties')

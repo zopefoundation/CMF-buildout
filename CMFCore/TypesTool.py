@@ -638,17 +638,85 @@ ContentFactoryMetadata = FactoryTypeInformation
 ContentTypeInformation = ScriptableTypeInformation
 
 
-typeClasses = [
-    {'class':FactoryTypeInformation,
-     'name':FactoryTypeInformation.meta_type,
-     'action':'manage_addFactoryTIForm',
-     'permission':ManagePortal},
-    {'class':ScriptableTypeInformation,
-     'name':ScriptableTypeInformation.meta_type,
-     'action':'manage_addScriptableTIForm',
-     'permission':ManagePortal},
-    ]
+_addTypeInfo_template = PageTemplateFile('addTypeInfo.zpt', _wwwdir)
 
+def manage_addFactoryTIForm(dispatcher, REQUEST):
+    """ Get the add form for factory-based type infos.
+    """
+    template = _addTypeInfo_template.__of__(dispatcher)
+    meta_type = FactoryTypeInformation.meta_type
+    return template(add_meta_type=meta_type,
+                    profiles=_getProfileInfo(dispatcher, meta_type))
+
+def manage_addScriptableTIForm(dispatcher, REQUEST):
+    """ Get the add form for scriptable type infos.
+    """
+    template = _addTypeInfo_template.__of__(dispatcher)
+    meta_type = ScriptableTypeInformation.meta_type
+    return template(add_meta_type=meta_type,
+                    profiles=_getProfileInfo(dispatcher, meta_type))
+
+def _getProfileInfo(dispatcher, meta_type):
+    profiles = []
+    stool = getToolByName(dispatcher, 'portal_setup', None)
+    if stool:
+        for info in stool.listContextInfos():
+            type_ids = []
+            context = stool._getImportContext(info['id'])
+            filenames = context.listDirectory('types')
+            if filenames is None:
+                continue
+            for filename in filenames:
+                body = context.readDataFile(filename, subdir='types')
+                if body is None:
+                    continue
+                root = parseString(body).documentElement
+                if root.getAttribute('meta_type') == meta_type:
+                    type_id = root.getAttribute('name')
+                    type_ids.append(type_id)
+            if not type_ids:
+                continue
+            type_ids.sort()
+            profiles.append({'id': info['id'],
+                             'title': info['title'],
+                             'type_ids': tuple(type_ids)})
+    return tuple(profiles)
+
+def manage_addTypeInfo(dispatcher, add_meta_type, id, settings_id='',
+                       REQUEST=None):
+    """Add a new TypeInformation object of type 'add_meta_type' with ID 'id'.
+    """
+    settings_node = None
+    if settings_id:
+        stool = getToolByName(dispatcher, 'portal_setup', None)
+        if stool:
+            profile_id, type_id = settings_id.split('/')
+            context = stool._getImportContext(profile_id)
+            filenames = context.listDirectory('types')
+            for filename in filenames or ():
+                body = context.readDataFile(filename, subdir='types')
+                if body is not None:
+                    root = parseString(body).documentElement
+                    if root.getAttribute('name') != type_id:
+                        continue
+                    if root.getAttribute('meta_type') == add_meta_type:
+                        settings_node = root
+                        if not id:
+                            id = type_id
+                        break
+    for mt in Products.meta_types:
+        if mt['name'] == add_meta_type:
+            klass = mt['instance']
+            break
+    else:
+        raise ValueError('Meta type %s is not a type class.' % add_meta_type)
+    obj = klass(id)
+    if settings_node:
+        INodeImporter(obj).importNode(settings_node)
+    dispatcher._setObject(id, obj)
+
+    if REQUEST:
+        return dispatcher.manage_main(dispatcher, REQUEST)
 
 allowedTypes = [
     'Script (Python)',
@@ -692,14 +760,19 @@ class TypesTool(UniqueObject, Folder, ActionProviderBase):
     #   ObjectManager methods
     #
     def all_meta_types(self):
-        """Adds TypesTool-specific meta types."""
+        # this is a workaround and should be removed again if allowedTypes
+        # have an interface we can use in _product_interfaces
         all = TypesTool.inheritedAttribute('all_meta_types')(self)
-        return tuple(typeClasses) + tuple(all)
+        others = [ mt for mt in Products.meta_types
+                   if mt['name'] in allowedTypes ]
+        return tuple(all) + tuple(others)
 
     def filtered_meta_types(self, user=None):
         # Filters the list of available meta types.
         allowed = {}
-        for tc in typeClasses:
+        others = [ mt for mt in Products.meta_types
+                   if mt['name'] in allowedTypes ]
+        for tc in others:
             allowed[tc['name']] = 1
         for name in allowedTypes:
             allowed[name] = 1
@@ -739,85 +812,6 @@ class TypesTool(UniqueObject, Folder, ActionProviderBase):
                         res.append( (p_id, fti) )
 
         return res
-
-    _addTIForm = DTMLFile( 'addTypeInfo', _dtmldir )
-
-    security.declareProtected(ManagePortal, 'manage_addFactoryTIForm')
-    def manage_addFactoryTIForm(self, REQUEST):
-        ' '
-        return self._addTIForm(
-            self, REQUEST,
-            add_meta_type=FactoryTypeInformation.meta_type,
-            types=self.listDefaultTypeInformation())
-
-    security.declareProtected(ManagePortal, 'manage_addScriptableTIForm')
-    def manage_addScriptableTIForm(self, REQUEST):
-        ' '
-        return self._addTIForm(
-            self, REQUEST,
-            add_meta_type=ScriptableTypeInformation.meta_type,
-            types=self.listDefaultTypeInformation())
-
-    security.declareProtected(ManagePortal, 'manage_addTypeInformation')
-    def manage_addTypeInformation(self, add_meta_type, id=None,
-                                  typeinfo_name=None, RESPONSE=None):
-        """
-        Create a TypeInformation in self.
-        """
-        fti = None
-        if typeinfo_name:
-            info = self.listDefaultTypeInformation()
-
-            # Nasty orkaround to stay backwards-compatible
-            # This workaround will disappear in CMF 2.0
-            if typeinfo_name.endswith(')'):
-                # This is a new-style name. Proceed normally.
-                for (name, ft) in info:
-                    if name == typeinfo_name:
-                        fti = ft
-                        break
-            else:
-                # Attempt to work around the old way
-                # This attempt harbors the problem that the first match on
-                # meta_type will be used. There could potentially be more
-                # than one TypeInformation sharing the same meta_type.
-                warn('Please switch to the new format for typeinfo names '
-                     '\"product_id: type_id (meta_type)\", the old '
-                     'spelling will disappear in CMF 2.0', DeprecationWarning,
-                     stacklevel=2)
-
-                ti_prod, ti_mt = [x.strip() for x in typeinfo_name.split(':')]
-
-                for name, ft in info:
-                    if ( name.startswith(ti_prod) and
-                         name.endswith('(%s)' % ti_mt) ):
-                        fti = ft
-                        break
-
-            if fti is None:
-                raise BadRequest('%s not found.' % typeinfo_name)
-            if not id:
-                id = fti.get('id', None)
-        if not id:
-            raise BadRequest('An id is required.')
-        for mt in typeClasses:
-            if mt['name'] == add_meta_type:
-                klass = mt['class']
-                break
-        else:
-            raise ValueError, (
-                'Meta type %s is not a type class.' % add_meta_type)
-        id = str(id)
-        if fti is not None:
-            fti = fti.copy()
-            if fti.has_key('id'):
-                del fti['id']
-            ob = klass(id, **fti)
-        else:
-            ob = klass(id)
-        self._setObject(id, ob)
-        if RESPONSE is not None:
-            RESPONSE.redirect('%s/manage_main' % self.absolute_url())
 
     security.declareProtected(ManagePortal, 'manage_setTIMethodAliases')
     def manage_setTIMethodAliases(self, REQUEST):

@@ -12,35 +12,9 @@
 ##############################################################################
 """ Document content type interfaces.
 
-$Id$
+$Id: Document.py 38590 2005-09-24 15:24:32Z yuppie $
 """
 
-from Interface import Interface
-
-
-class IDocument(Interface):
-
-    """ Textual content, in one of several formats.
-
-    o Allowed formats include: structured text, HTML, plain text.
-    """
-
-    def CookedBody():
-        """ Get the "cooked" (ready for presentation) form of the text.
-        """
-
-    def EditableBody():
-        """ Get the "raw" (as edited) form of the text.
-        """
-
-class IMutableDocument(IDocument):
-
-    """ Updatable form of IDocument.
-    """
-
-    def edit(text_format, text, file='', safety_belt=''):
-        """ Update the document.
-
-        o 'safety_belt', if passed, must match the value issued when the edit
-        began.
-        """
+# BBB: module will be removed in CMF 2.2
+#      zope2 interfaces created on runtime:
+#      - IDocument

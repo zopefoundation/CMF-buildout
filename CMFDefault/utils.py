@@ -33,6 +33,7 @@ security = ModuleSecurityInfo( 'Products.CMFDefault.utils' )
 
 security.declarePrivate('_dtmldir')
 _dtmldir = os.path.join( package_home( globals() ), 'dtml' )
+_wwwdir = os.path.join( package_home( globals() ), 'www' )
 
 security.declarePublic('formatRFC822Headers')
 def formatRFC822Headers( headers ):

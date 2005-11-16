@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <types-tool>
+ <type id="CMF BTree Folder"
+       filename="types/CMF_BTree_Folder.xml"/>
  <type id="Discussion Item"
        filename="types/Discussion_Item.xml"/>
  <type id="Document"/>
@@ -9,5 +11,4 @@
  <type id="Image"/>
  <type id="Link"/>
  <type id="News Item" filename="types/News_Item.xml"/>
- <type id="Topic"/>
 </types-tool>

@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
-<caching-policies>
+<object name="caching_policy_manager" meta_type="CMF Caching Policy Manager">
 <!-- TODO:  add some sensible defaults -->
-</caching-policies>
+</object>

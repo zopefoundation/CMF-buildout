@@ -12,6 +12,12 @@
   <dependency step="toolset"/>
   Import caching policy manager's policies.
  </import-step>
+ <import-step id="catalog" version="20050929-01"
+              handler="Products.CMFSetup.catalog.importCatalogTool"
+              title="Catalog Tool">
+  <dependency step="toolset"/>
+  Import catalog tool's sub-objects, indexes and columns.
+ </import-step>
  <import-step id="content_type_registry"
               version="20051013-01"
               handler="Products.CMFSetup.contenttyperegistry.importContentTypeRegistry"
@@ -38,7 +44,7 @@
   Import site properties.
  </import-step>
  <import-step id="rolemap" version="20040523-01"
-              handler="Products.CMFSetup.rolemap.importRolemap"
+              handler="Products.GenericSetup.rolemap.importRolemap"
               title="Role / Permission Map">
   Import custom roles and non-default role-permission mappings.
  </import-step>
@@ -49,7 +55,7 @@
   Import skins tool's filesystem directory views and skin path definitions.
  </import-step>
  <import-step id="toolset" version="20040630-01"
-              handler="Products.CMFSetup.tool.importToolset"
+              handler="Products.GenericSetup.tool.importToolset"
               title="Required tools">
   Create required tools, replacing any of the wrong class, and remove
   forbidden ones.

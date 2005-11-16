@@ -78,6 +78,10 @@ CMF 1.5.5-beta (2005/11/06)
     - CMFSetup: allow export of properties of old objects that were
       stored as lists (instead of tuples now).
 
+    - CMFCore: removed old backward compatibility code that slowed down
+      TypeInformation.allowType and gave PortalFolder.allowedContentTypes
+      quadratic complexity.
+
 CMF 1.5.4 (2005/09/04)
 
   Bug Fixes

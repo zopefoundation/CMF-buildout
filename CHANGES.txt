@@ -1,3 +1,22 @@
+CMF 1.5.5 (unreleased)
+
+  Bug Fixes
+
+    - DefaultWorkflowDefinition: Changed meta_type to make it unique.
+      (http://www.zope.org/Collectors/CMF/298)
+
+    - CMFSetup: fixed empty attribute parsing when an encoding is
+      defined.
+
+  Others
+
+    - CMFCore: removed old backward compatibility code that slowed down
+      TypeInformation.allowType and gave PortalFolder.allowedContentTypes
+      quadratic complexity.
+
+    - Removed deprecated 'all_cmf_tests.py' and supporting 'test_all.py'
+      from products (use 'zopectl test' to run CMF tests instead).
+
 CMF 1.5.5-beta (2005/11/06)
 
   Bug Fixes
@@ -13,9 +32,6 @@ CMF 1.5.5-beta (2005/11/06)
     - CalendarTool: If an event ends at exactly midnight, don't show it
       in the list of events for the day starting at midnight.
       (http://www.zope.org/Collectors/CMF/246)
-
-    - CMFSetup: fixed empty attribute parsing when an encoding is
-      defined.
 
   Features
 
@@ -57,9 +73,6 @@ CMF 1.5.5-beta (2005/11/06)
 
   Others
 
-    - Removed deprecated 'all_cmf_tests.py' and supporting 'test_all.py'
-      from products (use 'zopectl test' to run CMF tests instead).
-
     - CMFDefault.Portal:  deprecated 'manage_addCMFSite'.
 
     - Collectors #384:  Added '__traceback_info__' to FSDTMLMethod's
@@ -77,10 +90,6 @@ CMF 1.5.5-beta (2005/11/06)
 
     - CMFSetup: allow export of properties of old objects that were
       stored as lists (instead of tuples now).
-
-    - CMFCore: removed old backward compatibility code that slowed down
-      TypeInformation.allowType and gave PortalFolder.allowedContentTypes
-      quadratic complexity.
 
 CMF 1.5.4 (2005/09/04)
 

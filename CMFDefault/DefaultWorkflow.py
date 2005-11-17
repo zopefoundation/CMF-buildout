@@ -46,7 +46,7 @@ class DefaultWorkflowDefinition (SimpleItemWithProperties):
     implements(IWorkflowDefinition)
     __implements__ = z2IWorkflowDefinition
 
-    meta_type = 'Workflow'
+    meta_type = 'CMF Default Workflow'
     id = 'default_workflow'
     title = 'Simple Review / Publish Policy'
     _isAWorkflow = 1

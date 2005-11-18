@@ -431,7 +431,7 @@ class SiteStructureExporterTests(PlacelessSetup,
         after = site.objectIds()
         self.assertEqual(len(after), 0)
         self.assertEqual(len(context._notes), len(ITEM_IDS))
-        for component, message in context._notes:
+        for level, component, message in context._notes:
             self.assertEqual(component, 'SFWA')
             self.failUnless(message.startswith("Couldn't make"))
 

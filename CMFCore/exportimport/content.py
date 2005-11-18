@@ -145,9 +145,9 @@ class StructureFolderWalkingAdapter(object):
                 object = self._makeInstance(object_id, portal_type,
                                             subdir, import_context)
                 if object is None:
-                    message = "Couldn't make instance: %s/%s" % (subdir,
-                                                                 object_id)
-                    import_context.note('SFWA', message)
+                    logger = import_context.getLogger('SFWA')
+                    logger.warning("Couldn't make instance: %s/%s" %
+                                   (subdir, object_id))
                     continue
 
             wrapped = context._getOb(object_id)

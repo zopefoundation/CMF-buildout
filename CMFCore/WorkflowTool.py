@@ -16,7 +16,6 @@ $Id$
 """
 
 import sys
-from warnings import warn
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base, aq_inner, aq_parent
@@ -39,26 +38,6 @@ from WorkflowCore import WorkflowException
 
 
 _marker = []  # Create a new marker object.
-
-class WorkflowInformation:
-
-    """ Shim implementation of ActionInformation, to enable
-        querying actions without mediation of the 'portal_actions' tool.
-    """
-    def __init__(self, object):
-        warn('WorkflowInformation() is deprecated and will be removed in '
-             'CMF 2.0.',
-             DeprecationWarning)
-        self.object = self.content = object
-        self.content_url = object.absolute_url()
-        self.portal_url = self.folder_url = ''
-
-    def __getitem__(self, name):
-        if name[:1] == '_':
-            raise KeyError, name
-        if hasattr(self, name):
-            return getattr(self, name)
-        raise KeyError, name
 
 
 class WorkflowTool(UniqueObject, Folder, ActionProviderBase):
@@ -261,17 +240,6 @@ class WorkflowTool(UniqueObject, Folder, ActionProviderBase):
                     if a is not None:
                         actions.extend(a)
         return actions
-
-    security.declarePublic('getActionsFor')
-    def getActionsFor(self, ob):
-
-        """ Return a list of action dictionaries for 'ob', just as though
-            queried via 'ActionsTool.listFilteredActionsFor'.
-        """
-        warn('getActionsFor() is deprecated and will be removed in CMF 2.0. '
-             'Please use listActionInfos() instead.',
-             DeprecationWarning)
-        return self.listActions( WorkflowInformation( ob ) )
 
     security.declarePublic('doActionFor')
     def doActionFor(self, ob, action, wf_id=None, *args, **kw):

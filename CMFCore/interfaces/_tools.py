@@ -1513,17 +1513,6 @@ class IWorkflowTool(Interface):
         o Permission:  Private (Python only)
         """
 
-    def getActionsFor(ob):
-        """ Return a list of action dictionaries for 'ob'
-
-        o Generate the list as though queried via
-          'ActionsTool.listFilteredActionsFor'.
-
-        o This method is deprecated and will be removed in CMF 2.0.
-
-        o Permission:  Public
-        """
-
     def doActionFor(ob, action, wf_id=None, *args, **kw):
         """ Perform the given workflow action on 'ob'.
 

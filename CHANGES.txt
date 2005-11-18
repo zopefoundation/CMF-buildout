@@ -140,6 +140,8 @@ HEAD only (unreleased)
 
   Others
 
+    - Workflow: Removed deprecated WorkflowInformation and getActionsFor.
+
     - CMFCore and GenericSetup: Moved mechanisms for content export / import
       to GenericSetup/content.py, and made more generic.
 

@@ -15,10 +15,8 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from OFS.SimpleItem import SimpleItem
 
@@ -133,7 +131,7 @@ class DummyTypesTool( SimpleItem ):
         return None
 
 
-class WorkflowToolTests(TestCase, WarningInterceptor):
+class WorkflowToolTests(unittest.TestCase, WarningInterceptor):
 
     def setUp( self ):
         from Products.CMFCore.WorkflowTool import addWorkflowFactory
@@ -291,18 +289,6 @@ class WorkflowToolTests(TestCase, WarningInterceptor):
         self.failUnless( 'dummy' in vars.keys() )
         self.failUnless( 'a: dummy' in vars.values() )
 
-    def test_getActionsFor( self ):
-
-        import warnings
-
-        # Collector #360: Test AtttributeError in deprecated API :(
-        tool = self._makeWithTypesAndChain()
-        dummy = DummyContent( 'dummy' )
-
-        self._trap_warning_output()
-        actions = tool.getActionsFor( dummy )
-        self.assertEqual( len( actions ), 0 )
-
     def test_getInfoFor( self ):
 
         tool = self._makeWithTypesAndChain()
@@ -383,9 +369,9 @@ class WorkflowToolTests(TestCase, WarningInterceptor):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(WorkflowToolTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(WorkflowToolTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

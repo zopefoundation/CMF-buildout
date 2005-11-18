@@ -24,6 +24,13 @@ from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.testing import NodeAdapterTestCase
 
+try: # BBB;  CMF < 2.0 doesn't have Action or ActionCategory objects
+    from Products.CMFCore.ActionInformation import Action
+    from Products.CMFCore.ActionInformation import ActionCategory
+except ImportError: # no such beast
+    _HAVE_ACTION_OBJECTS = False
+else:
+    _HAVE_ACTION_OBJECTS = True
 
 _ACTION_XML = """\
 <object name="foo_action" meta_type="CMF Action">
@@ -101,7 +108,6 @@ class ActionNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
         self.assertEqual(obj.visible, True)
 
     def setUp(self):
-        from Products.CMFCore.ActionInformation import Action
         import Products.CMFCore.exportimport
         import Products.Five
         from Products.Five import zcml
@@ -132,7 +138,6 @@ class ActionCategoryNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
         self.assertEqual(obj.title, '')
 
     def setUp(self):
-        from Products.CMFCore.ActionInformation import ActionCategory
         import Products.CMFCore.exportimport
         import Products.Five
         from Products.Five import zcml
@@ -185,11 +190,12 @@ class ActionsToolNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
 
 
 def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(ActionNodeAdapterTests),
-        unittest.makeSuite(ActionCategoryNodeAdapterTests),
-        unittest.makeSuite(ActionsToolNodeAdapterTests),
-        ))
+    suite = unittest.TestSuite()
+    if _HAVE_ACTION_OBJECTS:
+        suite.addTest(unittest.makeSuite(ActionNodeAdapterTests))
+        suite.addTest(unittest.makeSuite(ActionCategoryNodeAdapterTests))
+        suite.addTest(unittest.makeSuite(ActionsToolNodeAdapterTests))
+    return suite
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

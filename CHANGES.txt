@@ -10,3 +10,7 @@ Before CMF 1.6 beta
       interfaces via bridge
 
     - Back-ported the GenericSetup style of site creation from CMF trunk
+
+  Others
+
+    - Reordered base classes of File and Image, to allow use of super().

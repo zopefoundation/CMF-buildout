@@ -97,10 +97,7 @@ def addImage( self
     self._getOb(id).manage_upload(file)
 
 
-class Image( OFS.Image.Image
-           , PortalContent
-           , DefaultDublinCoreImpl
-           ):
+class Image(PortalContent, OFS.Image.Image, DefaultDublinCoreImpl):
     """
         A Portal-managed Image
     """
@@ -146,6 +143,8 @@ class Image( OFS.Image.Image
                 ):
         OFS.Image.File.__init__( self, id, title, file
                                , content_type, precondition )
+        self._setId(id)
+        delattr(self, '__name__')
 
         # If no file format has been passed in, rely on what OFS.Image.File
         # detected.
@@ -155,6 +154,12 @@ class Image( OFS.Image.Image
         DefaultDublinCoreImpl.__init__( self, title, subject, description
                                , contributors, effective_date, expiration_date
                                , format, language, rights )
+
+    # For old instances where bases had OFS.Image.Image first,
+    # the id was actually stored in __name__.
+    # getId() will do the correct thing here, as id() is callable
+    def id(self):
+        return self.__name__
 
     security.declareProtected(View, 'SearchableText')
     def SearchableText(self):

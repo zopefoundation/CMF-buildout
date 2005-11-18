@@ -53,6 +53,26 @@ class TestImageElement(TestCase):
         self.site = DummySite('site')
         self.site._setObject( 'portal_membership', DummyTool() )
 
+    def test_getId_on_old_Image_instance(self):
+        image = self.site._setObject( 'testimage', Image('testimage') )
+        self.assertEqual(image.getId(), 'testimage')
+        self.assertEqual(image.id, 'testimage')
+        # Mimick old instance when base classes had OFS.Image.Image first
+        image.__name__ = 'testimage'
+        delattr(image, 'id')
+        self.assertEqual(image.getId(), 'testimage')
+        self.assertEqual(image.id(), 'testimage')
+
+    def test_getId_on_old_File_instance(self):
+        file = self.site._setObject( 'testfile', File('testfile') )
+        self.assertEqual(file.getId(), 'testfile')
+        self.assertEqual(file.id, 'testfile')
+        # Mimick old instance when base classes had OFS.Image.File first
+        file.__name__ = 'testfile'
+        delattr(file, 'id')
+        self.assertEqual(file.getId(), 'testfile')
+        self.assertEqual(file.id(), 'testfile')
+
     def test_EditWithEmptyFile(self):
         # Test handling of empty file uploads
         image = self.site._setObject( 'testimage', Image('testimage') )

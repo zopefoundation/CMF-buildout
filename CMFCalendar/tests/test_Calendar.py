@@ -34,6 +34,7 @@ from Products.ExternalMethod.ExternalMethod import manage_addExternalMethod
 from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 from Products.Transience.Transience import TransientObjectContainer
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
+from Products.CMFDefault.factory import addConfiguredSite
 from Testing.makerequest import makerequest
 try:
     import transaction
@@ -92,9 +93,11 @@ class CalendarRequestTests(unittest.TestCase, WarningInterceptor):
 
         app = self.app = makerequest(Zope2.app())
         # Log in as a god :-)
-        newSecurityManager( None, UnrestrictedUser('god', 'god', ['Manager'], '') )
+        newSecurityManager(None,
+                           UnrestrictedUser('god', 'god', ['Manager'], '') )
 
-        app.manage_addProduct['CMFDefault'].manage_addCMFSite('CalendarTest')
+        #app.manage_addProduct['CMFDefault'].manage_addCMFSite('CalendarTest')
+        addConfiguredSite(app, 'CalendarTest', 'CMFDefault:default')
 
         self.Site = app.CalendarTest
 

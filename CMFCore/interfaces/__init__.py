@@ -17,7 +17,6 @@ $Id: __init__.py 38636 2005-09-25 22:42:33Z tseaver $
 
 from _content import *
 from _tools import *
-from _exportimport import *
 
 import CachingPolicyManager
 import Contentish

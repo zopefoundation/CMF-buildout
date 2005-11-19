@@ -429,7 +429,7 @@ class SiteStructureExporterTests(PlacelessSetup,
         after = site.objectIds()
         self.assertEqual(len(after), 0)
         self.assertEqual(len(context._notes), len(ITEM_IDS))
-        for component, message in context._notes:
+        for level, component, message in context._notes:
             self.assertEqual(component, 'SFWA')
             self.failUnless(message.startswith("Couldn't make"))
 
@@ -826,6 +826,7 @@ def _makeFolder(id, site_folder=False):
     from Products.CMFCore.tests.base.dummy import DummyType
 
     class _TypeInfo(DummyType):
+        _isTypeInformation = 1
         def _getId(self):
             return self._id
         def constructInstance(self, container, id, *args, **kw):

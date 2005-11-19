@@ -173,3 +173,45 @@ class ActionsToolNodeAdapter(NodeAdapterBase, ObjectManagerHelpers):
 
             if provider_id not in self.context.listActionProviders():
                 self.context.addActionProvider(provider_id)
+                # delete any actions that are auto-created
+                provider = getToolByName(self.context, provider_id)
+                num_actions = len(provider.listActions())
+                if num_actions:
+                    provider.deleteActions(range(0,num_actions))
+
+            # BBB: for CMF 1.5 profiles
+            self._initOldstyleActions(child, mode)
+
+    def _initOldstyleActions(self, node, mode):
+        # BBB: for CMF 1.5 profiles
+        provider = getToolByName(self.context, node.getAttribute('id'))
+        for child in node.childNodes:
+            if child.nodeName != 'action':
+                continue
+
+            action_id = str(child.getAttribute('action_id'))
+            title = str(child.getAttribute('title'))
+            url_expr = str(child.getAttribute('url_expr'))
+            condition_expr = str(child.getAttribute('condition_expr'))
+            category = str(child.getAttribute('category'))
+            visible = str(child.getAttribute('visible'))
+            if visible.lower() == 'true':
+                visible = 1
+            else:
+                visible = 0
+
+            permission = ''
+            for permNode in child.childNodes:
+                if permNode.nodeName == 'permission':
+                    for textNode in permNode.childNodes:
+                        if textNode.nodeName != '#text' or \
+                               not textNode.nodeValue.strip():
+                            continue
+                        permission = str(textNode.nodeValue)
+                        break  # only one permission is allowed
+                    if permission:
+                        break
+
+            provider.addAction(action_id, title, url_expr,
+                               condition_expr, permission,
+                               category, visible)

@@ -251,7 +251,7 @@ class NameRegexPredicate( SimpleItem ):
         and 'pattern' can also be passed).
     """
 
-    #_implements__ = IContentTypeRegistryPredicate
+    __implements__ = z2IContentTypeRegistryPredicate
     implements(IContentTypeRegistryPredicate)
     
     pattern         = None

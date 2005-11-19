@@ -33,6 +33,8 @@ from interfaces.CachingPolicyManager \
 from utils import _dtmldir
 from utils import getToolByName
 
+from zope.interface import implements
+from interfaces import ICachingPolicy
 
 def createCPContext( content, view_method, keywords, time=None ):
     """
@@ -150,6 +152,8 @@ class CachingPolicy:
             Unfortunately these are needed to make IE behave correctly.
 
     """
+
+    implements(ICachingPolicy)
 
     def __init__( self
                 , policy_id

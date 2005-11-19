@@ -59,7 +59,7 @@ class DummyType(DummyObject):
         a page template.
         """
 
-        self.id = id
+        self.id = self._id = id
         self.title = title
         self._actions = {}
 

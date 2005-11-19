@@ -11,9 +11,15 @@ from Products.CMFCore.tests.base.testcase import TransactionalTest
 
 class MembershipTests( TransactionalTest ):
 
+    def _makePortal(self):
+        # Create a portal instance suitable for testing
+        factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
+        factory('site', 'CMFDefault:default', snapshot=False)
+
+        return self.root.site
+
     def test_join( self ):
-        self.root.manage_addProduct[ 'CMFDefault' ].manage_addCMFSite( 'site' )
-        site = self.root.site
+        site = self._makePortal()
         member_id = 'test_user'
         site.portal_registration.addMember( member_id
                                           , 'zzyyzz'
@@ -25,8 +31,7 @@ class MembershipTests( TransactionalTest ):
         self.failUnless(u)
 
     def test_join_without_email( self ):
-        self.root.manage_addProduct[ 'CMFDefault' ].manage_addCMFSite( 'site' )
-        site = self.root.site
+        site = self._makePortal()
         self.assertRaises(ValueError,
                           site.portal_registration.addMember,
                           'test_user',
@@ -35,8 +40,7 @@ class MembershipTests( TransactionalTest ):
                           )
 
     def test_join_with_variable_id_policies( self ):
-        self.root.manage_addProduct[ 'CMFDefault' ].manage_addCMFSite( 'site' )
-        site = self.root.site
+        site = self._makePortal()
         member_id = 'test.user'
 
         # Test with the default policy: Names with "." should fail

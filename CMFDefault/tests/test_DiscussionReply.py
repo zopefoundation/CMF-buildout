@@ -11,18 +11,26 @@ except ImportError: # BBB: for Zope 2.7
     import Zope as Zope2
 Zope2.startup()
 
+import Products
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
+from Products.Five import zcml
 
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import RequestTest
 
 
-class DiscussionReplyTest(RequestTest):
+class DiscussionReplyTest(PlacelessSetup, RequestTest):
 
     def setUp(self):
+        PlacelessSetup.setUp(self)
         RequestTest.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.GenericSetup)
+        zcml.load_config('configure.zcml', Products.CMFCore)
         try:
-            self.root.manage_addProduct['CMFDefault'].manage_addCMFSite('cmf')
+            factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
+            factory('cmf', 'CMFDefault:default', snapshot=False)
             self.portal = self.root.cmf
             # Become a Manager
             self.uf = self.portal.acl_users
@@ -42,7 +50,8 @@ class DiscussionReplyTest(RequestTest):
     def tearDown(self):
         noSecurityManager()
         RequestTest.tearDown(self)
-
+        PlacelessSetup.tearDown(self)
+        
     def login(self, name):
         user = self.uf.getUserById(name)
         user = user.__of__(self.uf)

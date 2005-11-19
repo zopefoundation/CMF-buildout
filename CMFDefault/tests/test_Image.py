@@ -30,6 +30,8 @@ from cStringIO import StringIO
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.User import UnrestrictedUser
+from Products.Five import zcml
+import Products
 try:
     import transaction
 except ImportError:
@@ -38,6 +40,7 @@ except ImportError:
 
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFDefault import tests
 from Products.CMFDefault.File import File
@@ -131,16 +134,21 @@ class TestImageElement(TestCase):
         self.assertEqual(file.content_type, 'image/jpeg')
 
 
-class TestImageCopyPaste(RequestTest):
+class TestImageCopyPaste(PlacelessSetup, RequestTest):
 
     # Tests related to http://www.zope.org/Collectors/CMF/176
     # Copy/pasting an image (or file) should reset the object's workflow state.
 
     def setUp(self):
+        PlacelessSetup.setUp(self)
         RequestTest.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.GenericSetup)
+        zcml.load_config('configure.zcml', Products.CMFCore)
         try:
             newSecurityManager(None, UnrestrictedUser('manager', '', ['Manager'], []))
-            self.root.manage_addProduct['CMFDefault'].manage_addCMFSite('cmf')
+            factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
+            factory('cmf', 'CMFDefault:default', snapshot=False)
             self.site = self.root.cmf
             self.site.invokeFactory('File', id='file')
             self.site.portal_workflow.doActionFor(self.site.file, 'publish')
@@ -157,6 +165,7 @@ class TestImageCopyPaste(RequestTest):
     def tearDown(self):
         noSecurityManager()
         RequestTest.tearDown(self)
+        PlacelessSetup.tearDown(self)
 
     def test_File_CopyPasteResetsWorkflowState(self):
         # Copy/pasting a File should reset wf state to private

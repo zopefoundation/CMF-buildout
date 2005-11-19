@@ -23,28 +23,35 @@ except ImportError: # BBB: for Zope 2.7
     import Zope as Zope2
 Zope2.startup()
 
+import Products
 from Acquisition import aq_base
+from Products.Five import zcml
 
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 
 
-class CMFSiteTests( SecurityRequestTest
-                  , WarningInterceptor
-                  ):
+class CMFSiteTests( PlacelessSetup, SecurityRequestTest, WarningInterceptor):
 
     def setUp( self ):
+        PlacelessSetup.setUp(self)
         SecurityRequestTest.setUp( self )
         self._trap_warning_output()
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.GenericSetup)
+        zcml.load_config('configure.zcml', Products.CMFCore)
 
     def tearDown( self ):
         self._free_warning_output()
         SecurityRequestTest.tearDown( self )
+        PlacelessSetup.tearDown(self)
 
     def _makeSite( self, id='testsite'):
 
-        from Products.CMFDefault.Portal import manage_addCMFSite
-        manage_addCMFSite( self.root, id )
+        from Products.CMFDefault.factory import addConfiguredSite
+
+        addConfiguredSite(self.root, id, 'CMFDefault:default', snapshot=False)
         return getattr( self.root, id )
 
     def _makeContent( self, site, portal_type, id='document', **kw ):

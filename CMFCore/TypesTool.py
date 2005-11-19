@@ -633,6 +633,20 @@ ContentFactoryMetadata = FactoryTypeInformation
 ContentTypeInformation = ScriptableTypeInformation
 
 
+# BBB: typeClasses definition is only needed for older FTI creation
+#      idiom
+typeClasses = [
+    {'class':FactoryTypeInformation,
+     'name':FactoryTypeInformation.meta_type,
+     'action':'manage_addFactoryTIForm',
+     'permission':ManagePortal},
+    {'class':ScriptableTypeInformation,
+     'name':ScriptableTypeInformation.meta_type,
+     'action':'manage_addScriptableTIForm',
+     'permission':ManagePortal},
+    ]
+
+
 _addTypeInfo_template = PageTemplateFile('addTypeInfo.zpt', _wwwdir)
 
 def manage_addFactoryTIForm(dispatcher, REQUEST):
@@ -807,6 +821,100 @@ class TypesTool(UniqueObject, Folder, ActionProviderBase):
                         res.append( (p_id, fti) )
 
         return res
+
+    # BBB: DTML based ZMI form and the following add methods are for
+    #      CMF-1.5 compatibility
+    _addTIForm = DTMLFile( 'addTypeInfo', _dtmldir )
+
+    security.declareProtected(ManagePortal, 'manage_addFactoryTIForm')
+    def manage_addFactoryTIForm(self, REQUEST):
+        ' '
+        warn('Please use the manage_addFactoryTIForm function in the '
+             'TypesTool module; this method on the TypesTool itself '
+             'will disappear in CMF 2.0', DeprecationWarning,
+             stacklevel=2)
+        return self._addTIForm(
+            self, REQUEST,
+            add_meta_type=FactoryTypeInformation.meta_type,
+            types=self.listDefaultTypeInformation())
+
+    security.declareProtected(ManagePortal, 'manage_addScriptableTIForm')
+    def manage_addScriptableTIForm(self, REQUEST):
+        ' '
+        warn('Please use the manage_addScriptableTIForm function in the '
+             'TypesTool module; this method on the TypesTool itself '
+             'will disappear in CMF 2.0', DeprecationWarning,
+             stacklevel=2)
+        return self._addTIForm(
+            self, REQUEST,
+            add_meta_type=ScriptableTypeInformation.meta_type,
+            types=self.listDefaultTypeInformation())
+
+    security.declareProtected(ManagePortal, 'manage_addTypeInformation')
+    def manage_addTypeInformation(self, add_meta_type, id=None,
+                                  typeinfo_name=None, RESPONSE=None):
+        """
+        Create a TypeInformation in self.
+        """
+        warn('Please use the manage_addTypeInfo function in the '
+             'TypesTool module (exposed as a factory method in the '
+             'CMFCore product); this method on the TypesTool itself '
+             'will disappear in CMF 2.0', DeprecationWarning,
+             stacklevel=2)
+        fti = None
+        if typeinfo_name:
+            info = self.listDefaultTypeInformation()
+
+            # Nasty orkaround to stay backwards-compatible
+            # This workaround will disappear in CMF 2.0
+            if typeinfo_name.endswith(')'):
+                # This is a new-style name. Proceed normally.
+                for (name, ft) in info:
+                    if name == typeinfo_name:
+                        fti = ft
+                        break
+            else:
+                # Attempt to work around the old way
+                # This attempt harbors the problem that the first match on
+                # meta_type will be used. There could potentially be more
+                # than one TypeInformation sharing the same meta_type.
+                warn('Please switch to the new format for typeinfo names '
+                     '\"product_id: type_id (meta_type)\", the old '
+                     'spelling will disappear in CMF 2.0', DeprecationWarning,
+                     stacklevel=2)
+
+                ti_prod, ti_mt = [x.strip() for x in typeinfo_name.split(':')]
+
+                for name, ft in info:
+                    if ( name.startswith(ti_prod) and
+                         name.endswith('(%s)' % ti_mt) ):
+                        fti = ft
+                        break
+
+            if fti is None:
+                raise BadRequest('%s not found.' % typeinfo_name)
+            if not id:
+                id = fti.get('id', None)
+        if not id:
+            raise BadRequest('An id is required.')
+        for mt in typeClasses:
+            if mt['name'] == add_meta_type:
+                klass = mt['class']
+                break
+        else:
+            raise ValueError, (
+                'Meta type %s is not a type class.' % add_meta_type)
+        id = str(id)
+        if fti is not None:
+            fti = fti.copy()
+            if fti.has_key('id'):
+                del fti['id']
+            ob = klass(id, **fti)
+        else:
+            ob = klass(id)
+        self._setObject(id, ob)
+        if RESPONSE is not None:
+            RESPONSE.redirect('%s/manage_main' % self.absolute_url())
 
     security.declareProtected(ManagePortal, 'manage_setTIMethodAliases')
     def manage_setTIMethodAliases(self, REQUEST):

@@ -1,4 +1,4 @@
-CMF 1.5.5 (unreleased)
+CMF 1.5.5 (2005/11/20)
 
   Bug Fixes
 

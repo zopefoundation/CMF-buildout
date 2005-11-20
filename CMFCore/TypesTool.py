@@ -857,11 +857,6 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
         """
         Create a TypeInformation in self.
         """
-        warn('Please use the manage_addTypeInfo function in the '
-             'TypesTool module (exposed as a factory method in the '
-             'CMFCore product); this method on the TypesTool itself '
-             'will disappear in CMF 2.0', DeprecationWarning,
-             stacklevel=2)
         fti = None
         if typeinfo_name:
             info = self.listDefaultTypeInformation()

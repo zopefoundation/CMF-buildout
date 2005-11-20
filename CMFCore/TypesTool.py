@@ -17,6 +17,7 @@ $Id$
 
 from sys import exc_info
 from warnings import warn
+from xml.dom.minidom import parseString
 
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
@@ -25,16 +26,22 @@ from Acquisition import aq_get
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.Folder import Folder
+from OFS.ObjectManager import IFAwareObjectManager
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from zLOG import LOG, ERROR
 import Products
+
+from Products.GenericSetup.interfaces import INodeImporter
 
 from ActionProviderBase import ActionProviderBase
 from exceptions import AccessControl_Unauthorized
 from exceptions import BadRequest
 from exceptions import zExceptions_Unauthorized
-from interfaces.portal_types import ContentTypeInformation as ITypeInformation
-from interfaces.portal_types import portal_types as ITypesTool
+from interfaces import ITypeInformation
+from interfaces import ITypesTool
+from interfaces.portal_types \
+     import ContentTypeInformation as z2ITypeInformation
+from interfaces.portal_types import portal_types as z2ITypesTool
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from permissions import View
@@ -45,7 +52,9 @@ from utils import cookString
 from utils import getActionContext
 from utils import SimpleItemWithProperties
 from utils import UniqueObject
+from utils import getToolByName
 
+from zope.interface import implements
 
 _marker = []  # Create a new marker.
 
@@ -470,7 +479,8 @@ class FactoryTypeInformation(TypeInformation):
     Portal content factory.
     """
 
-    __implements__ = ITypeInformation
+    implements(ITypeInformation)
+    __implements__ = z2ITypeInformation
 
     meta_type = 'Factory-based Type Information'
     security = ClassSecurityInfo()
@@ -577,7 +587,8 @@ class ScriptableTypeInformation( TypeInformation ):
     Invokes a script rather than a factory to create the content.
     """
 
-    __implements__ = ITypeInformation
+    implements(ITypeInformation)
+    __implements__ = z2ITypeInformation
 
     meta_type = 'Scriptable Type Information'
     security = ClassSecurityInfo()
@@ -735,15 +746,18 @@ allowedTypes = [
     ]
 
 
-class TypesTool(UniqueObject, Folder, ActionProviderBase):
+class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
+                ActionProviderBase):
     """
         Provides a configurable registry of portal content types.
     """
 
-    __implements__ = (ITypesTool, ActionProviderBase.__implements__)
+    implements(ITypesTool)
+    __implements__ = (z2ITypesTool, ActionProviderBase.__implements__)
 
     id = 'portal_types'
     meta_type = 'CMF Types Tool'
+    _product_interfaces = (ITypeInformation,)
 
     security = ClassSecurityInfo()
 
@@ -775,19 +789,6 @@ class TypesTool(UniqueObject, Folder, ActionProviderBase):
         others = [ mt for mt in Products.meta_types
                    if mt['name'] in allowedTypes ]
         return tuple(all) + tuple(others)
-
-    def filtered_meta_types(self, user=None):
-        # Filters the list of available meta types.
-        allowed = {}
-        others = [ mt for mt in Products.meta_types
-                   if mt['name'] in allowedTypes ]
-        for tc in others:
-            allowed[tc['name']] = 1
-        for name in allowedTypes:
-            allowed[name] = 1
-
-        all = TypesTool.inheritedAttribute('filtered_meta_types')(self)
-        return tuple( [ mt for mt in all if mt['name'] in allowed ] )
 
     #
     #   other methods

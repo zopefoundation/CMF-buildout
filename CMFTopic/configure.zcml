@@ -14,5 +14,12 @@
       for="Products.CMFTopic.Topic.ITopic"
       />
 
+  <adapter
+      factory=".exportimport.SubtopicFactory"
+      provides="Products.GenericSetup.interfaces.IContentFactory"
+      for="Products.CMFTopic.Topic.ITopic"
+      name="Topic"
+      />
+
 </configure>
 

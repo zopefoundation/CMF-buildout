@@ -30,6 +30,8 @@ except ImportError: # BBB:  no egg support
         import PageTemplateFile as PageTemplateResource
 
 
+from Topic import Topic
+
 class TopicExportImport(FolderishExporterImporter):
     """ Dump topic criteria to / from an XML file.
     """
@@ -145,4 +147,15 @@ class TopicExportImport(FolderishExporterImporter):
         keepers = FolderishExporterImporter._mustPreserve(self)
         keepers.extend(context.objectItems(context._criteria_metatype_ids()))
         return keepers
+
+
+class SubtopicFactory(object):
+
+    def __init__(self, context):
+        self.context = context
+
+    def __call__(self, id):
+        topic = Topic(id)
+        topic.portal_type = 'Topic'
+        return topic
 

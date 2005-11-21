@@ -242,6 +242,176 @@ class TopicExportImportTests(SecurityRequestTest,
         self._compareDOM( text, _MIXED_TOPIC_CRITERIA )
         self.assertEqual( content_type, 'text/xml' )
 
+    def test_import_empty_with_string_criterion(self):
+        topic = self._makeTopic('empty', False).__of__(self.root)
+        adapter = self._makeOne(topic)
+
+        context = DummyImportContext(topic, encoding='ascii')
+        context._files['test/empty/criteria.xml'] = _STRING_TOPIC_CRITERIA
+
+        adapter.import_(context, 'test', False)
+
+        expected = _CRITERIA_DATA[0]
+        found = topic.listCriteria()
+        self.assertEqual(len(found), 1)
+
+        criterion = found[0]
+
+        self.assertEqual(criterion.getId(), 'crit__%s' % expected[0])
+        self.assertEqual(criterion.Type(), expected[1])
+        self.assertEqual(criterion.Field(), expected[0])
+        self.assertEqual(criterion.value, expected[2]['value'])
+
+    def test_import_empty_with_integer_criterion(self):
+        topic = self._makeTopic('empty', False).__of__(self.root)
+        adapter = self._makeOne(topic)
+
+        context = DummyImportContext(topic, encoding='ascii')
+        context._files['test/empty/criteria.xml'] = _INTEGER_TOPIC_CRITERIA
+
+        adapter.import_(context, 'test', False)
+
+        expected = _CRITERIA_DATA[1]
+        found = topic.listCriteria()
+        self.assertEqual(len(found), 1)
+
+        criterion = found[0]
+
+        self.assertEqual(criterion.getId(), 'crit__%s' % expected[0])
+        self.assertEqual(criterion.Type(), expected[1])
+        self.assertEqual(criterion.Field(), expected[0])
+        self.assertEqual(criterion.value, expected[2]['value'])
+        self.assertEqual(criterion.direction, expected[2]['direction'])
+
+    def test_import_empty_with_date_criterion(self):
+        topic = self._makeTopic('empty', False).__of__(self.root)
+        adapter = self._makeOne(topic)
+
+        context = DummyImportContext(topic, encoding='ascii')
+        context._files['test/empty/criteria.xml'] = _DATE_TOPIC_CRITERIA
+
+        adapter.import_(context, 'test', False)
+
+        expected = _CRITERIA_DATA[2]
+        found = topic.listCriteria()
+        self.assertEqual(len(found), 1)
+
+        criterion = found[0]
+
+        self.assertEqual(criterion.getId(), 'crit__%s' % expected[0])
+        self.assertEqual(criterion.Type(), expected[1])
+        self.assertEqual(criterion.Field(), expected[0])
+        self.assertEqual(criterion.value, expected[2]['value'])
+        self.assertEqual(criterion.operation, expected[2]['operation'])
+        self.assertEqual(criterion.daterange, expected[2]['daterange'])
+
+    def test_import_empty_with_list_criterion(self):
+        topic = self._makeTopic('empty', False).__of__(self.root)
+        adapter = self._makeOne(topic)
+
+        context = DummyImportContext(topic, encoding='ascii')
+        context._files['test/empty/criteria.xml'] = _LIST_TOPIC_CRITERIA
+
+        adapter.import_(context, 'test', False)
+
+        expected = _CRITERIA_DATA[3]
+        found = topic.listCriteria()
+        self.assertEqual(len(found), 1)
+
+        criterion = found[0]
+
+        self.assertEqual(criterion.getId(), 'crit__%s' % expected[0])
+        self.assertEqual(criterion.Type(), expected[1])
+        self.assertEqual(criterion.Field(), expected[0])
+        self.assertEqual(','.join(criterion.value), expected[2]['value'])
+        self.assertEqual(criterion.operator, expected[2]['operator'])
+
+    def test_import_empty_with_sort_criterion(self):
+        topic = self._makeTopic('empty', False).__of__(self.root)
+        adapter = self._makeOne(topic)
+
+        context = DummyImportContext(topic, encoding='ascii')
+        context._files['test/empty/criteria.xml'] = _SORT_TOPIC_CRITERIA
+
+        adapter.import_(context, 'test', False)
+
+        expected = _CRITERIA_DATA[4]
+        found = topic.listCriteria()
+        self.assertEqual(len(found), 1)
+
+        criterion = found[0]
+
+        self.assertEqual(criterion.getId(), 'crit__%s' % expected[0])
+        self.assertEqual(criterion.Type(), expected[1])
+        self.assertEqual(criterion.field, None)
+        self.assertEqual(criterion.index, expected[0])
+        self.assertEqual(criterion.reversed, bool(expected[2]['reversed']))
+
+    def test_import_empty_with_mixed_criterion(self):
+        topic = self._makeTopic('empty', False).__of__(self.root)
+        adapter = self._makeOne(topic)
+
+        context = DummyImportContext(topic, encoding='ascii')
+        context._files['test/empty/criteria.xml'] = _MIXED_TOPIC_CRITERIA
+
+        adapter.import_(context, 'test', False)
+
+        found = topic.listCriteria()
+        self.assertEqual(len(found), 3)
+
+        criterion = found[0]
+        expected = _CRITERIA_DATA[0]
+
+        self.assertEqual(criterion.getId(), 'crit__%s' % expected[0])
+        self.assertEqual(criterion.Type(), expected[1])
+        self.assertEqual(criterion.Field(), expected[0])
+        self.assertEqual(criterion.value, expected[2]['value'])
+
+        criterion = found[1]
+        expected = _CRITERIA_DATA[2]
+
+        self.assertEqual(criterion.getId(), 'crit__%s' % expected[0])
+        self.assertEqual(criterion.Type(), expected[1])
+        self.assertEqual(criterion.Field(), expected[0])
+        self.assertEqual(criterion.value, expected[2]['value'])
+        self.assertEqual(criterion.operation, expected[2]['operation'])
+        self.assertEqual(criterion.daterange, expected[2]['daterange'])
+
+        criterion = found[2]
+        expected = _CRITERIA_DATA[4]
+
+        self.assertEqual(criterion.getId(), 'crit__%s' % expected[0])
+        self.assertEqual(criterion.Type(), expected[1])
+        self.assertEqual(criterion.field, None)
+        self.assertEqual(criterion.index, expected[0])
+        self.assertEqual(criterion.reversed, bool(expected[2]['reversed']))
+
+    def test_import_without_purge_leaves_existing_criteria(self):
+
+        topic = self._makeTopic('with_criteria', True).__of__(self.root)
+        adapter = self._makeOne(topic)
+
+        context = DummyImportContext(topic, purge=False)
+        context._files['test/with_criteria/criteria.xml'
+                      ] = _EMPTY_TOPIC_CRITERIA
+
+        self.assertEqual(len(topic.listCriteria()), len(_CRITERIA_DATA))
+        adapter.import_(context, 'test', False)
+        self.assertEqual(len(topic.listCriteria()), len(_CRITERIA_DATA))
+
+    def test_import_with_purge_removes_existing_criteria(self):
+
+        topic = self._makeTopic('with_criteria', True).__of__(self.root)
+        adapter = self._makeOne(topic)
+
+        context = DummyImportContext(topic, purge=True)
+        context._files['test/with_criteria/criteria.xml'
+                      ] = _EMPTY_TOPIC_CRITERIA
+
+        self.assertEqual(len(topic.listCriteria()), len(_CRITERIA_DATA))
+        adapter.import_(context, 'test', False)
+        self.assertEqual(len(topic.listCriteria()), 0)
+
 _EMPTY_TOPIC_CRITERIA = """\
 <?xml version="1.0" ?>
 <criteria>

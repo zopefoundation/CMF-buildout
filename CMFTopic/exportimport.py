@@ -64,7 +64,6 @@ class TopicExportImport(FolderishExporterImporter):
     def import_(self, import_context, subdir, root=False):
         """ See IFilesystemImporter
         """
-        return
         FolderishExporterImporter.import_(self, import_context, subdir, root)
 
         self.encoding = import_context.getEncoding()
@@ -77,12 +76,9 @@ class TopicExportImport(FolderishExporterImporter):
                                            subdir)
 
         if data is not None:
-
             dom = parseString(data)
             root = dom.firstChild
             assert root.tagName == self._ROOT_TAGNAME
-
-            self.context.title = self._getNodeAttr(root, 'title', None)
             self._updateFromDOM(root)
 
     def _getNodeAttr(self, node, attrname, default=None):
@@ -95,27 +91,27 @@ class TopicExportImport(FolderishExporterImporter):
         return value
 
     def _purgeContext(self):
-        return
         context = self.context
         criterion_ids = context.objectIds(context._criteria_metatype_ids())
         for criterion_id in criterion_ids:
             self.context._delObject(criterion_id)
 
     def _updateFromDOM(self, root):
-        return
-        for group in root.getElementsByTagName('group'):
-            group_id = self._getNodeAttr(group, 'group_id', None)
-            predicate = self._getNodeAttr(group, 'predicate', None)
-            title = self._getNodeAttr(group, 'title', None)
-            description = self._getNodeAttr(group, 'description', None)
-            active = self._getNodeAttr(group, 'active', None)
+        for criterion in root.getElementsByTagName('criterion'):
+            c_type = self._getNodeAttr(criterion, 'type', None)
+            field = self._getNodeAttr(criterion, 'field', None)
+            attributes = {}
+            for attribute in criterion.getElementsByTagName('attribute'):
+                name = self._getNodeAttr(attribute, 'name', None)
+                value = self._getNodeAttr(attribute, 'value', None)
+                if name == 'reversed':
+                    value = value in ('True', 'true', '1')
+                attributes[name] = value
 
-            self.context.addGroup(group_id,
-                                  predicate,
-                                  title,
-                                  description,
-                                  active == 'True',
-                                 )
+            self.context.addCriterion(field, c_type)
+            added = self.context.getCriterion(field)
+            added.edit(**attributes)
+
     def _getExportInfo(self):
         context = self.context
         criterion_info = []
@@ -143,4 +139,10 @@ class TopicExportImport(FolderishExporterImporter):
 
         return {'criteria': criterion_info,
                }
+
+    def _mustPreserve(self):
+        context = self.context
+        keepers = FolderishExporterImporter._mustPreserve(self)
+        keepers.extend(context.objectItems(context._criteria_metatype_ids()))
+        return keepers
 

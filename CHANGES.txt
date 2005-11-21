@@ -2,6 +2,9 @@ HEAD only (unreleased)
 
   New Features
 
+    - CMFTopic:  added specialized GenericSetup support for topics, to
+      allow capturing criteria in a single XML file.
+
     - CMFDefault and CMFTopic: Split off CMFTopic profile.
       CMFTopic support is now configured by an optional extension profile.
       CMFDefault no longer depends on CMFTopic.

@@ -18,6 +18,7 @@ $Id$
 from sys import modules
 
 from Products.CMFCore import utils
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.GenericSetup import EXTENSION
 from Products.GenericSetup import profile_registry
 
@@ -51,4 +52,6 @@ def initialize(context):
                                      'Adds UID support.',
                                      'profiles/default',
                                      'CMFUid',
-                                     EXTENSION)
+                                     EXTENSION,
+                                     for_=ISiteRoot,
+                                    )

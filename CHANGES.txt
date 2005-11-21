@@ -2,11 +2,9 @@ HEAD only (unreleased)
 
   New Features
 
-    - GenericSetup:  added 'for_' argument to profile registry operations.
-      A profile may be registered and queried as appropriate to a specific
-      site interface;  the default value, 'None', indicates that the profile
-      is relevant to any site.  Note that this is essentially an adapter
-      lookup;  perhaps we should reimplement it so.
+    - CMFActionIcons, CMFCalendar, CMFDefault, CMFTopic, CMFUid:
+      use the new 'for_' argument in GenericSetup's profile registry API
+      to indicate that profiles are intended for CMFCore's ISiteRoot sites.
 
     - CMFTopic:  added specialized GenericSetup support for topics, to
       allow capturing criteria in a single XML file.

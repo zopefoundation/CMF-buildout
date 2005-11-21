@@ -21,6 +21,7 @@ from Products.CMFCore.utils import ToolInit
 try:
     from Products.CMFSetup import EXTENSION
     from Products.CMFSetup import profile_registry
+    from Products.CMFCore.interfaces import ISiteRoot
     has_profile_registry = True
 except ImportError:
     has_profile_registry = False
@@ -44,4 +45,6 @@ def initialize( context ):
                                          'Adds action icon tool / settings.',
                                          'profiles/actionicons',
                                          'CMFActionIcons',
-                                         EXTENSION)
+                                         EXTENSION,
+                                         for_=ISiteRoot,
+                                        )

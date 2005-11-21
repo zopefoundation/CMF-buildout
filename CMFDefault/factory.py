@@ -17,6 +17,7 @@ $Id$
 
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.GenericSetup import EXTENSION
 from Products.GenericSetup import profile_registry
@@ -36,7 +37,7 @@ def addConfiguredSiteForm(dispatcher):
     base_profiles = []
     extension_profiles = []
 
-    for info in profile_registry.listProfileInfo():
+    for info in profile_registry.listProfileInfo(for_=ISiteRoot):
         if info.get('type') == EXTENSION:
             extension_profiles.append(info)
         else:

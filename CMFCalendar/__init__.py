@@ -19,6 +19,7 @@ import sys
 
 import utils
 from Products.CMFCore import utils
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.GenericSetup import EXTENSION
 from Products.GenericSetup import profile_registry
@@ -62,4 +63,6 @@ def initialize( context ):
                                      'Adds calendar support.',
                                      'profiles/default',
                                      'CMFCalendar',
-                                     EXTENSION)
+                                     EXTENSION,
+                                     for_=ISiteRoot,
+                                    )

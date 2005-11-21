@@ -65,13 +65,13 @@
       />
 
   <adapter
-      factory=".content.StructureFolderWalkingAdapter"
+      factory="Products.GenericSetup.content.FolderishExporterImporter"
       provides="Products.GenericSetup.interfaces.IFilesystemExporter"
       for="Products.CMFCore.interfaces.IFolderish"
       />
 
   <adapter
-      factory=".content.StructureFolderWalkingAdapter"
+      factory="Products.GenericSetup.content.FolderishExporterImporter"
       provides="Products.GenericSetup.interfaces.IFilesystemImporter"
       for="Products.CMFCore.interfaces.IFolderish"
       />

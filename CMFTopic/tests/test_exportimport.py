@@ -30,10 +30,12 @@ from Products.GenericSetup.tests.common import DummyImportContext
 _DATE_STR = '2005-11-20T12:00:00Z'
 _CRITERIA_DATA = (
     ('a', 'String Criterion', {'value': 'A'}),
-    ('b', 'List Criterion', {'value': ('B', 'b'), 'operator': 'or'}),
-    ('c', 'Integer Criterion', {'value': 3, 'direction': 'min'}),
-    ('d', 'Friendly Date Criterion', {'value': DateTime(_DATE_STR),
-                                      'operation': 'min', 'daterange': 'old'}),
+    ('b', 'Integer Criterion', {'value': 3, 'direction': 'min'}),
+    ('c', 'Friendly Date Criterion', {'value': DateTime(_DATE_STR),
+                                      'operation': 'min',
+                                      'daterange': 'old',
+                                     }),
+    ('d', 'List Criterion', {'value': ('D', 'd'), 'operator': 'or'}),
     ('e', 'Sort Criterion', {'reversed': 0}),
 )
 
@@ -103,17 +105,15 @@ class TopicExportImportTests(SecurityRequestTest,
         self.assertEqual(len(info['criteria']), len(_CRITERIA_DATA))
 
         for found, expected in zip(info['criteria'], _CRITERIA_DATA):
+            attributes = expected[2]
+            for k, v in attributes.items():
+                if type(v) in (list, tuple):
+                    attributes[k] = ','.join(v)
+
             self.assertEqual(found['criterion_id'], 'crit__%s' % expected[0])
             self.assertEqual(found['type'], expected[1])
-
-            if 0 and expected[0] == 'e': # field is None for SortCriterion
-                self.assertEqual(found['field'], None)
-                expected_attributes = expected[2].copy()
-                expected_attributes['index'] = expected[0]
-                self.assertEqual(dict(found['attributes']), expected_attributes)
-            else:
-                self.assertEqual(found['field'], expected[0])
-                self.assertEqual(dict(found['attributes']), expected[2])
+            self.assertEqual(found['field'], expected[0])
+            self.assertEqual(dict(found['attributes']), attributes)
 
     def test_export_with_string_criterion(self):
         topic = self._makeTopic('with_string', False).__of__(self.root)
@@ -136,6 +136,112 @@ class TopicExportImportTests(SecurityRequestTest,
         self._compareDOM( text, _STRING_TOPIC_CRITERIA )
         self.assertEqual( content_type, 'text/xml' )
 
+    def test_export_with_integer_criterion(self):
+        topic = self._makeTopic('with_integer', False).__of__(self.root)
+        data = _CRITERIA_DATA[1]
+        topic.addCriterion(data[0], data[1])
+        topic.getCriterion(data[0]).edit(**data[2])
+        adapter = self._makeOne(topic)
+
+        context = DummyExportContext(topic)
+        adapter.export(context, 'test', False)
+
+        self.assertEqual( len( context._wrote ), 2 )
+        filename, text, content_type = context._wrote[ 0 ]
+        self.assertEqual( filename, 'test/with_integer/.objects' )
+        self.assertEqual( text, '' )
+        self.assertEqual( content_type, 'text/comma-separated-values' )
+
+        filename, text, content_type = context._wrote[ 1 ]
+        self.assertEqual( filename, 'test/with_integer/criteria.xml' )
+        self._compareDOM( text, _INTEGER_TOPIC_CRITERIA )
+        self.assertEqual( content_type, 'text/xml' )
+
+    def test_export_with_date_criterion(self):
+        topic = self._makeTopic('with_date', False).__of__(self.root)
+        data = _CRITERIA_DATA[2]
+        topic.addCriterion(data[0], data[1])
+        topic.getCriterion(data[0]).edit(**data[2])
+        adapter = self._makeOne(topic)
+
+        context = DummyExportContext(topic)
+        adapter.export(context, 'test', False)
+
+        self.assertEqual( len( context._wrote ), 2 )
+        filename, text, content_type = context._wrote[ 0 ]
+        self.assertEqual( filename, 'test/with_date/.objects' )
+        self.assertEqual( text, '' )
+        self.assertEqual( content_type, 'text/comma-separated-values' )
+
+        filename, text, content_type = context._wrote[ 1 ]
+        self.assertEqual( filename, 'test/with_date/criteria.xml' )
+        self._compareDOM( text, _DATE_TOPIC_CRITERIA )
+        self.assertEqual( content_type, 'text/xml' )
+
+    def test_export_with_list_criterion(self):
+        topic = self._makeTopic('with_list', False).__of__(self.root)
+        data = _CRITERIA_DATA[3]
+        topic.addCriterion(data[0], data[1])
+        topic.getCriterion(data[0]).edit(**data[2])
+        adapter = self._makeOne(topic)
+
+        context = DummyExportContext(topic)
+        adapter.export(context, 'test', False)
+
+        self.assertEqual( len( context._wrote ), 2 )
+        filename, text, content_type = context._wrote[ 0 ]
+        self.assertEqual( filename, 'test/with_list/.objects' )
+        self.assertEqual( text, '' )
+        self.assertEqual( content_type, 'text/comma-separated-values' )
+
+        filename, text, content_type = context._wrote[ 1 ]
+        self.assertEqual( filename, 'test/with_list/criteria.xml' )
+        self._compareDOM( text, _LIST_TOPIC_CRITERIA )
+        self.assertEqual( content_type, 'text/xml' )
+
+    def test_export_with_sort_criterion(self):
+        topic = self._makeTopic('with_sort', False).__of__(self.root)
+        data = _CRITERIA_DATA[4]
+        topic.addCriterion(data[0], data[1])
+        topic.getCriterion(data[0]).edit(**data[2])
+        adapter = self._makeOne(topic)
+
+        context = DummyExportContext(topic)
+        adapter.export(context, 'test', False)
+
+        self.assertEqual( len( context._wrote ), 2 )
+        filename, text, content_type = context._wrote[ 0 ]
+        self.assertEqual( filename, 'test/with_sort/.objects' )
+        self.assertEqual( text, '' )
+        self.assertEqual( content_type, 'text/comma-separated-values' )
+
+        filename, text, content_type = context._wrote[ 1 ]
+        self.assertEqual( filename, 'test/with_sort/criteria.xml' )
+        self._compareDOM( text, _SORT_TOPIC_CRITERIA )
+        self.assertEqual( content_type, 'text/xml' )
+
+    def test_export_with_mixed_criteria(self):
+        topic = self._makeTopic('with_mixed', False).__of__(self.root)
+        for index in 0, 2, 4:
+            data = _CRITERIA_DATA[index]
+            topic.addCriterion(data[0], data[1])
+            topic.getCriterion(data[0]).edit(**data[2])
+        adapter = self._makeOne(topic)
+
+        context = DummyExportContext(topic)
+        adapter.export(context, 'test', False)
+
+        self.assertEqual( len( context._wrote ), 2 )
+        filename, text, content_type = context._wrote[ 0 ]
+        self.assertEqual( filename, 'test/with_mixed/.objects' )
+        self.assertEqual( text, '' )
+        self.assertEqual( content_type, 'text/comma-separated-values' )
+
+        filename, text, content_type = context._wrote[ 1 ]
+        self.assertEqual( filename, 'test/with_mixed/criteria.xml' )
+        self._compareDOM( text, _MIXED_TOPIC_CRITERIA )
+        self.assertEqual( content_type, 'text/xml' )
+
 _EMPTY_TOPIC_CRITERIA = """\
 <?xml version="1.0" ?>
 <criteria>
@@ -153,6 +259,84 @@ _STRING_TOPIC_CRITERIA = """\
  </criterion>
 </criteria>
 """
+
+_INTEGER_TOPIC_CRITERIA = """\
+<?xml version="1.0" ?>
+<criteria>
+ <criterion
+    criterion_id="crit__b"
+    type="Integer Criterion"
+    field="b">
+  <attribute name="value" value="3" />
+  <attribute name="direction" value="min" />
+ </criterion>
+</criteria>
+"""
+
+_DATE_TOPIC_CRITERIA = """\
+<?xml version="1.0" ?>
+<criteria>
+ <criterion
+    criterion_id="crit__c"
+    type="Friendly Date Criterion"
+    field="c">
+  <attribute name="value" value="%s" />
+  <attribute name="operation" value="min" />
+  <attribute name="daterange" value="old" />
+ </criterion>
+</criteria>
+""" % int(DateTime(_DATE_STR))
+
+_LIST_TOPIC_CRITERIA = """\
+<?xml version="1.0" ?>
+<criteria>
+ <criterion
+    criterion_id="crit__d"
+    type="List Criterion"
+    field="d">
+  <attribute name="value" value="D,d" />
+  <attribute name="operator" value="or" />
+ </criterion>
+</criteria>
+"""
+
+_SORT_TOPIC_CRITERIA = """\
+<?xml version="1.0" ?>
+<criteria>
+ <criterion
+    criterion_id="crit__e"
+    type="Sort Criterion"
+    field="e">
+  <attribute name="reversed" value="False" />
+ </criterion>
+</criteria>
+"""
+
+_MIXED_TOPIC_CRITERIA = """\
+<?xml version="1.0" ?>
+<criteria>
+ <criterion
+    criterion_id="crit__a"
+    type="String Criterion"
+    field="a">
+  <attribute name="value" value="A" />
+ </criterion>
+ <criterion
+    criterion_id="crit__c"
+    type="Friendly Date Criterion"
+    field="c">
+  <attribute name="value" value="%s" />
+  <attribute name="operation" value="min" />
+  <attribute name="daterange" value="old" />
+ </criterion>
+ <criterion
+    criterion_id="crit__e"
+    type="Sort Criterion"
+    field="e">
+  <attribute name="reversed" value="False" />
+ </criterion>
+</criteria>
+""" % int(DateTime(_DATE_STR))
 
 def test_suite():
     return unittest.TestSuite((

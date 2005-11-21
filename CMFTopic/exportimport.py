@@ -134,7 +134,10 @@ class TopicExportImport(FolderishExporterImporter):
 
             attributes = info['attributes']
             for attrname in criterion.editableAttributes():
-                attributes.append((attrname, getattr(criterion, attrname)))
+                value = getattr(criterion, attrname)
+                if type(value) in (tuple, list):
+                    value = ','.join(value)
+                attributes.append((attrname, value))
 
             criterion_info.append(info)
 

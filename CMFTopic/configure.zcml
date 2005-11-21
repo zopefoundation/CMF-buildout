@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    >
+
+  <adapter
+      factory=".exportimport.FolderishExporterImporter"
+      provides="Products.GenericSetup.interfaces.IFilesystemExporter"
+      for="Products.CMFTopic.Topic.ITopic"
+      />
+
+  <adapter
+      factory=".exportimport.FolderishExporterImporter"
+      provides="Products.GenericSetup.interfaces.IFilesystemImporter"
+      for="Products.CMFTopic.Topic.ITopic"
+      />
+
+</configure>
+

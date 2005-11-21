@@ -21,11 +21,18 @@ from Globals import InitializeClass
 
 from Products.CMFDefault.SkinnedFolder import SkinnedFolder
 from Products.CMFCore.utils import getToolByName
+from zope.interface import Interface
+from zope.interface import implements
+from zope.interface import implementedBy
 
 from permissions import View
 from permissions import AddTopics
 from permissions import ChangeTopics
 
+
+class ITopic(Interface):
+    """ Marker interface.
+    """
 
 def addTopic( self, id, title='', REQUEST=None ):
     """ Create an empty topic.
@@ -46,7 +53,7 @@ class Topic(SkinnedFolder):
     o Each topic holds a set of zero or more Criteria objects specifying
       the query.
     """
-
+    implements(ITopic, implementedBy(SkinnedFolder))
     meta_type='Portal Topic'
 
     security = ClassSecurityInfo()

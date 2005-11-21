@@ -2,6 +2,12 @@ HEAD only (unreleased)
 
   New Features
 
+    - GenericSetup:  added 'for_' argument to profile registry operations.
+      A profile may be registered and queried as appropriate to a specific
+      site interface;  the default value, 'None', indicates that the profile
+      is relevant to any site.  Note that this is essentially an adapter
+      lookup;  perhaps we should reimplement it so.
+
     - CMFTopic:  added specialized GenericSetup support for topics, to
       allow capturing criteria in a single XML file.
 

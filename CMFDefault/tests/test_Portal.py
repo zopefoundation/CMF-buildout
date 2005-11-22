@@ -221,6 +221,9 @@ class CMFSiteTests( PlacelessSetup, SecurityRequestTest, WarningInterceptor):
         site = getattr( self.root, id )
 
         # Check that a warning was raised.
+        if registry is None:
+            # registry only exists once a warning is generated
+            registry = globals().get("__warningregistry__")
         self.assertEqual( len( registry ), 1 )
         message, category, linenoe  = registry.keys()[ 0 ]
         self.failUnless( 'manage_addCMFSite' in message, message )

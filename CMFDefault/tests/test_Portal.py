@@ -214,9 +214,13 @@ class CMFSiteTests( PlacelessSetup, SecurityRequestTest, WarningInterceptor):
         if registry is not None:
             registry.clear()
 
-        # Check that a warning was raised.
-        site = self._makeSite( 'emits_warning' )
+        # Make a site the old-fashioned way
+        from Products.CMFDefault.Portal import manage_addCMFSite
+        id = 'emits_warning'
+        manage_addCMFSite( self.root, id )
+        site = getattr( self.root, id )
 
+        # Check that a warning was raised.
         self.assertEqual( len( registry ), 1 )
         message, category, linenoe  = registry.keys()[ 0 ]
         self.failUnless( 'manage_addCMFSite' in message, message )

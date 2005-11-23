@@ -15,36 +15,31 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
 
-from Products.CMFCore.WorkflowTool import addWorkflowFactory
 from Products.CMFCore.WorkflowTool import WorkflowTool
 
-from Products.CMFDefault.MembershipTool import MembershipTool
-from Products.CMFDefault.DefaultWorkflow import DefaultWorkflowDefinition
 
-class DefaultWorkflowDefinitionTests(TestCase):
+class DefaultWorkflowDefinitionTests(unittest.TestCase):
 
     def setUp(self):
-
+        from Products.CMFDefault.DefaultWorkflow \
+                import DefaultWorkflowDefinition
         self.site = DummySite('site')
         self.site._setObject('portal_types', DummyTool())
         self.site._setObject('portal_workflow', WorkflowTool())
-        self.site._setObject('portal_membership', MembershipTool())
+        self.site._setObject('portal_membership', DummyTool())
         self.site._setObject('acl_users', DummyUserFolder())
 
-        addWorkflowFactory(DefaultWorkflowDefinition,
-                           id='default_workflow', title='default_workflow')
-
-        self._constructDummyWorkflow()
+        wftool = self.site.portal_workflow
+        wftool._setObject('wf', DefaultWorkflowDefinition('wf'))
+        wftool.setDefaultChain('wf')
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -62,12 +57,6 @@ class DefaultWorkflowDefinitionTests(TestCase):
                 import DefaultWorkflowDefinition
 
         verifyClass(IWorkflowDefinition, DefaultWorkflowDefinition)
-
-    def _constructDummyWorkflow(self):
-
-        wftool = self.site.portal_workflow
-        wftool.manage_addWorkflow('default_workflow (default_workflow)', 'wf')
-        wftool.setDefaultChain('wf')
 
     def _getDummyWorkflow(self):
         wftool = self.site.portal_workflow
@@ -92,10 +81,11 @@ class DefaultWorkflowDefinitionTests(TestCase):
 
     # XXX more tests...
 
+
 def test_suite():
-    return TestSuite((
-        makeSuite( DefaultWorkflowDefinitionTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite(DefaultWorkflowDefinitionTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

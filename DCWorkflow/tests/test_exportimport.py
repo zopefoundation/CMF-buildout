@@ -10,62 +10,36 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-""" Unit tests for export / import of DCWorkflows and bindings.
+"""DCWorkflow export / import unit tests.
 
 $Id$
 """
 
 import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
-from OFS.Folder import Folder
+import Products
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
+from Products.Five import zcml
 
+import Products.GenericSetup.PythonScripts
+from Products.CMFCore.exportimport.tests.test_workflow \
+        import _BINDINGS_TOOL_EXPORT
+from Products.CMFCore.exportimport.tests.test_workflow import _DUMMY_ZCML
+from Products.CMFCore.exportimport.tests.test_workflow \
+        import _EMPTY_TOOL_EXPORT
+from Products.CMFCore.exportimport.tests.test_workflow \
+        import _WorkflowSetup as WorkflowSetupBase
+from Products.CMFCore.exportimport.tests.test_workflow import DummyWorkflow
+from Products.CMFCore.exportimport.tests.test_workflow \
+        import DummyWorkflowTool
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from Products.DCWorkflow.Transitions import TRIGGER_AUTOMATIC
-from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
-
-class DummyWorkflowTool( Folder ):
-
-    def __init__( self, id='portal_workflow' ):
-        Folder.__init__( self, id )
-        self._default_chain = ()
-        self._chains_by_type = {}
-
-    def getWorkflowIds( self ):
-
-        return self.objectIds()
-
-    def getWorkflowById( self, workflow_id ):
-
-        return self._getOb( workflow_id )
-
-    def setDefaultChain( self, chain ):
-
-        chain = chain.replace( ',', ' ' )
-        self._default_chain = tuple( chain.split() )
-
-    def setChainForPortalTypes( self, pt_names, chain ):
-
-        chain = chain.replace( ',', ' ' )
-        chain = tuple( chain.split() )
-
-        if self._chains_by_type is None:
-            self._chains_by_type = {}
-
-        for pt_name in pt_names:
-            self._chains_by_type[ pt_name ] = chain
-
-class DummyWorkflow( Folder ):
-
-    meta_type = 'Dummy Workflow'
 
 class _GuardChecker:
 
@@ -100,15 +74,14 @@ class _GuardChecker:
         self.assertEqual( info[ 'guard_expr' ], expr )
 
 
-class _WorkflowSetup( BaseRegistryTests ):
+class _WorkflowSetup(WorkflowSetupBase):
 
-    def _initSite( self ):
-
-        self.root.site = Folder( id='site' )
-        site = self.root.site
-        self.root.site.portal_workflow = DummyWorkflowTool()
-
-        return site
+    def setUp(self):
+        WorkflowSetupBase.setUp(self)
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.DCWorkflow)
+        zcml.load_config('configure.zcml', Products.GenericSetup.PythonScripts)
+        zcml.load_string(_DUMMY_ZCML)
 
     def _initDCWorkflow( self, workflow_id ):
 
@@ -227,247 +200,14 @@ class _WorkflowSetup( BaseRegistryTests ):
 
             dcworkflow.scripts._setObject( k, script )
 
-class WorkflowToolConfiguratorTests( _WorkflowSetup ):
-    
-    def _getTargetClass( self ):
-
-        from Products.CMFSetup.workflow import WorkflowToolConfigurator
-        return WorkflowToolConfigurator
-
-    def test_listWorkflowInfo_empty( self ):
-
-        site = self._initSite()
-
-        configurator = self._makeOne( site ).__of__( site )
-
-        self.assertEqual( len( configurator.listWorkflowInfo() ), 0 )
-
-    def test_listWorkflowInfo_mixed( self ):
-
-        from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
-
-        site = self._initSite()
-
-        WF_ID_NON = 'non_dcworkflow'
-        WF_TITLE_NON = 'Non-DCWorkflow'
-        WF_ID_DC = 'dcworkflow'
-        WF_TITLE_DC = 'DCWorkflow'
-
-        site = self._initSite()
-
-        wf_tool = site.portal_workflow
-        nondcworkflow = DummyWorkflow( WF_TITLE_NON )
-        nondcworkflow.title = WF_TITLE_NON
-        wf_tool._setObject( WF_ID_NON, nondcworkflow )
-
-        dcworkflow = self._initDCWorkflow( WF_ID_DC )
-        dcworkflow.title = WF_TITLE_DC
-
-        configurator = self._makeOne( site ).__of__( site )
-
-        info_list = configurator.listWorkflowInfo()
-
-        self.assertEqual( len( info_list ), 2 )
-
-        non_info = [ x for x in info_list if x[ 'id' ] == WF_ID_NON ][0]
-        self.assertEqual( non_info[ 'title' ], WF_TITLE_NON )
-        self.assertEqual( non_info[ 'meta_type' ], DummyWorkflow.meta_type )
-
-        dc_info = [ x for x in info_list if x[ 'id' ] == WF_ID_DC ][0]
-        self.assertEqual( dc_info[ 'title' ], WF_TITLE_DC )
-        self.assertEqual( dc_info[ 'meta_type' ]
-                        , DCWorkflowDefinition.meta_type )
-        self.assertEqual( dc_info[ 'filename' ]
-                        , 'workflows/%s/definition.xml' % WF_ID_DC )
-
-    def test_listWorkflowChains_no_default( self ):
-
-        site = self._initSite()
-        configurator = self._makeOne( site ).__of__( site )
-
-        chains = configurator.listWorkflowChains()
-
-        default_chain = [ x[1] for x in chains if x[0] is None ][0]
-        self.assertEqual( len( default_chain ), 0 )
-
-    def test_listWorkflowChains_with_default( self ):
-
-        site = self._initSite()
-        site.portal_workflow._default_chain = ( 'foo', 'bar' )
-        configurator = self._makeOne( site ).__of__( site )
-
-        chains = configurator.listWorkflowChains()
-
-        self.assertEqual( chains[ 0 ][ 0 ], None )
-        default_chain = chains[ 0 ][ 1 ]
-        self.assertEqual( len( default_chain ), 2 )
-        self.assertEqual( default_chain[ 0 ], 'foo' )
-        self.assertEqual( default_chain[ 1 ], 'bar' )
-
-    def test_listWorkflowChains_no_overrides( self ):
-
-        site = self._initSite()
-        configurator = self._makeOne( site ).__of__( site )
-
-        chains = configurator.listWorkflowChains()
-
-        self.assertEqual( len( chains ), 1 )
-
-    def test_listWorkflowChains_with_overrides( self ):
-
-        site = self._initSite()
-        site.portal_workflow._chains_by_type[ 'qux' ] = ( 'foo', 'bar' )
-        configurator = self._makeOne( site ).__of__( site )
-
-        chains = configurator.listWorkflowChains()
-
-        self.assertEqual( len( chains ), 2 )
-
-        self.assertEqual( chains[ 0 ][ 0 ], None )
-        default_chain = chains[ 0 ][ 1 ]
-        self.assertEqual( len( default_chain ), 0 )
-
-        self.assertEqual( chains[ 1 ][ 0 ], 'qux' )
-        qux_chain = chains[ 1 ][ 1 ]
-        self.assertEqual( len( qux_chain ), 2 )
-        self.assertEqual( qux_chain[ 0 ], 'foo' )
-        self.assertEqual( qux_chain[ 1 ], 'bar' )
-
-    def test_listWorkflowChains_default_chain_plus_overrides( self ):
-
-        site = self._initSite()
-        site.portal_workflow._default_chain = ( 'foo', 'bar' )
-        site.portal_workflow._chains_by_type[ 'qux' ] = ( 'baz', )
-        configurator = self._makeOne( site ).__of__( site )
-
-        chains = configurator.listWorkflowChains()
-
-        self.assertEqual( chains[ 0 ][ 0 ], None )
-        default_chain = chains[ 0 ][ 1 ]
-        self.assertEqual( len( default_chain ), 2 )
-        self.assertEqual( default_chain[ 0 ], 'foo' )
-        self.assertEqual( default_chain[ 1 ], 'bar' )
-
-        self.assertEqual( chains[ 1 ][ 0 ], 'qux' )
-        qux_chain = chains[ 1 ][ 1 ]
-        self.assertEqual( len( qux_chain ), 1 )
-        self.assertEqual( qux_chain[ 0 ], 'baz' )
-
-    def test_generateXML_empty( self ):
-
-        site = self._initSite()
-        configurator = self._makeOne( site ).__of__( site )
-        self._compareDOM( configurator.generateXML(), _EMPTY_TOOL_EXPORT )
-
-    def test_generateXML_default_chain_plus_overrides( self ):
-
-        site = self._initSite()
-        site.portal_workflow._default_chain = ( 'foo', 'bar' )
-        site.portal_workflow._chains_by_type[ 'qux' ] = ( 'baz', )
-
-        configurator = self._makeOne( site ).__of__( site )
-
-        self._compareDOM( configurator.generateXML()
-                        , _OVERRIDE_TOOL_EXPORT )
-
-    def test_generateXML_mixed( self ):
-
-        WF_ID_NON = 'non_dcworkflow'
-        WF_TITLE_NON = 'Non-DCWorkflow'
-        WF_ID_DC = 'dcworkflow'
-        WF_TITLE_DC = 'DCWorkflow'
-
-        site = self._initSite()
-
-        wf_tool = site.portal_workflow
-        nondcworkflow = DummyWorkflow( WF_TITLE_NON )
-        nondcworkflow.title = WF_TITLE_NON
-        wf_tool._setObject( WF_ID_NON, nondcworkflow )
-
-        dcworkflow = self._initDCWorkflow( WF_ID_DC )
-        dcworkflow.title = WF_TITLE_DC
-
-        configurator = self._makeOne( site ).__of__( site )
-
-        self._compareDOM( configurator.generateXML(), _NORMAL_TOOL_EXPORT )
-
-    def test_parseXML_empty( self ):
-
-        site = self._initSite()
-        configurator = self._makeOne( site ).__of__( site )
-
-        tool_info = configurator.parseXML( _EMPTY_TOOL_EXPORT )
-
-        self.assertEqual( len( tool_info[ 'workflows' ] ), 0 )
-        self.assertEqual( len( tool_info[ 'bindings' ] ), 1 )
-
-    def test_parseXML_default_chain_plus_overrides( self ):
-
-        site = self._initSite()
-        configurator = self._makeOne( site ).__of__( site )
-
-        tool_info = configurator.parseXML( _OVERRIDE_TOOL_EXPORT )
-
-        self.assertEqual( len( tool_info[ 'workflows' ] ), 0 )
-        self.assertEqual( len( tool_info[ 'bindings' ] ), 2 )
-
-        default = tool_info[ 'bindings' ][ None ]
-        self.assertEqual( len( default ), 2 )
-        self.assertEqual( default[ 0 ], 'foo' )
-        self.assertEqual( default[ 1 ], 'bar' )
-
-        override = tool_info[ 'bindings' ][ 'qux' ]
-        self.assertEqual( len( override ), 1 )
-        self.assertEqual( override[ 0 ], 'baz' )
-
-    def test_parseXML_normal( self ):
-
-        site = self._initSite()
-        configurator = self._makeOne( site ).__of__( site )
-
-        tool_info = configurator.parseXML( _NORMAL_TOOL_EXPORT )
-
-        self.assertEqual( len( tool_info[ 'workflows' ] ), 2 )
-
-        info = tool_info[ 'workflows' ][ 0 ]
-        self.assertEqual( info[ 'workflow_id' ], 'non_dcworkflow' )
-        self.assertEqual( info[ 'meta_type' ], DummyWorkflow.meta_type )
-        self.assertEqual( info[ 'filename' ], None )
-
-        info = tool_info[ 'workflows' ][ 1 ]
-        self.assertEqual( info[ 'workflow_id' ], 'dcworkflow' )
-        self.assertEqual( info[ 'meta_type' ], DCWorkflowDefinition.meta_type )
-        self.assertEqual( info[ 'filename' ],
-                          'workflows/dcworkflow/definition.xml' )
-
-        self.assertEqual( len( tool_info[ 'bindings' ] ), 1 )
-
 
 class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
     def _getTargetClass( self ):
+        from Products.DCWorkflow.exportimport \
+                import WorkflowDefinitionConfigurator
 
-        from Products.CMFSetup.workflow import WorkflowDefinitionConfigurator
         return WorkflowDefinitionConfigurator
-
-    def test_getWorkflowInfo_non_dcworkflow( self ):
-
-        WF_ID = 'dummy'
-        WF_TITLE = 'Dummy'
-
-        site = self._initSite()
-        wf_tool = site.portal_workflow
-        dummy = DummyWorkflow( WF_TITLE )
-        wf_tool._setObject( WF_ID, dummy )
-
-        dummy.title = WF_TITLE
-
-        configurator = self._makeOne( site ).__of__( site )
-        info = configurator.getWorkflowInfo( WF_ID )
-
-        self.assertEqual( info[ 'id' ], WF_ID )
-        self.assertEqual( info[ 'meta_type' ], DummyWorkflow.meta_type )
-        self.assertEqual( info[ 'title' ], WF_TITLE )
 
     def test_getWorkflowInfo_dcworkflow_defaults( self ):
 
@@ -476,7 +216,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         site = self._initSite()
         dcworkflow = self._initDCWorkflow( WF_ID )
 
-        configurator = self._makeOne( site ).__of__( site )
+        configurator = self._makeOne(dcworkflow).__of__(site)
         info = configurator.getWorkflowInfo( WF_ID )
 
         self.assertEqual( info[ 'id' ], WF_ID )
@@ -498,7 +238,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         dcworkflow = self._initDCWorkflow( WF_ID )
         dcworkflow.permissions = _WF_PERMISSIONS
 
-        configurator = self._makeOne( site ).__of__( site )
+        configurator = self._makeOne(dcworkflow).__of__(site)
         info = configurator.getWorkflowInfo( WF_ID )
 
         permissions = info[ 'permissions' ]
@@ -515,7 +255,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         dcworkflow = self._initDCWorkflow( WF_ID )
         self._initVariables( dcworkflow )
 
-        configurator = self._makeOne( site ).__of__( site )
+        configurator = self._makeOne(dcworkflow).__of__(site)
         info = configurator.getWorkflowInfo( WF_ID )
 
         variable_info = info[ 'variable_info' ]
@@ -549,7 +289,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         dcworkflow.initial_state = WF_INITIAL_STATE
         self._initStates( dcworkflow )
 
-        configurator = self._makeOne( site ).__of__( site )
+        configurator = self._makeOne(dcworkflow).__of__(site)
         info = configurator.getWorkflowInfo( WF_ID )
 
         self.assertEqual( info[ 'state_variable' ], dcworkflow.state_var )
@@ -614,7 +354,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
     def test_getWorkflowInfo_dcworkflow_transitions( self ):
 
-        from Products.CMFSetup.workflow import TRIGGER_TYPES
+        from Products.DCWorkflow.exportimport import TRIGGER_TYPES
 
         WF_ID = 'dcworkflow_transitions'
 
@@ -622,7 +362,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         dcworkflow = self._initDCWorkflow( WF_ID )
         self._initTransitions( dcworkflow )
 
-        configurator = self._makeOne( site ).__of__( site )
+        configurator = self._makeOne(dcworkflow).__of__(site)
         info = configurator.getWorkflowInfo( WF_ID )
 
         transition_info = info[ 'transition_info' ]
@@ -665,7 +405,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         dcworkflow = self._initDCWorkflow( WF_ID )
         self._initWorklists( dcworkflow )
 
-        configurator = self._makeOne( site ).__of__( site )
+        configurator = self._makeOne(dcworkflow).__of__(site)
         info = configurator.getWorkflowInfo( WF_ID )
 
         worklist_info = info[ 'worklist_info' ]
@@ -708,7 +448,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         dcworkflow = self._initDCWorkflow( WF_ID )
         self._initScripts( dcworkflow )
 
-        configurator = self._makeOne( site ).__of__( site )
+        configurator = self._makeOne(dcworkflow).__of__(site)
         info = configurator.getWorkflowInfo( WF_ID )
 
         script_info = info[ 'script_info' ]
@@ -724,7 +464,6 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
             expected = _WF_SCRIPTS[ info[ 'id' ] ]
 
             self.assertEqual( info[ 'meta_type' ], expected[ 0 ] )
-            self.assertEqual( info[ 'body' ], expected[ 1 ] )
 
             if info[ 'meta_type' ] == PythonScript.meta_type:
                 self.assertEqual( info[ 'filename' ]
@@ -743,29 +482,13 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         dcworkflow.title = WF_TITLE
         dcworkflow.initial_state = WF_INITIAL_STATE
 
-        configurator = self._makeOne( site ).__of__( site )
+        configurator = self._makeOne(dcworkflow).__of__(site)
 
-        self._compareDOM( configurator.generateWorkflowXML( WF_ID )
+        self._compareDOM( configurator.generateWorkflowXML()
                         , _EMPTY_WORKFLOW_EXPORT % ( WF_ID
                                                    , WF_TITLE
                                                    , WF_INITIAL_STATE
                                                    ) )
-
-    def test_generateWorkflowXML_nondc( self ):
-
-        WF_ID_NON = 'non_dcworkflow'
-        WF_TITLE_NON = 'Non-DCWorkflow'
-
-        site = self._initSite()
-
-        wf_tool = site.portal_workflow
-        nondcworkflow = DummyWorkflow( WF_TITLE_NON )
-        nondcworkflow.title = WF_TITLE_NON
-        wf_tool._setObject( WF_ID_NON, nondcworkflow )
-
-        configurator = self._makeOne( site ).__of__( site )
-
-        self.assertEqual( configurator.generateWorkflowXML( WF_ID_NON ), None )
 
     def test_generateWorkflowXML_normal( self ):
 
@@ -784,9 +507,9 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         self._initWorklists( dcworkflow )
         self._initScripts( dcworkflow )
 
-        configurator = self._makeOne( site ).__of__( site )
+        configurator = self._makeOne(dcworkflow).__of__(site)
 
-        self._compareDOM( configurator.generateWorkflowXML( WF_ID )
+        self._compareDOM( configurator.generateWorkflowXML()
                         , _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID
                             , 'title' : WF_TITLE
@@ -824,9 +547,9 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         self._initWorklists( dcworkflow_2 )
         self._initScripts( dcworkflow_2 )
 
-        configurator = self._makeOne( site ).__of__( site )
+        configurator = self._makeOne(dcworkflow_1).__of__(site)
 
-        self._compareDOM( configurator.generateWorkflowXML( WF_ID_1 )
+        self._compareDOM( configurator.generateWorkflowXML()
                         , _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID_1
                             , 'title' : WF_TITLE_1
@@ -834,7 +557,9 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
                             , 'workflow_filename' : WF_ID_1.replace(' ', '_')
                             } )
 
-        self._compareDOM( configurator.generateWorkflowXML( WF_ID_2 )
+        configurator = self._makeOne(dcworkflow_2).__of__(site)
+
+        self._compareDOM( configurator.generateWorkflowXML()
                         , _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID_2
                             , 'title' : WF_TITLE_2
@@ -971,7 +696,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
     def test_parseWorkflowXML_normal_transitions( self ):
 
-        from Products.CMFSetup.workflow import TRIGGER_TYPES
+        from Products.DCWorkflow.exportimport import TRIGGER_TYPES
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
@@ -1038,7 +763,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
     def test_parseWorkflowXML_normal_variables( self ):
 
-        from Products.CMFSetup.workflow import TRIGGER_TYPES
+        from Products.DCWorkflow.exportimport import TRIGGER_TYPES
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
@@ -1115,7 +840,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
     def test_parseWorkflowXML_normal_worklists( self ):
 
-        from Products.CMFSetup.workflow import TRIGGER_TYPES
+        from Products.DCWorkflow.exportimport import TRIGGER_TYPES
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
@@ -1176,7 +901,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
     def test_parseWorkflowXML_normal_permissions( self ):
 
-        from Products.CMFSetup.workflow import TRIGGER_TYPES
+        from Products.DCWorkflow.exportimport import TRIGGER_TYPES
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
@@ -1212,7 +937,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
     def test_parseWorkflowXML_normal_scripts( self ):
 
-        from Products.CMFSetup.workflow import TRIGGER_TYPES
+        from Products.DCWorkflow.exportimport import TRIGGER_TYPES
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
@@ -1488,105 +1213,44 @@ _WF_SCRIPTS = \
 , 'before_expire': ( ExternalMethod.meta_type
                    , ''
                    , ''
-                   , 'CMFSetup.test_method'
+                   , 'DCWorkflow.test_method'
                    , 'test'
                    )
 }
 
-_EMPTY_TOOL_EXPORT = """\
-<?xml version="1.0"?>
-<workflow-tool>
- <bindings>
-  <default>
-  </default>
- </bindings>
-</workflow-tool>
-"""
-
-_BINDINGS_TOOL_EXPORT = """\
-<?xml version="1.0"?>
-<workflow-tool>
- <bindings>
-  <default>
-   <bound-workflow workflow_id="non_dcworkflow_0" />
-   <bound-workflow workflow_id="non_dcworkflow_1" />
-  </default>
-  <type type_id="sometype">
-   <bound-workflow workflow_id="non_dcworkflow_2" />
-  </type>
-  <type type_id="anothertype">
-   <bound-workflow workflow_id="non_dcworkflow_3" />
-  </type>
- </bindings>
-</workflow-tool>
-"""
-
-_OVERRIDE_TOOL_EXPORT = """\
-<?xml version="1.0"?>
-<workflow-tool>
- <bindings>
-  <default>
-   <bound-workflow workflow_id="foo" />
-   <bound-workflow workflow_id="bar" />
-  </default>
-  <type type_id="qux">
-   <bound-workflow workflow_id="baz" />
-  </type>
- </bindings>
-</workflow-tool>
-"""
-
 _NORMAL_TOOL_EXPORT = """\
 <?xml version="1.0"?>
-<workflow-tool>
- <workflow
-    workflow_id="non_dcworkflow"
-    meta_type="Dummy Workflow"
-    />
- <workflow
-    workflow_id="dcworkflow"
-    filename="workflows/dcworkflow/definition.xml"
-    meta_type="Workflow"
-    />
+<object name="portal_workflow" meta_type="Dummy Workflow Tool">
+ <property name="title"></property>
+ <object name="Non-DCWorkflow" meta_type="Dummy Workflow"/>
+ <object name="dcworkflow" meta_type="Workflow"/>
  <bindings>
-  <default>
-  </default>
+  <default/>
  </bindings>
-</workflow-tool>
+</object>
 """
 
 _NORMAL_TOOL_EXPORT_WITH_FILENAME = """\
 <?xml version="1.0"?>
-<workflow-tool>
- <workflow
-    workflow_id="non_dcworkflow"
-    meta_type="Dummy Workflow"
-    />
- <workflow
-    workflow_id="dcworkflow"
-    filename="workflows/%s/definition.xml"
-    meta_type="Workflow"
-    />
+<object name="portal_workflow" meta_type="Dummy Workflow Tool">
+ <property name="title"></property>
+ <object name="Non-DCWorkflow" meta_type="Dummy Workflow"/>
+ <object name="%(workflow_id)s" meta_type="Workflow"/>
  <bindings>
-  <default>
-  </default>
+  <default/>
  </bindings>
-</workflow-tool>
+</object>
 """
 
 _FILENAME_TOOL_EXPORT = """\
 <?xml version="1.0"?>
-<workflow-tool>
- <workflow
-    workflow_id="name with spaces"
-    filename="workflows/name_with_spaces/definition.xml"
-    meta_type="Workflow"
-    />
+<object name="portal_workflow" meta_type="Dummy Workflow Tool">
+ <property name="title"></property>
+ <object name="name with spaces" meta_type="Workflow"/>
  <bindings>
-  <default>
-  </default>
+  <default/>
  </bindings>
-</workflow-tool>
+</object>
 """
 
 _EMPTY_WORKFLOW_EXPORT = """\
@@ -1831,7 +1495,7 @@ _OLD_WORKFLOW_EXPORT = """\
     script_id="before_expire"
     type="External Method"
     filename=""
-    module="CMFSetup.test_method"
+    module="DCWorkflow.test_method"
     function="test"
     />
  <script
@@ -2074,7 +1738,7 @@ _NORMAL_WORKFLOW_EXPORT = """\
     script_id="before_expire"
     type="External Method"
     filename=""
-    module="CMFSetup.test_method"
+    module="DCWorkflow.test_method"
     function="test"
     />
  <script
@@ -2092,11 +1756,10 @@ class Test_exportWorkflow( _WorkflowSetup
                          ):
 
     def test_empty( self ):
+        from Products.CMFCore.exportimport.workflow import exportWorkflowTool
 
         site = self._initSite()
         context = DummyExportContext( site )
-
-        from Products.CMFSetup.workflow import exportWorkflowTool
         exportWorkflowTool( context )
 
         self.assertEqual( len( context._wrote ), 1 )
@@ -2106,6 +1769,7 @@ class Test_exportWorkflow( _WorkflowSetup
         self.assertEqual( content_type, 'text/xml' )
 
     def test_normal( self ):
+        from Products.CMFCore.exportimport.workflow import exportWorkflowTool
 
         WF_ID_NON = 'non_dcworkflow'
         WF_TITLE_NON = 'Non-DCWorkflow'
@@ -2131,8 +1795,6 @@ class Test_exportWorkflow( _WorkflowSetup
         self._initScripts( dcworkflow )
 
         context = DummyExportContext( site )
-
-        from Products.CMFSetup.workflow import exportWorkflowTool
         exportWorkflowTool( context )
 
         # workflows list, wf defintion and 3 scripts
@@ -2161,6 +1823,7 @@ class Test_exportWorkflow( _WorkflowSetup
         self.assertEqual( content_type, 'text/plain' )
 
     def test_with_filenames( self ):
+        from Products.CMFCore.exportimport.workflow import exportWorkflowTool
 
         WF_ID_DC = 'name with spaces'
         WF_TITLE_DC = 'DCWorkflow with spaces'
@@ -2179,8 +1842,6 @@ class Test_exportWorkflow( _WorkflowSetup
         self._initScripts( dcworkflow )
 
         context = DummyExportContext( site )
-
-        from Products.CMFSetup.workflow import exportWorkflowTool
         exportWorkflowTool( context )
 
         # workflows list, wf defintion and 3 scripts
@@ -2215,6 +1876,7 @@ class Test_importWorkflow( _WorkflowSetup
                          ):
 
     def _importNormalWorkflow( self, wf_id, wf_title, wf_initial_state ):
+        from Products.CMFCore.exportimport.workflow import importWorkflowTool
 
         site = self._initSite()
         wf_tool = site.portal_workflow
@@ -2222,9 +1884,12 @@ class Test_importWorkflow( _WorkflowSetup
 
         context = DummyImportContext( site )
         context._files[ 'workflows.xml'
-                      ] = _NORMAL_TOOL_EXPORT_WITH_FILENAME % workflow_filename
+                      ] = (_NORMAL_TOOL_EXPORT_WITH_FILENAME
+                            % { 'workflow_id' : wf_id
+                              }
+                          )
 
-        context._files[ 'workflows/%s/definition.xml' % wf_id
+        context._files[ 'workflows/%s/definition.xml' % workflow_filename
                       ] = ( _NORMAL_WORKFLOW_EXPORT
                             % { 'workflow_id' : wf_id
                               , 'title' : wf_title
@@ -2242,12 +1907,12 @@ class Test_importWorkflow( _WorkflowSetup
         context._files[ 'workflows/%s/scripts/before_open.py' % workflow_filename
                       ] = _BEFORE_OPEN_SCRIPT
 
-        from Products.CMFSetup.workflow import importWorkflowTool
         importWorkflowTool( context )
 
         return wf_tool
 
     def _importOldWorkflow( self, wf_id, wf_title, wf_initial_state ):
+        from Products.CMFCore.exportimport.workflow import importWorkflowTool
 
         site = self._initSite()
         wf_tool = site.portal_workflow
@@ -2255,9 +1920,12 @@ class Test_importWorkflow( _WorkflowSetup
 
         context = DummyImportContext( site )
         context._files[ 'workflows.xml'
-                      ] = _NORMAL_TOOL_EXPORT_WITH_FILENAME % workflow_filename
+                      ] = (_NORMAL_TOOL_EXPORT_WITH_FILENAME
+                            % { 'workflow_id' : wf_id
+                              }
+                          )
 
-        context._files[ 'workflows/%s/definition.xml' % wf_id
+        context._files[ 'workflows/%s/definition.xml' % workflow_filename
                       ] = ( _OLD_WORKFLOW_EXPORT
                             % { 'workflow_id' : wf_id
                               , 'title' : wf_title
@@ -2275,12 +1943,12 @@ class Test_importWorkflow( _WorkflowSetup
         context._files[ 'workflows/%s/before_open.py' % workflow_filename
                       ] = _BEFORE_OPEN_SCRIPT
 
-        from Products.CMFSetup.workflow import importWorkflowTool
         importWorkflowTool( context )
 
         return wf_tool
 
     def test_empty_default_purge( self ):
+        from Products.CMFCore.exportimport.workflow import importWorkflowTool
 
         WF_ID_NON = 'non_dcworkflow_%s'
         WF_TITLE_NON = 'Non-DCWorkflow #%s'
@@ -2299,8 +1967,6 @@ class Test_importWorkflow( _WorkflowSetup
 
         context = DummyImportContext( site )
         context._files[ 'workflows.xml' ] = _EMPTY_TOOL_EXPORT
-
-        from Products.CMFSetup.workflow import importWorkflowTool
         importWorkflowTool( context )
 
         self.assertEqual( len( wf_tool.objectIds() ), 0 )
@@ -2308,6 +1974,7 @@ class Test_importWorkflow( _WorkflowSetup
         self.assertEqual( len( wf_tool._chains_by_type ), 0 )
 
     def test_empty_explicit_purge( self ):
+        from Products.CMFCore.exportimport.workflow import importWorkflowTool
 
         WF_ID_NON = 'non_dcworkflow_%s'
         WF_TITLE_NON = 'Non-DCWorkflow #%s'
@@ -2326,8 +1993,6 @@ class Test_importWorkflow( _WorkflowSetup
 
         context = DummyImportContext( site, True )
         context._files[ 'workflows.xml' ] = _EMPTY_TOOL_EXPORT
-
-        from Products.CMFSetup.workflow import importWorkflowTool
         importWorkflowTool( context )
 
         self.assertEqual( len( wf_tool.objectIds() ), 0 )
@@ -2335,6 +2000,7 @@ class Test_importWorkflow( _WorkflowSetup
         self.assertEqual( len( wf_tool._chains_by_type ), 0 )
 
     def test_empty_skip_purge( self ):
+        from Products.CMFCore.exportimport.workflow import importWorkflowTool
 
         WF_ID_NON = 'non_dcworkflow_%s'
         WF_TITLE_NON = 'Non-DCWorkflow #%s'
@@ -2353,8 +2019,6 @@ class Test_importWorkflow( _WorkflowSetup
 
         context = DummyImportContext( site, False )
         context._files[ 'typestool.xml' ] = _EMPTY_TOOL_EXPORT
-
-        from Products.CMFSetup.workflow import importWorkflowTool
         importWorkflowTool( context )
 
         self.assertEqual( len( wf_tool.objectIds() ), 4 )
@@ -2366,6 +2030,7 @@ class Test_importWorkflow( _WorkflowSetup
                         )
 
     def test_bindings_skip_purge( self ):
+        from Products.CMFCore.exportimport.workflow import importWorkflowTool
 
         WF_ID_NON = 'non_dcworkflow_%s'
         WF_TITLE_NON = 'Non-DCWorkflow #%s'
@@ -2384,8 +2049,6 @@ class Test_importWorkflow( _WorkflowSetup
 
         context = DummyImportContext( site, False )
         context._files[ 'workflows.xml' ] = _BINDINGS_TOOL_EXPORT
-
-        from Products.CMFSetup.workflow import importWorkflowTool
         importWorkflowTool( context )
 
         self.assertEqual( len( wf_tool.objectIds() ), 4 )
@@ -2408,8 +2071,8 @@ class Test_importWorkflow( _WorkflowSetup
 
         tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
 
-        self.assertEqual( len( tool.objectIds() ), 1 )
-        self.assertEqual( tool.objectIds()[ 0 ], WF_ID )
+        self.assertEqual( len( tool.objectIds() ), 2 )
+        self.assertEqual( tool.objectIds()[ 1 ], WF_ID )
 
     def test_from_empty_dcworkflow_workflow_attrs( self ):
 
@@ -2419,7 +2082,7 @@ class Test_importWorkflow( _WorkflowSetup
 
         tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
 
-        workflow = tool.objectValues()[ 0 ]
+        workflow = tool.objectValues()[ 1 ]
         self.assertEqual( workflow.meta_type, DCWorkflowDefinition.meta_type )
         self.assertEqual( workflow.title, WF_TITLE )
         self.assertEqual( workflow.state_var, 'state' )
@@ -2433,7 +2096,7 @@ class Test_importWorkflow( _WorkflowSetup
 
         tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
 
-        workflow = tool.objectValues()[ 0 ]
+        workflow = tool.objectValues()[ 1 ]
 
         permissions = workflow.permissions
         self.assertEqual( len( permissions ), len( _WF_PERMISSIONS ) )
@@ -2449,7 +2112,7 @@ class Test_importWorkflow( _WorkflowSetup
 
         tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
 
-        workflow = tool.objectValues()[ 0 ]
+        workflow = tool.objectValues()[ 1 ]
 
         variables = workflow.variables
 
@@ -2481,7 +2144,7 @@ class Test_importWorkflow( _WorkflowSetup
 
         tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
 
-        workflow = tool.objectValues()[ 0 ]
+        workflow = tool.objectValues()[ 1 ]
 
         states = workflow.states
 
@@ -2538,7 +2201,7 @@ class Test_importWorkflow( _WorkflowSetup
 
         tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
 
-        workflow = tool.objectValues()[ 0 ]
+        workflow = tool.objectValues()[ 1 ]
 
         transitions = workflow.transitions
 
@@ -2580,7 +2243,7 @@ class Test_importWorkflow( _WorkflowSetup
 
         tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
 
-        workflow = tool.objectValues()[ 0 ]
+        workflow = tool.objectValues()[ 1 ]
 
         worklists = workflow.worklists
 
@@ -2622,7 +2285,7 @@ class Test_importWorkflow( _WorkflowSetup
 
         tool = self._importOldWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
 
-        workflow = tool.objectValues()[ 0 ]
+        workflow = tool.objectValues()[ 1 ]
 
         scripts = workflow.scripts
 
@@ -2646,7 +2309,7 @@ class Test_importWorkflow( _WorkflowSetup
 
         tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
 
-        workflow = tool.objectValues()[ 0 ]
+        workflow = tool.objectValues()[ 1 ]
 
         scripts = workflow.scripts
 
@@ -2662,9 +2325,9 @@ class Test_importWorkflow( _WorkflowSetup
             if script.meta_type == PythonScript.meta_type:
                 self.assertEqual( script.manage_FTPget(), expected[ 1 ] )
 
+
 def test_suite():
     return unittest.TestSuite((
-        unittest.makeSuite( WorkflowToolConfiguratorTests ),
         unittest.makeSuite( WorkflowDefinitionConfiguratorTests ),
         unittest.makeSuite( Test_exportWorkflow ),
         unittest.makeSuite( Test_importWorkflow ),

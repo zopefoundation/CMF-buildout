@@ -1,30 +1,33 @@
 ##############################################################################
 #
 # Copyright (c) 2001 Zope Corporation and Contributors. All Rights Reserved.
-# 
+#
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
-# 
+#
 ##############################################################################
 """ Web-configurable workflow.
 
 $Id$
 """
 
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import registerIcon
+from Products.GenericSetup import EXTENSION
+from Products.GenericSetup import profile_registry
+
 import DCWorkflow, States, Transitions, Variables, Worklists, Scripts
-import Default
 
 
 def initialize(context):
-    
+
     context.registerHelp(directory='help')
     context.registerHelpTitle('DCWorkflow')
-    
+
     registerIcon(DCWorkflow.DCWorkflowDefinition,
                  'images/workflow.gif', globals())
     registerIcon(States.States,
@@ -41,3 +44,11 @@ def initialize(context):
     Worklists.WorklistDefinition.icon = Worklists.Worklists.icon
     registerIcon(Scripts.Scripts,
                  'images/script.gif', globals())
+
+    profile_registry.registerProfile('revision2',
+                                     'CMF Default Workflow [Revision 2]',
+                                     'Adds revision 2 of default workflow.',
+                                     'profiles/revision2',
+                                     'DCWorkflow',
+                                     EXTENSION,
+                                     for_=ISiteRoot)

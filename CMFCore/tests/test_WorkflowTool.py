@@ -20,8 +20,6 @@ import Testing
 
 from OFS.SimpleItem import SimpleItem
 
-from Products.CMFCore.tests.base.testcase import WarningInterceptor
-
 
 class Dummy( SimpleItem ):
 
@@ -131,16 +129,7 @@ class DummyTypesTool( SimpleItem ):
         return None
 
 
-class WorkflowToolTests(unittest.TestCase, WarningInterceptor):
-
-    def setUp( self ):
-        from Products.CMFCore.WorkflowTool import addWorkflowFactory
-        addWorkflowFactory( DummyWorkflow )
-
-    def tearDown( self ):
-        from Products.CMFCore.WorkflowTool import _removeWorkflowFactory
-        _removeWorkflowFactory( DummyWorkflow )
-        self._free_warning_output()
+class WorkflowToolTests(unittest.TestCase):
 
     def _makeOne( self, workflow_ids=() ):
         from Products.CMFCore.WorkflowTool import WorkflowTool
@@ -148,7 +137,7 @@ class WorkflowToolTests(unittest.TestCase, WarningInterceptor):
         tool = WorkflowTool()
 
         for workflow_id in workflow_ids:
-            tool.manage_addWorkflow( DummyWorkflow.meta_type, workflow_id )
+            tool._setObject(workflow_id, DummyWorkflow(workflow_id))
 
         return tool
 

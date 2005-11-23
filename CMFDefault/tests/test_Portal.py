@@ -15,10 +15,8 @@
 $Id$
 """
 
-from unittest import TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 import Products
 from Acquisition import aq_base
@@ -51,8 +49,10 @@ class CMFSiteTests(PlacelessSetup, SecurityRequestTest):
         PlacelessSetup.setUp(self)
         SecurityRequestTest.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.DCWorkflow)
 
     def tearDown(self):
         SecurityRequestTest.tearDown(self)
@@ -207,9 +207,9 @@ def _getMetadata( catalog, rid, field='Title' ):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(CMFSiteTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(CMFSiteTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

@@ -2,6 +2,18 @@ HEAD only (unreleased)
 
   New Features
 
+    - WorkflowTool and DCWorkflow: Improved add form for workflow objects.
+      Presettings can now be loaded from workflow settings in setup profiles.
+      This replaces the feature that did allow to load presettings from the
+      oldstyle workflow factories registry.
+
+    - WorkflowTool: Switched to generic plug-in mechanism for workflows.
+      Any class registered for IWorkflowDefinition can now be used in the
+      WorkflowTool.
+
+    - DCWorkflow: Added 'revision2' profile.
+      This replaces the hardcoded 'Revision 2' default workflow.
+
     - CMFActionIcons, CMFCalendar, CMFDefault, CMFTopic, CMFUid:
       use the new 'for_' argument in GenericSetup's profile registry API
       to indicate that profiles are intended for CMFCore's ISiteRoot sites.
@@ -146,6 +158,8 @@ HEAD only (unreleased)
       if no default view could be found for a piece of content.
 
   Others
+
+    - DCWorkflow: Removed hardcoded default workflows.
 
     - Workflow: Removed deprecated WorkflowInformation and getActionsFor.
 

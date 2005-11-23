@@ -35,9 +35,9 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import ObjectDeleted
 from Products.CMFCore.WorkflowCore import ObjectMoved
 from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFCore.WorkflowTool import addWorkflowFactory
 
 # DCWorkflow
+from interfaces import IDCWorkflowDefinition
 from permissions import ManagePortal
 from utils import modifyRolesForPermission
 from utils import modifyRolesForGroup
@@ -63,10 +63,9 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
     UI methods are in WorkflowUIMixin.
     '''
 
-    implements(IWorkflowDefinition)
+    implements(IDCWorkflowDefinition, IWorkflowDefinition)
     __implements__ = z2IWorkflowDefinition
 
-    meta_type = 'Workflow'
     title = 'DC Workflow Definition'
     _isAWorkflow = 1
 
@@ -414,7 +413,7 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
                     tdef = t
                     break
         return tdef
-        
+
     def _changeStateOf(self, ob, tdef=None, kwargs=None):
         '''
         Changes state.  Can execute multiple transitions if there are
@@ -537,7 +536,3 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
             return new_sdef
 
 InitializeClass(DCWorkflowDefinition)
-
-
-addWorkflowFactory(DCWorkflowDefinition, id='dc_workflow',
-                   title='Web-configurable workflow')

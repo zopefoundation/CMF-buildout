@@ -23,9 +23,11 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from Globals import PersistentMapping
 from OFS.Folder import Folder
+from OFS.ObjectManager import IFAwareObjectManager
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
+from interfaces import IWorkflowDefinition
 from interfaces import IWorkflowTool
 from interfaces.portal_workflow import portal_workflow as z2IWorkflowTool
 from permissions import ManagePortal
@@ -40,7 +42,8 @@ from WorkflowCore import WorkflowException
 _marker = []  # Create a new marker object.
 
 
-class WorkflowTool(UniqueObject, Folder, ActionProviderBase):
+class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
+                   ActionProviderBase):
 
     """ Mediator tool, mapping workflow objects
     """
@@ -50,6 +53,7 @@ class WorkflowTool(UniqueObject, Folder, ActionProviderBase):
 
     id = 'portal_workflow'
     meta_type = 'CMF Workflow Tool'
+    _product_interfaces = (IWorkflowDefinition,)
 
     _chains_by_type = None  # PersistentMapping
     _default_chain = ('default_workflow',)
@@ -68,37 +72,6 @@ class WorkflowTool(UniqueObject, Folder, ActionProviderBase):
     #
     security.declareProtected( ManagePortal, 'manage_overview' )
     manage_overview = DTMLFile( 'explainWorkflowTool', _dtmldir )
-
-    _manage_addWorkflowForm = DTMLFile('addWorkflow', _dtmldir)
-
-    security.declareProtected( ManagePortal, 'manage_addWorkflowForm')
-    def manage_addWorkflowForm(self, REQUEST):
-
-        """ Form for adding workflows.
-        """
-        wft = []
-        for key in _workflow_factories.keys():
-            wft.append(key)
-        wft.sort()
-        return self._manage_addWorkflowForm(REQUEST, workflow_types=wft)
-
-    security.declareProtected( ManagePortal, 'manage_addWorkflow')
-    def manage_addWorkflow(self, workflow_type, id, RESPONSE=None):
-
-        """ Adds a workflow from the registered types.
-        """
-        factory = _workflow_factories[workflow_type]
-        ob = factory(id)
-        self._setObject(id, ob)
-        if RESPONSE is not None:
-            RESPONSE.redirect(self.absolute_url() +
-                              '/manage_main?management_view=Contents')
-
-    def all_meta_types(self):
-        return (
-            {'name': 'Workflow',
-             'action': 'manage_addWorkflowForm',
-             'permission': ManagePortal },)
 
     _manage_selectWorkflows = DTMLFile('selectWorkflows', _dtmldir)
 
@@ -426,8 +399,7 @@ class WorkflowTool(UniqueObject, Folder, ActionProviderBase):
         self._default_chain = tuple(ids)
 
     security.declareProtected( ManagePortal, 'setChainForPortalTypes')
-    def setChainForPortalTypes(self, pt_names, chain):
-
+    def setChainForPortalTypes(self, pt_names, chain, verify=True):
         """ Set a chain for a specific portal type.
         """
         cbt = self._chains_by_type
@@ -437,12 +409,12 @@ class WorkflowTool(UniqueObject, Folder, ActionProviderBase):
         if isinstance(chain, basestring):
             chain = [ wf.strip() for wf in chain.split(',') if wf.strip() ]
 
-        ti = self._listTypeInfo()
-        for t in ti:
-            id = t.getId()
-            if id in pt_names:
-                cbt[id] = tuple(chain)
+        ti_ids = [ t.getId() for t in self._listTypeInfo() ]
 
+        for type_id in pt_names:
+            if verify and not (type_id in ti_ids):
+                continue
+            cbt[type_id] = tuple(chain)
 
     security.declareProtected( ManagePortal, 'updateRoleMappings')
     def updateRoleMappings(self, REQUEST=None):
@@ -464,11 +436,11 @@ class WorkflowTool(UniqueObject, Folder, ActionProviderBase):
 
     security.declarePrivate('getWorkflowById')
     def getWorkflowById(self, wf_id):
-
         """ Retrieve a given workflow.
         """
         wf = getattr(self, wf_id, None)
-        if getattr(wf, '_isAWorkflow', 0):
+        if getattr(wf, '_isAWorkflow', False) or \
+                IWorkflowDefinition.providedBy(wf):
             return wf
         else:
             return None
@@ -651,29 +623,3 @@ class WorkflowTool(UniqueObject, Folder, ActionProviderBase):
             ob.reindexObjectSecurity()
 
 InitializeClass(WorkflowTool)
-
-
-_workflow_factories = {}
-
-def _makeWorkflowFactoryKey(factory, id=None, title=None):
-    # The factory should take one argument, id.
-    if id is None:
-        id = getattr(factory, 'id', '') or getattr(factory, 'meta_type', '')
-    if title is None:
-        title = getattr(factory, 'title', '')
-    key = id
-    if title:
-        key = key + ' (%s)' % title
-    return key
-
-def addWorkflowFactory(factory, id=None, title=None):
-    key = _makeWorkflowFactoryKey( factory, id, title )
-    _workflow_factories[key] = factory
-
-def _removeWorkflowFactory( factory, id=None, title=None ):
-    """ Make teardown in unitcase cleaner. """
-    key = _makeWorkflowFactoryKey( factory, id, title )
-    try:
-        del _workflow_factories[key]
-    except KeyError:
-        pass

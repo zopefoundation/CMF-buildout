@@ -6,10 +6,27 @@ except ImportError: # BBB: for Zope 2.7
     import Zope as Zope2
 Zope2.startup()
 
+import Products
+from Products.Five import zcml
+
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import TransactionalTest
 
 
-class MembershipTests( TransactionalTest ):
+class MembershipTests(PlacelessSetup, TransactionalTest):
+
+    def setUp(self):
+        PlacelessSetup.setUp(self)
+        TransactionalTest.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.GenericSetup)
+        zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.DCWorkflow)
+
+    def tearDown(self):
+        TransactionalTest.tearDown(self)
+        PlacelessSetup.tearDown(self)
 
     def _makePortal(self):
         # Create a portal instance suitable for testing

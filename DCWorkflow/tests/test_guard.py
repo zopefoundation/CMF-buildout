@@ -15,32 +15,31 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
+import Testing
 
 from AccessControl import getSecurityManager
 from Products.PageTemplates.TALES import CompilerError
 
+from Products.CMFCore.tests.base.dummy import DummyContent
+from Products.CMFCore.tests.base.dummy import DummySite
+from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.WorkflowTool import WorkflowTool
-from Products.CMFCore.WorkflowTool import addWorkflowFactory
 
 from Products.DCWorkflow.Guard import Guard
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 
-from Products.CMFCore.tests.base.dummy import DummyContent
-from Products.CMFCore.tests.base.dummy import DummySite
-from Products.CMFCore.tests.base.dummy import DummyTool
 
-class TestGuard(TestCase):
+class TestGuard(unittest.TestCase):
 
     def setUp(self):
         self.site = DummySite('site')
         self.site._setObject( 'portal_types', DummyTool() )
         self.site._setObject( 'portal_workflow', WorkflowTool() )
-        addWorkflowFactory(DCWorkflowDefinition)
 
         # Construct a workflow
         wftool = self.site.portal_workflow
-        wftool.manage_addWorkflow('Workflow (DC Workflow Definition)', 'wf')
+        wftool._setObject('wf', DCWorkflowDefinition('wf'))
         wftool.setDefaultChain('wf')
 
     def _getDummyWorkflow(self):
@@ -260,11 +259,11 @@ class TestGuard(TestCase):
 
         # XXX more tests with permissions and roles
 
+
 def test_suite():
-    return TestSuite((
-        makeSuite(TestGuard),
+    return unittest.TestSuite((
+        unittest.makeSuite(TestGuard),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
-
+    unittest.main(defaultTest='test_suite')

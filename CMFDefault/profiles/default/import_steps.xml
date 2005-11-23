@@ -73,10 +73,9 @@
   Import various settings from PortalGenerator.
  </import-step>
  <import-step id="workflow" version="20040630-01"
-              handler="Products.CMFSetup.workflow.importWorkflowTool"
+              handler="Products.CMFCore.exportimport.workflow.importWorkflowTool"
               title="Workflow Tool">
   <dependency step="toolset"/>
-  <dependency step="typeinfo"/>
   Import workflow tool's workflow definitions and supporting scripts.
  </import-step>
 </import-steps>

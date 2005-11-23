@@ -26,8 +26,10 @@ class DiscussionReplyTest(PlacelessSetup, RequestTest):
         PlacelessSetup.setUp(self)
         RequestTest.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.DCWorkflow)
         try:
             factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
             factory('cmf', 'CMFDefault:default', snapshot=False)

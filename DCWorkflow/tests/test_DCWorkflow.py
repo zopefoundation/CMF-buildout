@@ -26,19 +26,15 @@ Zope2.startup()
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
-from Products.CMFCore.WorkflowTool import addWorkflowFactory
 from Products.CMFCore.WorkflowTool import WorkflowTool
 
 
 class DCWorkflowDefinitionTests(TestCase):
 
     def setUp(self):
-        from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
-
         self.site = DummySite('site')
         self.site._setObject( 'portal_types', DummyTool() )
         self.site._setObject( 'portal_workflow', WorkflowTool() )
-        addWorkflowFactory(DCWorkflowDefinition)
         self._constructDummyWorkflow()
 
     def test_z2interfaces(self):
@@ -61,9 +57,10 @@ class DCWorkflowDefinitionTests(TestCase):
         verifyClass(IWorkflowDefinition, DCWorkflowDefinition)
 
     def _constructDummyWorkflow(self):
+        from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 
         wftool = self.site.portal_workflow
-        wftool.manage_addWorkflow('Workflow (DC Workflow Definition)', 'wf')
+        wftool._setObject('wf', DCWorkflowDefinition('wf'))
         wftool.setDefaultChain('wf')
         wf = wftool.wf
 

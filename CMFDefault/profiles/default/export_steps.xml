@@ -61,7 +61,7 @@
   Export types tool's type information objects.
  </export-step>
  <export-step id="workflows"
-              handler="Products.CMFSetup.workflow.exportWorkflowTool"
+              handler="Products.CMFCore.exportimport.workflow.exportWorkflowTool"
               title="Workflow Tool">
   Export workflow tool's workflow definitions and supporting scripts.
  </export-step>

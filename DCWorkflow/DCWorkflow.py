@@ -26,10 +26,12 @@ from DocumentTemplate.DT_Util import TemplateDict
 from Globals import InitializeClass
 from OFS.Folder import Folder
 from OFS.ObjectManager import bad_id
+from zope.interface import implements
 
 # CMFCore
+from Products.CMFCore.interfaces import IWorkflowDefinition
 from Products.CMFCore.interfaces.portal_workflow \
-        import WorkflowDefinition as IWorkflowDefinition
+        import WorkflowDefinition as z2IWorkflowDefinition
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import ObjectDeleted
 from Products.CMFCore.WorkflowCore import ObjectMoved
@@ -37,6 +39,7 @@ from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.WorkflowTool import addWorkflowFactory
 
 # DCWorkflow
+from interfaces import IDCWorkflowDefinition
 from permissions import ManagePortal
 from utils import _dtmldir
 from utils import modifyRolesForPermission
@@ -63,9 +66,9 @@ class DCWorkflowDefinition (WorkflowUIMixin, Folder):
     UI methods are in WorkflowUIMixin.
     '''
 
-    __implements__ = IWorkflowDefinition
+    implements(IDCWorkflowDefinition, IWorkflowDefinition)
+    __implements__ = z2IWorkflowDefinition
 
-    meta_type = 'Workflow'
     title = 'DC Workflow Definition'
     _isAWorkflow = 1
 

@@ -64,6 +64,19 @@ class CMFSiteTests( PlacelessSetup, SecurityRequestTest, WarningInterceptor):
 
         return content
 
+    def setUp(self):
+        PlacelessSetup.setUp(self)
+        SecurityRequestTest.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.GenericSetup)
+        zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.DCWorkflow)
+
+    def tearDown(self):
+        SecurityRequestTest.tearDown(self)
+        PlacelessSetup.tearDown(self)
+
     def test_new( self ):
 
         site = self._makeSite()

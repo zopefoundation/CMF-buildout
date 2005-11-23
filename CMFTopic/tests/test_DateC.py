@@ -15,17 +15,17 @@
 $Id$
 """
 
-from unittest import TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 import Products
 from DateTime.DateTime import DateTime
+
 from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFTopic.Topic import Topic
+
 from common import CriterionTestCase
 
 
@@ -165,8 +165,10 @@ class FriendlyDateCriterionFunctionalTests(PlacelessSetup, RequestTest):
         PlacelessSetup.setUp(self)
         RequestTest.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.DCWorkflow)
 
         factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
         factory('site', 'CMFDefault:default', snapshot=False)
@@ -381,10 +383,10 @@ class FriendlyDateCriterionFunctionalTests(PlacelessSetup, RequestTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(FriendlyDateCriterionTests),
-        makeSuite(FriendlyDateCriterionFunctionalTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(FriendlyDateCriterionTests),
+        unittest.makeSuite(FriendlyDateCriterionFunctionalTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

@@ -1,7 +1,5 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five"
-    i18n_domain="cmf"
     >
 
   <adapter
@@ -122,6 +120,13 @@
       factory=".typeinfo.TypeInformationNodeAdapter"
       provides="Products.GenericSetup.interfaces.INodeImporter"
       for="Products.CMFCore.interfaces.ITypeInformation"
+      />
+
+  <adapter
+      factory=".workflow.WorkflowToolXMLAdapter"
+      provides="Products.GenericSetup.interfaces.IBody"
+      for="Products.CMFCore.interfaces.IWorkflowTool
+           Products.GenericSetup.interfaces.ISetupContext"
       />
 
 </configure>

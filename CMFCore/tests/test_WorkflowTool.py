@@ -138,13 +138,22 @@ class DummyTypesTool( SimpleItem ):
 
 class WorkflowToolTests(TestCase, WarningInterceptor):
 
+    def setUp( self ):
+        from Products.CMFCore.WorkflowTool import addWorkflowFactory
+        addWorkflowFactory( DummyWorkflow )
+
+    def tearDown( self ):
+        from Products.CMFCore.WorkflowTool import _removeWorkflowFactory
+        _removeWorkflowFactory( DummyWorkflow )
+        self._free_warning_output()
+
     def _makeOne( self, workflow_ids=() ):
         from Products.CMFCore.WorkflowTool import WorkflowTool
 
         tool = WorkflowTool()
 
         for workflow_id in workflow_ids:
-            tool._setObject(workflow_id, DummyWorkflow(workflow_id))
+            tool.manage_addWorkflow( DummyWorkflow.meta_type, workflow_id )
 
         return tool
 

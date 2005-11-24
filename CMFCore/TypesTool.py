@@ -639,21 +639,6 @@ ContentFactoryMetadata = FactoryTypeInformation
 ContentTypeInformation = ScriptableTypeInformation
 
 
-# BBB: typeClasses definition is only needed for older FTI creation
-#      idiom
-typeClasses = [
-    {'class':FactoryTypeInformation,
-     'name':FactoryTypeInformation.meta_type,
-     'action':'manage_addFactoryTIForm',
-     'permission':ManagePortal},
-    {'class':ScriptableTypeInformation,
-     'name':ScriptableTypeInformation.meta_type,
-     'action':'manage_addScriptableTIForm',
-     'permission':ManagePortal},
-    ]
-
-
-
 allowedTypes = [
     'Script (Python)',
     'Python Method',
@@ -809,9 +794,9 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
                 id = fti.get('id', None)
         if not id:
             raise BadRequest('An id is required.')
-        for mt in typeClasses:
+        for mt in Products.meta_types:
             if mt['name'] == add_meta_type:
-                klass = mt['class']
+                klass = mt['instance']
                 break
         else:
             raise ValueError, (

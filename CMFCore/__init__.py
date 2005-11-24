@@ -32,7 +32,6 @@ import CachingPolicyManager
 import utils
 
 from permissions import AddPortalFolders
-from permissions import ManagePortal
 
 
 # Old name that some third-party packages may need.

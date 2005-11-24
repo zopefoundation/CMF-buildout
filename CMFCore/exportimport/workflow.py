@@ -70,17 +70,6 @@ class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
 
         self._logger.info('Workflow tool imported.')
 
-    def _extractObjects(self):
-        fragment = self._doc.createDocumentFragment()
-        objects = self.context.objectValues()
-        objects.sort(lambda x,y: cmp(x.getId(), y.getId()))
-        for obj in objects:
-            node = self._doc.createElement('object')
-            node.setAttribute('name', obj.getId())
-            node.setAttribute('meta_type', obj.meta_type)
-            fragment.appendChild(node)
-        return fragment
-
     def _initBBBObjects(self, node, mode):
         for child in node.childNodes:
             if child.nodeName != 'workflow':
@@ -147,7 +136,7 @@ class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
 
 
 def importWorkflowTool(context):
-    """ Import worflow tool and contained workflow definitions from XML files.
+    """Import workflow tool and contained workflow definitions from XML files.
     """
     site = context.getSite()
     logger = context.getLogger('workflow')
@@ -167,7 +156,7 @@ def importWorkflowTool(context):
     importObjects(tool, 'workflows', context)
 
 def exportWorkflowTool(context):
-    """ Export worflow tool and contained workflow definitions as XML files.
+    """Export workflow tool and contained workflow definitions as XML files.
     """
     site = context.getSite()
     logger = context.getLogger('workflow')

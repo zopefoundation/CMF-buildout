@@ -111,15 +111,17 @@
       />
 
   <adapter
-      factory=".typeinfo.TypeInformationNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for="Products.CMFCore.interfaces.ITypeInformation"
+      factory=".typeinfo.TypeInformationXMLAdapter"
+      provides="Products.GenericSetup.interfaces.IBody"
+      for="Products.CMFCore.interfaces.ITypeInformation
+           Products.GenericSetup.interfaces.ISetupContext"
       />
 
   <adapter
-      factory=".typeinfo.TypeInformationNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for="Products.CMFCore.interfaces.ITypeInformation"
+      factory=".typeinfo.TypesToolXMLAdapter"
+      provides="Products.GenericSetup.interfaces.IBody"
+      for="Products.CMFCore.interfaces.ITypesTool
+           Products.GenericSetup.interfaces.ISetupContext"
       />
 
   <adapter

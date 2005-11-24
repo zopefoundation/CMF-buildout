@@ -10,7 +10,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""DCWorkflowDefinition browser views.
+"""TypeInformation browser views.
 
 $Id$
 """
@@ -19,21 +19,21 @@ from xml.dom.minidom import parseString
 
 from zope.app import zapi
 
+from Products.CMFCore.TypesTool import FactoryTypeInformation
+from Products.CMFCore.TypesTool import ScriptableTypeInformation
 from Products.CMFCore.utils import getToolByName
 from Products.GenericSetup.browser.utils import AddWithPresettingsViewBase
 from Products.GenericSetup.interfaces import IBody
 
-from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 
+class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
 
-class DCWorkflowDefinitionAddView(AddWithPresettingsViewBase):
-
-    """Add view for DCWorkflowDefinition.
+    """Add view for FactoryTypeInformation.
     """
 
-    klass = DCWorkflowDefinition
+    klass = FactoryTypeInformation
 
-    description = u'Add a web-configurable workflow.'
+    description = u'A type information object defines a portal type.'
 
     def getProfileInfos(self):
         profiles = []
@@ -42,14 +42,18 @@ class DCWorkflowDefinitionAddView(AddWithPresettingsViewBase):
             for info in stool.listContextInfos():
                 obj_ids = []
                 context = stool._getImportContext(info['id'])
-                file_ids = context.listDirectory('workflows')
+                file_ids = context.listDirectory('types')
                 for file_id in file_ids or ():
-                    filename = 'workflows/%s/definition.xml' % file_id
+                    filename = 'types/%s' % file_id
                     body = context.readDataFile(filename)
                     if body is None:
                         continue
                     root = parseString(body).documentElement
-                    obj_id = root.getAttribute('workflow_id')
+                    obj_id = root.getAttribute('name')
+                    if not obj_id:
+                        obj_id = root.getAttribute('id')
+                    if root.getAttribute('meta_type') != self.klass.meta_type:
+                        continue
                     obj_ids.append(obj_id)
                 if not obj_ids:
                     continue
@@ -65,15 +69,21 @@ class DCWorkflowDefinitionAddView(AddWithPresettingsViewBase):
             return
 
         context = stool._getImportContext(profile_id)
-        file_ids = context.listDirectory('workflows')
+        file_ids = context.listDirectory('types')
         for file_id in file_ids or ():
-            filename = 'workflows/%s/definition.xml' % file_id
+            filename = 'types/%s' % file_id
             body = context.readDataFile(filename)
             if body is None:
                 continue
 
             root = parseString(body).documentElement
-            if not root.getAttribute('workflow_id') == obj_id:
+            new_id = root.getAttribute('name')
+            if not new_id:
+                new_id = root.getAttribute('id')
+            if new_id != obj_id:
+                continue
+
+            if root.getAttribute('meta_type') != self.klass.meta_type:
                 continue
 
             importer = zapi.queryMultiAdapter((obj, context), IBody)
@@ -82,3 +92,11 @@ class DCWorkflowDefinitionAddView(AddWithPresettingsViewBase):
 
             importer.body = body
             return
+
+
+class ScriptableTypeInformationAddView(FactoryTypeInformationAddView):
+
+    """Add view for ScriptableTypeInformation.
+    """
+
+    klass = ScriptableTypeInformation

@@ -56,7 +56,7 @@
   Export required / forbidden tools.
  </export-step>
  <export-step id="typeinfo"
-              handler="Products.CMFSetup.typeinfo.exportTypesTool"
+              handler="Products.CMFCore.exportimport.typeinfo.exportTypesTool"
               title="Types Tool">
   Export types tool's type information objects.
  </export-step>

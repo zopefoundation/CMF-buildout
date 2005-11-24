@@ -17,16 +17,16 @@ $Id$
 
 from unittest import TestCase, TestSuite, makeSuite, main
 import Testing
-import Zope2
-Zope2.startup()
 
+import Products
 from AccessControl import Unauthorized
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
 from Acquisition import aq_base
+from Products.Five import zcml
 from Products.PythonScripts.PythonScript import PythonScript
-from Products.PythonScripts.standard import url_quote
+from Products.PythonScripts.standard import html_quote
 from webdav.NullResource import NullResource
 
 from Products.CMFCore.ActionInformation import ActionInformation
@@ -38,6 +38,7 @@ from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.security import UserWithRoles
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.tests.base.tidata import FTIDATA_ACTIONS
@@ -52,7 +53,29 @@ from Products.CMFCore.tests.base.tidata import FTIDATA_DUMMY
 from Products.CMFCore.tests.base.tidata import STI_SCRIPT
 
 
-class TypesToolTests(SecurityTest, WarningInterceptor):
+_TRAVERSE_ZCML = """
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    >
+
+  <adapter
+      for="*"
+      factory=".traversable.FiveTraversable"
+      provides="zope.app.traversing.interfaces.ITraversable"
+      />
+
+  <adapter
+      for="*"
+      factory="zope.app.traversing.adapters.Traverser"
+      provides="zope.app.traversing.interfaces.ITraverser"
+      />
+
+</configure>
+"""
+
+
+class TypesToolTests(PlacelessSetup, SecurityTest, WarningInterceptor):
 
     def _makeOne(self):
         from Products.CMFCore.TypesTool import TypesTool
@@ -62,7 +85,13 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
     def setUp( self ):
         from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 
+        PlacelessSetup.setUp(self)
         SecurityTest.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.Five.browser)
+        zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_string(_TRAVERSE_ZCML)
 
         self.site = DummySite('site').__of__(self.root)
         self.acl_users = self.site._setObject( 'acl_users', DummyUserFolder() )
@@ -72,6 +101,7 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
 
     def tearDown(self):
         SecurityTest.tearDown(self)
+        PlacelessSetup.tearDown(self)
         self._free_warning_output()
 
     def test_z2interfaces(self):
@@ -105,9 +135,9 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
         # so we check for that. If we've got it, something is b0rked.
         for factype in tool.all_meta_types():
             meta_types[factype['name']]=1
-            # The url_quote below is necessary 'cos of the one in
+            # The html_quote below is necessary 'cos of the one in
             # main.dtml. Could be removed once that is gone.
-            act = tool.unrestrictedTraverse(url_quote(factype['action']))
+            act = tool.unrestrictedTraverse(html_quote(factype['action']))
             self.failIf(type(aq_base(act)) is NullResource)
 
         # Check the ones we're expecting are there

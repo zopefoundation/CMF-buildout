@@ -36,7 +36,6 @@ import utils
 
 from interfaces import IAction
 from interfaces import IActionCategory
-from interfaces import ITypeInformation
 from permissions import AddPortalFolders
 from permissions import ManagePortal
 
@@ -143,24 +142,10 @@ def initialize(context):
         visibility=None,
         interfaces=(IAction,))
 
-    context.registerClass(
-        TypesTool.FactoryTypeInformation,
-        permission=ManagePortal,
-        constructors=(TypesTool.manage_addFactoryTIForm,
-                      TypesTool.manage_addTypeInfo),
-        icon='images/typeinfo.gif',
-        visibility=None,
-        interfaces=(ITypeInformation,))
-
-    context.registerClass(
-        TypesTool.ScriptableTypeInformation,
-        permission=ManagePortal,
-        constructors=(TypesTool.manage_addScriptableTIForm,
-                      TypesTool.manage_addTypeInfo),
-        icon='images/typeinfo.gif',
-        visibility=None,
-        interfaces=(ITypeInformation,))
-
+    utils.registerIcon(TypesTool.FactoryTypeInformation,
+                       'images/typeinfo.gif', globals())
+    utils.registerIcon(TypesTool.ScriptableTypeInformation,
+                       'images/typeinfo.gif', globals())
     utils.registerIcon(FSDTMLMethod.FSDTMLMethod,
                        'images/fsdtml.gif', globals())
     utils.registerIcon(FSPythonScript.FSPythonScript,

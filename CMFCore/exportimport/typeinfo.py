@@ -10,25 +10,41 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Types tool node adapters.
+"""Types tool xml adapters and setup handlers.
 
 $Id$
 """
 
+from xml.dom.minidom import parseString
+
+import Products
+from zope.app import zapi
+
+from Products.GenericSetup.interfaces import IBody
 from Products.GenericSetup.interfaces import PURGE
+from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import I18NURI
-from Products.GenericSetup.utils import NodeAdapterBase
+from Products.GenericSetup.utils import importObjects
+from Products.GenericSetup.utils import ObjectManagerHelpers
 from Products.GenericSetup.utils import PropertyManagerHelpers
+from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import ITypeInformation
+from Products.CMFCore.interfaces import ITypesTool
+from Products.CMFCore.utils import getToolByName
 
 
-class TypeInformationNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
+_FILENAME = 'typestool.xml'
+
+
+class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
 
     """Node im- and exporter for TypeInformation.
     """
 
     __used_for__ = ITypeInformation
+
+    _LOGGER_ID = 'typestool'
 
     def exportNode(self, doc):
         """Export the object as a DOM node.
@@ -39,6 +55,8 @@ class TypeInformationNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
         node.appendChild(self._extractProperties())
         node.appendChild(self._extractAliases())
         node.appendChild(self._extractActions())
+
+        self._logger.info('\'%s\' type info exported.' % self.context.getId())
         return node
 
     def importNode(self, node, mode=PURGE):
@@ -53,6 +71,8 @@ class TypeInformationNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
         self._initProperties(node, mode)
         self._initAliases(node, mode)
         self._initActions(node, mode)
+
+        self._logger.info('\'%s\' type info imported.' % self.context.getId())
 
     def _extractAliases(self):
         fragment = self._doc.createDocumentFragment()
@@ -176,3 +196,103 @@ class TypeInformationNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
             permission = node.getAttribute('permission')
             obj._updateProperty('constructor_path', constructor_path)
             obj._updateProperty('permission', permission)
+
+
+class TypesToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
+                          PropertyManagerHelpers):
+
+    """Node im- and exporter for TypesTool.
+    """
+
+    __used_for__ = ITypesTool
+
+    _LOGGER_ID = 'typestool'
+
+    def exportNode(self, doc):
+        """Export the object as a DOM node.
+        """
+        self._doc = doc
+        node = self._getObjectNode('object')
+        node.appendChild(self._extractProperties())
+        node.appendChild(self._extractObjects())
+
+        self._logger.info('Types tool exported.')
+        return node
+
+    def importNode(self, node, mode=PURGE):
+        """Import the object from the DOM node.
+        """
+        if mode == PURGE:
+            self._purgeProperties()
+            self._purgeObjects()
+
+        self._initProperties(node, mode)
+        self._initObjects(node, mode)
+        self._initBBBObjects(node, mode)
+
+        self._logger.info('Types tool imported.')
+
+    def _initBBBObjects(self, node, mode):
+        for child in node.childNodes:
+            if child.nodeName != 'type':
+                continue
+            parent = self.context
+
+            obj_id = str(child.getAttribute('id'))
+            if obj_id not in parent.objectIds():
+                filename = str(child.getAttribute('filename'))
+                if not filename:
+                    filename = 'types/%s.xml' % obj_id.replace(' ', '_')
+                body = self.environ.readDataFile(filename)
+                if body is None:
+                    break
+                root = parseString(body).documentElement
+                if root.getAttribute('name') != obj_id:
+                    if root.getAttribute('id') != obj_id:
+                        break
+                meta_type = str(root.getAttribute('kind'))
+                if not meta_type:
+                    meta_type = str(root.getAttribute('meta_type'))
+                for mt_info in Products.meta_types:
+                    if mt_info['name'] == meta_type:
+                        parent._setObject(obj_id, mt_info['instance'](obj_id))
+                        break
+
+
+def importTypesTool(context):
+    """Import types tool and content types from XML files.
+    """
+    site = context.getSite()
+    logger = context.getLogger('typestool')
+    tool = getToolByName(site, 'portal_types')
+
+    body = context.readDataFile(_FILENAME)
+    if body is None:
+        logger.info('Nothing to import.')
+        return
+
+    importer = zapi.queryMultiAdapter((tool, context), IBody)
+    if importer is None:
+        logger.warning('Import adapter misssing.')
+        return
+
+    importer.body = body
+    importObjects(tool, 'types', context)
+
+def exportTypesTool(context):
+    """Export types tool content types as a set of XML files.
+    """
+    site = context.getSite()
+    logger = context.getLogger('typestool')
+    tool = getToolByName(site, 'portal_types')
+    if tool is None:
+        logger.info('Nothing to export.')
+        return
+
+    exporter = zapi.queryMultiAdapter((tool, context), IBody)
+    if exporter is None:
+        logger.warning('Export adapter misssing.')
+        return
+
+    context.writeDataFile(_FILENAME, exporter.body, exporter.mime_type)
+    exportObjects(tool, 'types', context)

@@ -1,12 +1,26 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope">
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    >
 
-  <include
-      package=".browser"
+  <include package=".browser"/>
+
+  <include package=".exportimport"/>
+
+  <five:registerClass
+      class=".TypesTool.FactoryTypeInformation"
+      meta_type="Factory-based Type Information"
+      addview="addFactoryTypeInformation.html"
+      permission="cmf.ManagePortal"
+      global="False"
       />
 
-  <include
-      package=".exportimport"
+  <five:registerClass
+      class=".TypesTool.ScriptableTypeInformation"
+      meta_type="Scriptable Type Information"
+      addview="addScriptableTypeInformation.html"
+      permission="cmf.ManagePortal"
+      global="False"
       />
 
 </configure>

@@ -56,7 +56,7 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
         node.appendChild(self._extractAliases())
         node.appendChild(self._extractActions())
 
-        self._logger.info('\'%s\' type info exported.' % self.context.getId())
+        self._logger.info('%r type info exported.' % self.context.getId())
         return node
 
     def importNode(self, node, mode=PURGE):
@@ -72,7 +72,7 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
         self._initAliases(node, mode)
         self._initActions(node, mode)
 
-        self._logger.info('\'%s\' type info imported.' % self.context.getId())
+        self._logger.info('%r type info imported.' % self.context.getId())
 
     def _extractAliases(self):
         fragment = self._doc.createDocumentFragment()

@@ -15,11 +15,15 @@
 $Id$
 """
 
+from zope.app import zapi
+
+from Products.GenericSetup.interfaces import IBody
 from Products.GenericSetup.interfaces import PURGE, UPDATE
 from Products.GenericSetup.utils import I18NURI
 from Products.GenericSetup.utils import NodeAdapterBase
 from Products.GenericSetup.utils import ObjectManagerHelpers
 from Products.GenericSetup.utils import PropertyManagerHelpers
+from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import IAction
 from Products.CMFCore.interfaces import IActionCategory
@@ -29,6 +33,7 @@ from Products.CMFCore.interfaces.portal_actions \
         import ActionProvider as z2IActionProvider
 from Products.CMFCore.utils import getToolByName
 
+_FILENAME = 'actions.xml'
 _SPECIAL_PROVIDERS = ('portal_actions', 'portal_types', 'portal_workflow')
 
 
@@ -84,12 +89,14 @@ class ActionNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
         self._initProperties(node, mode)
 
 
-class ActionsToolNodeAdapter(NodeAdapterBase, ObjectManagerHelpers):
+class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
 
-    """Node im- and exporter for ActionsTool.
+    """XML im- and exporter for ActionsTool.
     """
 
     __used_for__ = IActionsTool
+
+    _LOGGER_ID = 'actions'
 
     def exportNode(self, doc):
         """Export the object as a DOM node.
@@ -99,6 +106,8 @@ class ActionsToolNodeAdapter(NodeAdapterBase, ObjectManagerHelpers):
         node.setAttribute('xmlns:i18n', I18NURI)
         node.appendChild(self._extractProviders())
         node.appendChild(self._extractObjects())
+
+        self._logger.info('Actions tool exported.')
         return node
 
     def importNode(self, node, mode=PURGE):
@@ -110,6 +119,8 @@ class ActionsToolNodeAdapter(NodeAdapterBase, ObjectManagerHelpers):
 
         self._initObjects(node, mode)
         self._initProviders(node, mode)
+
+        self._logger.info('Actions tool imported.')
 
     def _extractProviders(self):
         fragment = self._doc.createDocumentFragment()
@@ -222,3 +233,40 @@ class ActionsToolNodeAdapter(NodeAdapterBase, ObjectManagerHelpers):
             parent.appendChild(newnode)
 
         self._initObjects(fragment, UPDATE)
+
+
+def importActionProviders(context):
+    """Import actions tool.
+    """
+    site = context.getSite()
+    logger = context.getLogger('actions')
+    tool = getToolByName(site, 'portal_actions')
+
+    body = context.readDataFile(_FILENAME)
+    if body is None:
+        logger.info('Nothing to import.')
+        return
+
+    importer = zapi.queryMultiAdapter((tool, context), IBody)
+    if importer is None:
+        logger.warning('Import adapter misssing.')
+        return
+
+    importer.body = body
+
+def exportActionProviders(context):
+    """Export actions tool.
+    """
+    site = context.getSite()
+    logger = context.getLogger('actions')
+    tool = getToolByName(site, 'portal_actions', None)
+    if tool is None:
+        logger.info('Nothing to export.')
+        return
+
+    exporter = zapi.queryMultiAdapter((tool, context), IBody)
+    if exporter is None:
+        logger.warning('Export adapter misssing.')
+        return
+
+    context.writeDataFile(_FILENAME, exporter.body, exporter.mime_type)

@@ -219,6 +219,7 @@ class _WorkflowSetup(PlacelessSetup, BaseRegistryTests):
         BaseRegistryTests.tearDown(self)
         PlacelessSetup.tearDown(self)
 
+
 class exportWorkflowToolTests(_WorkflowSetup):
 
     def test_empty(self):
@@ -283,7 +284,6 @@ class importWorkflowToolTests(_WorkflowSetup):
 
         context = DummyImportContext(site)
         context._files['workflows.xml'] = self._EMPTY_TOOL_EXPORT
-
         importWorkflowTool(context)
 
         self.assertEqual(len(wf_tool.objectIds()), 0)

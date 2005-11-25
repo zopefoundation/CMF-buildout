@@ -29,14 +29,13 @@ from Products.GenericSetup.utils import XMLAdapterBase
 from Products.CMFCore.interfaces import IWorkflowTool
 from Products.CMFCore.utils import getToolByName
 
-
 _FILENAME = 'workflows.xml'
 
 
 class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
                              PropertyManagerHelpers):
 
-    """Node im- and exporter for WorkflowTool.
+    """XML im- and exporter for WorkflowTool.
     """
 
     __used_for__ = IWorkflowTool

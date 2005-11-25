@@ -15,88 +15,38 @@
 $Id: actions.py 39947 2005-11-06 16:41:15Z yuppie $
 """
 
-from Products.GenericSetup.interfaces import PURGE, UPDATE
-from Products.GenericSetup.utils import I18NURI
-from Products.GenericSetup.utils import NodeAdapterBase
-from Products.GenericSetup.utils import ObjectManagerHelpers
-from Products.GenericSetup.utils import PropertyManagerHelpers
+from zope.app import zapi
 
-from Products.CMFCore.interfaces import IAction
-from Products.CMFCore.interfaces import IActionCategory
+from Products.GenericSetup.interfaces import IBody
+from Products.GenericSetup.interfaces import PURGE
+from Products.GenericSetup.utils import XMLAdapterBase
+
 from Products.CMFCore.interfaces import IActionProvider
 from Products.CMFCore.interfaces import IActionsTool
 from Products.CMFCore.interfaces.portal_actions \
         import ActionProvider as z2IActionProvider
 from Products.CMFCore.utils import getToolByName
 
-
-class ActionCategoryNodeAdapter(NodeAdapterBase, ObjectManagerHelpers,
-                                PropertyManagerHelpers):
-
-    """Node im- and exporter for ActionCategory.
-    """
-
-    __used_for__ = IActionCategory
-
-    def exportNode(self, doc):
-        """Export the object as a DOM node.
-        """
-        self._doc = doc
-        node = self._getObjectNode('object')
-        node.appendChild(self._extractProperties())
-        node.appendChild(self._extractObjects())
-        return node
-
-    def importNode(self, node, mode=PURGE):
-        """Import the object from the DOM node.
-        """
-        if mode == PURGE:
-            self._purgeProperties()
-            self._purgeObjects()
-
-        self._initProperties(node, mode)
-        self._initObjects(node, mode)
+_FILENAME = 'actions.xml'
 
 
-class ActionNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
+class ActionsToolXMLAdapter(XMLAdapterBase):
 
-    """Node im- and exporter for Action.
-    """
-
-    __used_for__ = IAction
-
-    def exportNode(self, doc):
-        """Export the object as a DOM node.
-        """
-        self._doc = doc
-        node = self._getObjectNode('object')
-        node.appendChild(self._extractProperties())
-        return node
-
-    def importNode(self, node, mode=PURGE):
-        """Import the object from the DOM node.
-        """
-        if mode == PURGE:
-            self._purgeProperties()
-
-        self._initProperties(node, mode)
-
-
-class ActionsToolNodeAdapter(NodeAdapterBase, ObjectManagerHelpers):
-
-    """Node im- and exporter for ActionsTool.
+    """XML im- and exporter for ActionsTool.
     """
 
     __used_for__ = IActionsTool
 
+    _LOGGER_ID = 'actions'
+
     def exportNode(self, doc):
         """Export the object as a DOM node.
         """
         self._doc = doc
         node = self._getObjectNode('object')
-        node.setAttribute('xmlns:i18n', I18NURI)
         node.appendChild(self._extractProviders())
-        node.appendChild(self._extractObjects())
+
+        self._logger.info('Actions tool exported.')
         return node
 
     def importNode(self, node, mode=PURGE):
@@ -104,10 +54,10 @@ class ActionsToolNodeAdapter(NodeAdapterBase, ObjectManagerHelpers):
         """
         if mode == PURGE:
             self._purgeProviders()
-            self._purgeObjects()
 
-        self._initObjects(node, mode)
         self._initProviders(node, mode)
+
+        self._logger.info('Actions tool imported.')
 
     def _extractProviders(self):
         fragment = self._doc.createDocumentFragment()
@@ -173,18 +123,22 @@ class ActionsToolNodeAdapter(NodeAdapterBase, ObjectManagerHelpers):
 
             if provider_id not in self.context.listActionProviders():
                 self.context.addActionProvider(provider_id)
-                # delete any actions that are auto-created
-                provider = getToolByName(self.context, provider_id)
-                num_actions = len(provider.listActions())
-                if num_actions:
-                    provider.deleteActions(range(0,num_actions))
+
+            # delete any actions that are auto-created
+            provider = getToolByName(self.context, provider_id)
+            num_actions = len(provider.listActions())
+            if num_actions:
+                provider.deleteActions(range(0,num_actions))
 
             # BBB: for CMF 1.5 profiles
             self._initOldstyleActions(child, mode)
 
     def _initOldstyleActions(self, node, mode):
         # BBB: for CMF 1.5 profiles
-        provider = getToolByName(self.context, node.getAttribute('id'))
+        provider_id = str(node.getAttribute('name'))
+        if not provider_id:
+            provider_id = str(node.getAttribute('id'))
+        provider = getToolByName(self.context, provider_id)
         for child in node.childNodes:
             if child.nodeName != 'action':
                 continue
@@ -215,3 +169,40 @@ class ActionsToolNodeAdapter(NodeAdapterBase, ObjectManagerHelpers):
             provider.addAction(action_id, title, url_expr,
                                condition_expr, permission,
                                category, visible)
+
+
+def importActionProviders(context):
+    """Import actions tool.
+    """
+    site = context.getSite()
+    logger = context.getLogger('actions')
+    tool = getToolByName(site, 'portal_actions')
+
+    body = context.readDataFile(_FILENAME)
+    if body is None:
+        logger.info('Nothing to import.')
+        return
+
+    importer = zapi.queryMultiAdapter((tool, context), IBody)
+    if importer is None:
+        logger.warning('Import adapter misssing.')
+        return
+
+    importer.body = body
+
+def exportActionProviders(context):
+    """Export actions tool.
+    """
+    site = context.getSite()
+    logger = context.getLogger('actions')
+    tool = getToolByName(site, 'portal_actions', None)
+    if tool is None:
+        logger.info('Nothing to export.')
+        return
+
+    exporter = zapi.queryMultiAdapter((tool, context), IBody)
+    if exporter is None:
+        logger.warning('Export adapter misssing.')
+        return
+
+    context.writeDataFile(_FILENAME, exporter.body, exporter.mime_type)

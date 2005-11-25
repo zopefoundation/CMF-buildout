@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <import-steps>
  <import-step id="actions" version="20040630-01"
-              handler="Products.CMFSetup.actions.importActionProviders"
+              handler="Products.CMFCore.exportimport.actions.importActionProviders"
               title="Action Providers">
   <dependency step="toolset"/>
   Import actions tool's action providers and their actions.

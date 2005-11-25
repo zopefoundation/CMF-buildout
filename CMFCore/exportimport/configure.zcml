@@ -3,39 +3,10 @@
     >
 
   <adapter
-      factory=".actions.ActionCategoryNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for="Products.CMFCore.interfaces.IActionCategory"
-      />
-
-  <adapter
-      factory=".actions.ActionCategoryNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for="Products.CMFCore.interfaces.IActionCategory"
-      />
-
-  <adapter
-      factory=".actions.ActionNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for="Products.CMFCore.interfaces.IAction"
-      />
-
-  <adapter
-      factory=".actions.ActionNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for="Products.CMFCore.interfaces.IAction"
-      />
-
-  <adapter
-      factory=".actions.ActionsToolNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for="Products.CMFCore.interfaces.IActionsTool"
-      />
-
-  <adapter
-      factory=".actions.ActionsToolNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for="Products.CMFCore.interfaces.IActionsTool"
+      factory=".actions.ActionsToolXMLAdapter"
+      provides="Products.GenericSetup.interfaces.IBody"
+      for="Products.CMFCore.interfaces.IActionsTool
+           Products.GenericSetup.interfaces.ISetupContext"
       />
 
   <adapter

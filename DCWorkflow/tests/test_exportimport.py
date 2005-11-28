@@ -81,7 +81,6 @@ class _WorkflowSetup(WorkflowSetupBase):
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.DCWorkflow)
         zcml.load_config('configure.zcml', Products.GenericSetup.PythonScripts)
-        zcml.load_string(_DUMMY_ZCML)
 
     def _initDCWorkflow( self, workflow_id ):
 
@@ -1798,14 +1797,14 @@ class Test_exportWorkflow( _WorkflowSetup
         exportWorkflowTool( context )
 
         # workflows list, wf defintion and 3 scripts
-        self.assertEqual( len( context._wrote ), 5 )
+        self.assertEqual( len( context._wrote ), 6 )
 
         filename, text, content_type = context._wrote[ 0 ]
         self.assertEqual( filename, 'workflows.xml' )
         self._compareDOM( text, _NORMAL_TOOL_EXPORT )
         self.assertEqual( content_type, 'text/xml' )
 
-        filename, text, content_type = context._wrote[ 1 ]
+        filename, text, content_type = context._wrote[ 2 ]
         self.assertEqual( filename, 'workflows/%s/definition.xml' % WF_ID_DC )
         self._compareDOM( text
                         , _NORMAL_WORKFLOW_EXPORT
@@ -1817,7 +1816,7 @@ class Test_exportWorkflow( _WorkflowSetup
         self.assertEqual( content_type, 'text/xml' )
 
         # just testing first script
-        filename, text, content_type = context._wrote[ 2 ]
+        filename, text, content_type = context._wrote[ 3 ]
         self.assertEqual( filename, 'workflows/%s/scripts/after_close.py' % WF_ID_DC )
         self.assertEqual( text, _AFTER_CLOSE_SCRIPT)
         self.assertEqual( content_type, 'text/plain' )

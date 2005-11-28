@@ -96,7 +96,7 @@ def initialize(context):
     utils.initializeBasesPhase2(z_tool_bases, context)
 
     context.registerClass(
-        DirectoryView.DirectoryViewSurrogate,
+        DirectoryView.DirectoryView,
         constructors=(('manage_addDirectoryViewForm',
                        DirectoryView.manage_addDirectoryViewForm),
                       DirectoryView.manage_addDirectoryView,

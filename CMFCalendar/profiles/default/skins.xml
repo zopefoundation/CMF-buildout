@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<skins-tool>
- <skin-directory id="zpt_calendar"
-                 directory="CMFCalendar/skins/zpt_calendar"/>
- <skin-path id="*">
+<object name="portal_skins" meta_type="CMF Skins Tool">
+ <object name="zpt_calendar" meta_type="Filesystem Directory View"
+    directory="CMFCalendar/skins/zpt_calendar"/>
+ <skin-path name="*">
   <layer name="zpt_calendar" insert-before="zpt_content"/>
  </skin-path>
-</skins-tool>
+</object>

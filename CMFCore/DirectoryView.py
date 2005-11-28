@@ -31,9 +31,11 @@ from Globals import Persistent
 from OFS.Folder import Folder
 from OFS.ObjectManager import bad_id
 from zLOG import LOG, ERROR
+from zope.interface import implements
 
 from FSMetadata import FSMetadata
 from FSObject import BadFile
+from interfaces import IDirectoryView
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from utils import _dtmldir
@@ -390,15 +392,19 @@ def listFolderHierarchy(ob, path, rval, adding_meta_type=None):
             listFolderHierarchy(subob, subpath, rval, adding_meta_type)
 
 
-class DirectoryView (Persistent):
+class DirectoryView(Persistent):
+
     """ Directory views mount filesystem directories.
     """
+
+    implements(IDirectoryView)
+
     meta_type = 'Filesystem Directory View'
     _dirpath = None
     _properties = None
     _objects = ()
 
-    def __init__(self, id, dirpath, fullname=None, properties=None):
+    def __init__(self, id, dirpath='', fullname=None, properties=None):
         if properties:
             # Since props come from the filesystem, this should be
             # safe.
@@ -424,7 +430,7 @@ class DirectoryView (Persistent):
             if info is not None:
                 # update the directory view with a corrected path
                 self._dirpath = dirpath
-            else:
+            elif self._dirpath:
                 from warnings import warn
                 warn('DirectoryView %s refers to a non-existing path %s'
                      % (self.id, dirpath), UserWarning)
@@ -443,9 +449,12 @@ class DirectoryView (Persistent):
 InitializeClass(DirectoryView)
 
 
-class DirectoryViewSurrogate (Folder):
+class DirectoryViewSurrogate(Folder):
+
     """ Folderish DirectoryView.
     """
+
+    implements(IDirectoryView)
 
     meta_type = 'Filesystem Directory View'
     all_meta_types = ()

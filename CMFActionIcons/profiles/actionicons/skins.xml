@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<skins-tool>
- <skin-directory id="actionicons"
-                 directory="CMFActionIcons/skins/actionicons"/>
- <skin-path id="*">
+<object name="portal_skins" meta_type="CMF Skins Tool">
+ <object name="actionicons" meta_type="Filesystem Directory View"
+    directory="CMFActionIcons/skins/actionicons"/>
+ <skin-path name="*">
   <layer name="actionicons" insert-before="zpt_content"/>
  </skin-path>
-</skins-tool>
+</object>

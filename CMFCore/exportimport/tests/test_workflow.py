@@ -31,7 +31,7 @@ from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
-
+from Products.GenericSetup.utils import BodyAdapterBase
 
 _DUMMY_ZCML = """\
 <configure
@@ -45,6 +45,12 @@ _DUMMY_ZCML = """\
       permission="dummy.add"
       addview="addDummyWorkflow.html"
       global="false"
+      />
+  <adapter
+      factory="Products.CMFCore.exportimport.tests.test_workflow.DummyWorkflowBodyAdapter"
+      provides="Products.GenericSetup.interfaces.IBody"
+      for="Products.CMFCore.interfaces.IWorkflowDefinition
+           Products.GenericSetup.interfaces.ISetupContext"
       />
 </configure>
 """
@@ -176,6 +182,11 @@ class DummyWorkflow(SimpleItem):
         return self._id
 
 
+class DummyWorkflowBodyAdapter(BodyAdapterBase):
+
+    pass
+
+
 class WorkflowToolXMLAdapterTests(BodyAdapterTestCase):
 
     def _getTargetClass(self):
@@ -214,6 +225,7 @@ class _WorkflowSetup(PlacelessSetup, BaseRegistryTests):
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
+        zcml.load_string(_DUMMY_ZCML)
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)
@@ -242,7 +254,6 @@ class exportWorkflowToolTests(_WorkflowSetup):
         WF_TITLE_NON = 'Non-DCWorkflow'
 
         site = self._initSite()
-
         wf_tool = site.portal_workflow
         nondcworkflow = DummyWorkflow(WF_TITLE_NON)
         nondcworkflow.title = WF_TITLE_NON
@@ -251,8 +262,7 @@ class exportWorkflowToolTests(_WorkflowSetup):
         context = DummyExportContext(site)
         exportWorkflowTool(context)
 
-        self.assertEqual(len(context._wrote), 1)
-
+        self.assertEqual(len(context._wrote), 2)
         filename, text, content_type = context._wrote[0]
         self.assertEqual(filename, 'workflows.xml')
         self._compareDOM(text, _NORMAL_TOOL_EXPORT)

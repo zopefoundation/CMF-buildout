@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2004 Zope Corporation and Contributors. All Rights Reserved.
+# Copyright (c) 2005 Zope Corporation and Contributors. All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
@@ -10,10 +10,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-""" Skins tool setup handlers.
+"""OFS support.
 
 $Id$
 """
-
-from Products.CMFCore.exportimport.skins import exportSkinsTool
-from Products.CMFCore.exportimport.skins import importSkinsTool

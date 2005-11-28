@@ -1133,6 +1133,12 @@ class IRegistrationTool(Interface):
 #
 #   Skins tool interfaces
 #
+class IDirectoryView(Interface):
+
+    """ Directory views mount filesystem directories.
+    """
+
+
 class ISkinsContainer(Interface):
 
     """ An object that provides skins.

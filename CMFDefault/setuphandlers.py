@@ -15,8 +15,6 @@
 $Id$
 """
 
-from Products.CMFCore.utils import getToolByName
-
 from exceptions import BadRequest
 
 
@@ -28,15 +26,10 @@ def importVarious(context):
     """
     site = context.getSite()
 
-    # add custom skin folder
-    stool = getToolByName(site, 'portal_skins')
     try:
-        stool.manage_addProduct['OFSP'].manage_addFolder(id='custom')
+        site.manage_addPortalFolder('Members')
     except BadRequest:
         return 'Various settings: Nothing to import.'
-
-    site.manage_addProduct['OFSP'].manage_addUserFolder()
-    site.manage_addPortalFolder('Members')
     site.Members.manage_addProduct['OFSP'].manage_addDTMLMethod('index_html',
                                         'Member list', '<dtml-return roster>')
 

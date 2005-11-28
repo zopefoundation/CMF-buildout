@@ -18,13 +18,10 @@ $Id$
 import sys
 
 from Products.CMFCore import utils
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.DirectoryView import registerDirectory
-try:
-    from Products.CMFSetup import EXTENSION
-    from Products.CMFSetup import profile_registry
-    has_profile_registry = True
-except ImportError:
-    has_profile_registry = False
+from Products.GenericSetup import EXTENSION
+from Products.GenericSetup import profile_registry
 
 import Event
 import CalendarTool
@@ -61,10 +58,11 @@ def initialize( context ):
                      , fti = Event.factory_type_information
                      ).initialize( context )
 
-    if has_profile_registry:
-        profile_registry.registerProfile('default',
-                                         'CMFCalendar',
-                                         'Adds calendar support.',
-                                         'profiles/default',
-                                         'CMFCalendar',
-                                         EXTENSION)
+    profile_registry.registerProfile('default',
+                                     'CMFCalendar',
+                                     'Adds calendar support.',
+                                     'profiles/default',
+                                     'CMFCalendar',
+                                     EXTENSION,
+                                     for_=ISiteRoot,
+                                    )

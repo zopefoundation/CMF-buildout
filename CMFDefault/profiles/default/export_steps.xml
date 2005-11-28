@@ -41,7 +41,7 @@
   Export custom roles and non-default role-permission mappings.
  </export-step>
  <export-step id="skins"
-              handler="Products.CMFSetup.skins.exportSkinsTool"
+              handler="Products.CMFCore.exportimport.skins.exportSkinsTool"
               title="Skins Tool">
   Export skins tool's filesystem directory views and skin path definitions.
  </export-step>

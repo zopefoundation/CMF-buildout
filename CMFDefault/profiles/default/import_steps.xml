@@ -49,7 +49,7 @@
   Import custom roles and non-default role-permission mappings.
  </import-step>
  <import-step id="skins" version="20040630-01"
-              handler="Products.CMFSetup.skins.importSkinsTool"
+              handler="Products.CMFCore.exportimport.skins.importSkinsTool"
               title="Skins Tool">
   <dependency step="toolset"/>
   Import skins tool's filesystem directory views and skin path definitions.

@@ -82,6 +82,25 @@
       />
 
   <adapter
+      factory=".skins.DirectoryViewNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeExporter"
+      for="Products.CMFCore.interfaces.IDirectoryView"
+      />
+
+  <adapter
+      factory=".skins.DirectoryViewNodeAdapter"
+      provides="Products.GenericSetup.interfaces.INodeImporter"
+      for="Products.CMFCore.interfaces.IDirectoryView"
+      />
+
+  <adapter
+      factory=".skins.SkinsToolXMLAdapter"
+      provides="Products.GenericSetup.interfaces.IBody"
+      for="Products.CMFCore.interfaces.ISkinsTool
+           Products.GenericSetup.interfaces.ISetupContext"
+      />
+
+  <adapter
       factory=".typeinfo.TypeInformationXMLAdapter"
       provides="Products.GenericSetup.interfaces.IBody"
       for="Products.CMFCore.interfaces.ITypeInformation

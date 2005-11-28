@@ -32,9 +32,11 @@ from Globals import Persistent
 from OFS.Folder import Folder
 from OFS.ObjectManager import bad_id
 from zLOG import LOG, ERROR
+from zope.interface import implements
 
 from FSMetadata import FSMetadata
 from FSObject import BadFile
+from interfaces import IDirectoryView
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from utils import _dtmldir
@@ -394,11 +396,14 @@ def listFolderHierarchy(ob, path, rval, adding_meta_type=None):
 class DirectoryView (Persistent):
     """ Directory views mount filesystem directories.
     """
+
+    implements(IDirectoryView)
+
     meta_type = 'Filesystem Directory View'
     _dirpath = None
     _objects = ()
 
-    def __init__(self, id, dirpath, fullname=None):
+    def __init__(self, id, dirpath='', fullname=None):
         self.id = id
         self._dirpath = dirpath
 
@@ -418,7 +423,7 @@ class DirectoryView (Persistent):
             if info is not None:
                 # update the directory view with a corrected path
                 self._dirpath = dirpath
-            else:
+            elif self._dirpath:
                 warn('DirectoryView %s refers to a non-existing path %s'
                      % (self.id, dirpath), UserWarning)
         if info is None:
@@ -439,6 +444,8 @@ InitializeClass(DirectoryView)
 class DirectoryViewSurrogate (Folder):
     """ Folderish DirectoryView.
     """
+
+    implements(IDirectoryView)
 
     meta_type = 'Filesystem Directory View'
     all_meta_types = ()

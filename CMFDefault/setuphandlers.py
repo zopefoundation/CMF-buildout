@@ -15,6 +15,8 @@
 $Id$
 """
 
+from exceptions import BadRequest
+
 
 def importVarious(context):
     """ Import various settings.
@@ -25,10 +27,9 @@ def importVarious(context):
     site = context.getSite()
 
     try:
-        site.manage_addProduct['OFSP'].manage_addUserFolder()
-    except TypeError:
+        site.manage_addPortalFolder('Members')
+    except BadRequest:
         return 'Various settings: Nothing to import.'
-    site.manage_addPortalFolder('Members')
     site.Members.manage_addProduct['OFSP'].manage_addDTMLMethod('index_html',
                                         'Member list', '<dtml-return roster>')
 

@@ -110,19 +110,6 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
         A Portal-managed File
     """
 
-    # The order of base classes is very significant in this case.
-    # Image.File does not store it's id in it's 'id' attribute.
-    # Rather, it has an 'id' method which returns the contents of the
-    # instnace's __name__ attribute.  Inheriting in the other order
-    # obscures this method, resulting in much pulling of hair and
-    # gnashing of teeth and fraying of nerves.  Don't do it.
-    #
-    # Really.
-    # 
-    # Note that if you use getId() to retrieve an object's ID, you will avoid
-    # this problem altogether. getId is the new way, accessing .id is
-    # deprecated.
-
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )
@@ -164,6 +151,11 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
         DefaultDublinCoreImpl.__init__( self, title, subject, description
                                , contributors, effective_date, expiration_date
                                , format, language, rights )
+
+    # use OFS.Image.File's index_html; PortalContent's will cause some
+    # circular behaviour w/ 'None' being returned as the default view
+    security.declareProtected(View, 'index_html')
+    index_html = OFS.Image.File.index_html
 
     # For old instances where bases had OFS.Image.File first,
     # the id was actually stored in __name__.

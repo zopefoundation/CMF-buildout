@@ -102,19 +102,6 @@ class Image(PortalContent, OFS.Image.Image, DefaultDublinCoreImpl):
         A Portal-managed Image
     """
 
-    # The order of base classes is very significant in this case.
-    # Image.Image does not store it's id in it's 'id' attribute.
-    # Rather, it has an 'id' method which returns the contents of the
-    # instnace's __name__ attribute.  Inheriting in the other order
-    # obscures this method, resulting in much pulling of hair and
-    # gnashing of teeth and fraying of nerves.  Don't do it.
-    #
-    # Really.
-    # 
-    # Note that if you use getId() to retrieve an object's ID, you will avoid
-    # this problem altogether. getId is the new way, accessing .id is
-    # deprecated.
-
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )

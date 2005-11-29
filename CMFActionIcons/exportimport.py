@@ -56,7 +56,7 @@ def importActionIconsTool(context):
         ait.clearActionIcons()
 
     # now act on the settings we've retrieved
-    configurator = ActionIconsToolImportConfigurator(site)
+    configurator = ActionIconsToolImportConfigurator(site, 'utf-8')
     ait_info = configurator.parseXML(body)
 
     for action_icon in ait_info['action_icons']:

@@ -13,4 +13,7 @@ Before CMF 1.6 beta
 
   Others
 
+    - Converted CMFSetup into a pure legacy package. CMFSetup will be removed
+      in CMF 2.0.
+
     - Reordered base classes of File and Image, to allow use of super().

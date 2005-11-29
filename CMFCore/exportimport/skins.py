@@ -234,7 +234,7 @@ def exportSkinsTool(context):
         logger.info('Nothing to export.')
         return
 
-    exporter = zapi.getMultiAdapter((tool, context), IBody)
+    exporter = zapi.queryMultiAdapter((tool, context), IBody)
     if exporter is None:
         logger.warning('Export adapter misssing.')
         return

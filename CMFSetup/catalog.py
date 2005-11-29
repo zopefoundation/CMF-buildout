@@ -15,49 +15,5 @@
 $Id$
 """
 
-from xml.dom.minidom import parseString
-
-from Products.CMFCore.utils import getToolByName
-from Products.GenericSetup.interfaces import INodeExporter
-from Products.GenericSetup.interfaces import INodeImporter
-from Products.GenericSetup.interfaces import PURGE, UPDATE
-from Products.GenericSetup.utils import PrettyDocument
-
-_FILENAME = 'catalog.xml'
-
-
-def importCatalogTool(context):
-    """ Import catalog tool.
-    """
-    site = context.getSite()
-    mode = context.shouldPurge() and PURGE or UPDATE
-    ctool = getToolByName(site, 'portal_catalog')
-
-    body = context.readDataFile(_FILENAME)
-    if body is None:
-        return 'Catalog tool: Nothing to import.'
-
-    importer = INodeImporter(ctool, None)
-    if importer is None:
-        return 'Catalog tool: Import adapter misssing.'
-
-    importer.importNode(parseString(body).documentElement, mode=mode)
-    return 'Catalog tool imported.'
-
-def exportCatalogTool(context):
-    """ Export catalog tool.
-    """
-    site = context.getSite()
-
-    ctool = getToolByName(site, 'portal_catalog', None)
-    if ctool is None:
-        return 'Catalog tool: Nothing to export.'
-
-    exporter = INodeExporter(ctool)
-    if exporter is None:
-        return 'Catalog tool: Export adapter misssing.'
-
-    doc = PrettyDocument()
-    doc.appendChild(exporter.exportNode(doc))
-    context.writeDataFile(_FILENAME, doc.toprettyxml(' '), 'text/xml')
-    return 'Catalog tool exported.'
+from Products.CMFCore.exportimport.catalog import exportCatalogTool
+from Products.CMFCore.exportimport.catalog import importCatalogTool

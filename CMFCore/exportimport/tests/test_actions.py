@@ -40,7 +40,6 @@ from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
-
 _ACTION_XML = """\
 <object name="foo_action" meta_type="CMF Action">
  <property name="title">Foo</property>
@@ -425,12 +424,10 @@ class exportActionProvidersTests(_ActionSetup):
                 import exportActionProviders
 
         site = self._initSite()
-
         context = DummyExportContext(site)
         exportActionProviders(context)
 
         self.assertEqual(len(context._wrote), 1)
-
         filename, text, content_type = context._wrote[0]
         self.assertEqual(filename, 'actions.xml')
         self._compareDOM(text, _NORMAL_EXPORT)

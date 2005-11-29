@@ -46,15 +46,10 @@
       />
 
   <adapter
-      factory=".cachingpolicymgr.CachingPolicyManagerNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for="Products.CMFCore.interfaces.ICachingPolicyManager"
-      />
-
-  <adapter
-      factory=".cachingpolicymgr.CachingPolicyManagerNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for="Products.CMFCore.interfaces.ICachingPolicyManager"
+      factory=".cachingpolicymgr.CachingPolicyManagerXMLAdapter"
+      provides="Products.GenericSetup.interfaces.IBody"
+      for="Products.CMFCore.interfaces.ICachingPolicyManager
+           Products.GenericSetup.interfaces.ISetupContext"
       />
 
   <adapter
@@ -70,39 +65,24 @@
       />
 
   <adapter
-      factory=".contenttyperegistry.ContentTypeRegistryNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for="Products.CMFCore.interfaces.IContentTypeRegistry"
+      factory=".contenttyperegistry.ContentTypeRegistryXMLAdapter"
+      provides="Products.GenericSetup.interfaces.IBody"
+      for="Products.CMFCore.interfaces.IContentTypeRegistry
+           Products.GenericSetup.interfaces.ISetupContext"
       />
 
   <adapter
-      factory=".contenttyperegistry.ContentTypeRegistryNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for="Products.CMFCore.interfaces.IContentTypeRegistry"
+      factory=".cookieauth.CookieCrumblerXMLAdapter"
+      provides="Products.GenericSetup.interfaces.IBody"
+      for="Products.CMFCore.interfaces.ICookieCrumbler
+           Products.GenericSetup.interfaces.ISetupContext"
       />
 
   <adapter
-      factory=".cookieauth.CookieCrumblerNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for="Products.CMFCore.interfaces.ICookieCrumbler"
-      />
-
-  <adapter
-      factory=".cookieauth.CookieCrumblerNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for="Products.CMFCore.interfaces.ICookieCrumbler"
-      />
-
-  <adapter
-      factory=".properties.PropertiesNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for="Products.CMFCore.interfaces.ISiteRoot"
-      />
-
-  <adapter
-      factory=".properties.PropertiesNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for="Products.CMFCore.interfaces.ISiteRoot"
+      factory=".properties.PropertiesXMLAdapter"
+      provides="Products.GenericSetup.interfaces.IBody"
+      for="Products.CMFCore.interfaces.ISiteRoot
+           Products.GenericSetup.interfaces.ISetupContext"
       />
 
   <adapter

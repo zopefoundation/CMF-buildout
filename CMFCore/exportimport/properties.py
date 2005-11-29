@@ -10,24 +10,31 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Site properties node adapters.
+"""Site properties xml adapters and setup handlers.
 
 $Id$
 """
 
+from zope.app import zapi
+
+from Products.GenericSetup.interfaces import IBody
 from Products.GenericSetup.interfaces import PURGE
-from Products.GenericSetup.utils import NodeAdapterBase
 from Products.GenericSetup.utils import PropertyManagerHelpers
+from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import ISiteRoot
 
+_FILENAME = 'properties.xml'
 
-class PropertiesNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
 
-    """Node im- and exporter for properties.
+class PropertiesXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
+
+    """XML im- and exporter for properties.
     """
 
     __used_for__ = ISiteRoot
+
+    _LOGGER_ID = 'properties'
 
     def exportNode(self, doc):
         """Export the object as a DOM node.
@@ -35,6 +42,8 @@ class PropertiesNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
         self._doc = doc
         node = self._doc.createElement('site')
         node.appendChild(self._extractProperties())
+
+        self._logger.info('Site properties exported.')
         return node
 
     def importNode(self, node, mode=PURGE):
@@ -44,3 +53,37 @@ class PropertiesNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
             self._purgeProperties()
 
         self._initProperties(node, mode)
+
+        self._logger.info('Site properties imported.')
+
+
+def importSiteProperties(context):
+    """ Import site properties from an XML file.
+    """
+    site = context.getSite()
+    logger = context.getLogger('properties')
+
+    body = context.readDataFile(_FILENAME)
+    if body is None:
+        logger.info('Nothing to import.')
+        return
+
+    importer = zapi.queryMultiAdapter((site, context), IBody)
+    if importer is None:
+        logger.warning('Import adapter misssing.')
+        return
+
+    importer.body = body
+
+def exportSiteProperties(context):
+    """ Export site properties as an XML file.
+    """
+    site = context.getSite()
+    logger = context.getLogger('properties')
+
+    exporter = zapi.queryMultiAdapter((site, context), IBody)
+    if exporter is None:
+        logger.warning('Export adapter misssing.')
+        return
+
+    context.writeDataFile(_FILENAME, exporter.body, exporter.mime_type)

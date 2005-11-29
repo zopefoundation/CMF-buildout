@@ -17,6 +17,8 @@ $Id$
 
 import unittest
 import Testing
+import Zope2
+Zope2.startup()
 
 import Products
 from OFS.Folder import Folder
@@ -26,11 +28,47 @@ from Products.ZCTextIndex.Lexicon import Splitter
 from Products.ZCTextIndex.Lexicon import StopWordRemover
 from Products.ZCTextIndex.ZCTextIndex import PLexicon
 
-from Products.CMFCore.CatalogTool import CatalogTool
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
+
+from Products.CMFCore.CatalogTool import CatalogTool
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
+
+_EMPTY_EXPORT = """\
+<?xml version="1.0"?>
+<object meta_type="CMF Catalog" name="portal_catalog">
+ <property name="title"/>
+</object>
+"""
+
+_NORMAL_EXPORT = """\
+<?xml version="1.0"?>
+<object meta_type="CMF Catalog" name="portal_catalog">
+ <property name="title"/>
+ <object name="foo_plexicon" meta_type="ZCTextIndex Lexicon">
+  <element name="Whitespace splitter" group="Word Splitter"/>
+  <element name="Case Normalizer" group="Case Normalizer"/>
+  <element name="Remove listed stop words only" group="Stop Words"/>
+ </object>
+ <index name="foo_zctext" meta_type="ZCTextIndex">
+  <indexed_attr value="foo_zctext"/>
+  <extra name="index_type" value="Okapi BM25 Rank"/>
+  <extra name="lexicon_id" value="foo_plexicon"/>
+ </index>
+ <column value="foo_zctext"/>
+</object>
+"""
+
+_UPDATE_IMPORT = """\
+<?xml version="1.0"?>
+<object meta_type="CMF Catalog" name="portal_catalog">
+ <index name="foo_date" meta_type="DateIndex">
+  <property name="index_naive_time_as_local">True</property>
+ </index>
+ <column value="foo_date"/>
+</object>
+"""
 
 
 class _extra:
@@ -78,46 +116,11 @@ class _CatalogToolSetup(PlacelessSetup, BaseRegistryTests):
         BaseRegistryTests.tearDown(self)
         PlacelessSetup.tearDown(self)
 
-_EMPTY_EXPORT = """\
-<?xml version="1.0"?>
-<object meta_type="CMF Catalog" name="portal_catalog">
- <property name="title"/>
-</object>
-"""
 
-_NORMAL_EXPORT = """\
-<?xml version="1.0"?>
-<object meta_type="CMF Catalog" name="portal_catalog">
- <property name="title"/>
- <object name="foo_plexicon" meta_type="ZCTextIndex Lexicon">
-  <element name="Whitespace splitter" group="Word Splitter"/>
-  <element name="Case Normalizer" group="Case Normalizer"/>
-  <element name="Remove listed stop words only" group="Stop Words"/>
- </object>
- <index name="foo_zctext" meta_type="ZCTextIndex">
-  <indexed_attr value="foo_zctext"/>
-  <extra name="index_type" value="Okapi BM25 Rank"/>
-  <extra name="lexicon_id" value="foo_plexicon"/>
- </index>
- <column value="foo_zctext"/>
-</object>
-"""
-
-_UPDATE_IMPORT = """\
-<?xml version="1.0"?>
-<object meta_type="CMF Catalog" name="portal_catalog">
- <index name="foo_date" meta_type="DateIndex">
-  <property name="index_naive_time_as_local">True</property>
- </index>
- <column value="foo_date"/>
-</object>
-"""
-
-
-class Test_exportCatalogTool(_CatalogToolSetup):
+class exportCatalogToolTests(_CatalogToolSetup):
 
     def test_unchanged(self):
-        from Products.CMFSetup.catalog import exportCatalogTool
+        from Products.CMFCore.exportimport.catalog import exportCatalogTool
 
         site = self._initSite(0)
         context = DummyExportContext(site)
@@ -130,7 +133,7 @@ class Test_exportCatalogTool(_CatalogToolSetup):
         self.assertEqual(content_type, 'text/xml')
 
     def test_normal(self):
-        from Products.CMFSetup.catalog import exportCatalogTool
+        from Products.CMFCore.exportimport.catalog import exportCatalogTool
 
         site = self._initSite(2)
         context = DummyExportContext(site)
@@ -143,10 +146,10 @@ class Test_exportCatalogTool(_CatalogToolSetup):
         self.assertEqual(content_type, 'text/xml')
 
 
-class Test_importCatalogTool(_CatalogToolSetup):
+class importCatalogToolTests(_CatalogToolSetup):
 
     def test_empty_purge(self):
-        from Products.CMFSetup.catalog import importCatalogTool
+        from Products.CMFCore.exportimport.catalog import importCatalogTool
 
         site = self._initSite(2)
         ctool = site.portal_catalog
@@ -164,7 +167,7 @@ class Test_importCatalogTool(_CatalogToolSetup):
         self.assertEqual(len(ctool.schema()), 0)
 
     def test_empty_update(self):
-        from Products.CMFSetup.catalog import importCatalogTool
+        from Products.CMFCore.exportimport.catalog import importCatalogTool
 
         site = self._initSite(2)
         ctool = site.portal_catalog
@@ -182,8 +185,8 @@ class Test_importCatalogTool(_CatalogToolSetup):
         self.assertEqual(len(ctool.schema()), 1)
 
     def test_normal_purge(self):
-        from Products.CMFSetup.catalog import exportCatalogTool
-        from Products.CMFSetup.catalog import importCatalogTool
+        from Products.CMFCore.exportimport.catalog import exportCatalogTool
+        from Products.CMFCore.exportimport.catalog import importCatalogTool
 
         site = self._initSite(2)
         ctool = site.portal_catalog
@@ -211,7 +214,7 @@ class Test_importCatalogTool(_CatalogToolSetup):
         self.assertEqual(content_type, 'text/xml')
 
     def test_normal_update(self):
-        from Products.CMFSetup.catalog import importCatalogTool
+        from Products.CMFCore.exportimport.catalog import importCatalogTool
 
         site = self._initSite(2)
         ctool = site.portal_catalog
@@ -231,8 +234,8 @@ class Test_importCatalogTool(_CatalogToolSetup):
 
 def test_suite():
     return unittest.TestSuite((
-        unittest.makeSuite(Test_exportCatalogTool),
-        unittest.makeSuite(Test_importCatalogTool),
+        unittest.makeSuite(exportCatalogToolTests),
+        unittest.makeSuite(importCatalogToolTests),
         ))
 
 if __name__ == '__main__':

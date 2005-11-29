@@ -24,14 +24,15 @@ from OFS.SimpleItem import SimpleItem
 from Products.Five import zcml
 from zope.interface import implements
 
-from Products.CMFCore.interfaces import IWorkflowDefinition
-from Products.CMFCore.interfaces import IWorkflowTool
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 from Products.GenericSetup.utils import BodyAdapterBase
+
+from Products.CMFCore.interfaces import IWorkflowDefinition
+from Products.CMFCore.interfaces import IWorkflowTool
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 _DUMMY_ZCML = """\
 <configure

@@ -18,42 +18,14 @@ $Id$
 import unittest
 import Testing
 
-import Products
 from OFS.Folder import Folder
 from Products.Five import zcml
-from Products.MailHost.MailHost import MailHost
 
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
-
-class _MailHostSetup(PlacelessSetup, BaseRegistryTests):
-
-    def _initSite(self, use_changed=False):
-        self.root.site = Folder(id='site')
-        site = self.root.site
-        mh = site.MailHost = MailHost('MailHost')
- 
-        if use_changed:
-           mh.smtp_port='1'
-           mh.smtp_pwd="value1"
-           mh.smtp_host="value2"
-           mh.smtp_uid="value3"
-
-        return site
-
-    def setUp(self):
-        PlacelessSetup.setUp(self)
-        BaseRegistryTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.GenericSetup.MailHost)
-
-    def tearDown(self):
-        BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
-
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 _DEFAULT_EXPORT = """\
 <?xml version="1.0"?>
@@ -68,10 +40,40 @@ _CHANGED_EXPORT = """\
 """
 
 
-class Test_exportMailHost(_MailHostSetup):
+class _MailHostSetup(PlacelessSetup, BaseRegistryTests):
+
+    def _initSite(self, use_changed=False):
+        from Products.MailHost.MailHost import MailHost
+
+        self.root.site = Folder(id='site')
+        site = self.root.site
+        mh = site.MailHost = MailHost('MailHost')
+ 
+        if use_changed:
+           mh.smtp_port='1'
+           mh.smtp_pwd="value1"
+           mh.smtp_host="value2"
+           mh.smtp_uid="value3"
+
+        return site
+
+    def setUp(self):
+        import Products.GenericSetup.MailHost
+
+        PlacelessSetup.setUp(self)
+        BaseRegistryTests.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.GenericSetup.MailHost)
+
+    def tearDown(self):
+        BaseRegistryTests.tearDown(self)
+        PlacelessSetup.tearDown(self)
+
+
+class exportMailHostTests(_MailHostSetup):
 
     def test_unchanged(self):
-        from Products.CMFSetup.mailhost import exportMailHost
+        from Products.CMFCore.exportimport.mailhost import exportMailHost
 
         site = self._initSite(use_changed=False)
         context = DummyExportContext(site)
@@ -84,7 +86,7 @@ class Test_exportMailHost(_MailHostSetup):
         self.assertEqual(content_type, 'text/xml')
 
     def test_changed(self):
-        from Products.CMFSetup.mailhost import exportMailHost
+        from Products.CMFCore.exportimport.mailhost import exportMailHost
 
         site = self._initSite(use_changed=True)
         context = DummyExportContext(site)
@@ -97,10 +99,10 @@ class Test_exportMailHost(_MailHostSetup):
         self.assertEqual(content_type, 'text/xml')
 
 
-class Test_importMailHost(_MailHostSetup):
+class importMailHostTests(_MailHostSetup):
 
     def test_normal(self):
-        from Products.CMFSetup.mailhost import importMailHost
+        from Products.CMFCore.exportimport.mailhost import importMailHost
 
         site = self._initSite()
         mh = site.MailHost
@@ -117,8 +119,8 @@ class Test_importMailHost(_MailHostSetup):
 
 def test_suite():
     return unittest.TestSuite((
-        unittest.makeSuite(Test_exportMailHost),
-        unittest.makeSuite(Test_importMailHost),
+        unittest.makeSuite(exportMailHostTests),
+        unittest.makeSuite(importMailHostTests),
         ))
 
 if __name__ == '__main__':

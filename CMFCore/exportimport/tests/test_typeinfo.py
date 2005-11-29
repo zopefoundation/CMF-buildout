@@ -22,6 +22,11 @@ import Products
 from OFS.Folder import Folder
 from Products.Five import zcml
 
+from Products.GenericSetup.testing import BodyAdapterTestCase
+from Products.GenericSetup.tests.common import BaseRegistryTests
+from Products.GenericSetup.tests.common import DummyExportContext
+from Products.GenericSetup.tests.common import DummyImportContext
+
 from Products.CMFCore.permissions import View
 from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.permissions import ModifyPortalContent
@@ -29,11 +34,6 @@ from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.TypesTool import FactoryTypeInformation
 from Products.CMFCore.TypesTool import ScriptableTypeInformation
 from Products.CMFCore.TypesTool import TypesTool
-from Products.GenericSetup.testing import BodyAdapterTestCase
-from Products.GenericSetup.tests.common import BaseRegistryTests
-from Products.GenericSetup.tests.common import DummyExportContext
-from Products.GenericSetup.tests.common import DummyImportContext
-
 
 _FTI_BODY = """\
 <?xml version="1.0"?>
@@ -65,103 +65,6 @@ _TYPESTOOL_BODY = """\
  <object name="foo_type" meta_type="Factory-based Type Information"/>
 </object>
 """
-
-
-class TypeInformationXMLAdapterTests(BodyAdapterTestCase):
-
-    def _getTargetClass(self):
-        from Products.CMFCore.exportimport.typeinfo \
-                import TypeInformationXMLAdapter
-
-        return TypeInformationXMLAdapter
-
-    def _populate(self, obj):
-        obj.addAction('foo_action', 'Foo', 'string:${object_url}/foo',
-                      'python:1', (), 'Bar')
-
-    def _verifyImport(self, obj):
-        self.assertEqual(type(obj._aliases), dict)
-        self.assertEqual(obj._aliases, {'(Default)': 'foo', 'view': 'foo'})
-        self.assertEqual(type(obj._aliases['view']), str)
-        self.assertEqual(obj._aliases['view'], 'foo')
-        self.assertEqual(type(obj._actions), tuple)
-        self.assertEqual(type(obj._actions[0].id), str)
-        self.assertEqual(obj._actions[0].id, 'foo_action')
-        self.assertEqual(type(obj._actions[0].title), str)
-        self.assertEqual(obj._actions[0].title, 'Foo')
-        self.assertEqual(type(obj._actions[0].description), str)
-        self.assertEqual(obj._actions[0].description, '')
-        self.assertEqual(type(obj._actions[0].category), str)
-        self.assertEqual(obj._actions[0].category, 'Bar')
-        self.assertEqual(type(obj._actions[0].condition.text), str)
-        self.assertEqual(obj._actions[0].condition.text, 'python:1')
-
-    def setUp(self):
-        import Products.CMFCore
-        from Products.CMFCore.TypesTool import FactoryTypeInformation
-
-        BodyAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
-        self._obj = FactoryTypeInformation('foo_fti')
-        self._BODY = _FTI_BODY
-
-
-class TypesToolXMLAdapterTests(BodyAdapterTestCase):
-
-    def _getTargetClass(self):
-        from Products.CMFCore.exportimport.typeinfo \
-                import TypesToolXMLAdapter
-
-        return TypesToolXMLAdapter
-
-    def _populate(self, obj):
-        from Products.CMFCore.TypesTool import FactoryTypeInformation
-
-        obj._setObject('foo_type', FactoryTypeInformation('foo_type'))
-
-    def setUp(self):
-        import Products.CMFCore
-        from Products.CMFCore.TypesTool import TypesTool
-
-        BodyAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
-        self._obj = TypesTool()
-        self._BODY = _TYPESTOOL_BODY
-
-
-class _TypeInfoSetup(PlacelessSetup, BaseRegistryTests):
-
-    def _initSite(self, foo=0):
-        self.root.site = Folder(id='site')
-        site = self.root.site
-        ttool = site.portal_types = TypesTool()
-
-        if foo == 1:
-            fti = _TI_LIST[0].copy()
-            ttool._setObject(fti['id'], FactoryTypeInformation(**fti))
-            sti = _TI_LIST[1].copy()
-            ttool._setObject(sti['id'], ScriptableTypeInformation(**sti))
-        elif foo == 2:
-            fti = _TI_LIST_WITH_FILENAME[0].copy()
-            ttool._setObject(fti['id'], FactoryTypeInformation(**fti))
-            sti = _TI_LIST_WITH_FILENAME[1].copy()
-            ttool._setObject(sti['id'], ScriptableTypeInformation(**sti))
-
-        return site
-
-    def setUp(self):
-        PlacelessSetup.setUp(self)
-        BaseRegistryTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
-    def tearDown(self):
-        BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
-
 
 _TI_LIST = ({
     'id':                    'foo',
@@ -484,10 +387,106 @@ _UPDATE_FOO_IMPORT = """\
 """
 
 
+class TypeInformationXMLAdapterTests(BodyAdapterTestCase):
+
+    def _getTargetClass(self):
+        from Products.CMFCore.exportimport.typeinfo \
+                import TypeInformationXMLAdapter
+
+        return TypeInformationXMLAdapter
+
+    def _populate(self, obj):
+        obj.addAction('foo_action', 'Foo', 'string:${object_url}/foo',
+                      'python:1', (), 'Bar')
+
+    def _verifyImport(self, obj):
+        self.assertEqual(type(obj._aliases), dict)
+        self.assertEqual(obj._aliases, {'(Default)': 'foo', 'view': 'foo'})
+        self.assertEqual(type(obj._aliases['view']), str)
+        self.assertEqual(obj._aliases['view'], 'foo')
+        self.assertEqual(type(obj._actions), tuple)
+        self.assertEqual(type(obj._actions[0].id), str)
+        self.assertEqual(obj._actions[0].id, 'foo_action')
+        self.assertEqual(type(obj._actions[0].title), str)
+        self.assertEqual(obj._actions[0].title, 'Foo')
+        self.assertEqual(type(obj._actions[0].description), str)
+        self.assertEqual(obj._actions[0].description, '')
+        self.assertEqual(type(obj._actions[0].category), str)
+        self.assertEqual(obj._actions[0].category, 'Bar')
+        self.assertEqual(type(obj._actions[0].condition.text), str)
+        self.assertEqual(obj._actions[0].condition.text, 'python:1')
+
+    def setUp(self):
+        import Products.CMFCore
+        from Products.CMFCore.TypesTool import FactoryTypeInformation
+
+        BodyAdapterTestCase.setUp(self)
+        zcml.load_config('configure.zcml', Products.CMFCore)
+
+        self._obj = FactoryTypeInformation('foo_fti')
+        self._BODY = _FTI_BODY
+
+
+class TypesToolXMLAdapterTests(BodyAdapterTestCase):
+
+    def _getTargetClass(self):
+        from Products.CMFCore.exportimport.typeinfo \
+                import TypesToolXMLAdapter
+
+        return TypesToolXMLAdapter
+
+    def _populate(self, obj):
+        from Products.CMFCore.TypesTool import FactoryTypeInformation
+
+        obj._setObject('foo_type', FactoryTypeInformation('foo_type'))
+
+    def setUp(self):
+        import Products.CMFCore
+        from Products.CMFCore.TypesTool import TypesTool
+
+        BodyAdapterTestCase.setUp(self)
+        zcml.load_config('configure.zcml', Products.CMFCore)
+
+        self._obj = TypesTool()
+        self._BODY = _TYPESTOOL_BODY
+
+
+class _TypeInfoSetup(PlacelessSetup, BaseRegistryTests):
+
+    def _initSite(self, foo=0):
+        self.root.site = Folder(id='site')
+        site = self.root.site
+        ttool = site.portal_types = TypesTool()
+
+        if foo == 1:
+            fti = _TI_LIST[0].copy()
+            ttool._setObject(fti['id'], FactoryTypeInformation(**fti))
+            sti = _TI_LIST[1].copy()
+            ttool._setObject(sti['id'], ScriptableTypeInformation(**sti))
+        elif foo == 2:
+            fti = _TI_LIST_WITH_FILENAME[0].copy()
+            ttool._setObject(fti['id'], FactoryTypeInformation(**fti))
+            sti = _TI_LIST_WITH_FILENAME[1].copy()
+            ttool._setObject(sti['id'], ScriptableTypeInformation(**sti))
+
+        return site
+
+    def setUp(self):
+        PlacelessSetup.setUp(self)
+        BaseRegistryTests.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.CMFCore)
+
+    def tearDown(self):
+        BaseRegistryTests.tearDown(self)
+        PlacelessSetup.tearDown(self)
+
+
 class exportTypesToolTests(_TypeInfoSetup):
 
     def test_empty(self):
-        from Products.CMFSetup.typeinfo import exportTypesTool
+        from Products.CMFCore.exportimport.typeinfo import exportTypesTool
 
         site = self._initSite()
         context = DummyExportContext(site)
@@ -500,7 +499,7 @@ class exportTypesToolTests(_TypeInfoSetup):
         self.assertEqual(content_type, 'text/xml')
 
     def test_normal(self):
-        from Products.CMFSetup.typeinfo import exportTypesTool
+        from Products.CMFCore.exportimport.typeinfo import exportTypesTool
 
         site = self._initSite(1)
         context = DummyExportContext(site)
@@ -523,24 +522,21 @@ class exportTypesToolTests(_TypeInfoSetup):
         self.assertEqual(content_type, 'text/xml')
 
     def test_with_filenames(self):
-        from Products.CMFSetup.typeinfo import exportTypesTool
+        from Products.CMFCore.exportimport.typeinfo import exportTypesTool
 
         site = self._initSite(2)
         context = DummyExportContext(site)
         exportTypesTool(context)
 
         self.assertEqual(len(context._wrote), 3)
-
         filename, text, content_type = context._wrote[0]
         self.assertEqual(filename, 'typestool.xml')
         self._compareDOM(text, _FILENAME_EXPORT)
         self.assertEqual(content_type, 'text/xml')
-
         filename, text, content_type = context._wrote[2]
         self.assertEqual(filename, 'types/bar_object.xml')
         self._compareDOM(text, _BAR_EXPORT % 'bar object')
         self.assertEqual(content_type, 'text/xml')
-
         filename, text, content_type = context._wrote[1]
         self.assertEqual(filename, 'types/foo_object.xml')
         self._compareDOM(text, _FOO_EXPORT % 'foo object')
@@ -554,7 +550,7 @@ class importTypesToolTests(_TypeInfoSetup):
     _NORMAL_TOOL_EXPORT = _NORMAL_TOOL_EXPORT
 
     def test_empty_default_purge(self):
-        from Products.CMFSetup.typeinfo import importTypesTool
+        from Products.CMFCore.exportimport.typeinfo import importTypesTool
 
         site = self._initSite(1)
         tool = site.portal_types
@@ -568,7 +564,7 @@ class importTypesToolTests(_TypeInfoSetup):
         self.assertEqual(len(tool.objectIds()), 0)
 
     def test_empty_explicit_purge(self):
-        from Products.CMFSetup.typeinfo import importTypesTool
+        from Products.CMFCore.exportimport.typeinfo import importTypesTool
 
         site = self._initSite(1)
         tool = site.portal_types
@@ -582,7 +578,7 @@ class importTypesToolTests(_TypeInfoSetup):
         self.assertEqual(len(tool.objectIds()), 0)
 
     def test_empty_skip_purge(self):
-        from Products.CMFSetup.typeinfo import importTypesTool
+        from Products.CMFCore.exportimport.typeinfo import importTypesTool
 
         site = self._initSite(1)
         tool = site.portal_types
@@ -596,7 +592,7 @@ class importTypesToolTests(_TypeInfoSetup):
         self.assertEqual(len(tool.objectIds()), 2)
 
     def test_normal(self):
-        from Products.CMFSetup.typeinfo import importTypesTool
+        from Products.CMFCore.exportimport.typeinfo import importTypesTool
 
         site = self._initSite()
         tool = site.portal_types
@@ -614,8 +610,8 @@ class importTypesToolTests(_TypeInfoSetup):
         self.failUnless('bar' in tool.objectIds())
 
     def test_old_xml(self):
-        from Products.CMFSetup.typeinfo import exportTypesTool
-        from Products.CMFSetup.typeinfo import importTypesTool
+        from Products.CMFCore.exportimport.typeinfo import exportTypesTool
+        from Products.CMFCore.exportimport.typeinfo import importTypesTool
 
         site = self._initSite()
         tool = site.portal_types
@@ -641,7 +637,7 @@ class importTypesToolTests(_TypeInfoSetup):
         self.assertEqual(content_type, 'text/xml')
 
     def test_with_filenames(self):
-        from Products.CMFSetup.typeinfo import importTypesTool
+        from Products.CMFCore.exportimport.typeinfo import importTypesTool
 
         site = self._initSite()
         tool = site.portal_types
@@ -659,7 +655,7 @@ class importTypesToolTests(_TypeInfoSetup):
         self.failUnless('bar object' in tool.objectIds())
 
     def test_normal_update(self):
-        from Products.CMFSetup.typeinfo import importTypesTool
+        from Products.CMFCore.exportimport.typeinfo import importTypesTool
 
         site = self._initSite()
         tool = site.portal_types

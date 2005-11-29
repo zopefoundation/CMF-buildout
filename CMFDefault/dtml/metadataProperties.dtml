@@ -20,52 +20,74 @@
 </table>
 </form>
 
-<h3> Add Metadata Element </h3>
+<h3> Metadata Schemas </h3>
 
-<form action="&dtml-absolute_url;/addElementSpec" method="POST">
-<input type="hidden" name="is_multi_valued:int:default" value="0">
+<form action="&dtml-absolute_url;" method="POST">
 <table>
 
- <tr valign="middle">
-  <th width="100" align="right"> Element: </th>
-  <td> <input type="text" name="element" size="20"> </td>
- </tr>
+ <dtml-in listSchemas>
+ <dtml-if sequence-start>
 
  <tr valign="middle">
-  <th width="100" align="right"> Multi-valued? </th>
-  <td> <input type="checkbox" name="is_multi_valued:boolean"> </td>
- </tr>
-
- <tr valign="middle">
-  <td> <br> </td>
-  <td> <input type="submit" value=" Add "> </td>
- </tr>
-
-</table>
-</form>
-
-<h3> Remove Metadata Element </h3>
-
-<form action="&dtml-absolute_url;/removeElementSpec" method="POST">
-<table>
-
- <tr valign="middle">
-  <th width="100" align="right"> Element: </th>
-  <td> <dtml-in listElementSpecs>
-       <dtml-if sequence-start>
-       <select name="element">
-       </dtml-if>
-       <option value="&dtml-sequence-key;"> &dtml-sequence-key; </option>
-       <dtml-if sequence-end>
-       </select>
-       </dtml-if>
-       </dtml-in>
+  <td width="16">
+    <br /> <!-- can't remove DCMI schema! -->
+  </td>
+  <td>
+   <a href="&dtml-absolute_url;/manage_workspace">DCMI</a>
   </td>
  </tr>
 
+ <dtml-else>
+
  <tr valign="middle">
-  <td> <br> </td>
-  <td> <input type="submit" value=" Remove "> </td>
+  <td>
+   <input type="checkbox" name="schema_ids:list" value="&dtml-sequence-key;" />
+  </td>
+  <td>
+   <a href="&dtml-absolute_url;/manage_workspace"
+   > &dtml-sequence-key; </a>
+  </td>
+ </tr>
+
+ </dtml-if>
+ </dtml-in>
+
+ <tr valign="middle">
+  <td colspan="2">
+    <input type="submit" name="manage_removeSchemas:method"
+        value=" Remove Schemas ">
+  </td>
+ </tr>
+</table>
+
+<br />
+
+<table>
+
+ <tr>
+  <th colspan="2"
+      style="background-color:#CCCCCC; color:#000088">
+   Add a Schema
+  </th>
+ <tr>
+  <th> Schema ID </th>
+  <td>
+    <input type="text" name="schema_id" size="20"><br />
+  </td>
+ </tr>
+
+ <tr>
+  <th> Elements </th>
+  <td>
+    <textarea name="elements:lines" cols="30" rows="10"></textarea>
+  </td>
+ </tr>
+
+ <tr>
+  <td> <br /> </td>
+  <td>
+    <input type="submit" name="manage_addSchema:method" value=" Add Schema ">
+  </td>
  </tr>
 
 </table>

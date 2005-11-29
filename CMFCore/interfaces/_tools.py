@@ -911,13 +911,16 @@ class IMetadataTool(Interface):
             o Must be set to 'portal_metadata'.
             """)
 
+    id = Attribute('id', 'Must be set to "portal_metadata"')
+
     #
-    #   Site-wide queries.
+    #   Site-wide queries, specific to Dublin Core metadata.
     #
     def getFullName(userid):
-        """ Convert an internal userid to a "formal" name, if possible
-
-        o 'userid' is the ID of the user within the user folder.
+        """ Convert an internal userid to a "formal" name.
+        
+        o Convert only if possible, perhaps using the 'portal_membership'
+          tool;  otherwise, return 'userid'.
 
         o Used to map userid's for Creator, Contributor DCMI queries.
         """
@@ -927,64 +930,97 @@ class IMetadataTool(Interface):
         """
 
     #
-    #   Content-specific queries.
+    #   Content-specific queries, for Dublin Core metadata.
     #
-    def listAllowedSubjects(content=None):
+    def listAllowedSubjects(content=None, content_type=None):
         """ List the allowed values of the 'Subject' DCMI element.
 
-        o If 'content' is not None, return only values appropriate for
-          content's type;  otherwise, return "default" values.
-
         o 'Subject' elements should be keywords categorizing their resource.
+
+        o Return only values appropriate for content's type, or all values if
+          both 'content' and 'content_type' are None.
         """
 
-    def listAllowedFormats(content=None):
+    def listAllowedFormats(content=None, content_type=None):
         """ List the allowed values of the 'Format' DCMI element.
 
-        o If 'content' is not None, return only values appropriate for
-          content's type;  otherwise, return "default" values.
+        o These items should be usable as HTTP 'Content-type' values.
 
-        o 'Format' elements should be usable as HTTP 'Content-type' values.
+        o Return only values appropriate for content's type, or all values if
+          both 'content' and 'content_type' are None.
         """
 
-    def listAllowedLanguages(content=None):
+    def listAllowedLanguages(content=None, content_type=None):
         """ List the allowed values of the 'Language' DCMI element.
-
-        o If 'content' is not None, return only values appropriate for
-          content's type;  otherwise, return "default" values.
 
         o 'Language' element values should be suitable for generating
           HTTP headers.
+
+        o Return only values appropriate for content's type, or all values if
+          both 'content' and 'content_type' are None.
         """
 
-    def listAllowedRights(content=None):
+    def listAllowedRights(content=None, content_type=None):
         """ List the allowed values of the 'Rights' DCMI element.
 
-        o If 'content' is not None, return only values appropriate for
-          content's type;  otherwise, return "default" values.
+        o The 'Rights' element describes copyright or other IP declarations
+          pertaining to a resource.
 
-        o The 'Rights' element describes copyright or other IP
-          declarations pertaining to a resource.
+        o Return only values appropriate for content's type, or all values if
+          both 'content' and 'content_type' are None.
+        """
+
+    #
+    #   Content-specific queries, for generic metadata.
+    #
+    def listAllowedVocabulary( schema
+                             , element
+                             , content=None
+                             , content_type=None
+                             ):
+        """ List allowed values for a given schema element and content object.
+        
+        o List possible keywords if both 'content' and 'content_type' are None.
+        """
+
+    #
+    #   Schema manipulation
+    #
+    def listSchemas():
+        """ Return a list of (id, schema) tuples enumerating our schema.
+        """
+
+    def addSchema( schema_id ):
+        """ Create a new schema with the given ID.
+
+        o Return the newly-created schema object.
+
+        o Raise KeyError if such a schema already exists.
+        """
+
+    def removeSchema( schema_id ):
+        """ Remove an existing schema with the given ID.
+
+        o Raise KeyError if no such schema exists.
         """
 
     #
     #   Validation policy hooks.
     #
     def setInitialMetadata(content):
-        """ Set default initial values for content metatdata.
+        """ Set initial values for content metatdata.
+        
+        o Supply any site-specific defaults.
         """
 
     def validateMetadata(content):
-        """ Enforce portal-wide policies about DCMI elements.
-
-        o Such policy may, e.g., require non-empty title/description, etc.
-
-        o Called by the CMF immediately before saving changes to the
-          metadata of an object.
-
-        o XXX:  Note that the default skins / edit methods do *not*
-          call this method;  the choice of when to apply the validation
-          is policy.
+        """ Enforce portal-wide policies about metadata.
+        
+        o E.g., policies may require non-empty title/description, etc.
+        
+        o This method may be called by view / workflow code at "appropriate"
+          times, such as immediately before saving changes to the metadata of
+          an object.
         """
 
 

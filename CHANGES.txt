@@ -2,6 +2,10 @@ HEAD only (unreleased)
 
   New Features
 
+    - CMFDefault.MetadataTool:  support arbitrary additional schemas.
+      The "stock" DublinCore-specific API is still accessible, implemented
+      via a special "DCMI" subobject.
+
     - WorkflowTool and DCWorkflow: Improved add form for workflow objects.
       Presettings can now be loaded from workflow settings in setup profiles.
       This replaces the feature that did allow to load presettings from the

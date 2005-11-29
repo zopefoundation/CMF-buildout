@@ -33,18 +33,17 @@ from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.utils import getToolByName
 
-
 _FILENAME = 'typestool.xml'
 
 
 class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
 
-    """Node im- and exporter for TypeInformation.
+    """XML im- and exporter for TypeInformation.
     """
 
     __used_for__ = ITypeInformation
 
-    _LOGGER_ID = 'typestool'
+    _LOGGER_ID = 'types'
 
     def exportNode(self, doc):
         """Export the object as a DOM node.
@@ -201,12 +200,12 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
 class TypesToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
                           PropertyManagerHelpers):
 
-    """Node im- and exporter for TypesTool.
+    """XML im- and exporter for TypesTool.
     """
 
     __used_for__ = ITypesTool
 
-    _LOGGER_ID = 'typestool'
+    _LOGGER_ID = 'types'
 
     def exportNode(self, doc):
         """Export the object as a DOM node.
@@ -263,7 +262,7 @@ def importTypesTool(context):
     """Import types tool and content types from XML files.
     """
     site = context.getSite()
-    logger = context.getLogger('typestool')
+    logger = context.getLogger('types')
     tool = getToolByName(site, 'portal_types')
 
     body = context.readDataFile(_FILENAME)
@@ -283,8 +282,8 @@ def exportTypesTool(context):
     """Export types tool content types as a set of XML files.
     """
     site = context.getSite()
-    logger = context.getLogger('typestool')
-    tool = getToolByName(site, 'portal_types')
+    logger = context.getLogger('types')
+    tool = getToolByName(site, 'portal_types', None)
     if tool is None:
         logger.info('Nothing to export.')
         return

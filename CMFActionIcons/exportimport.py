@@ -24,11 +24,11 @@ from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 from Products.CMFCore.utils import getToolByName
 
-from Products.CMFSetup.utils import CONVERTER
-from Products.CMFSetup.utils import DEFAULT
-from Products.CMFSetup.utils import ExportConfiguratorBase
-from Products.CMFSetup.utils import ImportConfiguratorBase
-from Products.CMFSetup.utils import KEY
+from Products.GenericSetup.utils import CONVERTER
+from Products.GenericSetup.utils import DEFAULT
+from Products.GenericSetup.utils import ExportConfiguratorBase
+from Products.GenericSetup.utils import ImportConfiguratorBase
+from Products.GenericSetup.utils import KEY
 
 from permissions import ManagePortal
 
@@ -75,6 +75,7 @@ def exportActionIconsTool(context):
 
     return 'Action icons tool settings exported.'
 
+
 class ActionIconsToolExportConfigurator(ExportConfiguratorBase):
     """ Synthesize XML description of cc properties.
     """
@@ -100,6 +101,7 @@ class ActionIconsToolExportConfigurator(ExportConfiguratorBase):
 
 InitializeClass(ActionIconsToolExportConfigurator)
 
+
 class ActionIconsToolImportConfigurator(ImportConfiguratorBase):
 
     def _getImportMapping(self):
@@ -114,5 +116,8 @@ class ActionIconsToolImportConfigurator(ImportConfiguratorBase):
                'priority':      {CONVERTER: self._convertToInteger},
              },
           }
+
+    def _convertToInteger(self, val):
+        return int(val.strip())
 
 InitializeClass(ActionIconsToolImportConfigurator)

@@ -27,14 +27,15 @@ from OFS.Folder import Folder
 from Products.Five import zcml
 from zope.interface import implements
 
-from Products.CMFCore.interfaces import ISkinsTool
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.testing import NodeAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DOMComparator
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
+
+from Products.CMFCore.interfaces import ISkinsTool
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 _TESTS_PATH = os.path.split(__file__)[0]
 
@@ -352,7 +353,7 @@ class _SkinsSetup(_DVRegistrySetup, PlacelessSetup, BaseRegistryTests):
 class exportSkinsToolTests(_SkinsSetup):
 
     def test_empty(self):
-        from Products.CMFSetup.skins import exportSkinsTool
+        from Products.CMFCore.exportimport.skins import exportSkinsTool
 
         site = self._initSite()
         context = DummyExportContext(site)
@@ -365,7 +366,7 @@ class exportSkinsToolTests(_SkinsSetup):
         self.assertEqual(content_type, 'text/xml')
 
     def test_normal(self):
-        from Products.CMFSetup.skins import exportSkinsTool
+        from Products.CMFCore.exportimport.skins import exportSkinsTool
 
         _IDS = ('one', 'two', 'three')
         _PATHS = {'basic': 'one', 'fancy': 'three, two, one'}
@@ -397,7 +398,7 @@ class importSkinsToolTests(_SkinsSetup):
     _NORMAL_EXPORT = _NORMAL_EXPORT
 
     def test_empty_default_purge(self):
-        from Products.CMFSetup.skins import importSkinsTool
+        from Products.CMFCore.exportimport.skins import importSkinsTool
 
         _IDS = ('one', 'two', 'three')
         _PATHS = {'basic': 'one', 'fancy': 'three, two, one'}
@@ -422,7 +423,7 @@ class importSkinsToolTests(_SkinsSetup):
         self.assertEqual(len(skins_tool.objectItems()), 0)
 
     def test_empty_explicit_purge(self):
-        from Products.CMFSetup.skins import importSkinsTool
+        from Products.CMFCore.exportimport.skins import importSkinsTool
 
         _IDS = ('one', 'two', 'three')
         _PATHS = {'basic': 'one', 'fancy': 'three, two, one'}
@@ -447,7 +448,7 @@ class importSkinsToolTests(_SkinsSetup):
         self.assertEqual(len(skins_tool.objectItems()), 0)
 
     def test_empty_skip_purge(self):
-        from Products.CMFSetup.skins import importSkinsTool
+        from Products.CMFCore.exportimport.skins import importSkinsTool
 
         _IDS = ('one', 'two', 'three')
         _PATHS = {'basic': 'one', 'fancy': 'three, two, one'}
@@ -472,7 +473,7 @@ class importSkinsToolTests(_SkinsSetup):
         self.assertEqual(len(skins_tool.objectItems()), 3)
 
     def test_normal(self):
-        from Products.CMFSetup.skins import importSkinsTool
+        from Products.CMFCore.exportimport.skins import importSkinsTool
 
         site = self._initSite()
         skins_tool = site.portal_skins
@@ -494,7 +495,7 @@ class importSkinsToolTests(_SkinsSetup):
         self.assertEqual(len(skins_tool.objectItems()), 3)
 
     def test_fragment_skip_purge(self):
-        from Products.CMFSetup.skins import importSkinsTool
+        from Products.CMFCore.exportimport.skins import importSkinsTool
 
         _IDS = ('one', 'two')
         _PATHS = {'basic': 'one', 'fancy': 'two,one'}
@@ -539,7 +540,7 @@ class importSkinsToolTests(_SkinsSetup):
         self.assertEqual(len(skins_tool.objectItems()), 4)
 
     def test_fragment3_skip_purge(self):
-        from Products.CMFSetup.skins import importSkinsTool
+        from Products.CMFCore.exportimport.skins import importSkinsTool
 
         _IDS = ('one', 'two')
         _PATHS = {'basic': 'one', 'fancy': 'two,one'}
@@ -571,7 +572,7 @@ class importSkinsToolTests(_SkinsSetup):
         self.assertEqual(len(skins_tool.objectItems()), 4)
 
     def test_fragment4_removal(self):
-        from Products.CMFSetup.skins import importSkinsTool
+        from Products.CMFCore.exportimport.skins import importSkinsTool
 
         _IDS = ('one', 'two')
         _PATHS = {'basic': 'one', 'fancy': 'two,one'}

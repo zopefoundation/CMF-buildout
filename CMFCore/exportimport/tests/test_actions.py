@@ -232,12 +232,10 @@ class exportActionProvidersTests(_ActionSetup):
                 import exportActionProviders
 
         site = self._initSite()
-
         context = DummyExportContext(site)
         exportActionProviders(context)
 
         self.assertEqual(len(context._wrote), 1)
-
         filename, text, content_type = context._wrote[0]
         self.assertEqual(filename, 'actions.xml')
         self._compareDOM(text, _NORMAL_EXPORT)

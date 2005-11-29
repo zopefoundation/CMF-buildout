@@ -10,23 +10,31 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Content type registry node adapters.
+"""Content type registry xml adapters and setup handlers.
 
 $Id: contenttyperegistry.py 40087 2005-11-13 19:55:09Z yuppie $
 """
 
+from zope.app import zapi
+
+from Products.GenericSetup.interfaces import IBody
 from Products.GenericSetup.interfaces import PURGE
-from Products.GenericSetup.utils import NodeAdapterBase
+from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import IContentTypeRegistry
+from Products.CMFCore.utils import getToolByName
+
+_FILENAME = 'contenttyperegistry.xml'
 
 
-class ContentTypeRegistryNodeAdapter(NodeAdapterBase):
+class ContentTypeRegistryXMLAdapter(XMLAdapterBase):
 
-    """Node im- and exporter for ContentTypeRegistry.
+    """XML im- and exporter for ContentTypeRegistry.
     """
 
     __used_for__ = IContentTypeRegistry
+
+    _LOGGER_ID = 'contenttypes'
 
     def exportNode(self, doc):
         """Export the object as a DOM node.
@@ -34,6 +42,8 @@ class ContentTypeRegistryNodeAdapter(NodeAdapterBase):
         self._doc = doc
         node = self._getObjectNode('object')
         node.appendChild(self._extractPredicates())
+
+        self._logger.info('Content type registry exported.')
         return node
 
     def importNode(self, node, mode=PURGE):
@@ -43,6 +53,8 @@ class ContentTypeRegistryNodeAdapter(NodeAdapterBase):
             self._purgePredicates()
 
         self._initPredicates(node, mode)
+
+        self._logger.info('Content type registry imported.')
 
     def _extractPredicates(self):
         fragment = self._doc.createDocumentFragment()
@@ -97,3 +109,40 @@ class ContentTypeRegistryNodeAdapter(NodeAdapterBase):
         if cracker is not None:
             return cracker(predicate)
         return ()  # XXX:  raise?
+
+
+def importContentTypeRegistry(context):
+    """Import content type registry settings from an XML file.
+    """
+    site = context.getSite()
+    logger = context.getLogger('contenttypes')
+    tool = getToolByName(site, 'content_type_registry')
+
+    body = context.readDataFile(_FILENAME)
+    if body is None:
+        logger.info('Nothing to import.')
+        return
+
+    importer = zapi.queryMultiAdapter((tool, context), IBody)
+    if importer is None:
+        logger.warning('Import adapter misssing.')
+        return
+
+    importer.body = body
+
+def exportContentTypeRegistry(context):
+    """Export content type registry settings as an XML file.
+    """
+    site = context.getSite()
+    logger = context.getLogger('contenttypes')
+    tool = getToolByName(site, 'content_type_registry', None)
+    if tool is None:
+        logger.info('Nothing to export.')
+        return
+
+    exporter = zapi.queryMultiAdapter((tool, context), IBody)
+    if exporter is None:
+        logger.warning('Export adapter misssing.')
+        return
+
+    context.writeDataFile(_FILENAME, exporter.body, exporter.mime_type)

@@ -43,7 +43,7 @@ HEAD only (unreleased)
     - ActionsTool: Improved add form for 'CMF Action' objects.
       Presettings can now be loaded from Action settings in setup profiles.
 
-    - CMFSetup and GenericSetup: Added catalog tool setup handlers.
+    - CMFCore and GenericSetup: Added catalog tool setup handlers.
       This includes node adapters for PluginIndexes, ZCTextIndex and ZCatalog.
       Support for additional indexes can be added by providing INodeExporter
       and INodeImporter adapters. All indexes are cleared by this handler, so
@@ -87,7 +87,7 @@ HEAD only (unreleased)
 
     - Replaced user messages by MassageIDs to improve the i18n support.
 
-    - CMFDefault CMFSetup profile: Added CMF BTree Folder to the list of
+    - CMFDefault GenericSetup profile: Added CMF BTree Folder to the list of
       automatically instantiated types in the types tool.
       (http://www.zope.org/Collectors/CMF/371)
 
@@ -116,9 +116,6 @@ HEAD only (unreleased)
       TypesTool.
 
   Bug Fixes
-
-    - CMFSetup: fixed empty attribute parsing when an encoding is
-      defined.
 
     - ActionProviderBase: getActionObject did stumble over newstyle Actions.
 
@@ -162,6 +159,9 @@ HEAD only (unreleased)
       if no default view could be found for a piece of content.
 
   Others
+
+    - CMFSetup and GenericSetup: Removed obsolete CMFSetup product.
+      Added __module_aliases__ to support setup tools created with CMFSetup. 
 
     - DCWorkflow: Removed hardcoded default workflows.
 

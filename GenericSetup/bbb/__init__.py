@@ -10,9 +10,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-""" CMFSetup product permissions.
+""" CMFSetup product initialization.
 
 $Id$
 """
-
-from Products.CMFCore.permissions import ManagePortal

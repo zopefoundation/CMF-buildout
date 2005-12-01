@@ -15,7 +15,7 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
 
 import Products
@@ -38,6 +38,7 @@ from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.security import UserWithRoles
+from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
 from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
@@ -51,28 +52,6 @@ from Products.CMFCore.tests.base.tidata import FTIDATA_CMF14_SPECIAL2
 from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
 from Products.CMFCore.tests.base.tidata import FTIDATA_DUMMY
 from Products.CMFCore.tests.base.tidata import STI_SCRIPT
-
-
-_TRAVERSE_ZCML = """
-<configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five"
-    >
-
-  <adapter
-      for="*"
-      factory=".traversable.FiveTraversable"
-      provides="zope.app.traversing.interfaces.ITraversable"
-      />
-
-  <adapter
-      for="*"
-      factory="zope.app.traversing.adapters.Traverser"
-      provides="zope.app.traversing.interfaces.ITraverser"
-      />
-
-</configure>
-"""
 
 
 class TypesToolTests(PlacelessSetup, SecurityTest, WarningInterceptor):
@@ -175,7 +154,7 @@ class TypesToolTests(PlacelessSetup, SecurityTest, WarningInterceptor):
                       'Unauthorized raised' )
 
 
-class TypeInfoTests(TestCase):
+class TypeInfoTests(unittest.TestCase):
 
     def _makeTypesTool(self):
         from Products.CMFCore.TypesTool import TypesTool
@@ -496,7 +475,7 @@ class STIDataTests( TypeInfoTests ):
         self.assertEqual( ti.constructor_path, 'foo_add' )
 
 
-class FTIConstructionTests(TestCase):
+class FTIConstructionTests(unittest.TestCase):
 
     def setUp( self ):
         noSecurityManager()
@@ -543,7 +522,7 @@ class FTIConstructionTests(TestCase):
         self.failIf( ti.isConstructionAllowed( folder ) )
 
 
-class FTIConstructionTests_w_Roles(TestCase):
+class FTIConstructionTests_w_Roles(unittest.TestCase):
 
     def tearDown( self ):
         noSecurityManager()
@@ -646,13 +625,13 @@ class FTIConstructionTests_w_Roles(TestCase):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(TypesToolTests),
-        makeSuite(FTIDataTests),
-        makeSuite(STIDataTests),
-        makeSuite(FTIConstructionTests),
-        makeSuite(FTIConstructionTests_w_Roles),
+    return unittest.TestSuite((
+        unittest.makeSuite(TypesToolTests),
+        unittest.makeSuite(FTIDataTests),
+        unittest.makeSuite(STIDataTests),
+        unittest.makeSuite(FTIConstructionTests),
+        unittest.makeSuite(FTIConstructionTests_w_Roles),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

@@ -30,6 +30,28 @@ except ImportError:  # BBB, Zope3 < 3.1
     from zope.app.tests.placelesssetup import setUp as placelessSetUp
     from zope.app.tests.placelesssetup import tearDown as placelessTearDown
 
+_TRAVERSE_ZCML = """
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    >
+
+  <adapter
+      for="*"
+      factory=".traversable.FiveTraversable"
+      provides="zope.app.traversing.interfaces.ITraversable"
+      />
+
+  <adapter
+      for="*"
+      factory="zope.app.traversing.adapters.Traverser"
+      provides="zope.app.traversing.interfaces.ITraverser"
+      />
+
+</configure>
+"""
+
+
 class LogInterceptor:
 
     _old_log_write = None

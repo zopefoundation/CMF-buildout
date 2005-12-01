@@ -21,19 +21,21 @@ import Testing
 import base64
 import os
 
+import Products.Five
 from AccessControl.SecurityManagement import newSecurityManager
 from App.Common import rfc1123_date
 from DateTime.DateTime import DateTime
+from Products.Five import zcml
 
 from Products.CMFCore.FSPageTemplate import FSPageTemplate
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
+from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
 from Products.CMFCore.tests.base.testcase import FSDVTest
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import RequestTest
-from Products.CMFCore.tests.test_FSPageTemplate import FSPTMaker
-
 
 ACCLARK = DateTime( '2001/01/01' )
 portal_owner = 'portal_owner'
@@ -600,13 +602,18 @@ class CachingPolicyManagerTests(unittest.TestCase):
         self.assertEqual( headers[2][1] , 'max-age=86400' )
 
 
-class CachingPolicyManager304Tests(RequestTest, FSDVTest):
+class CachingPolicyManager304Tests(PlacelessSetup, RequestTest, FSDVTest):
 
     def setUp(self):
         from Products.CMFCore import CachingPolicyManager
 
+        PlacelessSetup.setUp(self)
         RequestTest.setUp(self)
         FSDVTest.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_string(_TRAVERSE_ZCML)
 
         now = DateTime()
 
@@ -681,6 +688,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
     def tearDown(self):
         RequestTest.tearDown(self)
         FSDVTest.tearDown(self)
+        PlacelessSetup.tearDown(self)
 
     def _cleanup(self):
         # Clean up request and response

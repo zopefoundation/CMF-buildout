@@ -15,12 +15,12 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
+import Products.Five
 from OFS.Folder import manage_addFolder
+from Products.Five import zcml
 from Products.PythonScripts.PythonScript import manage_addPythonScript
 
 from Products.CMFCore.Expression import createExprContext
@@ -28,11 +28,13 @@ from Products.CMFCore.Expression import Expression
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool as DummyMembershipTool
+from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
+from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import TransactionalTest
 
 
-class ActionCategoryTests(TestCase):
+class ActionCategoryTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ActionInformation import ActionCategory
@@ -57,7 +59,7 @@ class ActionCategoryTests(TestCase):
         self.assertEqual( ac.listActions(), (baz,) )
 
 
-class ActionTests(TestCase):
+class ActionTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ActionInformation import Action
@@ -96,7 +98,7 @@ class ActionTests(TestCase):
         self.assertEqual( a.getInfoData(), WANTED )
 
 
-class ActionInfoTests(TestCase):
+class ActionInfoTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ActionInformation import ActionInfo
@@ -287,11 +289,16 @@ class ActionInfoSecurityTests(SecurityTest):
         self.assertEqual( ai2['allowed'], True )
 
 
-class ActionInformationTests(TransactionalTest):
+class ActionInformationTests(PlacelessSetup, TransactionalTest):
 
-    def setUp( self ):
-
-        TransactionalTest.setUp( self )
+    def setUp(self):
+        import Products.CMFCore
+        PlacelessSetup.setUp(self)
+        TransactionalTest.setUp(self)
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_string(_TRAVERSE_ZCML)
 
         root = self.root
         root._setObject('portal', DummyContent('portal', 'url_portal'))
@@ -299,6 +306,10 @@ class ActionInformationTests(TransactionalTest):
         portal.portal_membership = DummyMembershipTool()
         self.folder = DummyContent('foo', 'url_foo')
         self.object = DummyContent('bar', 'url_bar')
+
+    def tearDown(self):
+        TransactionalTest.tearDown(self)
+        PlacelessSetup.tearDown(self)
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ActionInformation import ActionInformation
@@ -416,13 +427,13 @@ class ActionInformationTests(TransactionalTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(ActionCategoryTests),
-        makeSuite(ActionTests),
-        makeSuite(ActionInfoTests),
-        makeSuite(ActionInfoSecurityTests),
-        makeSuite(ActionInformationTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(ActionCategoryTests),
+        unittest.makeSuite(ActionTests),
+        unittest.makeSuite(ActionInfoTests),
+        unittest.makeSuite(ActionInfoSecurityTests),
+        unittest.makeSuite(ActionInformationTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

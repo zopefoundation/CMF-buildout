@@ -261,8 +261,7 @@ class _DVRegistrySetup:
         DirectoryView._dirreg = self._olddirreg
 
 
-class DirectoryViewAdapterTests(_DVRegistrySetup, PlacelessSetup,
-                                NodeAdapterTestCase):
+class DirectoryViewAdapterTests(_DVRegistrySetup, NodeAdapterTestCase):
 
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.skins \
@@ -275,12 +274,10 @@ class DirectoryViewAdapterTests(_DVRegistrySetup, PlacelessSetup,
 
     def setUp(self):
         import Products.CMFCore.exportimport
-        import Products.Five
         from Products.CMFCore.DirectoryView import DirectoryView
 
-        PlacelessSetup.setUp(self)
+        NodeAdapterTestCase.setUp(self)
         _DVRegistrySetup.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
         self._obj = DirectoryView('foo_directoryview').__of__(Folder())
@@ -288,7 +285,7 @@ class DirectoryViewAdapterTests(_DVRegistrySetup, PlacelessSetup,
 
     def tearDown(self):
         _DVRegistrySetup.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        NodeAdapterTestCase.tearDown(self)
 
 
 class SkinsToolXMLAdapterTests(_DVRegistrySetup, BodyAdapterTestCase):
@@ -323,7 +320,7 @@ class SkinsToolXMLAdapterTests(_DVRegistrySetup, BodyAdapterTestCase):
 
     def tearDown(self):
         _DVRegistrySetup.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        BodyAdapterTestCase.tearDown(self)
 
 
 class _SkinsSetup(_DVRegistrySetup, PlacelessSetup, BaseRegistryTests):

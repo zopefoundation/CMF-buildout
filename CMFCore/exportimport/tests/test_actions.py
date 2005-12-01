@@ -245,7 +245,7 @@ class DummyActionsTool(DummyTool):
         self._providers = [ x for x in self._providers if x != provider_name ]
 
 
-class ActionNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
+class ActionNodeAdapterTests(NodeAdapterTestCase):
 
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.actions import ActionNodeAdapter
@@ -274,20 +274,17 @@ class ActionNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
         self.assertEqual(obj.visible, True)
 
     def setUp(self):
-        from Products.CMFCore.ActionInformation import Action
         import Products.CMFCore.exportimport
-        import Products.Five
-        from Products.Five import zcml
+        from Products.CMFCore.ActionInformation import Action
 
-        PlacelessSetup.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
+        NodeAdapterTestCase.setUp(self)
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
         self._obj = Action('foo_action')
         self._XML = _ACTION_XML
 
 
-class ActionCategoryNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
+class ActionCategoryNodeAdapterTests(NodeAdapterTestCase):
 
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.actions \
@@ -305,13 +302,10 @@ class ActionCategoryNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
         self.assertEqual(obj.title, '')
 
     def setUp(self):
-        from Products.CMFCore.ActionInformation import ActionCategory
         import Products.CMFCore.exportimport
-        import Products.Five
-        from Products.Five import zcml
+        from Products.CMFCore.ActionInformation import ActionCategory
 
-        PlacelessSetup.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
+        NodeAdapterTestCase.setUp(self)
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
         self._obj = ActionCategory('foo_category')

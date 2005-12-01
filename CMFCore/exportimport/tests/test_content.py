@@ -26,7 +26,6 @@ from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
-from conformance import ConformsToIFilesystemExporter
 from conformance import ConformsToIFilesystemImporter
 
 

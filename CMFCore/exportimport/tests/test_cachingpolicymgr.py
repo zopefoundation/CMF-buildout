@@ -51,7 +51,7 @@ _CPM_BODY = """\
 """
 
 
-class CachingPolicyNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
+class CachingPolicyNodeAdapterTests(NodeAdapterTestCase):
 
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.cachingpolicymgr \
@@ -60,13 +60,10 @@ class CachingPolicyNodeAdapterTests(PlacelessSetup, NodeAdapterTestCase):
         return CachingPolicyNodeAdapter
 
     def setUp(self):
-        from Products.CMFCore.CachingPolicyManager import CachingPolicy
         import Products.CMFCore.exportimport
-        import Products.Five
-        from Products.Five import zcml
+        from Products.CMFCore.CachingPolicyManager import CachingPolicy
 
-        PlacelessSetup.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
+        NodeAdapterTestCase.setUp(self)
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
         self._obj = CachingPolicy('foo_policy', max_age_secs=0)

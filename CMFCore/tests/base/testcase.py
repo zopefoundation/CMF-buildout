@@ -1,9 +1,5 @@
 from unittest import TestCase
-try:
-    import Zope2
-except ImportError:
-    # BBB: for Zope 2.7
-    import Zope as Zope2
+import Zope2
 Zope2.startup()
 
 import sys
@@ -19,11 +15,7 @@ from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
 from Testing.makerequest import makerequest
 import zLOG
-try:
-    import transaction
-except ImportError:
-    # BBB: for Zope 2.7
-    from Products.CMFCore.utils import transaction
+import transaction
 
 from dummy import DummyFolder
 from security import AnonymousUser
@@ -37,6 +29,28 @@ except ImportError:  # BBB, Zope3 < 3.1
     from zope.app.tests.placelesssetup import PlacelessSetup
     from zope.app.tests.placelesssetup import setUp as placelessSetUp
     from zope.app.tests.placelesssetup import tearDown as placelessTearDown
+
+_TRAVERSE_ZCML = """
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    >
+
+  <adapter
+      for="*"
+      factory=".traversable.FiveTraversable"
+      provides="zope.app.traversing.interfaces.ITraversable"
+      />
+
+  <adapter
+      for="*"
+      factory="zope.app.traversing.adapters.Traverser"
+      provides="zope.app.traversing.interfaces.ITraverser"
+      />
+
+</configure>
+"""
+
 
 class LogInterceptor:
 

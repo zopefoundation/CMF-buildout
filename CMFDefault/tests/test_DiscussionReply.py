@@ -1,21 +1,29 @@
+##############################################################################
 #
-# Tests for http://zope.org/Collectors/CMF/318
+# Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
 #
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+""" Unit tests for http://zope.org/Collectors/CMF/318
 
-from unittest import TestSuite, makeSuite, main
+$Id$
+"""
 
+import unittest
 import Testing
-try:
-    import Zope2
-except ImportError: # BBB: for Zope 2.7
-    import Zope as Zope2
-Zope2.startup()
 
 import Products
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from Products.Five import zcml
 
+from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
 from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import RequestTest
 
@@ -30,6 +38,7 @@ class DiscussionReplyTest(PlacelessSetup, RequestTest):
         zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.CMFCore)
         zcml.load_config('configure.zcml', Products.DCWorkflow)
+        zcml.load_string(_TRAVERSE_ZCML)
         try:
             factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
             factory('cmf', 'CMFDefault:default', snapshot=False)
@@ -53,7 +62,7 @@ class DiscussionReplyTest(PlacelessSetup, RequestTest):
         noSecurityManager()
         RequestTest.tearDown(self)
         PlacelessSetup.tearDown(self)
-        
+
     def login(self, name):
         user = self.uf.getUserById(name)
         user = user.__of__(self.uf)
@@ -83,10 +92,10 @@ class DiscussionReplyTestMember(DiscussionReplyTest):
 
 
 def test_suite():
-    suite = TestSuite()
-    suite.addTest(makeSuite(DiscussionReplyTest))
-    suite.addTest(makeSuite(DiscussionReplyTestMember))
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(DiscussionReplyTest))
+    suite.addTest(unittest.makeSuite(DiscussionReplyTestMember))
     return suite
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

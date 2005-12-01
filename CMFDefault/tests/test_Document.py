@@ -15,13 +15,8 @@
 $Id$
 """
 
-from unittest import TestSuite, makeSuite, main
+import unittest
 import Testing
-try:
-    import Zope2
-except ImportError: # BBB: for Zope 2.7
-    import Zope as Zope2
-Zope2.startup()
 
 from os.path import abspath
 from os.path import dirname
@@ -45,7 +40,6 @@ from Products.CMFCore.tests.base.content import STX_NO_HEADERS
 from Products.CMFCore.tests.base.content import STX_NO_HEADERS_BUT_COLON
 from Products.CMFCore.tests.base.content import STX_WITH_HTML
 from Products.CMFCore.tests.base.dummy import DummySite
-from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
 from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
@@ -55,15 +49,13 @@ from Products.CMFDefault import utils
 
 class RequestTestBase(RequestTest):
 
-    def setUp(self):
-        RequestTest.setUp(self)
-        self.site = DummySite('site').__of__(self.root)
-        self.site._setObject( 'portal_membership', DummyTool() )
-
-    def _makeOne(self, id, *args, **kw):
+    def _getTargetClass(self):
         from Products.CMFDefault.Document import Document
 
-        return self.site._setObject( id, Document(id, *args, **kw) )
+        return Document
+
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
 
 
 class DocumentTests(RequestTestBase):
@@ -93,18 +85,14 @@ class DocumentTests(RequestTestBase):
         verifyClass(IMutableDublinCore, Document)
 
     def test_z3interfaces(self):
-        try:
-            from zope.interface.verify import verifyClass
-            from Products.CMFCore.interfaces import ICatalogableDublinCore
-            from Products.CMFCore.interfaces import IContentish
-            from Products.CMFCore.interfaces import IDublinCore
-            from Products.CMFCore.interfaces import IDynamicType
-            from Products.CMFCore.interfaces import IMutableDublinCore
-            from Products.CMFDefault.interfaces import IDocument
-            from Products.CMFDefault.interfaces import IMutableDocument
-        except ImportError:
-            # BBB: for Zope 2.7
-            return
+        from zope.interface.verify import verifyClass
+        from Products.CMFCore.interfaces import ICatalogableDublinCore
+        from Products.CMFCore.interfaces import IContentish
+        from Products.CMFCore.interfaces import IDublinCore
+        from Products.CMFCore.interfaces import IDynamicType
+        from Products.CMFCore.interfaces import IMutableDublinCore
+        from Products.CMFDefault.interfaces import IDocument
+        from Products.CMFDefault.interfaces import IMutableDocument
         from Products.CMFDefault.Document import Document
 
         verifyClass(ICatalogableDublinCore, Document)
@@ -412,6 +400,10 @@ class DocumentTests(RequestTestBase):
 
 class DocumentFTPGetTests(RequestTestBase):
 
+    def setUp(self):
+        RequestTest.setUp(self)
+        self.site = DummySite('site').__of__(self.root)
+
     def testHTML( self ):
         self.REQUEST['BODY']=BASIC_HTML
 
@@ -506,13 +498,7 @@ class DocumentFTPGetTests(RequestTestBase):
             self.failUnless( header in get_headers )
 
 
-class DocumentPUTTests(RequestTest):
-
-    def _makeOne(self, id, *args, **kw):
-        from Products.CMFDefault.Document import Document
-
-        # NullResource.PUT calls the PUT method on the bare object!
-        return Document(id, *args, **kw)
+class DocumentPUTTests(RequestTestBase):
 
     def test_PUTBasicHTML(self):
         self.REQUEST['BODY'] = BASIC_HTML
@@ -595,11 +581,11 @@ class DocumentPUTTests(RequestTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(DocumentTests),
-        makeSuite(DocumentFTPGetTests),
-        makeSuite(DocumentPUTTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(DocumentTests),
+        unittest.makeSuite(DocumentFTPGetTests),
+        unittest.makeSuite(DocumentPUTTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

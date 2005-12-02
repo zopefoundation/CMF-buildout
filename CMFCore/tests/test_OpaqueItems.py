@@ -20,7 +20,8 @@ from Products.CMFCore.TypesTool import TypesTool
 # -------------------------------------------
 
 def extra_meta_types():
-    return [{'name': 'Dummy', 'action': 'manage_addFolder'}]
+    return [{'name': 'Dummy', 'action': 'manage_addFolder',
+             'permission': 'View'}]
 
 def addDummyContent(container, id, opaqueItem):
     container._setObject(id, DummyContent(id, opaqueItem=opaqueItem, catalog=1))

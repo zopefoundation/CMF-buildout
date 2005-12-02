@@ -59,7 +59,8 @@ from Products.CMFCore.WorkflowTool import WorkflowTool
 
 
 def extra_meta_types():
-    return [  { 'name' : 'Dummy', 'action' : 'manage_addFolder' } ]
+    return [{'name': 'Dummy', 'action': 'manage_addFolder',
+             'permission': 'View'}]
 
 
 class PortalFolderFactoryTests( SecurityTest ):
@@ -1085,7 +1086,11 @@ class PortalFolderCopySupportTests( TestCase ):
         def _no_manage_addFile( a, c, n, v, *args, **kw ):
             return n != 'manage_addFile'
 
-        self._initPolicyAndUser( v_lambda=_no_manage_addFile )
+        def _no_add_images_and_files(permission, object, context):
+            return permission != ADD_IMAGES_AND_FILES
+
+        self._initPolicyAndUser( v_lambda=_no_manage_addFile,
+                                 c_lambda=_no_add_images_and_files )
 
         cookie = folder1.manage_cutObjects( ids=( 'file', ) )
         self._assertCopyErrorUnauth( folder2.manage_pasteObjects

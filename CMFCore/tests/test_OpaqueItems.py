@@ -14,10 +14,8 @@
 
 $Id$
 """
-from unittest import TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from zope.interface import implements
 
@@ -39,7 +37,8 @@ from Products.CMFCore.TypesTool import TypesTool
 # -------------------------------------------
 
 def extra_meta_types():
-    return [{'name': 'Dummy', 'action': 'manage_addFolder'}]
+    return [{'name': 'Dummy', 'action': 'manage_addFolder',
+             'permission': 'View'}]
 
 def addDummyContent(container, id, opaqueItem):
     container._setObject(id, DummyContent(id, opaqueItem=opaqueItem, catalog=1))
@@ -265,9 +264,9 @@ class ManageBeforeAfterTests(SecurityTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(ManageBeforeAfterTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(ManageBeforeAfterTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

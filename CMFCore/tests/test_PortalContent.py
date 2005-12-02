@@ -25,7 +25,6 @@ except ImportError:
 Zope2.startup()
 
 from AccessControl.SecurityManagement import newSecurityManager
-from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.User import SimpleUser
 from Acquisition import aq_base
 try:
@@ -34,6 +33,8 @@ except ImportError:
     # BBB: for Zope 2.7
     from Products.CMFCore.utils import transaction
 
+from Products.CMFCore.tests.base.dummy import DummySite
+from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 
 
@@ -69,21 +70,12 @@ class TestContentCopyPaste(SecurityRequestTest):
     # Tests related to http://www.zope.org/Collectors/CMF/205
     # Copy/pasting a content item must set ownership to pasting user
 
-    def _initFolders(self):
-        from OFS.Folder import Folder
+    def setUp(self):
+        SecurityRequestTest.setUp(self)
 
-        FOLDER_IDS = ( 'acl_users', 'folder1', 'folder2' )
-
-        for folder_id in FOLDER_IDS:
-            if folder_id not in self.root.objectIds():
-                self.root._setObject( folder_id, Folder( folder_id ) )
-
-        # Hack, we need a _p_mtime for the file, so we make sure that it
-        # has one. We use a subtransaction, which means we can rollback
-        # later and pretend we didn't touch the ZODB.
-        #transaction.commit(1)
-
-        return [ self.root._getOb( folder_id ) for folder_id in FOLDER_IDS ]
+        self.root._setObject('site', DummySite('site'))
+        self.site = self.root.site
+        self.acl_users = self.site._setObject('acl_users', DummyUserFolder())
 
     def _initContent(self, folder, id):
         from Products.CMFCore.PortalContent import PortalContent
@@ -96,30 +88,30 @@ class TestContentCopyPaste(SecurityRequestTest):
 
     def test_CopyPasteSetsOwnership(self):
         # Copy/pasting a File should set new ownership including local roles
+        from OFS.Folder import Folder
 
-        acl_users, folder1, folder2 = self._initFolders()
-        acl_users._doAddUser('user1', '', ('Member',), ())
-        user1 = acl_users.getUserById('user1').__of__(acl_users)
-        acl_users._doAddUser('user2', '', ('Member',), ())
-        user2 = acl_users.getUserById('user2').__of__(acl_users)
+        acl_users = self.acl_users
+        folder1 = self.site._setObject('folder1', Folder('folder1'))
+        folder2 = self.site._setObject('folder2', Folder('folder2'))
 
-        newSecurityManager(None, user1)
+        newSecurityManager(None, acl_users.user_foo)
         content = self._initContent(folder1, 'content')
-        content.manage_setLocalRoles(user1.getId(), ['Owner'])
+        content.manage_setLocalRoles(acl_users.user_foo.getId(), ['Owner'])
 
-        newSecurityManager(None, user2)
+        newSecurityManager(None, acl_users.all_powerful_Oz)
         cb = folder1.manage_copyObjects(['content'])
         folder2.manage_pasteObjects(cb)
 
         # Now test executable ownership and "owner" local role
         # "member" should have both.
         moved = folder2._getOb('content')
-        self.assertEqual(aq_base(moved.getOwner()), aq_base(user2))
+        self.assertEqual(aq_base(moved.getOwner()),
+                         aq_base(acl_users.all_powerful_Oz))
 
         local_roles = moved.get_local_roles()
         self.assertEqual(len(local_roles), 1)
         userid, roles = local_roles[0]
-        self.assertEqual(userid, user2.getId())
+        self.assertEqual(userid, acl_users.all_powerful_Oz.getId())
         self.assertEqual(len(roles), 1)
         self.assertEqual(roles[0], 'Owner')
 

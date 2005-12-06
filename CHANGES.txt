@@ -1,3 +1,13 @@
+After CMF 1.5.5
+
+  Others
+
+    - Made cut / copy / paste tests more independent from implementation
+      details of '_verifyObjectPaste'.
+
+    - Modified several deprecation warnings to indicate point-of-use of the
+      deprecated feature.
+
 CMF 1.5.5 (2005/11/20)
 
   Bug Fixes

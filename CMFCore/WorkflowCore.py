@@ -68,7 +68,7 @@ class WorkflowMethod( Method ):
     def __init__(self, method, id=None, reindex=1):
         warn('WorkflowMethod() alias WorkflowAction() is deprecated and will '
              'be removed in CMF 2.0.',
-             DeprecationWarning)
+             DeprecationWarning, stacklevel=2)
         self._m = method
         if id is None:
             id = method.__name__

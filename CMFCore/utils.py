@@ -765,7 +765,7 @@ def format_stx( text, level=1 ):
     """
     warn('format_stx() will be removed in CMF 2.0. Please use '
          'StructuredText.StructuredText.HTML instead.',
-         DeprecationWarning)
+         DeprecationWarning, stacklevel=2)
     return HTML(text, level=level, header=0)
 
 #

@@ -8,7 +8,7 @@ from Products.CMFDefault.utils import MessageID as _
 if context.cb_dataValid:
     try:
         result = context.manage_pasteObjects(context.REQUEST['__cp'])
-        if len(ids) == 1:
+        if len(result) == 1:
             return context.setStatus(True, _('Item pasted.'))
         else:
             return context.setStatus(True, _('Items pasted.'))

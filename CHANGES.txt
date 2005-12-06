@@ -117,6 +117,10 @@ HEAD only (unreleased)
 
   Bug Fixes
 
+    - PortalFolder: Synced _verifyObjectPaste code with OFS.CopySupport.
+      The behavior is almost the same as before, but the code is less tolerant
+      if content types are not registered properly.
+
     - ActionProviderBase: getActionObject did stumble over newstyle Actions.
 
     - CMFCore.exportimport.content:  Ensure that BODYFILE in our "faux"

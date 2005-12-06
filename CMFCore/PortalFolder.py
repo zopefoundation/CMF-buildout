@@ -365,75 +365,48 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
         # This assists the version in OFS.CopySupport.
         # It enables the clipboard to function correctly
         # with objects created by a multi-factory.
-        securityChecksDone = False
-        sm = getSecurityManager()
-        parent = aq_parent(aq_inner(object))
-        object_id = object.getId()
         mt = getattr(object, '__factory_meta_type__', None)
         meta_types = getattr(self, 'all_meta_types', None)
 
         if mt is not None and meta_types is not None:
-            method_name=None
-            permission_name = None
+            method_name = None
+            mt_permission = None
 
             if callable(meta_types):
                 meta_types = meta_types()
 
             for d in meta_types:
-
-                if d['name']==mt:
-                    method_name=d['action']
-                    permission_name = d.get('permission', None)
+                if d['name'] == mt:
+                    method_name = d['action']
+                    mt_permission = d.get('permission')
                     break
 
-            if permission_name is not None:
+            if mt_permission is not None:
+                sm = getSecurityManager()
 
-                if not sm.checkPermission(permission_name,self):
-                    raise AccessControl_Unauthorized, method_name
+                if sm.checkPermission(mt_permission, self):
+                    if validate_src:
+                        # Ensure the user is allowed to access the object on
+                        # the clipboard.
+                        parent = aq_parent(aq_inner(object))
 
-                if validate_src:
+                        if not sm.validate(None, parent, None, object):
+                            raise AccessControl_Unauthorized(object.getId())
 
-                    if not sm.validate(None, parent, None, object):
-                        raise AccessControl_Unauthorized, object_id
-
-                if validate_src > 1:
-                    if not sm.checkPermission(DeleteObjects, parent):
-                        raise AccessControl_Unauthorized
-
-                # validation succeeded
-                securityChecksDone = 1
-
-            #
-            # Old validation for objects that may not have registered
-            # themselves in the proper fashion.
-            #
-            elif method_name is not None:
-
-                meth = self.unrestrictedTraverse(method_name)
-
-                factory = getattr(meth, 'im_self', None)
-
-                if factory is None:
-                    factory = aq_parent(aq_inner(meth))
-
-                if not sm.validate(None, factory, None, meth):
-                    raise AccessControl_Unauthorized, method_name
-
-                # Ensure the user is allowed to access the object on the
-                # clipboard.
-                if validate_src:
-
-                    if not sm.validate(None, parent, None, object):
-                        raise AccessControl_Unauthorized, object_id
-
-                if validate_src > 1: # moving
-                    if not sm.checkPermission(DeleteObjects, parent):
-                        raise AccessControl_Unauthorized
-
-                securityChecksDone = 1
-
-        # Call OFS' _verifyObjectPaste if necessary
-        if not securityChecksDone:
+                        if validate_src == 2: # moving
+                            if not sm.checkPermission(DeleteObjects, parent):
+                                raise AccessControl_Unauthorized('Delete not '
+                                                                 'allowed.')
+                else:
+                    raise AccessControl_Unauthorized('You do not possess the '
+                            '%r permission in the context of the container '
+                            'into which you are pasting, thus you are not '
+                            'able to perform this operation.' % mt_permission)
+            else:
+                raise AccessControl_Unauthorized('The object %r does not '
+                        'support this operation.' % object.getId())
+        else:
+            # Call OFS' _verifyObjectPaste if necessary
             PortalFolderBase.inheritedAttribute(
                 '_verifyObjectPaste')(self, object, validate_src)
 

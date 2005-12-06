@@ -2,6 +2,7 @@
 ##title=Cut objects from a folder and copy to the clipboard
 ##
 from Products.CMFDefault.exceptions import CopyError
+from Products.CMFDefault.exceptions import zExceptions_Unauthorized
 from Products.CMFDefault.utils import MessageID as _
 
 try:
@@ -12,3 +13,5 @@ try:
         return context.setStatus(True, _('Items cut.'))
 except CopyError:
     return context.setStatus(False, _('CopyError: Cut failed.'))
+except zExceptions_Unauthorized:
+    return context.setStatus(False, _('Unauthorized: Cut failed.'))

@@ -52,8 +52,6 @@ def initialize( context ):
                    ).initialize( context )
 
     utils.initializeBasesPhase2( z_bases, context )
-    context.registerHelpTitle('CMF Calendar Help')
-    context.registerHelp(directory='help')
     utils.ContentInit( 'CMF Event'
                      , content_types = contentClasses
                      , permission = AddPortalContent

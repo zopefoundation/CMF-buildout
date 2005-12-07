@@ -72,7 +72,6 @@ class PortalContent(DynamicType, CMFCatalogAware, SimpleItem):
     # The security for FTP methods aren't set up by default in our
     # superclasses...  :(
     security.declareProtected(FTPAccess, 'manage_FTPstat')
-    security.declareProtected(FTPAccess, 'manage_FTPget')
     security.declareProtected(FTPAccess, 'manage_FTPlist')
 
     def failIfLocked(self):

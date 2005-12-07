@@ -364,7 +364,7 @@ class WorkflowDefinitionConfigurator( Implicit ):
 
         return self._workflowConfig( workflow_id=workflow_id )
 
-    security.declareProtected( ManagePortal, 'generateWorkflowScripts' )
+    security.declareProtected( ManagePortal, 'getWorkflowScripts' )
     def getWorkflowScripts( self, workflow_id ):
         """ Get workflow scripts information
         """

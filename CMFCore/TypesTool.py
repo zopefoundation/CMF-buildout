@@ -53,8 +53,6 @@ from permissions import View
 from utils import _checkPermission
 from utils import _dtmldir
 from utils import _wwwdir
-from utils import cookString
-from utils import getActionContext
 from utils import getToolByName
 from utils import SimpleItemWithProperties
 from utils import UniqueObject
@@ -128,6 +126,8 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
     def __init__(self, id, **kw):
 
         self.id = id
+        self._actions = ()
+        self._aliases = {}
 
         if not kw:
             return
@@ -145,21 +145,18 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
         self.manage_changeProperties(**kw)
 
         actions = kw.get( 'actions', () )
-        # make sure we have a copy
-        _actions = []
         for action in actions:
-            _actions.append( action.copy() )
-        actions = tuple(_actions)
-        # We don't know if actions need conversion, so we always add oldstyle
-        # _actions and convert them.
-        self._actions = actions
-        self._convertActions()
+            self.addAction(
+                  id=action['id']
+                , name=action['title']
+                , action=action['action']
+                , condition=action.get('condition')
+                , permission=action.get( 'permissions', () )
+                , category=action.get('category', 'object')
+                , visible=action.get('visible', True)
+                )
 
-        aliases = kw.get( 'aliases', _marker )
-        if aliases is _marker:
-            self._guessMethodAliases()
-        else:
-            self.setMethodAliases(aliases)
+        self.setMethodAliases(kw.get('aliases', {}))
 
     #
     #   ZMI methods
@@ -270,40 +267,7 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
     def listActions(self, info=None, object=None):
         """ Return a sequence of the action info objects for this type.
         """
-        if self._actions and isinstance(self._actions[0], dict):
-            self._convertActions()
-
         return self._actions or ()
-
-    security.declarePrivate( '_convertActions' )
-    def _convertActions( self ):
-        """ Upgrade dictionary-based actions.
-        """
-        aa, self._actions = self._actions, ()
-
-        for action in aa:
-
-            # Some backward compatibility stuff.
-            if not 'id' in action:
-                action['id'] = cookString(action['name'])
-
-            if not 'title' in action:
-                action['title'] = action.get('name', action['id'].capitalize())
-
-            # historically, action['action'] is simple string
-            actiontext = action.get('action').strip() or 'string:${object_url}'
-            if actiontext[:7] not in ('python:', 'string:'):
-                actiontext = 'string:${object_url}/%s' % actiontext
-
-            self.addAction(
-                  id=action['id']
-                , name=action['title']
-                , action=actiontext
-                , condition=action.get('condition')
-                , permission=action.get( 'permissions', () )
-                , category=action.get('category', 'object')
-                , visible=action.get('visible', True)
-                )
 
     security.declarePublic('constructInstance')
     def constructInstance(self, container, id, *args, **kw):
@@ -338,8 +302,6 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
     def getMethodAliases(self):
         """ Get method aliases dict.
         """
-        if not hasattr(self, '_aliases'):
-            self._guessMethodAliases()
         aliases = self._aliases
         # for aliases created with CMF 1.5.0beta
         for key, method_id in aliases.items():
@@ -367,83 +329,12 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
     def queryMethodID(self, alias, default=None, context=None):
         """ Query method ID by alias.
         """
-        if not hasattr(self, '_aliases'):
-            self._guessMethodAliases()
         aliases = self._aliases
         method_id = aliases.get(alias, default)
         # for aliases created with CMF 1.5.0beta
         if isinstance(method_id, tuple):
             method_id = method_id[0]
         return method_id
-
-    security.declarePrivate('_guessMethodAliases')
-    def _guessMethodAliases(self):
-        """ Guess and set Method Aliases. Used for upgrading old TIs.
-        """
-        context = getActionContext(self)
-        actions = self.listActions()
-        ordered = []
-        _dict = {}
-        viewmethod = ''
-
-        # order actions and search 'mkdir' action
-        for action in actions:
-            if action.getId() == 'view':
-                ordered.insert(0, action)
-            elif action.getId() == 'mkdir':
-                try:
-                    mkdirmethod = action.action(context).strip()
-                except AttributeError:
-                    continue
-                if mkdirmethod.startswith('/'):
-                    mkdirmethod = mkdirmethod[1:]
-                _dict['mkdir'] = mkdirmethod
-            else:
-                ordered.append(action)
-
-        # search 'view' action
-        for action in ordered:
-            perms = action.getPermissions()
-            if not perms or View in perms:
-                try:
-                    viewmethod = action.action(context).strip()
-                except (AttributeError, TypeError):
-                    break
-                if viewmethod.startswith('/'):
-                    viewmethod = viewmethod[1:]
-                if not viewmethod:
-                    viewmethod = '(Default)'
-                break
-        else:
-            viewmethod = '(Default)'
-        if viewmethod:
-            _dict['view'] = viewmethod
-
-        # search default action
-        for action in ordered:
-            try:
-                defmethod = action.action(context).strip()
-            except (AttributeError, TypeError):
-                break
-            if defmethod.startswith('/'):
-                defmethod = defmethod[1:]
-            if not defmethod:
-                break
-        else:
-            if viewmethod:
-                _dict['(Default)'] = viewmethod
-
-        # correct guessed values if we know better
-        if self.content_meta_type in ('Portal File', 'Portal Folder',
-                                      'Portal Image'):
-            _dict['(Default)'] = 'index_html'
-            if viewmethod == '(Default)':
-                _dict['view'] = 'index_html'
-        if self.content_meta_type in ('Document', 'News Item'):
-            _dict['gethtml'] = 'source_html'
-
-        self.setMethodAliases(_dict)
-        return 1
 
 InitializeClass( TypeInformation )
 

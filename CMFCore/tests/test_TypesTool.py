@@ -43,12 +43,6 @@ from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.tests.base.tidata import FTIDATA_ACTIONS
-from Products.CMFCore.tests.base.tidata import FTIDATA_CMF13
-from Products.CMFCore.tests.base.tidata import FTIDATA_CMF13_FOLDER
-from Products.CMFCore.tests.base.tidata import FTIDATA_CMF14
-from Products.CMFCore.tests.base.tidata import FTIDATA_CMF14_FOLDER
-from Products.CMFCore.tests.base.tidata import FTIDATA_CMF14_SPECIAL
-from Products.CMFCore.tests.base.tidata import FTIDATA_CMF14_SPECIAL2
 from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
 from Products.CMFCore.tests.base.tidata import FTIDATA_DUMMY
 from Products.CMFCore.tests.base.tidata import STI_SCRIPT
@@ -299,110 +293,6 @@ class TypeInfoTests(unittest.TestCase):
         self.assertEqual(ti._actions[0].action.text, wanted_actions_text0)
         self.assertEqual(ti._actions[1].action.text, wanted_actions_text1)
         self.assertEqual(ti._actions[2].action.text, wanted_actions_text2)
-
-    def test_CMF13_content_migration(self):
-
-        # use old FTI Data
-        ti = self._makeInstance( **FTIDATA_CMF13[0] )
-        self._checkContentTI(ti)
-
-        # simulate old FTI
-        del ti._aliases
-        self.failIf( hasattr(ti, '_aliases') )
-        ti._actions = FTIDATA_CMF13[0]['actions']
-        self.failUnless( isinstance(ti._actions[0], dict) )
-
-        # migrate FTI
-        ti.queryMethodID('view')
-        self._checkContentTI(ti)
-
-    def test_CMF13_folder_migration(self):
-
-        # use old FTI Data
-        ti = self._makeInstance( **FTIDATA_CMF13_FOLDER[0] )
-        self._checkFolderTI(ti)
-
-        # simulate old FTI
-        del ti._aliases
-        self.failIf( hasattr(ti, '_aliases') )
-        ti._actions = FTIDATA_CMF13_FOLDER[0]['actions']
-        self.failUnless( isinstance(ti._actions[0], dict) )
-
-        # migrate FTI
-        ti.queryMethodID('view')
-        self._checkFolderTI(ti)
-
-    def test_CMF14_content_migration(self):
-
-        # use old FTI Data
-        ti = self._makeInstance( **FTIDATA_CMF14[0] )
-        self._checkContentTI(ti)
-
-        # simulate old FTI
-        del ti._aliases
-        self.failIf( hasattr(ti, '_aliases') )
-
-        # migrate FTI
-        ti.queryMethodID('view')
-        self._checkContentTI(ti)
-
-    def test_CMF14_folder_migration(self):
-
-        # use old FTI Data
-        ti = self._makeInstance( **FTIDATA_CMF14_FOLDER[0] )
-        self._checkFolderTI(ti)
-
-        # simulate old FTI
-        del ti._aliases
-        self.failIf( hasattr(ti, '_aliases') )
-
-        # migrate FTI
-        ti.queryMethodID('view')
-        self._checkFolderTI(ti)
-
-    def test_CMF14_special_migration(self):
-        wanted = { 'view': 'dummy_view', 'mkdir': 'dummy_mkdir' }
-
-        # use old FTI Data
-        ti = self._makeInstance( **FTIDATA_CMF14_SPECIAL[0] )
-        self.assertEqual(ti._aliases, wanted)
-
-        # simulate old FTI
-        del ti._aliases
-        self.failIf( hasattr(ti, '_aliases') )
-
-        # migrate FTI
-        ti.queryMethodID('view')
-        self.assertEqual(ti._aliases, wanted)
-
-    def test_CMF14_special2_migration(self):
-        wanted = {}
-
-        # use old FTI Data
-        ti = self._makeInstance( **FTIDATA_CMF14_SPECIAL2[0] )
-        self.assertEqual(ti._aliases, wanted)
-
-        # simulate old FTI
-        del ti._aliases
-        self.failIf( hasattr(ti, '_aliases') )
-
-        # migrate FTI
-        ti.queryMethodID('view')
-        self.assertEqual(ti._aliases, wanted)
-
-    def test_CMF150beta_content_migration(self):
-
-        # use old FTI Data
-        ti = self._makeInstance( **FTIDATA_CMF14[0] )
-        self._checkContentTI(ti)
-
-        # simulate old FTI
-        ti._aliases = { 'view': ('dummy_view',),
-                        '(Default)': ('dummy_view',) }
-
-        # migrate FTI
-        ti.getMethodAliases()
-        self._checkContentTI(ti)
 
 
 class FTIDataTests( TypeInfoTests ):

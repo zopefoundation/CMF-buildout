@@ -44,8 +44,6 @@ from OFS.misc_ import Misc_ as MiscImage
 from OFS.PropertyManager import PropertyManager
 from OFS.PropertySheets import PropertySheets
 from OFS.SimpleItem import SimpleItem
-from Products.PageTemplates.Expressions import getEngine
-from Products.PageTemplates.Expressions import SecureModuleImporter
 from thread import allocate_lock
 
 from exceptions import AccessControl_Unauthorized
@@ -153,24 +151,6 @@ def _checkPermission(permission, obj):
                 return 0
 
     return context.user.allowed(obj, roles)
-
-security.declarePublic( 'getActionContext' )
-def getActionContext( self ):
-    # getActionContext is deprecated and will be removed as soon as the
-    # backwards compatibility code in TypeInformation._guessMethodAliases is
-    # removed.
-    data = { 'object_url'   : ''
-           , 'folder_url'   : ''
-           , 'portal_url'   : ''
-           , 'object'       : None
-           , 'folder'       : None
-           , 'portal'       : None
-           , 'nothing'      : None
-           , 'request'      : getattr( self, 'REQUEST', None )
-           , 'modules'      : SecureModuleImporter
-           , 'member'       : None
-           }
-    return getEngine().getContext( data )
 
 # If Zope ever provides a call to getRolesInContext() through
 # the SecurityManager API, the method below needs to be updated.

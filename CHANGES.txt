@@ -164,6 +164,11 @@ HEAD only (unreleased)
 
   Others
 
+    - TypeInformation: Removed support for old setting formats.
+      If TypeInformation objects are initialized with keyword arguments,
+      'actions' and 'aliases' keys have to use the format introduced in
+      CMF 1.5.
+
     - CMFSetup and GenericSetup: Removed obsolete CMFSetup product.
       Added __module_aliases__ to support setup tools created with CMFSetup. 
 

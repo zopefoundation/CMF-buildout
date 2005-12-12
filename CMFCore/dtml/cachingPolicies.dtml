@@ -26,8 +26,8 @@
                 e304_checked="getEnable304s() and 'checked' or ''"
                 s_max_age_secs="getSMaxAgeSecs() is not None and getSMaxAgeSecs() or ''"
                 last_modified_checked="getLastModified() and 'checked' or ''"
-                pre_check="test(getPreCheck() is None, '', getPreCheck())"
-                post_check="test(getPostCheck() is None, '', getPostCheck())">
+                pre_check="getPreCheck() is not None and getPreCheck() or ''"
+                post_check="getPostCheck() is not None and getPostCheck() or ''">
 
        <input type="hidden" name="policy_id" value="&dtml-getPolicyId;">
        <input type="hidden" name="no_cache:default:int" value="0">

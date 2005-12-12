@@ -331,7 +331,8 @@ class _SkinsSetup(_DVRegistrySetup, PlacelessSetup, BaseRegistryTests):
         site = DummySite()
         fsdvs = [ (id, DirectoryView(id, 'CMFCore/exportimport/tests/%s' %
                                          id)) for id in ids ]
-        site.portal_skins = DummySkinsTool(selections, fsdvs)
+        site._setObject('portal_skins', DummySkinsTool(selections, fsdvs))
+        site.REQUEST = 'exists'
         return site
 
     def setUp(self):

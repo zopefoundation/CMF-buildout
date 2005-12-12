@@ -4,9 +4,9 @@
     xmlns:five="http://namespaces.zope.org/five"
     >
 
-  <five:traversable class="Products.CMFCore.WorkflowTool.WorkflowTool"/>
-
   <five:traversable class="Products.CMFCore.TypesTool.TypesTool"/>
+
+  <five:traversable class="Products.CMFCore.WorkflowTool.WorkflowTool"/>
 
   <configure package="Products.GenericSetup.browser">
 

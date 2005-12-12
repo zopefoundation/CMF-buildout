@@ -18,9 +18,7 @@ $Id: cachingpolicymgr.py 40087 2005-11-13 19:55:09Z yuppie $
 from zope.app import zapi
 
 from Products.GenericSetup.interfaces import IBody
-from Products.GenericSetup.interfaces import INodeExporter
-from Products.GenericSetup.interfaces import INodeImporter
-from Products.GenericSetup.interfaces import PURGE
+from Products.GenericSetup.interfaces import INode
 from Products.GenericSetup.utils import NodeAdapterBase
 from Products.GenericSetup.utils import XMLAdapterBase
 
@@ -38,10 +36,9 @@ class CachingPolicyNodeAdapter(NodeAdapterBase):
 
     __used_for__ = ICachingPolicy
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         obj = self.context
         node = self._doc.createElement('caching-policy')
         node.setAttribute('name', obj.getPolicyId())
@@ -72,7 +69,7 @@ class CachingPolicyNodeAdapter(NodeAdapterBase):
             node.setAttribute('post_check', str(post_check))
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
         info = {}
@@ -113,6 +110,8 @@ class CachingPolicyNodeAdapter(NodeAdapterBase):
             info['post_check'] = int(post_check)
         self.context.__init__(**info)
 
+    node = property(_exportNode, _importNode)
+
 
 class CachingPolicyManagerXMLAdapter(XMLAdapterBase):
 
@@ -123,39 +122,37 @@ class CachingPolicyManagerXMLAdapter(XMLAdapterBase):
 
     _LOGGER_ID = 'cachingpolicies'
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.appendChild(self._extractCachingPolicies())
 
         self._logger.info('Caching policy manager exported.')
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
-        if mode == PURGE:
+        if self.environ.shouldPurge():
             self._purgeCachingPolicies()
 
-        self._initCachingPolicies(node, mode)
+        self._initCachingPolicies(node)
 
         self._logger.info('Caching policy manager imported.')
 
     def _extractCachingPolicies(self):
         fragment = self._doc.createDocumentFragment()
         for policy_id, policy in self.context.listPolicies():
-            exporter = INodeExporter(policy, None)
-            if exporter is None:
-                continue
-            fragment.appendChild(exporter.exportNode(self._doc))
+            exporter = zapi.queryMultiAdapter((policy, self.environ), INode)
+            if exporter:
+                fragment.appendChild(exporter.node)
         return fragment
 
     def _purgeCachingPolicies(self):
         self.context.__init__()
 
-    def _initCachingPolicies(self, node, mode):
+    def _initCachingPolicies(self, node):
         for child in node.childNodes:
             if child.nodeName != 'caching-policy':
                 continue
@@ -167,7 +164,9 @@ class CachingPolicyManagerXMLAdapter(XMLAdapterBase):
                                  0, 0, 0, 0, '', '')
 
             policy = self.context._policies[policy_id]
-            INodeImporter(policy).importNode(child, mode)
+            importer = zapi.queryMultiAdapter((policy, self.environ), INode)
+            if importer:
+                importer.node = child
 
 
 def importCachingPolicyManager(context):

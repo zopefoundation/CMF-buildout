@@ -18,7 +18,6 @@ $Id: actions.py 39947 2005-11-06 16:41:15Z yuppie $
 from zope.app import zapi
 
 from Products.GenericSetup.interfaces import IBody
-from Products.GenericSetup.interfaces import PURGE
 from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import IActionProvider
@@ -39,23 +38,22 @@ class ActionsToolXMLAdapter(XMLAdapterBase):
 
     _LOGGER_ID = 'actions'
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.appendChild(self._extractProviders())
 
         self._logger.info('Actions tool exported.')
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
-        if mode == PURGE:
+        if self.environ.shouldPurge():
             self._purgeProviders()
 
-        self._initProviders(node, mode)
+        self._initProviders(node)
 
         self._logger.info('Actions tool imported.')
 
@@ -107,7 +105,7 @@ class ActionsToolXMLAdapter(XMLAdapterBase):
         for provider_id in self.context.listActionProviders():
             self.context.deleteActionProvider(provider_id)
 
-    def _initProviders(self, node, mode):
+    def _initProviders(self, node):
         for child in node.childNodes:
             if child.nodeName != 'action-provider':
                 continue
@@ -131,9 +129,9 @@ class ActionsToolXMLAdapter(XMLAdapterBase):
                 provider.deleteActions(range(0,num_actions))
 
             # BBB: for CMF 1.5 profiles
-            self._initOldstyleActions(child, mode)
+            self._initOldstyleActions(child)
 
-    def _initOldstyleActions(self, node, mode):
+    def _initOldstyleActions(self, node):
         # BBB: for CMF 1.5 profiles
         provider_id = str(node.getAttribute('name'))
         if not provider_id:

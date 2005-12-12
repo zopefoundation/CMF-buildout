@@ -18,7 +18,6 @@ $Id: cookieauth.py 39493 2005-10-17 18:48:24Z yuppie $
 from zope.app import zapi
 
 from Products.GenericSetup.interfaces import IBody
-from Products.GenericSetup.interfaces import PURGE
 from Products.GenericSetup.utils import PropertyManagerHelpers
 from Products.GenericSetup.utils import XMLAdapterBase
 
@@ -37,23 +36,22 @@ class CookieCrumblerXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
 
     _LOGGER_ID = 'cookies'
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.appendChild(self._extractProperties())
 
         self._logger.info('Cookie crumbler exported.')
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
-        if mode == PURGE:
+        if self.environ.shouldPurge():
             self._purgeProperties()
 
-        self._initProperties(node, mode)
+        self._initProperties(node)
 
         self._logger.info('Cookie crumbler imported.')
 

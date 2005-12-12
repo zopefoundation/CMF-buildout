@@ -18,7 +18,6 @@ $Id: properties.py 39947 2005-11-06 16:41:15Z yuppie $
 from zope.app import zapi
 
 from Products.GenericSetup.interfaces import IBody
-from Products.GenericSetup.interfaces import PURGE
 from Products.GenericSetup.utils import PropertyManagerHelpers
 from Products.GenericSetup.utils import XMLAdapterBase
 
@@ -36,23 +35,22 @@ class PropertiesXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
 
     _LOGGER_ID = 'properties'
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._doc.createElement('site')
         node.appendChild(self._extractProperties())
 
         self._logger.info('Site properties exported.')
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
-        if mode == PURGE:
+        if self.environ.shouldPurge():
             self._purgeProperties()
 
-        self._initProperties(node, mode)
+        self._initProperties(node)
 
         self._logger.info('Site properties imported.')
 

@@ -59,7 +59,7 @@ class DCWorkflowDefinitionAddView(AddWithPresettingsViewBase):
                                  'obj_ids': tuple(obj_ids)})
         return tuple(profiles)
 
-    def _initSettings(self, obj, profile_id, obj_id):
+    def _initSettings(self, obj, profile_id, obj_path):
         stool = getToolByName(self, 'portal_setup', None)
         if stool is None:
             return
@@ -73,7 +73,7 @@ class DCWorkflowDefinitionAddView(AddWithPresettingsViewBase):
                 continue
 
             root = parseString(body).documentElement
-            if not root.getAttribute('workflow_id') == obj_id:
+            if not root.getAttribute('workflow_id') == obj_path[0]:
                 continue
 
             importer = zapi.queryMultiAdapter((obj, context), IBody)

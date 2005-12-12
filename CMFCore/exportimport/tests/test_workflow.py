@@ -51,7 +51,7 @@ _DUMMY_ZCML = """\
       factory="Products.CMFCore.exportimport.tests.test_workflow.DummyWorkflowBodyAdapter"
       provides="Products.GenericSetup.interfaces.IBody"
       for="Products.CMFCore.interfaces.IWorkflowDefinition
-           Products.GenericSetup.interfaces.ISetupContext"
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 </configure>
 """
@@ -185,7 +185,7 @@ class DummyWorkflow(SimpleItem):
 
 class DummyWorkflowBodyAdapter(BodyAdapterBase):
 
-    pass
+    body = property(BodyAdapterBase._exportBody, BodyAdapterBase._importBody)
 
 
 class WorkflowToolXMLAdapterTests(BodyAdapterTestCase):

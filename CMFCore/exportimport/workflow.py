@@ -19,7 +19,6 @@ import Products
 from zope.app import zapi
 
 from Products.GenericSetup.interfaces import IBody
-from Products.GenericSetup.interfaces import PURGE
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import ObjectManagerHelpers
@@ -42,10 +41,9 @@ class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
 
     _LOGGER_ID = 'workflow'
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.appendChild(self._extractProperties())
         node.appendChild(self._extractObjects())
@@ -54,22 +52,22 @@ class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
         self._logger.info('Workflow tool exported.')
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
-        if mode == PURGE:
+        if self.environ.shouldPurge():
             self._purgeProperties()
             self._purgeObjects()
             self._purgeChains()
 
-        self._initProperties(node, mode)
-        self._initObjects(node, mode)
-        self._initBBBObjects(node, mode)
-        self._initChains(node, mode)
+        self._initProperties(node)
+        self._initObjects(node)
+        self._initBBBObjects(node)
+        self._initChains(node)
 
         self._logger.info('Workflow tool imported.')
 
-    def _initBBBObjects(self, node, mode):
+    def _initBBBObjects(self, node):
         for child in node.childNodes:
             if child.nodeName != 'workflow':
                 continue
@@ -113,7 +111,7 @@ class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
         if self.context._chains_by_type is not None:
             self.context._chains_by_type.clear()
 
-    def _initChains(self, node, mode):
+    def _initChains(self, node):
         for child in node.childNodes:
             if child.nodeName != 'bindings':
                 continue

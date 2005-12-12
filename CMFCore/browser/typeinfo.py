@@ -63,7 +63,7 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
                                  'obj_ids': tuple(obj_ids)})
         return tuple(profiles)
 
-    def _initSettings(self, obj, profile_id, obj_id):
+    def _initSettings(self, obj, profile_id, obj_path):
         stool = getToolByName(self, 'portal_setup', None)
         if stool is None:
             return
@@ -80,7 +80,7 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
             new_id = root.getAttribute('name')
             if not new_id:
                 new_id = root.getAttribute('id')
-            if new_id != obj_id:
+            if new_id != obj_path[0]:
                 continue
 
             if root.getAttribute('meta_type') != self.klass.meta_type:

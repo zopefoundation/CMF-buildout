@@ -6,26 +6,21 @@
       factory=".actions.ActionsToolXMLAdapter"
       provides="Products.GenericSetup.interfaces.IBody"
       for="Products.CMFCore.interfaces.IActionsTool
-           Products.GenericSetup.interfaces.ISetupContext"
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 
   <adapter
       factory=".cachingpolicymgr.CachingPolicyNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for="Products.CMFCore.interfaces.ICachingPolicy"
-      />
-
-  <adapter
-      factory=".cachingpolicymgr.CachingPolicyNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for="Products.CMFCore.interfaces.ICachingPolicy"
+      provides="Products.GenericSetup.interfaces.INode"
+      for="Products.CMFCore.interfaces.ICachingPolicy
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 
   <adapter
       factory=".cachingpolicymgr.CachingPolicyManagerXMLAdapter"
       provides="Products.GenericSetup.interfaces.IBody"
       for="Products.CMFCore.interfaces.ICachingPolicyManager
-           Products.GenericSetup.interfaces.ISetupContext"
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 
   <adapter
@@ -44,61 +39,56 @@
       factory=".contenttyperegistry.ContentTypeRegistryXMLAdapter"
       provides="Products.GenericSetup.interfaces.IBody"
       for="Products.CMFCore.interfaces.IContentTypeRegistry
-           Products.GenericSetup.interfaces.ISetupContext"
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 
   <adapter
       factory=".cookieauth.CookieCrumblerXMLAdapter"
       provides="Products.GenericSetup.interfaces.IBody"
       for="Products.CMFCore.interfaces.ICookieCrumbler
-           Products.GenericSetup.interfaces.ISetupContext"
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 
   <adapter
       factory=".properties.PropertiesXMLAdapter"
       provides="Products.GenericSetup.interfaces.IBody"
       for="Products.CMFCore.interfaces.ISiteRoot
-           Products.GenericSetup.interfaces.ISetupContext"
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 
   <adapter
       factory=".skins.DirectoryViewNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeExporter"
-      for="Products.CMFCore.interfaces.IDirectoryView"
-      />
-
-  <adapter
-      factory=".skins.DirectoryViewNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INodeImporter"
-      for="Products.CMFCore.interfaces.IDirectoryView"
+      provides="Products.GenericSetup.interfaces.INode"
+      for="Products.CMFCore.interfaces.IDirectoryView
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 
   <adapter
       factory=".skins.SkinsToolXMLAdapter"
       provides="Products.GenericSetup.interfaces.IBody"
       for="Products.CMFCore.interfaces.ISkinsTool
-           Products.GenericSetup.interfaces.ISetupContext"
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 
   <adapter
       factory=".typeinfo.TypeInformationXMLAdapter"
       provides="Products.GenericSetup.interfaces.IBody"
       for="Products.CMFCore.interfaces.ITypeInformation
-           Products.GenericSetup.interfaces.ISetupContext"
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 
   <adapter
       factory=".typeinfo.TypesToolXMLAdapter"
       provides="Products.GenericSetup.interfaces.IBody"
       for="Products.CMFCore.interfaces.ITypesTool
-           Products.GenericSetup.interfaces.ISetupContext"
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 
   <adapter
       factory=".workflow.WorkflowToolXMLAdapter"
       provides="Products.GenericSetup.interfaces.IBody"
       for="Products.CMFCore.interfaces.IWorkflowTool
-           Products.GenericSetup.interfaces.ISetupContext"
+           Products.GenericSetup.interfaces.ISetupEnviron"
       />
 
 </configure>

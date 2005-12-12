@@ -15,10 +15,11 @@
 $Id$
 """
 
+from Acquisition import aq_inner
+from Acquisition import aq_parent
 from zope.app import zapi
 
 from Products.GenericSetup.interfaces import IBody
-from Products.GenericSetup.interfaces import PURGE
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import NodeAdapterBase
@@ -40,18 +41,19 @@ class DirectoryViewNodeAdapter(NodeAdapterBase):
 
     __used_for__ = IDirectoryView
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.setAttribute('directory', self.context.getDirPath())
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
         self.context.manage_properties(str(node.getAttribute('directory')))
+
+    node = property(_exportNode, _importNode)
 
 
 class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
@@ -63,10 +65,9 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
 
     _LOGGER_ID = 'skins'
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.setAttribute('default_skin', self.context.default_skin)
         node.setAttribute('request_varname', self.context.request_varname)
@@ -79,12 +80,12 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
         self._logger.info('Skins tool exported.')
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
         obj = self.context
 
-        if mode == PURGE:
+        if self.environ.shouldPurge():
             obj.default_skin = ''
             obj.request_varname = 'portal_skin'
             obj.allow_any = 0
@@ -102,13 +103,13 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
         if node.hasAttribute('cookie_persistence'):
             persistence = node.getAttribute('cookie_persistence')
             obj.cookie_persistence = int(self._convertToBoolean(persistence))
-        self._initObjects(node, mode)
-        self._initBBBObjects(node, mode)
-        self._initSkinPaths(node, mode)
+        self._initObjects(node)
+        self._initBBBObjects(node)
+        self._initSkinPaths(node)
 
         self._logger.info('Skins tool imported.')
 
-    def _initBBBObjects(self, node, mode):
+    def _initBBBObjects(self, node):
         for child in node.childNodes:
             if child.nodeName != 'skin-directory':
                 continue
@@ -134,7 +135,7 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
     def _purgeSkinPaths(self):
         self.context._getSelections().clear()
 
-    def _initSkinPaths(self, node, mode):
+    def _initSkinPaths(self, node):
         for child in node.childNodes:
             if child.nodeName != 'skin-path':
                 continue
@@ -157,12 +158,11 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
         # Purge and rebuild the skin path, now that we have added our stuff.
         # Don't bother if no REQUEST is present, e.g. when running unit tests
         #
-        site = self.environ.getSite()
-        request = getattr(site, 'REQUEST', None)
-        if request is not None:
-            site.clearCurrentSkin()
-            site.setupCurrentSkin(request)
-
+        request = getattr(self.context, 'REQUEST', None)
+        skinnable = aq_parent(aq_inner(self.context))
+        if request is not None and skinnable is not None:
+            skinnable.clearCurrentSkin()
+            skinnable.setupCurrentSkin(request)
 
     def _updatePath(self, path, node):
         path = [ name.strip() for name in path.split(',') if name.strip() ]

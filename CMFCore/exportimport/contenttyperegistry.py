@@ -18,7 +18,6 @@ $Id$
 from zope.app import zapi
 
 from Products.GenericSetup.interfaces import IBody
-from Products.GenericSetup.interfaces import PURGE
 from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import IContentTypeRegistry
@@ -36,23 +35,22 @@ class ContentTypeRegistryXMLAdapter(XMLAdapterBase):
 
     _LOGGER_ID = 'contenttypes'
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.appendChild(self._extractPredicates())
 
         self._logger.info('Content type registry exported.')
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
-        if mode == PURGE:
+        if self.environ.shouldPurge():
             self._purgePredicates()
 
-        self._initPredicates(node, mode)
+        self._initPredicates(node)
 
         self._logger.info('Content type registry imported.')
 
@@ -73,7 +71,7 @@ class ContentTypeRegistryXMLAdapter(XMLAdapterBase):
     def _purgePredicates(self):
         self.context.__init__()
 
-    def _initPredicates(self, node, mode):
+    def _initPredicates(self, node):
         for child in node.childNodes:
             if child.nodeName != 'predicate':
                 continue

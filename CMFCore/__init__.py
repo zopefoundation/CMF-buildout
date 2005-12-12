@@ -34,10 +34,7 @@ import CachingPolicyManager
 import CMFBTreeFolder
 import utils
 
-from interfaces import IAction
-from interfaces import IActionCategory
 from permissions import AddPortalFolders
-from permissions import ManagePortal
 
 
 bases = (
@@ -124,24 +121,10 @@ def initialize(context):
         icon = 'images/registry.gif'
         )
 
-    context.registerClass(
-        ActionInformation.ActionCategory,
-        permission=ManagePortal,
-        constructors=(ActionInformation.manage_addActionCategoryForm,
-                      ActionInformation.manage_addActionCategory),
-        icon='images/cmf_action_category.gif',
-        visibility=None,
-        interfaces=(IActionCategory,))
-
-    context.registerClass(
-        ActionInformation.Action,
-        permission=ManagePortal,
-        constructors=(ActionInformation.manage_addActionForm,
-                      ActionInformation.manage_addAction),
-        icon='images/cmf_action.gif',
-        visibility=None,
-        interfaces=(IAction,))
-
+    utils.registerIcon(ActionInformation.ActionCategory,
+                       'images/cmf_action_category.gif', globals())
+    utils.registerIcon(ActionInformation.Action,
+                       'images/cmf_action.gif', globals())
     utils.registerIcon(TypesTool.FactoryTypeInformation,
                        'images/typeinfo.gif', globals())
     utils.registerIcon(TypesTool.ScriptableTypeInformation,

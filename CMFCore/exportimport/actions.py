@@ -18,7 +18,6 @@ $Id$
 from zope.app import zapi
 
 from Products.GenericSetup.interfaces import IBody
-from Products.GenericSetup.interfaces import PURGE, UPDATE
 from Products.GenericSetup.utils import I18NURI
 from Products.GenericSetup.utils import NodeAdapterBase
 from Products.GenericSetup.utils import ObjectManagerHelpers
@@ -45,24 +44,28 @@ class ActionCategoryNodeAdapter(NodeAdapterBase, ObjectManagerHelpers,
 
     __used_for__ = IActionCategory
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.appendChild(self._extractProperties())
         node.appendChild(self._extractObjects())
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
-        if mode == PURGE:
+        purge = self.environ.shouldPurge()
+        if node.getAttribute('purge'):
+            purge = self._convertToBoolean(node.getAttribute('purge'))
+        if purge:
             self._purgeProperties()
             self._purgeObjects()
 
-        self._initProperties(node, mode)
-        self._initObjects(node, mode)
+        self._initProperties(node)
+        self._initObjects(node)
+
+    node = property(_exportNode, _importNode)
 
 
 class ActionNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
@@ -72,21 +75,25 @@ class ActionNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
 
     __used_for__ = IAction
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.appendChild(self._extractProperties())
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
-        if mode == PURGE:
+        purge = self.environ.shouldPurge()
+        if node.getAttribute('purge'):
+            purge = self._convertToBoolean(node.getAttribute('purge'))
+        if purge:
             self._purgeProperties()
 
-        self._initProperties(node, mode)
+        self._initProperties(node)
+
+    node = property(_exportNode, _importNode)
 
 
 class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
@@ -98,10 +105,9 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
 
     _LOGGER_ID = 'actions'
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.setAttribute('xmlns:i18n', I18NURI)
         node.appendChild(self._extractProviders())
@@ -110,15 +116,15 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
         self._logger.info('Actions tool exported.')
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
-        if mode == PURGE:
+        if self.environ.shouldPurge():
             self._purgeProviders()
             self._purgeObjects()
 
-        self._initObjects(node, mode)
-        self._initProviders(node, mode)
+        self._initObjects(node)
+        self._initProviders(node)
 
         self._logger.info('Actions tool imported.')
 
@@ -170,7 +176,7 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
         for provider_id in self.context.listActionProviders():
             self.context.deleteActionProvider(provider_id)
 
-    def _initProviders(self, node, mode):
+    def _initProviders(self, node):
         for child in node.childNodes:
             if child.nodeName != 'action-provider':
                 continue
@@ -189,9 +195,9 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
                 self.context.addActionProvider(provider_id)
 
             # BBB: for CMF 1.5 profiles
-            self._initOldstyleActions(child, mode)
+            self._initOldstyleActions(child)
 
-    def _initOldstyleActions(self, node, mode):
+    def _initOldstyleActions(self, node):
         # BBB: for CMF 1.5 profiles
         doc = node.ownerDocument
         fragment = doc.createDocumentFragment()
@@ -204,11 +210,13 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
                 newnode = doc.createElement('object')
                 newnode.setAttribute('name', str(category_id))
                 newnode.setAttribute('meta_type', 'CMF Action Category')
+                newnode.setAttribute('purge', 'False')
                 parent.appendChild(newnode)
                 parent = newnode
             newnode = doc.createElement('object')
             newnode.setAttribute('name', str(child.getAttribute('action_id')))
             newnode.setAttribute('meta_type', 'CMF Action')
+            newnode.setAttribute('purge', 'False')
 
             mapping = {'title': 'title',
                        'url_expr': 'url_expr',
@@ -232,7 +240,7 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
 
             parent.appendChild(newnode)
 
-        self._initObjects(fragment, UPDATE)
+        self._initObjects(fragment)
 
 
 def importActionProviders(context):

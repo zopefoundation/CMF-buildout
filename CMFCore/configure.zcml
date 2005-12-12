@@ -8,6 +8,22 @@
   <include package=".exportimport"/>
 
   <five:registerClass
+      class=".ActionInformation.ActionCategory"
+      meta_type="CMF Action Category"
+      addview="addActionCategory.html"
+      permission="cmf.ManagePortal"
+      global="False"
+      />
+
+  <five:registerClass
+      class=".ActionInformation.Action"
+      meta_type="CMF Action"
+      addview="addAction.html"
+      permission="cmf.ManagePortal"
+      global="False"
+      />
+
+  <five:registerClass
       class=".TypesTool.FactoryTypeInformation"
       meta_type="Factory-based Type Information"
       addview="addFactoryTypeInformation.html"

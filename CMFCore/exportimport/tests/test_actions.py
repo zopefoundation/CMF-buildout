@@ -17,8 +17,6 @@ $Id$
 
 import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 import Products
 from Acquisition import Implicit
@@ -274,11 +272,11 @@ class ActionNodeAdapterTests(NodeAdapterTestCase):
         self.assertEqual(obj.visible, True)
 
     def setUp(self):
-        import Products.CMFCore.exportimport
+        import Products.CMFCore
         from Products.CMFCore.ActionInformation import Action
 
         NodeAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
+        zcml.load_config('configure.zcml', Products.CMFCore)
 
         self._obj = Action('foo_action')
         self._XML = _ACTION_XML
@@ -302,11 +300,11 @@ class ActionCategoryNodeAdapterTests(NodeAdapterTestCase):
         self.assertEqual(obj.title, '')
 
     def setUp(self):
-        import Products.CMFCore.exportimport
+        import Products.CMFCore
         from Products.CMFCore.ActionInformation import ActionCategory
 
         NodeAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
+        zcml.load_config('configure.zcml', Products.CMFCore)
 
         self._obj = ActionCategory('foo_category')
         self._XML = _ACTIONCATEGORY_XML
@@ -336,11 +334,11 @@ class ActionsToolXMLAdapterTests(BodyAdapterTestCase):
         self.assertEqual(obj.action_providers[0], 'portal_actions')
 
     def setUp(self):
-        import Products.CMFCore.exportimport
+        import Products.CMFCore
         from Products.CMFCore.ActionsTool import ActionsTool
 
         BodyAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
+        zcml.load_config('configure.zcml', Products.CMFCore)
 
         site = DummySite('site')
         site._setObject('portal_actions', ActionsTool('portal_actions'))
@@ -390,7 +388,8 @@ class _ActionSetup(PlacelessSetup, BaseRegistryTests):
         PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.CMFCore)
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)

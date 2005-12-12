@@ -21,7 +21,6 @@ import Products
 from zope.app import zapi
 
 from Products.GenericSetup.interfaces import IBody
-from Products.GenericSetup.interfaces import PURGE
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import I18NURI
 from Products.GenericSetup.utils import importObjects
@@ -45,10 +44,9 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
 
     _LOGGER_ID = 'types'
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.setAttribute('xmlns:i18n', I18NURI)
         node.appendChild(self._extractProperties())
@@ -58,18 +56,18 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
         self._logger.info('%r type info exported.' % self.context.getId())
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
-        if mode == PURGE:
+        if self.environ.shouldPurge():
             self._purgeProperties()
             self._purgeAliases()
             self._purgeActions()
 
-        self._initOldstyleProperties(node, mode)
-        self._initProperties(node, mode)
-        self._initAliases(node, mode)
-        self._initActions(node, mode)
+        self._initOldstyleProperties(node)
+        self._initProperties(node)
+        self._initAliases(node)
+        self._initActions(node)
 
         self._logger.info('%r type info imported.' % self.context.getId())
 
@@ -87,7 +85,7 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
     def _purgeAliases(self):
         self.context.setMethodAliases({})
 
-    def _initAliases(self, node, mode):
+    def _initAliases(self, node):
         aliases = self.context.getMethodAliases()
         for child in node.childNodes:
             # BBB: for CMF 1.5 profiles
@@ -129,7 +127,7 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
     def _purgeActions(self):
         self.context._actions = ()
 
-    def _initActions(self, node, mode):
+    def _initActions(self, node):
         for child in node.childNodes:
             if child.nodeName != 'action':
                 continue
@@ -152,7 +150,7 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
             self.context.addAction(id, title, action, condition,
                                    tuple(permissions), category, visible)
 
-    def _initOldstyleProperties(self, node, mode):
+    def _initOldstyleProperties(self, node):
         if not node.hasAttribute('title'):
             return
         # BBB: for CMF 1.5 profiles
@@ -207,10 +205,9 @@ class TypesToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
 
     _LOGGER_ID = 'types'
 
-    def exportNode(self, doc):
+    def _exportNode(self):
         """Export the object as a DOM node.
         """
-        self._doc = doc
         node = self._getObjectNode('object')
         node.appendChild(self._extractProperties())
         node.appendChild(self._extractObjects())
@@ -218,20 +215,20 @@ class TypesToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
         self._logger.info('Types tool exported.')
         return node
 
-    def importNode(self, node, mode=PURGE):
+    def _importNode(self, node):
         """Import the object from the DOM node.
         """
-        if mode == PURGE:
+        if self.environ.shouldPurge():
             self._purgeProperties()
             self._purgeObjects()
 
-        self._initProperties(node, mode)
-        self._initObjects(node, mode)
-        self._initBBBObjects(node, mode)
+        self._initProperties(node)
+        self._initObjects(node)
+        self._initBBBObjects(node)
 
         self._logger.info('Types tool imported.')
 
-    def _initBBBObjects(self, node, mode):
+    def _initBBBObjects(self, node):
         for child in node.childNodes:
             if child.nodeName != 'type':
                 continue
@@ -242,6 +239,7 @@ class TypesToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
                 filename = str(child.getAttribute('filename'))
                 if not filename:
                     filename = 'types/%s.xml' % obj_id.replace(' ', '_')
+                # cheating here for BBB: readDataFile is no interface method
                 body = self.environ.readDataFile(filename)
                 if body is None:
                     break

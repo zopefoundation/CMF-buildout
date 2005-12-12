@@ -5,11 +5,31 @@
     i18n_domain="cmf"
     >
 
-  <five:traversable class="Products.CMFCore.WorkflowTool.WorkflowTool"/>
+  <five:traversable class="Products.CMFCore.ActionInformation.ActionCategory"/>
+
+  <five:traversable class="Products.CMFCore.ActionsTool.ActionsTool"/>
 
   <five:traversable class="Products.CMFCore.TypesTool.TypesTool"/>
 
+  <five:traversable class="Products.CMFCore.WorkflowTool.WorkflowTool"/>
+
   <configure package="Products.GenericSetup.browser">
+
+    <browser:page
+        for="zope.app.container.interfaces.IAdding"
+        name="addAction.html"
+        template="addWithPresettings.pt"
+        class="Products.CMFCore.browser.actions.ActionAddView"
+        permission="cmf.ManagePortal"
+        />
+
+    <browser:page
+        for="zope.app.container.interfaces.IAdding"
+        name="addActionCategory.html"
+        template="addWithPresettings.pt"
+        class="Products.CMFCore.browser.actions.ActionCategoryAddView"
+        permission="cmf.ManagePortal"
+        />
 
     <browser:page
         for="zope.app.container.interfaces.IAdding"

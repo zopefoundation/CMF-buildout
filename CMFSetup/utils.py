@@ -352,3 +352,91 @@ class ConfiguratorBase(ImportConfiguratorBase, ExportConfiguratorBase):
         ExportConfiguratorBase.__init__(self, site, encoding)
 
 InitializeClass(ConfiguratorBase)
+
+
+# BBB: deprecated DOM parsing utilities, will be removed in CMF 2.0
+
+_marker = object()
+
+def _queryNodeAttribute( node, attr_name, default, encoding=None ):
+
+    """ Extract a string-valued attribute from node.
+
+    o Return 'default' if the attribute is not present.
+    """
+    attr_node = node.attributes.get( attr_name, _marker )
+
+    if attr_node is _marker:
+        return default
+
+    value = attr_node.nodeValue
+
+    if encoding is not None:
+        value = value.encode( encoding )
+
+    return value
+
+def _getNodeAttribute( node, attr_name, encoding=None ):
+
+    """ Extract a string-valued attribute from node.
+    """
+    value = _queryNodeAttribute( node, attr_name, _marker, encoding )
+
+    if value is _marker:
+        raise ValueError, 'Invalid attribute: %s' % attr_name
+
+    return value
+
+def _queryNodeAttributeBoolean( node, attr_name, default ):
+
+    """ Extract a string-valued attribute from node.
+
+    o Return 'default' if the attribute is not present.
+    """
+    attr_node = node.attributes.get( attr_name, _marker )
+
+    if attr_node is _marker:
+        return default
+
+    value = node.attributes[ attr_name ].nodeValue.lower()
+
+    return value in ( 'true', 'yes', '1' )
+
+def _getNodeAttributeBoolean( node, attr_name ):
+
+    """ Extract a string-valued attribute from node.
+    """
+    value = node.attributes[ attr_name ].nodeValue.lower()
+
+    return value in ( 'true', 'yes', '1' )
+
+def _coalesceTextNodeChildren( node, encoding=None ):
+
+    """ Concatenate all childe text nodes into a single string.
+    """
+    from xml.dom import Node
+    fragments = []
+    node.normalize()
+    child = node.firstChild
+
+    while child is not None:
+
+        if child.nodeType == Node.TEXT_NODE:
+            fragments.append( child.nodeValue )
+
+        child = child.nextSibling
+
+    joined = ''.join( fragments )
+
+    if encoding is not None:
+        joined = joined.encode( encoding )
+
+    return ''.join( [ line.lstrip() for line in joined.splitlines(True) ] )
+
+def _extractDescriptionNode(parent, encoding=None):
+
+    d_nodes = parent.getElementsByTagName('description')
+    if d_nodes:
+        return _coalesceTextNodeChildren(d_nodes[0], encoding)
+    else:
+        return ''

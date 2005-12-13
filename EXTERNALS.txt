@@ -5,5 +5,4 @@
 #
 # svn propset svn:externals -F ./EXTERNALS.TXT .
 #
-CMFSetup svn://svn.zope.org/repos/main/CMF/trunk/CMFSetup
 GenericSetup svn://svn.zope.org/repos/main/CMF/trunk/GenericSetup

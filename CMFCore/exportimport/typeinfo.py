@@ -32,7 +32,7 @@ from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.utils import getToolByName
 
-_FILENAME = 'typestool.xml'
+_FILENAME = 'types.xml'
 
 
 class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
@@ -269,8 +269,10 @@ def importTypesTool(context):
 
     body = context.readDataFile(_FILENAME)
     if body is None:
-        logger.info('Nothing to import.')
-        return
+        body = context.readDataFile('typestool.xml')
+        if body is None:
+            logger.info('Nothing to import.')
+            return
 
     importer = zapi.queryMultiAdapter((tool, context), IBody)
     if importer is None:

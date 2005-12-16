@@ -495,7 +495,7 @@ class exportTypesToolTests(_TypeInfoSetup):
 
         self.assertEqual(len(context._wrote), 1)
         filename, text, content_type = context._wrote[0]
-        self.assertEqual(filename, 'typestool.xml')
+        self.assertEqual(filename, 'types.xml')
         self._compareDOM(text, _EMPTY_TOOL_EXPORT)
         self.assertEqual(content_type, 'text/xml')
 
@@ -508,7 +508,7 @@ class exportTypesToolTests(_TypeInfoSetup):
 
         self.assertEqual(len(context._wrote), 3)
         filename, text, content_type = context._wrote[0]
-        self.assertEqual(filename, 'typestool.xml')
+        self.assertEqual(filename, 'types.xml')
         self._compareDOM(text, _NORMAL_TOOL_EXPORT)
         self.assertEqual(content_type, 'text/xml')
 
@@ -531,7 +531,7 @@ class exportTypesToolTests(_TypeInfoSetup):
 
         self.assertEqual(len(context._wrote), 3)
         filename, text, content_type = context._wrote[0]
-        self.assertEqual(filename, 'typestool.xml')
+        self.assertEqual(filename, 'types.xml')
         self._compareDOM(text, _FILENAME_EXPORT)
         self.assertEqual(content_type, 'text/xml')
         filename, text, content_type = context._wrote[2]
@@ -559,7 +559,7 @@ class importTypesToolTests(_TypeInfoSetup):
         self.assertEqual(len(tool.objectIds()), 2)
 
         context = DummyImportContext(site)
-        context._files['typestool.xml'] = self._EMPTY_TOOL_EXPORT
+        context._files['types.xml'] = self._EMPTY_TOOL_EXPORT
         importTypesTool(context)
 
         self.assertEqual(len(tool.objectIds()), 0)
@@ -573,7 +573,7 @@ class importTypesToolTests(_TypeInfoSetup):
         self.assertEqual(len(tool.objectIds()), 2)
 
         context = DummyImportContext(site, True)
-        context._files['typestool.xml'] = self._EMPTY_TOOL_EXPORT
+        context._files['types.xml'] = self._EMPTY_TOOL_EXPORT
         importTypesTool(context)
 
         self.assertEqual(len(tool.objectIds()), 0)
@@ -587,7 +587,7 @@ class importTypesToolTests(_TypeInfoSetup):
         self.assertEqual(len(tool.objectIds()), 2)
 
         context = DummyImportContext(site, False)
-        context._files['typestool.xml'] = self._EMPTY_TOOL_EXPORT
+        context._files['types.xml'] = self._EMPTY_TOOL_EXPORT
         importTypesTool(context)
 
         self.assertEqual(len(tool.objectIds()), 2)
@@ -601,7 +601,7 @@ class importTypesToolTests(_TypeInfoSetup):
         self.assertEqual(len(tool.objectIds()), 0)
 
         context = DummyImportContext(site)
-        context._files['typestool.xml'] = self._NORMAL_TOOL_EXPORT
+        context._files['types.xml'] = self._NORMAL_TOOL_EXPORT
         context._files['types/foo.xml'] = _FOO_EXPORT % 'foo'
         context._files['types/bar.xml'] = _BAR_EXPORT % 'bar'
         importTypesTool(context)
@@ -620,7 +620,7 @@ class importTypesToolTests(_TypeInfoSetup):
         self.assertEqual(len(tool.objectIds()), 0)
 
         context = DummyImportContext(site)
-        context._files['typestool.xml'] = self._NORMAL_TOOL_EXPORT
+        context._files['types.xml'] = self._NORMAL_TOOL_EXPORT
         context._files['types/foo.xml'] = _FOO_OLD_EXPORT % 'foo'
         context._files['types/bar.xml'] = _BAR_OLD_EXPORT % 'bar'
         importTypesTool(context)
@@ -646,7 +646,7 @@ class importTypesToolTests(_TypeInfoSetup):
         self.assertEqual(len(tool.objectIds()), 0)
 
         context = DummyImportContext(site)
-        context._files['typestool.xml'] = self._FILENAME_EXPORT
+        context._files['types.xml'] = self._FILENAME_EXPORT
         context._files['types/foo_object.xml'] = _FOO_EXPORT % 'foo object'
         context._files['types/bar_object.xml'] = _BAR_EXPORT % 'bar object'
         importTypesTool(context)
@@ -662,7 +662,7 @@ class importTypesToolTests(_TypeInfoSetup):
         tool = site.portal_types
 
         context = DummyImportContext(site)
-        context._files['typestool.xml'] = self._NORMAL_TOOL_EXPORT
+        context._files['types.xml'] = self._NORMAL_TOOL_EXPORT
         context._files['types/foo.xml'] = _FOO_EXPORT % 'foo'
         context._files['types/bar.xml'] = _BAR_EXPORT % 'bar'
         importTypesTool(context)
@@ -675,7 +675,7 @@ class importTypesToolTests(_TypeInfoSetup):
                          {'(Default)': 'foo_view', 'view': 'foo_view'})
 
         context = DummyImportContext(site, False)
-        context._files['typestool.xml'] = _UPDATE_TOOL_IMPORT
+        context._files['types.xml'] = _UPDATE_TOOL_IMPORT
         context._files['types/foo.xml'] = _UPDATE_FOO_IMPORT
         importTypesTool(context)
 

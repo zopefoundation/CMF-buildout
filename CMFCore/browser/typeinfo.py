@@ -49,10 +49,15 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
                     if body is None:
                         continue
                     root = parseString(body).documentElement
-                    obj_id = root.getAttribute('name')
+                    obj_id = str(root.getAttribute('name'))
                     if not obj_id:
-                        obj_id = root.getAttribute('id')
-                    if root.getAttribute('meta_type') != self.klass.meta_type:
+                        # BBB: for CMF 1.5 profiles
+                        obj_id = str(root.getAttribute('id'))
+                    # BBB: for CMF 1.5 profiles
+                    meta_type = str(root.getAttribute('kind'))
+                    if not meta_type:
+                        meta_type = str(root.getAttribute('meta_type'))
+                    if meta_type != self.klass.meta_type:
                         continue
                     obj_ids.append(obj_id)
                 if not obj_ids:
@@ -77,13 +82,18 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
                 continue
 
             root = parseString(body).documentElement
-            new_id = root.getAttribute('name')
+            new_id = str(root.getAttribute('name'))
             if not new_id:
-                new_id = root.getAttribute('id')
+                # BBB: for CMF 1.5 profiles
+                new_id = str(root.getAttribute('id'))
             if new_id != obj_path[0]:
                 continue
 
-            if root.getAttribute('meta_type') != self.klass.meta_type:
+            # BBB: for CMF 1.5 profiles
+            meta_type = str(root.getAttribute('kind'))
+            if not meta_type:
+                meta_type = str(root.getAttribute('meta_type'))
+            if meta_type != self.klass.meta_type:
                 continue
 
             importer = zapi.queryMultiAdapter((obj, context), IBody)

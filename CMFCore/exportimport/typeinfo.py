@@ -69,7 +69,11 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
         self._initAliases(node)
         self._initActions(node)
 
-        self._logger.info('%r type info imported.' % self.context.getId())
+        obj_id = str(node.getAttribute('name'))
+        if not obj_id:
+            # BBB: for CMF 1.5 profiles
+            obj_id = str(node.getAttribute('id'))
+        self._logger.info('%r type info imported.' % obj_id)
 
     def _extractAliases(self):
         fragment = self._doc.createDocumentFragment()

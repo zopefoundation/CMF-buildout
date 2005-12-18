@@ -17,7 +17,8 @@ $Id: cachingpolicymgr.py 40087 2005-11-13 19:55:09Z yuppie $
 
 from zope.app import zapi
 
-from Products.GenericSetup.interfaces import IBody
+from Products.GenericSetup.utils import exportObjects
+from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.interfaces import INode
 from Products.GenericSetup.utils import NodeAdapterBase
 from Products.GenericSetup.utils import XMLAdapterBase
@@ -25,8 +26,6 @@ from Products.GenericSetup.utils import XMLAdapterBase
 from Products.CMFCore.interfaces import ICachingPolicy
 from Products.CMFCore.interfaces import ICachingPolicyManager
 from Products.CMFCore.utils import getToolByName
-
-_FILENAME = 'cachingpolicymgr.xml'
 
 
 class CachingPolicyNodeAdapter(NodeAdapterBase):
@@ -122,6 +121,8 @@ class CachingPolicyManagerXMLAdapter(XMLAdapterBase):
 
     _LOGGER_ID = 'cachingpolicies'
 
+    name = 'cachingpolicymgr'
+
     def _exportNode(self):
         """Export the object as a DOM node.
         """
@@ -173,34 +174,18 @@ def importCachingPolicyManager(context):
     """Import caching policy manager settings from an XML file.
     """
     site = context.getSite()
-    logger = context.getLogger('cachingpolicies')
     tool = getToolByName(site, 'caching_policy_manager')
 
-    body = context.readDataFile(_FILENAME)
-    if body is None:
-        logger.info('Nothing to import.')
-        return
-
-    importer = zapi.queryMultiAdapter((tool, context), IBody)
-    if importer is None:
-        logger.warning('Import adapter misssing.')
-        return
-
-    importer.body = body
+    importObjects(tool, '', context)
 
 def exportCachingPolicyManager(context):
     """Export caching policy manager settings as an XML file.
     """
     site = context.getSite()
-    logger = context.getLogger('cachingpolicies')
     tool = getToolByName(site, 'caching_policy_manager', None)
     if tool is None:
+        logger = context.getLogger('cachingpolicies')
         logger.info('Nothing to export.')
         return
 
-    exporter = zapi.queryMultiAdapter((tool, context), IBody)
-    if exporter is None:
-        logger.warning('Export adapter misssing.')
-        return
-
-    context.writeDataFile(_FILENAME, exporter.body, exporter.mime_type)
+    exportObjects(tool, '', context)

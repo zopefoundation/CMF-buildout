@@ -16,9 +16,7 @@ $Id$
 """
 
 import Products
-from zope.app import zapi
 
-from Products.GenericSetup.interfaces import IBody
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import ObjectManagerHelpers
@@ -27,8 +25,6 @@ from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import IWorkflowTool
 from Products.CMFCore.utils import getToolByName
-
-_FILENAME = 'workflows.xml'
 
 
 class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
@@ -40,6 +36,8 @@ class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
     __used_for__ = IWorkflowTool
 
     _LOGGER_ID = 'workflow'
+
+    name = 'workflows'
 
     def _exportNode(self):
         """Export the object as a DOM node.
@@ -136,36 +134,18 @@ def importWorkflowTool(context):
     """Import workflow tool and contained workflow definitions from XML files.
     """
     site = context.getSite()
-    logger = context.getLogger('workflow')
     tool = getToolByName(site, 'portal_workflow')
 
-    body = context.readDataFile(_FILENAME)
-    if body is None:
-        logger.info('Nothing to import.')
-        return
-
-    importer = zapi.queryMultiAdapter((tool, context), IBody)
-    if importer is None:
-        logger.warning('Import adapter misssing.')
-        return
-
-    importer.body = body
-    importObjects(tool, 'workflows', context)
+    importObjects(tool, '', context)
 
 def exportWorkflowTool(context):
     """Export workflow tool and contained workflow definitions as XML files.
     """
     site = context.getSite()
-    logger = context.getLogger('workflow')
-    tool = getToolByName(site, 'portal_workflow')
+    tool = getToolByName(site, 'portal_workflow', None)
     if tool is None:
+        logger = context.getLogger('workflow')
         logger.info('Nothing to export.')
         return
 
-    exporter = zapi.queryMultiAdapter((tool, context), IBody)
-    if exporter is None:
-        logger.warning('Export adapter misssing.')
-        return
-
-    context.writeDataFile(_FILENAME, exporter.body, exporter.mime_type)
-    exportObjects(tool, 'workflows', context)
+    exportObjects(tool, '', context)

@@ -18,9 +18,7 @@ $Id$
 from xml.dom.minidom import parseString
 
 import Products
-from zope.app import zapi
 
-from Products.GenericSetup.interfaces import IBody
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import I18NURI
 from Products.GenericSetup.utils import importObjects
@@ -31,8 +29,6 @@ from Products.GenericSetup.utils import XMLAdapterBase
 from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.utils import getToolByName
-
-_FILENAME = 'types.xml'
 
 
 class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
@@ -209,6 +205,8 @@ class TypesToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
 
     _LOGGER_ID = 'types'
 
+    name = 'types'
+
     def _exportNode(self):
         """Export the object as a DOM node.
         """
@@ -264,38 +262,18 @@ def importTypesTool(context):
     """Import types tool and content types from XML files.
     """
     site = context.getSite()
-    logger = context.getLogger('types')
     tool = getToolByName(site, 'portal_types')
 
-    body = context.readDataFile(_FILENAME)
-    if body is None:
-        body = context.readDataFile('typestool.xml')
-        if body is None:
-            logger.info('Nothing to import.')
-            return
-
-    importer = zapi.queryMultiAdapter((tool, context), IBody)
-    if importer is None:
-        logger.warning('Import adapter misssing.')
-        return
-
-    importer.body = body
-    importObjects(tool, 'types', context)
+    importObjects(tool, '', context)
 
 def exportTypesTool(context):
     """Export types tool content types as a set of XML files.
     """
     site = context.getSite()
-    logger = context.getLogger('types')
     tool = getToolByName(site, 'portal_types', None)
     if tool is None:
+        logger = context.getLogger('types')
         logger.info('Nothing to export.')
         return
 
-    exporter = zapi.queryMultiAdapter((tool, context), IBody)
-    if exporter is None:
-        logger.warning('Export adapter misssing.')
-        return
-
-    context.writeDataFile(_FILENAME, exporter.body, exporter.mime_type)
-    exportObjects(tool, 'types', context)
+    exportObjects(tool, '', context)

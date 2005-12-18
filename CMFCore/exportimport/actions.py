@@ -15,10 +15,9 @@
 $Id$
 """
 
-from zope.app import zapi
-
-from Products.GenericSetup.interfaces import IBody
+from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import I18NURI
+from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import NodeAdapterBase
 from Products.GenericSetup.utils import ObjectManagerHelpers
 from Products.GenericSetup.utils import PropertyManagerHelpers
@@ -32,7 +31,6 @@ from Products.CMFCore.interfaces.portal_actions \
         import ActionProvider as z2IActionProvider
 from Products.CMFCore.utils import getToolByName
 
-_FILENAME = 'actions.xml'
 _SPECIAL_PROVIDERS = ('portal_actions', 'portal_types', 'portal_workflow')
 
 
@@ -104,6 +102,8 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
     __used_for__ = IActionsTool
 
     _LOGGER_ID = 'actions'
+
+    name = 'actions'
 
     def _exportNode(self):
         """Export the object as a DOM node.
@@ -247,34 +247,18 @@ def importActionProviders(context):
     """Import actions tool.
     """
     site = context.getSite()
-    logger = context.getLogger('actions')
     tool = getToolByName(site, 'portal_actions')
 
-    body = context.readDataFile(_FILENAME)
-    if body is None:
-        logger.info('Nothing to import.')
-        return
-
-    importer = zapi.queryMultiAdapter((tool, context), IBody)
-    if importer is None:
-        logger.warning('Import adapter misssing.')
-        return
-
-    importer.body = body
+    importObjects(tool, '', context)
 
 def exportActionProviders(context):
     """Export actions tool.
     """
     site = context.getSite()
-    logger = context.getLogger('actions')
     tool = getToolByName(site, 'portal_actions', None)
     if tool is None:
+        logger = context.getLogger('actions')
         logger.info('Nothing to export.')
         return
 
-    exporter = zapi.queryMultiAdapter((tool, context), IBody)
-    if exporter is None:
-        logger.warning('Export adapter misssing.')
-        return
-
-    context.writeDataFile(_FILENAME, exporter.body, exporter.mime_type)
+    exportObjects(tool, '', context)

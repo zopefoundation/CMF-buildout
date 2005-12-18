@@ -17,9 +17,7 @@ $Id$
 
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from zope.app import zapi
 
-from Products.GenericSetup.interfaces import IBody
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import NodeAdapterBase
@@ -30,8 +28,6 @@ from Products.CMFCore.DirectoryView import createDirectoryView
 from Products.CMFCore.interfaces import IDirectoryView
 from Products.CMFCore.interfaces import ISkinsTool
 from Products.CMFCore.utils import getToolByName
-
-_FILENAME = 'skins.xml'
 
 
 class DirectoryViewNodeAdapter(NodeAdapterBase):
@@ -64,6 +60,8 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
     __used_for__ = ISkinsTool
 
     _LOGGER_ID = 'skins'
+
+    name = 'skins'
 
     def _exportNode(self):
         """Export the object as a DOM node.
@@ -208,36 +206,18 @@ def importSkinsTool(context):
     """Import skins tool FSDirViews and skin paths from an XML file.
     """
     site = context.getSite()
-    logger = context.getLogger('skins')
     tool = getToolByName(site, 'portal_skins')
 
-    body = context.readDataFile(_FILENAME)
-    if body is None:
-        logger.info('Nothing to import.')
-        return
-
-    importer = zapi.queryMultiAdapter((tool, context), IBody)
-    if importer is None:
-        logger.warning('Import adapter misssing.')
-        return
-
-    importer.body = body
-    importObjects(tool, 'skins', context)
+    importObjects(tool, '', context)
 
 def exportSkinsTool(context):
     """Export skins tool FSDVs and skin paths as an XML file.
     """
     site = context.getSite()
-    logger = context.getLogger('skins')
     tool = getToolByName(site, 'portal_skins', None)
     if tool is None:
+        logger = context.getLogger('skins')
         logger.info('Nothing to export.')
         return
 
-    exporter = zapi.queryMultiAdapter((tool, context), IBody)
-    if exporter is None:
-        logger.warning('Export adapter misssing.')
-        return
-
-    context.writeDataFile(_FILENAME, exporter.body, exporter.mime_type)
-    exportObjects(tool, 'skins', context)
+    exportObjects(tool, '', context)

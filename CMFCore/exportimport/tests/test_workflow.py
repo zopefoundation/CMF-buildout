@@ -401,7 +401,7 @@ def test_suite():
         unittest.makeSuite(exportWorkflowToolTests),
         unittest.makeSuite(importWorkflowToolTests),
         unittest.makeSuite(importWorkflowToolV1Tests),
-       ))
+        ))
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

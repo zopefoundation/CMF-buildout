@@ -625,7 +625,7 @@ def test_suite():
         unittest.makeSuite(exportSkinsToolTests),
         unittest.makeSuite(importSkinsToolTests),
         unittest.makeSuite(importSkinsToolV1Tests),
-       ))
+        ))
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

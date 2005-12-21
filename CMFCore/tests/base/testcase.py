@@ -125,6 +125,9 @@ class RequestTest( TransactionalTest ):
         self.REQUEST  = root.REQUEST
         self.RESPONSE = root.REQUEST.RESPONSE
 
+    def tearDown(self):
+        self.REQUEST.close()
+        TransactionalTest.tearDown(self)
 
 class SecurityTest( TestCase ):
 

@@ -17,3 +17,5 @@ Before CMF 1.6 beta
       in CMF 2.0.
 
     - Reordered base classes of File and Image, to allow use of super().
+
+    - Made unit tests close the request properly.

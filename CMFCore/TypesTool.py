@@ -775,10 +775,11 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
                 # This attempt harbors the problem that the first match on
                 # meta_type will be used. There could potentially be more
                 # than one TypeInformation sharing the same meta_type.
-                warn('Please switch to the new format for typeinfo names '
-                     '\"product_id: type_id (meta_type)\", the old '
-                     'spelling will disappear in CMF 2.0', DeprecationWarning,
-                     stacklevel=2)
+                warn("Please switch to the new format "
+                     "'product_id: type_id (meta_type)' "
+                     "for typeinfo name %r, the old "
+                     "spelling will disappear in CMF 2.0" % typeinfo_name,
+                     DeprecationWarning, stacklevel=2)
 
                 ti_prod, ti_mt = [x.strip() for x in typeinfo_name.split(':')]
 

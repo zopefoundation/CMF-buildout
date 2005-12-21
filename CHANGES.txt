@@ -262,6 +262,8 @@ HEAD only (unreleased)
 
     - Workflow: Removed deprecated WorkflowMethod machinery.
 
+    - Made unit tests close the request properly.
+
 CMF 1.5.x
 
   For a complete list see CHANGES.txt of CMF-1_5-branch.

@@ -91,6 +91,7 @@ class CookieCrumblerTests (unittest.TestCase):
 
 
     def tearDown(self):
+        self.req.close()
         noSecurityManager()
 
     def test_z3interfaces(self):

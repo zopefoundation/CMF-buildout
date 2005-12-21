@@ -152,6 +152,10 @@ class SecurityRequestTest( SecurityTest ):
         SecurityTest.setUp(self)
         self.root = makerequest(self.root)
 
+    def tearDown(self):
+        self.root.REQUEST.close()
+        SecurityTest.tearDown(self)
+
 try:
     __file__
 except NameError:

@@ -1,4 +1,4 @@
-RELEASE.txt - notes for creating a CMF release
+RELEASE.txt - how to create a CMF release
 
   Most of the work necessary to create a CMF release is done by the script
   'slurp_release.py', which can always be found in the root of the CMF 

@@ -479,6 +479,7 @@ class FactoryTypeInformation(TypeInformation):
     implements(ITypeInformation)
     __implements__ = z2ITypeInformation
 
+    meta_type = 'Factory-based Type Information'
     security = ClassSecurityInfo()
 
     _properties = (TypeInformation._basic_properties + (
@@ -586,6 +587,7 @@ class ScriptableTypeInformation( TypeInformation ):
     implements(ITypeInformation)
     __implements__ = z2ITypeInformation
 
+    meta_type = 'Scriptable Type Information'
     security = ClassSecurityInfo()
 
     _properties = (TypeInformation._basic_properties + (
@@ -762,7 +764,7 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
         if typeinfo_name:
             info = self.listDefaultTypeInformation()
 
-            # Nasty orkaround to stay backwards-compatible
+            # Nasty workaround to stay backwards-compatible
             # This workaround will disappear in CMF 2.0
             if typeinfo_name.endswith(')'):
                 # This is a new-style name. Proceed normally.
@@ -790,9 +792,15 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
                         break
 
             if fti is None:
-                raise BadRequest('%s not found.' % typeinfo_name)
-            if not id:
-                id = fti.get('id', None)
+                warn("Typeinfo name %r not found. "
+                     "Note that the typeinfo_name "
+                     "argument will not be used at all "
+                     "in CMF 2.0." % typeinfo_name,
+                     DeprecationWarning, stacklevel=2)
+            else:
+                if not id:
+                    id = fti.get('id', None)
+
         if not id:
             raise BadRequest('An id is required.')
         for mt in Products.meta_types:

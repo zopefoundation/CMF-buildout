@@ -19,3 +19,6 @@ Before CMF 1.6 beta
     - Reordered base classes of File and Image, to allow use of super().
 
     - Made unit tests close the request properly.
+
+    - Changed TypesTool.manage_addTypeInformation method to log a warning
+      instead of raise an exception if the typeinfo_name is not found.

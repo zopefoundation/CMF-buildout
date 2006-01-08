@@ -122,14 +122,13 @@ security.declarePrivate('_checkPermission')
 def _checkPermission(permission, obj):
     """ Check if the current user has the permission on the given object.
     """
-    # this code is ported from ZopeSecurityPolicy.checkPermission
+    # this code is ported from Zope 2.8's ZopeSecurityPolicy.checkPermission
     roles = rolesForPermissionOn(permission, obj)
     if isinstance(roles, basestring):
         roles = [roles]
     context = getSecurityManager()._context
 
     # check executable owner and proxy roles
-    # this code is ported from ZopeSecurityPolicy.validate
     stack = context.stack
     if stack:
         eo = stack[-1]
@@ -139,12 +138,14 @@ def _checkPermission(permission, obj):
                 return 0
             proxy_roles = getattr(eo, '_proxy_roles', None)
             if proxy_roles:
-                if obj is not aq_base(obj):
-                    if not owner._check_context(obj):
-                        return 0
+                owner = eo.getWrappedOwner()
+                if owner is not None:
+                    if obj is not aq_base(obj):
+                        if not owner._check_context(obj):
+                            return 0
                 for r in proxy_roles:
                     if r in roles:
-                         return 1
+                        return 1
                 return 0
 
     return context.user.allowed(obj, roles)

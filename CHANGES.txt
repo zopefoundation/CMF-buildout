@@ -1,5 +1,12 @@
 After CMF 1.5.5
 
+  Bug Fixes
+
+    - CMFCore utils: Synced _checkPermission with Zope 2.8.5 code.
+      checkPermission of Zope 2.8.5 and later contains bug fixes and respects
+      proxy roles, but for backwards compatibility CMF 1.5 still needs its own
+      implementation.
+
   Others
 
     - Made cut / copy / paste tests more independent from implementation

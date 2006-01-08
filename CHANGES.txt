@@ -164,6 +164,9 @@ HEAD only (unreleased)
 
   Others
 
+    - CMFCore utils: Made _checkPermission depend on Zope's checkPermission.
+      There is no longer a need to modify the checkPermission behavior in CMF.
+
     - TypeInformation: Removed support for old setting formats.
       If TypeInformation objects are initialized with keyword arguments,
       'actions' and 'aliases' keys have to use the format introduced in

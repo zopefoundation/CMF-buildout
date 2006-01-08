@@ -27,7 +27,6 @@ from AccessControl import ModuleSecurityInfo
 from AccessControl.Permission import Permission
 from AccessControl.PermissionRole import rolesForPermissionOn
 from AccessControl.Role import gather_permissions
-from Acquisition import aq_base
 from Acquisition import aq_get
 from Acquisition import aq_inner
 from Acquisition import aq_parent
@@ -115,39 +114,12 @@ def tuplize( valueName, value ):
 #   Security utilities, callable only from unrestricted code.
 #
 security.declarePrivate('_getAuthenticatedUser')
-def _getAuthenticatedUser( self ):
+def _getAuthenticatedUser(self):
     return getSecurityManager().getUser()
 
 security.declarePrivate('_checkPermission')
 def _checkPermission(permission, obj):
-    """ Check if the current user has the permission on the given object.
-    """
-    # this code is ported from ZopeSecurityPolicy.checkPermission
-    roles = rolesForPermissionOn(permission, obj)
-    if isinstance(roles, basestring):
-        roles = [roles]
-    context = getSecurityManager()._context
-
-    # check executable owner and proxy roles
-    # this code is ported from ZopeSecurityPolicy.validate
-    stack = context.stack
-    if stack:
-        eo = stack[-1]
-        owner = eo.getOwner()
-        if owner is not None:
-            if not owner.allowed(obj, roles):
-                return 0
-            proxy_roles = getattr(eo, '_proxy_roles', None)
-            if proxy_roles:
-                if obj is not aq_base(obj):
-                    if not owner._check_context(obj):
-                        return 0
-                for r in proxy_roles:
-                    if r in roles:
-                         return 1
-                return 0
-
-    return context.user.allowed(obj, roles)
+    return getSecurityManager().checkPermission(permission, obj)
 
 security.declarePrivate('_verifyActionPermissions')
 def _verifyActionPermissions(obj, action):

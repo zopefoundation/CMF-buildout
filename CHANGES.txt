@@ -13,6 +13,9 @@ Before CMF 1.6 beta
 
   Others
 
+    - CMFCore utils: Made _checkPermission depend on Zope's checkPermission.
+      There is no longer a need to modify the checkPermission behavior in CMF.
+
     - Converted CMFSetup into a pure legacy package. CMFSetup will be removed
       in CMF 2.0.
 

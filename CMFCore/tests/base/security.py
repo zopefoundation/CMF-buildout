@@ -67,6 +67,9 @@ class OmnipotentUser( Implicit ):
     def getRolesInContext(self, object):
         return ('Manager',)
 
+    def _check_context(self, object):
+        return True
+
 
 class UserWithRoles( Implicit ):
     """

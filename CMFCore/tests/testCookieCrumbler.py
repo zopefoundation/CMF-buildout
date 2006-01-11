@@ -93,6 +93,7 @@ class CookieCrumblerTests (unittest.TestCase):
 
 
     def tearDown(self):
+        self.req.close()
         noSecurityManager()
 
 

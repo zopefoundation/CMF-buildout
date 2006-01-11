@@ -102,6 +102,9 @@ class RequestTest( TransactionalTest ):
         self.REQUEST  = root.REQUEST
         self.RESPONSE = root.REQUEST.RESPONSE
 
+    def tearDown(self):
+        self.REQUEST.close()
+        TransactionalTest.tearDown(self)
 
 class SecurityTest( TestCase ):
 
@@ -125,6 +128,10 @@ class SecurityRequestTest( SecurityTest ):
     def setUp(self):
         SecurityTest.setUp(self)
         self.root = makerequest(self.root)
+
+    def tearDown(self):
+        self.root.REQUEST.close()
+        SecurityTest.tearDown(self)
 
 try:
     __file__

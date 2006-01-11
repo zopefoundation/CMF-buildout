@@ -122,6 +122,7 @@ class CalendarRequestTests(unittest.TestCase, WarningInterceptor):
                               app.session_data_manager.getSessionData )
 
     def tearDown(self):
+        self.app.REQUEST.close()
         noSecurityManager()
         transaction.abort()
         self.app._p_jar.close()

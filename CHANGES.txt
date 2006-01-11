@@ -9,6 +9,8 @@ After CMF 1.5.5
 
   Others
 
+    - Made unit tests close the request properly.
+
     - Made cut / copy / paste tests more independent from implementation
       details of '_verifyObjectPaste'.
 

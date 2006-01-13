@@ -181,6 +181,14 @@ class FSFileTests( RequestTest, FSDVTest):
         self.assertEqual( self.RESPONSE.getHeader( 'Last-Modified'.lower() )
                         , rfc1123_date( mod_time ) )
 
+    def test_utf8charset_detection( self ):
+        file_name = 'testUtf8.js'
+        file = self._makeOne(file_name, file_name)
+        file = file.__of__(self.root)
+        data = file.index_html(self.REQUEST, self.RESPONSE)
+        self.assertEqual(self.RESPONSE.getHeader('content-type'),
+                         'application/x-javascript; charset=utf-8')
+
 
 def test_suite():
     return unittest.TestSuite((

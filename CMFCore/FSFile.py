@@ -15,6 +15,7 @@
 $Id$
 """
 
+import codecs
 import Globals
 from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
@@ -79,6 +80,11 @@ class FSFile(FSObject):
                 body = body.data
             content_type, enc=guess_content_type(
                 getattr(file, 'filename',id), body, content_type)
+            if (enc is None
+                and (content_type.startswith('text/') or
+                     content_type.startswith('application/'))
+                and body.startswith(codecs.BOM_UTF8)):
+                content_type += '; charset=utf-8'
 
         return content_type
 

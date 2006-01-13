@@ -11,6 +11,9 @@ Before CMF 1.6 beta
 
     - Back-ported the GenericSetup style of site creation from CMF trunk
 
+    - FSFile: autodetect the encoding of UTF-8 text files with a
+      suitable Byte Order Mark (0xEF 0xBB 0xBF).
+
   Others
 
     - CMFCore utils: Made _checkPermission depend on Zope's checkPermission.

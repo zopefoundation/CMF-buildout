@@ -1,27 +1,23 @@
-Installing CMF 1.5.0beta
+Installing CMF 2.0
 
   Requirements
 
-    - Zope v. 2.8.2 or later
-
-    - Five v. 1.2 or later (installing a newer version of Five in
-      $INSTANCE_HOME/Products is sufficient to "shadow" the version which
-      ships with Zope).
+    - Zope v. 2.9.0 or later
 
   Assumptions
 
     - New installation
 
     - Zope configured using INSTANCE_HOME, /var/zope, and
-      SOFTWARE_HOME, /usr/local/zope/Zope-2.7.0
+      SOFTWARE_HOME, /usr/local/zope/Zope-2.9.0
 
   Procedure
 
-    1. Unpack the CMF-1.5.0beta.tar.gz tarball into a working
+    1. Unpack the CMF-2.X.tar.gz tarball into a working
        directory. For instance::
 
         $ cd /usr/local/zope
-        $ tar xzf /tmp/CMF-1.5.0beta.tar.gz
+        $ tar xzf /tmp/CMF-2.X.tar.gz
 
        Note for Windows users:  if you are using WinZip to unpack
           the file, be *sure* to disable the "TAR file smart CR/LF
@@ -34,19 +30,21 @@ Installing CMF 1.5.0beta
        For instance::
 
         $ cd /var/zope/Products  # /var/zope is INSTANCE_HOME
-        $ ln -s /usr/local/zope/CMF-1.5.0beta/CMFCore .
-        $ ln -s /usr/local/zope/CMF-1.5.0beta/CMFDefault .
-        $ ln -s /usr/local/zope/CMF-1.5.0beta/CMFTopic .
-        $ ln -s /usr/local/zope/CMF-1.5.0beta/CMFActionIcons .
-        $ ln -s /usr/local/zope/CMF-1.5.0beta/CMFCalendar .
-        $ ln -s /usr/local/zope/CMF-1.5.0beta/CMFSetup .
-        $ ln -s /usr/local/zope/CMF-1.5.0beta/CMFUid .
-        $ ln -s /usr/local/zope/CMF-1.5.0beta/DCWorkflow .
+        $ ln -s /usr/local/zope/CMF-2.X/CMFCore .
+        $ ln -s /usr/local/zope/CMF-2.X/CMFDefault .
+        $ ln -s /usr/local/zope/CMF-2.X/CMFTopic .
+        $ ln -s /usr/local/zope/CMF-2.X/CMFActionIcons .
+        $ ln -s /usr/local/zope/CMF-2.X/CMFCalendar .
+        $ ln -s /usr/local/zope/CMF-2.X/CMFSetup .
+        $ ln -s /usr/local/zope/CMF-2.X/CMFUid .
+        $ ln -s /usr/local/zope/CMF-2.X/DCWorkflow .
+        $ ln -s /usr/local/zope/CMF-2.x/GenericSetup .
 
        or, as a shortcut::
 
-        $ ln -s /usr/local/zope/CMF-1.5.0beta/CMF* .
-        $ ln -s /usr/local/zope/CMF-1.5.0beta/DCWorkflow .
+        $ ln -s /usr/local/zope/CMF-2.X/CMF* .
+        $ ln -s /usr/local/zope/CMF-2.X/DCWorkflow .
+        $ ln -s /usr/local/zope/CMF-2.x/GenericSetup .
 
        Since linking doesn't apply on Windows, you will need
        to cut or copy the files from the place where you unpacked
@@ -58,51 +56,17 @@ Installing CMF 1.5.0beta
     4. Create a CMF Site object. join, and begin adding content.
        Enjoy!
 
-    5. If you want to use CMFCalendar: Build and run the installation
-       ExternalMethod as described in CMFCalendar/INSTALL.txt.
+    5. If you want to use addon functionalities such as CMFCalendar, CMFTopic
+       or CMFUid choose the extension when you set up the CMF site object,
+       or apply the extension from the portal_setup tool at any time after 
+       site creation.
 
-Installing Internationalization (I18N) Support for CMF
-
-  Requirements
-
-    - "Localizer":http://www.localizer.org
-
-    - "TranslationService":http://www.zope.org/Members/efge/TranslationService
-
-    - If you don't have the right language files (.po), you have to translate
-      the messages yourself!
-
-  Assumptions
-
-    - CMF is installed as described above.
-
-  Procedure
-
-    1. From the ZMI of your CMFSite, select "Localizer" from the Add list. Use
-       the default values.
-
-    2. From the "Contents" tab of Localizer, select "MessageCatalog" from the
-       Add list. Use 'CMFMessages' as id.
-
-    3. Use the "Languages" tab of CMFMessages to select the languages you want
-       to support.
-
-    4. From the ZMI of your CMFSite, select "Translation Service" from the Add
-       list. Use the default id.
-
-    5. Use the "Configuration" tab of translation_service to set the
-       MessageCatalog for the default domain to 'Localizer/CMFMessages'.
-
-    6. Go again to the MessageCatalog 'CMFMessages'. If you have the right .po
-       files, import them using the "Import/Export" tab.
-       If you have no .po files, collect the message ids by using your site.
-       Use the 'Messages' tab to translate the collected messages.
 
 Upgrading from Earlier Versions
 
   Install the New Software.
 
-    0. "Download":CMF-1.5.0beta.tar.gz the tarball.
+    0. "Download":CMF-2.X.tar.gz the tarball.
 
     1. Copy your "working" products off to one side (in case
        you need / choose to revert).
@@ -114,6 +78,7 @@ Upgrading from Earlier Versions
     3. Restart Zope.
 
   Follow additionnal version-specific information below.
+
 
 Upgrading from versions earlier than CMF 1.3
 
@@ -139,28 +104,3 @@ Upgrading from versions earlier than CMF 1.3
       "(Default)" value from the input fields for the "Folder" and
       "Topic" types and click "Change".
 
-Upgrading from CMF 1.0
-
-  Create and Configure New tools
-
-    'portal_metadata' tool
-
-      1. From the ZMI of your CMFSite, select "CMFDefault Tool"
-         from the Add list.  Select "Default Metadata Tool" and
-         click "Add".
-
-      2. Configure the "Elements" tab, particularly the "Subject"
-         element (give it "suggested" subjects, perhaps by
-         looking at the values on the search page).
-
-    'portal_syndication'
-
-      1. From the ZMI of your CMFSite, select "CMFDefault Tool"
-         from the Add list.  Select "Default Syndication Tool"
-         and click "Add".
-
-      2. Use the "Properties" tab to enable syndication for the
-         site (if desired), and then to configure the "sitewide"
-         policies for outbound syndication.  Once enabled, you
-         will be able to toggle syndication and policies for
-         individual folders as well.

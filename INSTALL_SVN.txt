@@ -11,11 +11,8 @@ Overview
     - See the note below [1] if you want to export or check out
       the sources for a specific version from Subversion.
 
- * Please note that the trunk version of the CMF requires Zope 
-   2.8.2 or later, as well as a more recent version of the Five product
-   (1.2. or later) than the one which sships with Zope.  Installing the
-   later version of Five in $INSTANCE_HOME/Products is sufficient to
-   "shadow" the older version in $SOFTWARE_HOME/Products.
+  * Please note that the trunk version of the CMF requires Zope 
+    2.9.0 or later.
 
   * For help with Subversion in general, see "Version Control with 
     Subversion" at http://svnbook.red-bean.com/
@@ -75,8 +72,6 @@ Installation
 
       - GenericSetup
 
-      - CMFSetup
-
       - CMFActionIcons
 
       - CMFUID
@@ -88,8 +83,8 @@ Installation
   4. Create a CMF Site:
 
      From the management interface, somewhere in the "main" section of your 
-     site (*not* the Control_Panel!), select "Configured CMF Site" from the 
-     add list.  Fill out the constructor form, and click the "Add" button.
+     site (*not* the Control_Panel!), select "CMF Site" from the add list.  
+     Fill out the constructor form, and click the "Add" button.
 
 Refreshing your Checkout
 

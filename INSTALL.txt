@@ -35,7 +35,6 @@ Installing CMF 2.0
         $ ln -s /usr/local/zope/CMF-2.X/CMFTopic .
         $ ln -s /usr/local/zope/CMF-2.X/CMFActionIcons .
         $ ln -s /usr/local/zope/CMF-2.X/CMFCalendar .
-        $ ln -s /usr/local/zope/CMF-2.X/CMFSetup .
         $ ln -s /usr/local/zope/CMF-2.X/CMFUid .
         $ ln -s /usr/local/zope/CMF-2.X/DCWorkflow .
         $ ln -s /usr/local/zope/CMF-2.x/GenericSetup .

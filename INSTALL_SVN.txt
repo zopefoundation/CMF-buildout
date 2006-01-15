@@ -51,7 +51,6 @@ Installation
       $ ln -s /tmp/CMF-head/CMFDefault .
       $ ln -s /tmp/CMF-head/CMFTopic .
       $ ln -s /tmp/CMF-head/GenericSetup .
-      $ ln -s /tmp/CMF-head/CMFSetup .
       $ ln -s /tmp/CMF-head/CMFActionIcons .
       $ ln -s /tmp/CMF-head/CMFUID .
       $ ln -s /tmp/CMF-head/DCWorkflow .

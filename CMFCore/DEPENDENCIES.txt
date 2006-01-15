@@ -1,3 +1,2 @@
-Zope >= 2.8.5
-Five >= 1.2
+Zope >= 2.9.0
 GenericSetup

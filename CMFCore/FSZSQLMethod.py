@@ -14,12 +14,12 @@
 
 $Id$
 """
+import logging
 
 import Globals
 from AccessControl import ClassSecurityInfo
 from Acquisition import ImplicitAcquisitionWrapper
 from Products.ZSQLMethods.SQL import SQL
-from zLOG import LOG, ERROR
 
 from DirectoryView import registerFileExtension
 from DirectoryView import registerMetaType
@@ -50,7 +50,10 @@ class FSZSQLMethod(SQL, FSObject):
     security.declareObjectProtected(View)
 
     # Make mutators private
-    security.declarePrivate('manage_main','manage_edit','manage_advanced','manage_advancedForm')
+    security.declarePrivate('manage_main')
+    security.declarePrivate('manage_edit')
+    security.declarePrivate('manage_advanced')
+    security.declarePrivate('manage_advancedForm')
     manage=None
 
     security.declareProtected(ViewManagementScreens, 'manage_customise')
@@ -103,7 +106,8 @@ class FSZSQLMethod(SQL, FSObject):
             connection_id =   ( parameters.get('connection id', '') or
                                 parameters['connection_id'] )
         except KeyError,e:
-            raise ValueError,"The '%s' parameter is required but was not supplied" % e
+            raise ValueError("The '%s' parameter is required "
+                             "but was not supplied" % e)
 
         # Optional parameters
         title =           parameters.get('title','')
@@ -137,11 +141,8 @@ class FSZSQLMethod(SQL, FSObject):
                 self._updateFromFS()
                 return self
             except:
-                import sys
-                LOG('FS Z SQL Method',
-                    ERROR,
-                    'Error during __of__',
-                    error=sys.exc_info())
+                logging.exception('FS Z SQL Method',
+                                  'Error during __of__')
                 raise
 
 Globals.InitializeClass(FSZSQLMethod)

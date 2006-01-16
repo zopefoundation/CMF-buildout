@@ -82,8 +82,8 @@ class FSSecurityTests( FSSecurityBase, LogInterceptor ):
         self._checkSettings(self.ob.fake_skin.test4,'Access contents information',0,[])
 
     def test_invalidPermissionNames( self ):
-        import zLOG
-        self._catch_log_errors(zLOG.ERROR)
+        import logging
+        self._catch_log_errors(logging.ERROR)
         # Test for an invalid permission name
         # baseline
         self._checkSettings(self.ob.fake_skin.test5,'View',1,[])

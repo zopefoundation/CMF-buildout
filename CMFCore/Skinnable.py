@@ -18,7 +18,9 @@ the browser request.  Skins are stored in a fixed-name subobject.
 $Id$
 """
 
+import logging
 from thread import get_ident
+
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 from Acquisition import ImplicitAcquisitionWrapper
@@ -189,10 +191,7 @@ class SkinnableObjectManager(ObjectManager):
         except:
             # This shouldn't happen, even if the requested skin
             # does not exist.
-            import sys
-            from zLOG import LOG, ERROR
-            LOG('CMFCore', ERROR, 'Unable to setupCurrentSkin()',
-                error=sys.exc_info())
+            logging.exception('CMFCore', 'Unable to setupCurrentSkin()')
         return w_self
 
     def _checkId(self, id, allow_dup=0):

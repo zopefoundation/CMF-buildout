@@ -15,8 +15,6 @@
 $Id$
 """
 
-from zLOG import LOG, ERROR
-from sys import exc_info
 from os.path import exists
 from ConfigParser import ConfigParser
 from warnings import warn
@@ -90,10 +88,8 @@ class FSMetadata:
             self._security = self._getSectionDict(cfg, 'security',
                                                   self._securityParser)
         except:
-            LOG('FSMetadata',
-                 ERROR,
-                'Error parsing .metadata file',
-                 error=exc_info())
+            logging.exception('FSMetadata',
+                              'Error parsing .metadata file')
 
         # to add in a new value such as proxy roles,
         # just add in the section, call it using getSectionDict
@@ -169,10 +165,8 @@ class FSMetadata:
                 if len(kv) == 2:
                     props[kv[0].strip()] = kv[1].strip()
                 else:
-                    LOG('FSMetadata',
-                        ERROR,
-                        'Error parsing .properties file',
-                        error=exc_info())
+                    logging.exception('FSMetadata',
+                                      'Error parsing .properties file')
 
             return props
 
@@ -207,10 +201,7 @@ class FSMetadata:
                         if role:
                             roles.append(role)
                 except:
-                    LOG('DirectoryView',
-                        ERROR,
-                        'Error reading permission from .security file',
-                        error=exc_info())
-                        # warning use of exc_info is deprecated
+                    logging.exception('DirectoryView',
+                        'Error reading permission from .security file')
                 prm[permission]=(acquire,roles)
             return prm

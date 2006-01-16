@@ -2,6 +2,7 @@ from unittest import TestCase
 import Zope2
 Zope2.startup()
 
+import logging
 import sys
 import time
 from os import chmod, curdir, mkdir, remove, stat, walk
@@ -14,7 +15,6 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
 from Testing.makerequest import makerequest
-import zLOG
 import transaction
 
 from dummy import DummyFolder
@@ -54,31 +54,36 @@ _TRAVERSE_ZCML = """
 
 class LogInterceptor:
 
-    _old_log_write = None
     logged = None
+    installed = False
+    level = 0
 
-    def _catch_log_errors( self, ignored_level=zLOG.PROBLEM ):
+    def _catch_log_errors( self, ignored_level=logging.WARNING ):
 
-        if self._old_log_write is not None:
-            return
+        if self.installed:
+            raise ValueError, 'Already installed filter!'
 
-        def log_write(subsystem, severity, summary, detail, error):
-            if severity > ignored_level:
-                assert 0, "%s(%s): %s" % (subsystem, severity, summary)
-            if self.logged is None:
-                self.logged = []
-            self.logged.append( ( subsystem, severity, summary, detail ) )
+        root_logger = logging.getLogger('')
+        self.installed = True
+        self.level = ignored_level
+        root_logger.addFilter(self)
 
-        self._old_log_write = zLOG.log_write
-        zLOG.log_write = log_write
+    def filter(self, record):
+        if record.levelno > self.level:
+            return True
+        if self.logged is None:
+            self.logged = []
+        self.logged.append(record)
+        return False
 
     def _ignore_log_errors( self ):
 
-        if self._old_log_write is None:
+        if not self.installed:
             return
 
-        zLOG.log_write = self._old_log_write
-        del self._old_log_write
+        root_logger = logging.getLogger('')
+        root_logger.removeFilter(self)
+        self.installed = False
 
 class WarningInterceptor:
 

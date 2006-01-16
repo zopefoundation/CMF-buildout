@@ -167,6 +167,9 @@ HEAD only (unreleased)
 
   Others
 
+    - Replaced use of deprecated 'zLOG' module with standard Python
+      'logging' module.
+
     - CMFCore utils: Made _checkPermission depend on Zope's checkPermission.
       There is no longer a need to modify the checkPermission behavior in CMF.
 

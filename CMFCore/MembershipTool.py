@@ -14,6 +14,7 @@
 
 $Id$
 """
+import logging
 
 from AccessControl import ClassSecurityInfo
 from AccessControl.User import nobody
@@ -144,13 +145,8 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
             except ConflictError:
                 raise
             except:
-                from zLOG import LOG, ERROR
-                import sys
-                LOG('CMFCore.MembershipTool',
-                    ERROR,
-                    'Error during wrapUser',
-                    error=sys.exc_info(),
-                    )
+                logging.exception('CMFCore.MembershipTool',
+                                  'Error during wrapUser')
         return u
 
     security.declareProtected(ManagePortal, 'getPortalRoles')

@@ -17,10 +17,10 @@ Provides support for accessing unique ids on content object.
 $Id$
 """
 
+import logging
 import os
 import Missing
 
-import zLOG
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 from Globals import InitializeClass
@@ -191,7 +191,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         # print a message to the log  if more than one object has
         # the same uid (uups!)
         if len_result > 1:
-            zLOG.LOG("CMUid ASSERT:", zLOG.INFO,
+            logging.info("CMUid ASSERT:",
                      "Uups, %s objects have '%s' as uid!!!" % \
                      (len_result, uid))
 

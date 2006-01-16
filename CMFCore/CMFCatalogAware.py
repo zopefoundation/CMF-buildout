@@ -15,7 +15,8 @@
 $Id$
 """
 
-from zLOG import LOG, PROBLEM
+import logging
+
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 from ExtensionClass import Base
@@ -117,7 +118,7 @@ class CMFCatalogAware(Base):
                 # BBB: Ignore old references to deleted objects.
                 # Can happen only when using
                 # catalog-getObject-raises off in Zope 2.8
-                LOG('reindexObjectSecurity', PROBLEM,
+                logging.warn('reindexObjectSecurity',
                     "Cannot get %s from catalog" % brain_path)
                 continue
             # Recatalog with the same catalog uid.

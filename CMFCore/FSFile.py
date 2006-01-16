@@ -20,7 +20,7 @@ import Globals
 from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
 from OFS.Cache import Cacheable
-from OFS.content_types import guess_content_type
+from zope.app.content_types import guess_content_type
 from OFS.Image import File
 from webdav.common import rfc1123_date
 

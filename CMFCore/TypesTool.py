@@ -15,7 +15,7 @@
 $Id$
 """
 
-from sys import exc_info
+import logging
 from warnings import warn
 
 import Products
@@ -28,7 +28,6 @@ from Globals import InitializeClass
 from OFS.Folder import Folder
 from OFS.ObjectManager import IFAwareObjectManager
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-from zLOG import LOG, ERROR
 from zope.interface import implements
 try:
     from zope.i18nmessageid import MessageFactory
@@ -391,8 +390,8 @@ class FactoryTypeInformation(TypeInformation):
         try:
             p = dispatcher[self.product]
         except AttributeError:
-            LOG('Types Tool', ERROR, '_queryFactoryMethod raised an exception',
-                error=exc_info())
+            logging.exception('Types Tool',
+                              '_queryFactoryMethod raised an exception')
             return default
 
         m = getattr(p, self.factory, None)

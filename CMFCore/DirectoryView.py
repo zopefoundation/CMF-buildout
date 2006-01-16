@@ -15,9 +15,9 @@
 $Id$
 """
 
+import logging
 import re
 from os import path, listdir, stat
-from sys import exc_info
 from sys import platform
 
 from AccessControl import ClassSecurityInfo
@@ -30,7 +30,6 @@ from Globals import package_home
 from Globals import Persistent
 from OFS.Folder import Folder
 from OFS.ObjectManager import bad_id
-from zLOG import LOG, ERROR
 from zope.interface import implements
 
 from FSMetadata import FSMetadata
@@ -141,10 +140,8 @@ class DirectoryInformation:
                     path.walk(self._filepath, self._walker, filelist)
                     filelist.sort()
             except:
-                LOG('DirectoryView',
-                    ERROR,
-                    'Error checking for directory modification',
-                    error=exc_info())
+                logging.exception('DirectoryView',
+                    'Error checking for directory modification')
 
             if mtime != self._v_last_read or filelist != self._v_last_filelist:
                 self._v_last_read = mtime
@@ -166,10 +163,8 @@ class DirectoryInformation:
                 self.data, self.objects = self.prepareContents(registry,
                     register_subdirs=changed)
             except:
-                LOG('DirectoryView',
-                    ERROR,
-                    'Error during prepareContents:',
-                    error=exc_info())
+                logging.exception('DirectoryView',
+                    'Error during prepareContents:')
                 self.data = {}
                 self.objects = ()
 
@@ -245,15 +240,15 @@ class DirectoryInformation:
                         ob = t(name, entry_minimal_fp, fullname=entry,
                                properties=metadata.getProperties())
                     except:
+                        import sys
                         import traceback
-                        typ, val, tb = exc_info()
+                        typ, val, tb = sys.exc_info()
                         try:
+                            logging.exception( 'DirectoryView')
+
                             exc_lines = traceback.format_exception( typ,
                                                                     val,
                                                                     tb )
-                            LOG( 'DirectoryView', ERROR,
-                                 '\n'.join(exc_lines) )
-
                             ob = BadFile( name,
                                           entry_minimal_fp,
                                           exc_str='\r\n'.join(exc_lines),
@@ -269,20 +264,16 @@ class DirectoryInformation:
                             try:
                                 ob.manage_permission(name,roles,acquire)
                             except ValueError:
-                                LOG('DirectoryView',
-                                    ERROR,
-                                    'Error setting permissions',
-                                    error=exc_info())
+                                logging.exception('DirectoryView',
+                                    'Error setting permissions')
 
                     # only DTML Methods and Python Scripts can have proxy roles
                     if hasattr(ob, '_proxy_roles'):
                         try:
                             ob._proxy_roles = tuple(metadata.getProxyRoles())
                         except:
-                            LOG('DirectoryView',
-                                ERROR,
-                                'Error setting proxy role',
-                                error=exc_info())
+                            logging.exception('DirectoryView',
+                                'Error setting proxy role')
 
                     ob_id = ob.getId()
                     data[ob_id] = ob

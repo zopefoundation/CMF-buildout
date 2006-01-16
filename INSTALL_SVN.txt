@@ -12,7 +12,7 @@ Overview
       the sources for a specific version from Subversion.
 
  *Please note that current versions of the CMF (1.6 and later) require Zope 
- 2.8.1 or later.
+ 2.8.1 or later and GenericSetup later than version 1.0.
 
   * For help with Subversion in general, see "Version Control with 
     Subversion" at http://svnbook.red-bean.com/

@@ -16,6 +16,9 @@ Before CMF 1.6 beta
 
   Others
 
+    - Removed GenericSetup as a package inside CMF, it is now a standalone
+      product.
+
     - CMFCore utils: Made _checkPermission depend on Zope's checkPermission.
       There is no longer a need to modify the checkPermission behavior in CMF.
 

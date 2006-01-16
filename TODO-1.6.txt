@@ -1,9 +1,0 @@
-Temporary TODO list for the CMF 1.6 branch - will go away for the final release
-
-  [x] Update deprecation warnings in the code, "will be removed in CMF 1.6"
-      and "will be removed in CMF 1.7" becomes "will be removed in CMF 2.0"
-
-  [x] finish the work that's necessary to make CMFSetup obsolete in CMF 2.0
-
-  [ ] add a module alias for the setup tool to make sure CMF 1.5 setup tools
-      still work in CMF 2.0

@@ -3,7 +3,6 @@ Installing CMF 1.6.x
   Requirements
 
     - Zope 2.8.1 or later
-    - GenericSetup lateer than version 1.0
 
   Assumptions
 
@@ -39,11 +38,13 @@ Installing CMF 1.6.x
         $ ln -s /usr/local/zope/CMF-1.6.x/CMFSetup .
         $ ln -s /usr/local/zope/CMF-1.6.x/CMFUid .
         $ ln -s /usr/local/zope/CMF-1.6.x/DCWorkflow .
+        $ ln -s /usr/local/zope/CMF-1.6.x/GenericSetup .
 
        or, as a shortcut::
 
         $ ln -s /usr/local/zope/CMF-1.6.x/CMF* .
         $ ln -s /usr/local/zope/CMF-1.6.x/DCWorkflow .
+        $ ln -s /usr/local/zope/CMF-1.6.x/GenericSetup .
 
        Since linking doesn't apply on Windows, you will need
        to cut or copy the files from the place where you unpacked

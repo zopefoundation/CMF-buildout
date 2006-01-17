@@ -12,7 +12,7 @@ Overview
       the sources for a specific version from Subversion.
 
  *Please note that current versions of the CMF (1.6 and later) require Zope 
- 2.8.1 or later and GenericSetup later than version 1.0.
+ 2.8.1 or later.
 
   * For help with Subversion in general, see "Version Control with 
     Subversion" at http://svnbook.red-bean.com/
@@ -41,6 +41,8 @@ Installation
 
       - DCWorkflow
 
+      - GenericSetup
+
      ... and several others.
 
   2. Copy or link each of these subdirectories into the 'Products' directory of
@@ -51,6 +53,7 @@ Installation
       $ ln -s /tmp/CMF-head/CMFDefault .
       $ ln -s /tmp/CMF-head/CMFTopic .
       $ ln -s /tmp/CMF-head/DCWorkflow .
+      $ ln -s /tmp/CMF-head/GenericSetup .
       ...
 
   3. Verify filesystem products:
@@ -67,6 +70,8 @@ Installation
       - CMFTopic
 
       - DCWorkflow
+
+      - GenericSetup
 
       ...
 

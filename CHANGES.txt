@@ -168,7 +168,7 @@ HEAD only (unreleased)
   Others
 
     - Moved GenericSetup out of the CMF package, it is now a standalone
-      product.
+      product, but still distributed as part of the CMF package.
 
     - Replaced use of deprecated 'zLOG' module with standard Python
       'logging' module.

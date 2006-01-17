@@ -3,7 +3,6 @@ Installing CMF 2.0
   Requirements
 
     - Zope v. 2.9.0 or later
-    - GenericSetup after version 1.0
 
   Assumptions
 
@@ -38,11 +37,13 @@ Installing CMF 2.0
         $ ln -s /usr/local/zope/CMF-2.X/CMFCalendar .
         $ ln -s /usr/local/zope/CMF-2.X/CMFUid .
         $ ln -s /usr/local/zope/CMF-2.X/DCWorkflow .
+        $ ln -s /usr/local/zope/CMF-2.X/GenericSetup .
 
        or, as a shortcut::
 
         $ ln -s /usr/local/zope/CMF-2.X/CMF* .
         $ ln -s /usr/local/zope/CMF-2.X/DCWorkflow .
+        $ ln -s /usr/local/zope/CMF-2.X/GenericSetup .
 
        Since linking doesn't apply on Windows, you will need
        to cut or copy the files from the place where you unpacked

@@ -1,19 +1,17 @@
-<html xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      metal:use-macro="here/main_template/macros/master">
+<html metal:use-macro="context/main_template/macros/master">
 <body>
-<div metal:fill-slot="main" i18n:domain="cmf_default">
-  <div tal:define="b_start string:0;b_start request/b_start | b_start;
-       newsitems python: here.portal_catalog.searchResults(portal_type='News Item', sort_on='Date', sort_order='reverse', review_state='published');
+
+<metal:slot metal:fill-slot="main" i18n:domain="cmf_default">
+<div class="Desktop" tal:define="b_start string:0;b_start request/b_start | b_start;
+       newsitems python: context.portal_catalog.searchResults(portal_type='News Item', sort_on='Date', sort_order='reverse', review_state='published');
        Batch python:modules['ZTUtils'].Batch;
        global batch python:Batch(newsitems, 10, int(b_start), orphan=1)">
 
- <p class="Desktop"
-    tal:define="p batch/previous" tal:condition="p">
+ <p tal:define="p batch/previous" tal:condition="p">
  <a href=""
     tal:attributes="href string:?b_start=${p/first}"
     i18n:translate=""><span tal:replace="p/length"
-                            i18:name="count">n</span> more recent articles</a>
+                            i18n:name="count">n</span> more recent articles</a>
  </p>
 
  <table cellspacing="0" border="0" width="90%"
@@ -49,19 +47,18 @@
   </td>
  </tr>
  </table>
-<div tal:condition="python:not(newsitems)">
- <p class="Desktop" i18n:translate="">
-  No news is good news!
- </p>
-</div>
- <p class="Desktop"
-    tal:define="n batch/next" tal:condition="n">
+ <div tal:condition="python:not(newsitems)">
+  <p i18n:translate="">No news is good news!</p>
+ </div>
+ <p tal:define="n batch/next" tal:condition="n">
  <a href=""
     tal:attributes="href string:?b_start=${batch/end}"
     i18n:translate=""><span tal:replace="n/length"
                             i18n:name="count">n</span> older articles</a>
  </p>
+
 </div>
-</div>
+</metal:slot>
+
 </body>
 </html>

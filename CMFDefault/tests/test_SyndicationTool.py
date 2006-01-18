@@ -160,14 +160,6 @@ class SyndicationToolTests(SecurityTest):
         # http://www.zope.org/Collectors/CMF/369
         # Make sure we use a suitable base class call when determining
         # syndicatable content
-        try:
-            # This test only makes sense if CMFBTreeFolder is installed,
-            # which depends on the BTreeFolder2 product, which might not
-            # always be available.
-            from Products.CMFCore import CMFBTreeFolder
-        except ImportError:
-            return
-
         from Products.CMFCore.PortalFolder import PortalFolder
         from Products.CMFCore.CMFBTreeFolder import CMFBTreeFolder
         from Products.CMFCore.TypesTool import TypesTool

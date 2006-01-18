@@ -11,24 +11,19 @@ from shutil import copytree, rmtree
 from stat import S_IREAD, S_IWRITE
 from tempfile import mktemp
 
+import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
 from Testing.makerequest import makerequest
-import transaction
+from zope.app.testing.placelesssetup import PlacelessSetup
+from zope.app.testing.placelesssetup import setUp as placelessSetUp
+from zope.app.testing.placelesssetup import tearDown as placelessTearDown
 
 from dummy import DummyFolder
 from security import AnonymousUser
 from security import PermissiveSecurityPolicy
 
-try:
-    from zope.app.testing.placelesssetup import PlacelessSetup
-    from zope.app.testing.placelesssetup import setUp as placelessSetUp
-    from zope.app.testing.placelesssetup import tearDown as placelessTearDown
-except ImportError:  # BBB, Zope3 < 3.1
-    from zope.app.tests.placelesssetup import PlacelessSetup
-    from zope.app.tests.placelesssetup import setUp as placelessSetUp
-    from zope.app.tests.placelesssetup import tearDown as placelessTearDown
 
 _TRAVERSE_ZCML = """
 <configure

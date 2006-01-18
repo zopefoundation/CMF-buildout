@@ -16,15 +16,12 @@ Define tool for mapping CMF actions onto icons.
 
 $Id$
 """
+
 from Products.CMFCore.DirectoryView import registerDirectory
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import ToolInit
-try:
-    from Products.CMFSetup import EXTENSION
-    from Products.CMFSetup import profile_registry
-    from Products.CMFCore.interfaces import ISiteRoot
-    has_profile_registry = True
-except ImportError:
-    has_profile_registry = False
+from Products.GenericSetup import EXTENSION
+from Products.GenericSetup import profile_registry
 
 import ActionIconsTool
 
@@ -39,12 +36,11 @@ def initialize( context ):
             , icon="tool.gif"
             ).initialize( context )
 
-    if has_profile_registry:
-        profile_registry.registerProfile('actionicons',
-                                         'CMFActionIcons',
-                                         'Adds action icon tool / settings.',
-                                         'profiles/actionicons',
-                                         'CMFActionIcons',
-                                         EXTENSION,
-                                         for_=ISiteRoot,
-                                        )
+    profile_registry.registerProfile('actionicons',
+                                     'CMFActionIcons',
+                                     'Adds action icon tool / settings.',
+                                     'profiles/actionicons',
+                                     'CMFActionIcons',
+                                     EXTENSION,
+                                     for_=ISiteRoot,
+                                     )

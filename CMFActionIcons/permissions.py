@@ -19,12 +19,7 @@ from AccessControl import ModuleSecurityInfo
 security = ModuleSecurityInfo('Products.CMFActionIcons.permissions')
 
 security.declarePublic('ManagePortal')
+from Products.CMFCore.permissions import ManagePortal
+
 security.declarePublic('View')
-
-try:
-    from Products.CMFCore.permissions import ManagePortal
-    from Products.CMFCore.permissions import View
-except ImportError: # CMF < 1.5
-    from Products.CMFCore.CMFCorePermissions import ManagePortal
-    from Products.CMFCore.CMFCorePermissions import View
-
+from Products.CMFCore.permissions import View

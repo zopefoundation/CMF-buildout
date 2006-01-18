@@ -19,6 +19,9 @@ from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from Globals import DTMLFile
 from OFS.SimpleItem import SimpleItem
+from zope.app import zapi
+from zope.app.publisher.interfaces.browser import IBrowserMenu
+from zope.app.publisher.browser.menu import getMenu
 
 from ActionInformation import ActionInformation
 from ActionProviderBase import ActionProviderBase
@@ -26,22 +29,6 @@ from Expression import Expression
 from permissions import ManagePortal
 from utils import UniqueObject
 from utils import _dtmldir
-
-try:  # BBB (actually, FFF ;)
-    from zope.app.publisher.browser.globalbrowsermenuservice import \
-        globalBrowserMenuService
-except ImportError:  # Zope3 > 3.0 loses services
-    from zope.app import zapi
-    from zope.app.publisher.interfaces.browser import IBrowserMenu
-    from zope.app.publisher.browser.menu import getMenu
-
-    def _listMenuIds():
-        return zapi.getUtilitiesFor(IBrowserMenu)
-else:
-
-    from browser.globalbrowsermenuservice import getMenu
-    def _listMenuIds():
-        return globalBrowserMenuService._registry.keys()
 
 
 class FiveActionsTool(UniqueObject, SimpleItem, ActionProviderBase):
@@ -86,7 +73,7 @@ class FiveActionsTool(UniqueObject, SimpleItem, ActionProviderBase):
 
         actions = []
 
-        for menu_id in _listMenuIds():
+        for menu_id in zapi.getUtilitiesFor(IBrowserMenu):
             for entry in getMenu(menu_id, object, self.REQUEST):
                 # The action needs a unique name, so we'll build one
                 # from the object_id and the action url. That is sure

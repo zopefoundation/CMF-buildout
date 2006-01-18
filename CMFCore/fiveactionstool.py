@@ -16,66 +16,54 @@ $Id$
 """
 
 from AccessControl import ClassSecurityInfo
+from Acquisition import aq_base
 from Globals import InitializeClass
-from Globals import DTMLFile
 from OFS.SimpleItem import SimpleItem
+
+from Products.CMFCore.ActionInformation import ActionInformation
+from Products.CMFCore.ActionProviderBase import ActionProviderBase
+from Products.CMFCore.Expression import Expression
+from Products.CMFCore.utils import UniqueObject
+
 from zope.app import zapi
 from zope.app.publisher.interfaces.browser import IBrowserMenu
 from zope.app.publisher.browser.menu import getMenu
+    
+def _listMenuIds():
+    return [id for id, utility in zapi.getUtilitiesFor(IBrowserMenu)]
 
-from ActionInformation import ActionInformation
-from ActionProviderBase import ActionProviderBase
-from Expression import Expression
-from permissions import ManagePortal
-from utils import UniqueObject
-from utils import _dtmldir
+from Products.Five import security
+import zope.thread
 
-
-class FiveActionsTool(UniqueObject, SimpleItem, ActionProviderBase):
-    """Five actions tool.
-
-    Provides a bridge that makes Zope 3 menus available as CMF actions.
+class FiveActionsTool( UniqueObject, SimpleItem, ActionProviderBase ):
+    """ Links content to discussions.
     """
 
-    __implements__ = ActionProviderBase.__implements__
+    __implements__ = (ActionProviderBase.__implements__)
 
     id = 'portal_fiveactions'
-    meta_type = 'CMF Five Actions Tool'
+    meta_type = 'Five Actions Tool'
 
     security = ClassSecurityInfo()
 
-    manage_options = (({'label': 'Overview',
-                        'action': 'manage_overview'},
-                       ) +
-                      SimpleItem.manage_options)
-
-    #
-    # ZMI methods
-    #
-
-    security.declareProtected(ManagePortal, 'manage_overview')
-    manage_overview = DTMLFile('explainFiveActionsTool', _dtmldir)
-
-    #
-    # ActionProvider
-    #
+    def getReqestURL(self):
+        return self.REQUEST.URL
 
     security.declarePrivate('listActions')
     def listActions(self, info=None, object=None):
         """ List all the actions defined by a provider.
-        """
-        if object is None and info is not None:
-            # BBB (according to the interface)
-            object = info.content
+        """       
         if object is None:
-            # The tool itself doesn't provide any action
-            return ()
+            if  info is None:
+                # There is no support for global actions
+                return ()
+            else:
+                object = info.content
 
         actions = []
-
-        for menu_id in zapi.getUtilitiesFor(IBrowserMenu):
+        for menu_id in _listMenuIds():
             for entry in getMenu(menu_id, object, self.REQUEST):
-                # The action needs a unique name, so we'll build one
+                # The action needs a unique name, so I'll build one
                 # from the object_id and the action url. That is sure
                 # to be unique.
                 action = str(entry['action'])
@@ -83,21 +71,30 @@ class FiveActionsTool(UniqueObject, SimpleItem, ActionProviderBase):
                     act_id = 'action_%s' % action
                 else:
                     act_id = 'action_%s_%s' % (object.getId(), action)
-
-                if entry['filter'] is None:
+                    
+                if entry.get('filter') is None:
                     filter = None
                 else:
                     filter = Expression(text=str(entry['filter']))
 
+                title = entry['title']
+                # Having bits of unicode here can make rendering very confused,
+                # so we convert it to plain strings, but NOT if it is a 
+                # messageID. In Zope 3.2 there are two types of messages,
+                # Message and MessageID, where MessageID is depracated. We can 
+                # type-check for both but that provokes a deprecation warning, 
+                # so we check for the "domain" attribute instead. 
+                if not hasattr(title, 'domain'):
+                    title = str(title)
                 act = ActionInformation(id=act_id,
-                    title=str(entry['title']),
+                    title=title,
                     action=Expression(text='string:%s' % action),
                     condition=filter,
                     category=str(menu_id),
                     visible=1)
                 actions.append(act)
-
+                
         return tuple(actions)
 
 
-InitializeClass(FiveActionsTool)
+InitializeClass( FiveActionsTool )

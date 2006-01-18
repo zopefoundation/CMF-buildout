@@ -37,6 +37,21 @@ def test_fiveactionstool():
       >>> zcml.load_config('permissions.zcml', Products.Five)
       >>> zcml.load_config('meta.zcml', Products.CMFCore)
       >>> folder = self.folder
+    
+    Do a Zope 2 login:
+    
+      >>> from Products.Five.security import newInteraction
+      >>> newInteraction()
+
+    The request needs a skin layer for the test.
+    XXX: There is probably a better way to do this.
+    
+      >>> zcml.load_string('''<configure xmlns="http://namespaces.zope.org/five">
+      ...       <implements class="ZPublisher.HTTPRequest.HTTPRequest"
+      ...          interface="zope.publisher.interfaces.browser.IDefaultBrowserLayer"
+      ...          />
+      ...     </configure>''')
+      
 
     Let's create a Five actions tool:
 
@@ -59,7 +74,7 @@ def test_fiveactionstool():
     that 'action_content_protected.html' is not present, as it was
     protected by a more restrictive permission:
 
-      >>> actions = tool.listActions(object=foo)
+      >>> actions = tool.listActions(object=foo, info="kuk")
       >>> [(action.category, action.id) for action in actions]
       [('mymenu', 'action_foo_public.html')]
 

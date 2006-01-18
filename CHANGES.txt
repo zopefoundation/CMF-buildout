@@ -219,7 +219,7 @@ HEAD only (unreleased)
     - Some simplifications to the slurp_release release helper script and
       updates to the RELEASE.txt release instructions.
 
-    - The CMF now depends on Zope 2.8.1 including Five.
+    - The CMF now depends on Zope 2.9.0 including Five.
 
     - Non-release packages moved out of the /CMF/ repository package:
 

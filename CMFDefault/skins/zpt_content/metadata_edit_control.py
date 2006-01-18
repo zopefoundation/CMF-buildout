@@ -2,7 +2,7 @@
 ##
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.exceptions import ResourceLockedError
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 dtool = getToolByName(script, 'portal_discussion')
 

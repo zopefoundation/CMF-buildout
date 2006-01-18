@@ -3,7 +3,7 @@
 ##
 from Products.CMFDefault.exceptions import CopyError
 from Products.CMFDefault.exceptions import zExceptions_Unauthorized
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 if context.cb_dataValid:
     try:

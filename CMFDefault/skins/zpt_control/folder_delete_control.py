@@ -1,7 +1,7 @@
 ##parameters=ids, **kw
 ##title=Delete objects from a folder
 ##
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 context.manage_delObjects( list(ids) )
 

@@ -28,14 +28,8 @@ from Globals import InitializeClass
 from OFS.Folder import Folder
 from OFS.ObjectManager import IFAwareObjectManager
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from zope.i18nmessageid import Message
 from zope.interface import implements
-try:
-    from zope.i18nmessageid import MessageFactory
-except ImportError: # BBB
-    from zope.i18nmessageid import MessageIDFactory as MessageFactory
-
-def MessageID(val, domain): # XXX performance?
-    return MessageFactory(domain)(val)
 
 from ActionProviderBase import ActionProviderBase
 from exceptions import AccessControl_Unauthorized
@@ -193,7 +187,7 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
             used twice, under different names.
         """
         if self.title and self.i18n_domain:
-            return MessageID(self.title, self.i18n_domain)
+            return Message(self.title, self.i18n_domain)
         else:
             return self.title or self.getId()
 
@@ -204,7 +198,7 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
             for display in a "constructor list").
         """
         if self.description and self.i18n_domain:
-            return MessageID(self.description, self.i18n_domain)
+            return Message(self.description, self.i18n_domain)
         else:
             return self.description
 

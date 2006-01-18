@@ -23,6 +23,7 @@ from Globals import InitializeClass
 from OFS.ObjectManager import IFAwareObjectManager
 from OFS.OrderedFolder import OrderedFolder
 from OFS.SimpleItem import SimpleItem
+from zope.i18nmessageid import Message
 from zope.interface import implements
 
 from Expression import Expression
@@ -35,7 +36,6 @@ from utils import _checkPermission
 from utils import _wwwdir
 from utils import getToolByName
 from utils import SimpleItemWithProperties
-from utils import MessageFactory
 
 
 _unchanged = [] # marker
@@ -145,7 +145,7 @@ class Action(SimpleItemWithProperties):
             elif id == 'i18n_domain':
                 continue
             elif self.i18n_domain and id in ('title', 'description'):
-                val = MessageFactory(self.i18n_domain)(val)
+                val = Message(val, self.i18n_domain)
             lazy_map[id] = val
 
         return (lazy_map, lazy_keys)

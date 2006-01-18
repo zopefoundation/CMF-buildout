@@ -1,7 +1,7 @@
 ##parameters=remote_url, **kw
 ##
 from Products.CMFDefault.exceptions import ResourceLockedError
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 if remote_url != context.remote_url:
     try:

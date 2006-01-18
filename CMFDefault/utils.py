@@ -25,13 +25,9 @@ from sgmllib import SGMLParser
 from AccessControl import ModuleSecurityInfo
 from Globals import package_home
 from ZTUtils.Zope import complex_marshal
+from zope.i18nmessageid import MessageFactory
 
 from exceptions import IllegalHTML
-
-try:
-    from zope.i18nmessageid import MessageFactory
-except ImportError: # BBB
-    from zope.i18nmessageid import MessageIDFactory as MessageFactory
 
 
 security = ModuleSecurityInfo( 'Products.CMFDefault.utils' )
@@ -432,5 +428,5 @@ def toUnicode(value, charset=None):
     else:
         return value
 
-security.declarePublic('MessageID')
-MessageID = MessageFactory('cmf_default')
+security.declarePublic('Message')
+Message = MessageFactory('cmf_default')

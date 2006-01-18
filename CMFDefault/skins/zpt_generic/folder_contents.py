@@ -9,7 +9,7 @@ from Products.CMFDefault.permissions import ListFolderContents
 from Products.CMFDefault.permissions import ManageProperties
 from Products.CMFDefault.permissions import ViewManagementScreens
 from Products.CMFDefault.utils import html_marshal
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 mtool = getToolByName(script, 'portal_membership')
 utool = getToolByName(script, 'portal_url')

@@ -2,7 +2,7 @@
 ##title=Copy objects from a folder to the clipboard
 ##
 from Products.CMFDefault.exceptions import CopyError
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 try:
     context.manage_copyObjects(ids, context.REQUEST)

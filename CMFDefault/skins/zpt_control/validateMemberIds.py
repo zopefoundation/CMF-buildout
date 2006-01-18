@@ -1,6 +1,6 @@
 ##parameters=ids=(), **kw
 ##
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 if ids:
     return context.setStatus(True)

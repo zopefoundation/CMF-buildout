@@ -25,7 +25,7 @@ from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 
 from permissions import ManagePortal
-from utils import MessageID as _
+from utils import Message as _
 
 
 class RegistrationTool(BaseTool):

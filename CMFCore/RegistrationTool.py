@@ -35,7 +35,7 @@ from utils import _checkPermission
 from utils import _dtmldir
 from utils import _limitGrantedRoles
 from utils import getToolByName
-from utils import MessageID as _
+from utils import Message as _
 from utils import UniqueObject
 
 

@@ -2,7 +2,7 @@
 ##
 from Products.CMFDefault.exceptions import EditingConflict
 from Products.CMFDefault.exceptions import ResourceLockedError
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 if text_format != context.text_format or text != context.text:
     try:

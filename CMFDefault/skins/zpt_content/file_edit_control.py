@@ -1,7 +1,7 @@
 ##parameters=file, **kw
 ##
 from Products.CMFDefault.exceptions import ResourceLockedError
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 try:
     context.edit(file=file)

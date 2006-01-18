@@ -3,7 +3,7 @@
 from ZTUtils import Batch
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import html_marshal
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 atool = getToolByName(script, 'portal_actions')
 mtool = getToolByName(script, 'portal_membership')

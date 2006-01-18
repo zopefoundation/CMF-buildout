@@ -2,7 +2,7 @@
 ##
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.permissions import ManageUsers
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 atool = getToolByName(script, 'portal_actions')
 mtool = getToolByName(script, 'portal_membership')

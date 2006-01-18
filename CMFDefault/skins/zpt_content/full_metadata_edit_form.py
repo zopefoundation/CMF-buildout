@@ -1,6 +1,6 @@
 ##parameters=change='', change_and_edit='', change_and_view=''
 ##
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 form = context.REQUEST.form
 if change and \

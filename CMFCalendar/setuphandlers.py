@@ -31,7 +31,7 @@ def importVarious(context):
 
     # Set up a MetadataTool element policy for events
     try:
-        _ = str # MetadataTool ist not aware of MessageIDs
+        _ = str # MetadataTool ist not aware of Message objects
         mdtool.DCMI.addElementPolicy(
             element='Subject',
             content_type='Event',

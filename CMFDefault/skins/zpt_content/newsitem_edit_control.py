@@ -1,7 +1,7 @@
 ##parameters=text_format, text, description='', **kw
 ##
 from Products.CMFDefault.exceptions import ResourceLockedError
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 if description != context.description or \
         text_format != context.text_format or text != context.text:

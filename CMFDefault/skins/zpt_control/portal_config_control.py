@@ -1,7 +1,7 @@
 ##parameters=**kw
 ##
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 ptool = getToolByName(script, 'portal_properties')
 

@@ -44,15 +44,11 @@ from OFS.PropertyManager import PropertyManager
 from OFS.PropertySheets import PropertySheets
 from OFS.SimpleItem import SimpleItem
 from thread import allocate_lock
+from zope.i18nmessageid import MessageFactory
 
 from exceptions import AccessControl_Unauthorized
 from exceptions import NotFound
 from warnings import warn
-
-try:
-    from zope.i18nmessageid import MessageFactory
-except ImportError: # BBB
-    from zope.i18nmessageid import MessageIDFactory as MessageFactory
 
 
 security = ModuleSecurityInfo( 'Products.CMFCore.utils' )
@@ -747,5 +743,5 @@ class SimpleRecord:
         self.__dict__.update(kw)
 
 
-security.declarePublic('MessageID')
-MessageID = MessageFactory('cmf_default')
+security.declarePublic('Message')
+Message = MessageFactory('cmf_default')

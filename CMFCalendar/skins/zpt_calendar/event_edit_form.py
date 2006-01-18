@@ -1,6 +1,6 @@
 ##parameters=change='', change_and_view=''
 ##
-from Products.CMFCalendar.utils import MessageID as _
+from Products.CMFCalendar.utils import Message as _
 
 form = context.REQUEST.form
 if change and \

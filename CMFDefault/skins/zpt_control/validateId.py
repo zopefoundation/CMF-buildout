@@ -1,6 +1,6 @@
 ##parameters=id='', **kw
 ##
-from Products.CMFDefault.utils import MessageID as _
+from Products.CMFDefault.utils import Message as _
 
 if id:
     if context.checkIdAvailable(id):

@@ -970,8 +970,9 @@ def _initDCWorkflowVariables( workflow, variables ):
     for v_info in variables:
 
         id = str( v_info[ 'variable_id' ] ) # no unicode!
-        v = VariableDefinition( id )
-        workflow.variables._setObject( id, v )
+        if not workflow.variables.has_key(id):
+            v = VariableDefinition(id)
+            workflow.variables._setObject(id, v)
         v = workflow.variables._getOb( id )
 
         guard = v_info[ 'guard' ]
@@ -1005,8 +1006,9 @@ def _initDCWorkflowStates( workflow, states ):
     for s_info in states:
 
         id = str( s_info[ 'state_id' ] ) # no unicode!
-        s = StateDefinition( id )
-        workflow.states._setObject( id, s )
+        if not workflow.states.has_key(id):
+            s = StateDefinition(id)
+            workflow.states._setObject(id, s)
         s = workflow.states._getOb( id )
 
         s.setProperties( title = s_info[ 'title' ]
@@ -1042,8 +1044,9 @@ def _initDCWorkflowTransitions( workflow, transitions ):
     for t_info in transitions:
 
         id = str( t_info[ 'transition_id' ] ) # no unicode!
-        t = TransitionDefinition( id )
-        workflow.transitions._setObject( id, t )
+        if not workflow.transitions.has_key(id):
+            t = TransitionDefinition(id)
+            workflow.transitions._setObject(id, t)
         t = workflow.transitions._getOb( id )
 
         trigger_type = list( TRIGGER_TYPES ).index( t_info[ 'trigger' ] )
@@ -1081,9 +1084,9 @@ def _initDCWorkflowWorklists( workflow, worklists ):
     for w_info in worklists:
 
         id = str( w_info[ 'worklist_id' ] ) # no unicode!
-        w = WorklistDefinition( id )
-        workflow.worklists._setObject( id, w )
-
+        if not workflow.worklists.has_key(id):
+            w = WorklistDefinition(id)
+            workflow.worklists._setObject(id, w)
         w = workflow.worklists._getOb( id )
 
         action = w_info[ 'action' ]
@@ -1134,6 +1137,8 @@ def _initDCWorkflowScripts( workflow, scripts, context ):
         elif meta_type == DTMLMethod.meta_type:
             script = DTMLMethod( file, __name__=id )
 
+        if workflow.scripts.has_key(id):
+            workflow.scripts._delObject(id)
         workflow.scripts._setObject( id, script )
 
 #

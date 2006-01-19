@@ -37,21 +37,24 @@ def test_fiveactionstool():
       >>> zcml.load_config('permissions.zcml', Products.Five)
       >>> zcml.load_config('meta.zcml', Products.CMFCore)
       >>> folder = self.folder
+
+    For menus to work, the request must have defaultSkin.
     
-    Do a Zope 2 login:
+      >>> from zope.app.publication.browser import setDefaultSkin
+      >>> setDefaultSkin(self.folder.REQUEST)
+      
+    We need to make Zope 3 use Zope 2s security policy
     
+      >>> from zope.security.management import thread_local
+      >>> thread_local.interaction = None
       >>> from Products.Five.security import newInteraction
       >>> newInteraction()
 
-    The request needs a skin layer for the test.
-    XXX: There is probably a better way to do this.
-    
-      >>> zcml.load_string('''<configure xmlns="http://namespaces.zope.org/five">
-      ...       <implements class="ZPublisher.HTTPRequest.HTTPRequest"
-      ...          interface="zope.publisher.interfaces.browser.IDefaultBrowserLayer"
-      ...          />
-      ...     </configure>''')
-      
+    Log in as manager
+   
+      >>> uf = self.folder.acl_users
+      >>> uf._doAddUser('manager', 'r00t', ['Manager'], [])
+      >>> self.login('manager')
 
     Let's create a Five actions tool:
 
@@ -62,7 +65,8 @@ def test_fiveactionstool():
     Let's create some simple content object providing ISimpleContent:
 
       >>> from Products.Five.tests.testing.simplecontent import SimpleContent
-      >>> foo = SimpleContent('foo', 'Foo')
+      >>> id = self.folder._setObject('foo', SimpleContent('foo', 'Foo'))
+      >>> foo = self.folder.foo
 
     Now we'll load a configuration file specifying some menu and menu
     items for ISimpleContent.
@@ -70,11 +74,20 @@ def test_fiveactionstool():
       >>> import Products.CMFCore.tests
       >>> zcml.load_config('fiveactions.zcml', Products.CMFCore.tests)
 
-    Let's look what the tool lists as actions for such an object. Note
-    that 'action_content_protected.html' is not present, as it was
-    protected by a more restrictive permission:
+    Let's look what the tool lists as actions for such an object. 
 
-      >>> actions = tool.listActions(object=foo, info="kuk")
+      >>> actions = tool.listActions(object=foo)
+      >>> [(action.category, action.id) for action in actions]
+      [('mymenu', 'action_foo_public.html'), ('mymenu', 'action_foo_protected.html')]
+
+    But if we log in as a user who is not manager, we should not get the
+    protected menu item, , as it was protected by a more restrictive permission:
+    
+      >>> uf = self.folder.acl_users
+      >>> uf._doAddUser('user', 'user', [], [])
+      >>> self.login('user')
+      
+      >>> actions = tool.listActions(object=foo)
       >>> [(action.category, action.id) for action in actions]
       [('mymenu', 'action_foo_public.html')]
 

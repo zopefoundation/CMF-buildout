@@ -1,0 +1,196 @@
+##############################################################################
+#
+# Copyright (c) 2006 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+msgid ""
+msgstr ""
+"Project-Id-Version: CMF 2.0\n"
+"POT-Creation-Date: Thu Jan 19 12:44:25 2006\n"
+"Language-Team: CMF Developers <zope-cmf@zope.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: CMFCalendar/profiles/default/types/Event.xml:5
+msgid "Event"
+msgstr ""
+
+#: CMFCalendar/profiles/default/types/Event.xml:6
+msgid "Events are objects for use in Calendar topical queries on the catalog."
+msgstr ""
+
+#: CMFCalendar/setuphandlers.py:42
+msgid "Appointment"
+msgstr ""
+
+#: CMFCalendar/setuphandlers.py:43
+msgid "Convention"
+msgstr ""
+
+#: CMFCalendar/setuphandlers.py:44
+msgid "Meeting"
+msgstr ""
+
+#: CMFCalendar/setuphandlers.py:45
+msgid "Social Event"
+msgstr ""
+
+#: CMFCalendar/setuphandlers.py:46
+msgid "Work"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/calendarBox.pt:12
+msgid "CMF Calendar"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/calendarBox.pt:28
+#: CMFCalendar/skins/zpt_calendar/calendarBox.pt:41
+msgid "${DYNAMIC_CONTENT}"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_form.py:20
+msgid "Change"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_form.py:21
+msgid "Change and View"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:101
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:47
+msgid "Stop Date"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:129
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:51
+msgid "Start Time"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:142
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:161
+msgid "am"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:145
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:164
+msgid "pm"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:148
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:53
+msgid "Stop Time"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:169
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:60
+msgid "Description"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:17
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:14
+msgid "Event Name"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:23
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:16
+msgid "Contact Name"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:31
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:20
+msgid "Location"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:37
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:22
+msgid "Contact Email"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:45
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:29
+msgid "Event type"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:5
+msgid "Edit: ${obj_title}"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:59
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:32
+msgid "Contact Phone"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:67
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:36
+msgid "Event URL"
+msgstr ""
+
+#: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:75
+#: CMFCalendar/skins/zpt_calendar/event_view.pt:45
+msgid "Start Date"
+msgstr ""
+
+msgid "Su"
+msgstr ""
+
+msgid "Mo"
+msgstr ""
+
+msgid "Tu"
+msgstr ""
+
+msgid "We"
+msgstr ""
+
+msgid "Th"
+msgstr ""
+
+msgid "Fr"
+msgstr ""
+
+msgid "Sa"
+msgstr ""
+
+msgid "January"
+msgstr ""
+
+msgid "February"
+msgstr ""
+
+msgid "March"
+msgstr ""
+
+msgid "April"
+msgstr ""
+
+msgid "May"
+msgstr ""
+
+msgid "June"
+msgstr ""
+
+msgid "July"
+msgstr ""
+
+msgid "August"
+msgstr ""
+
+msgid "September"
+msgstr ""
+
+msgid "October"
+msgstr ""
+
+msgid "November"
+msgstr ""
+
+msgid "December"
+msgstr ""

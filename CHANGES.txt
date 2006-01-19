@@ -2,6 +2,10 @@ HEAD only (unreleased)
 
   New Features
 
+    - CMFDefault and CMFCalendar: Added locales directories with .pot files.
+      A modified i18nextract.py script from Zope 3 is used to extract
+      translatable strings from .py, .pt, .html and .xml files.
+
     - FSFile: autodetect the encoding of UTF-8 text files with a
       suitable Byte Order Mark (0xEF 0xBB 0xBF).
 
@@ -88,7 +92,7 @@ HEAD only (unreleased)
       MassageID objects instead of strings. This allows to use different i18n
       domains for different TypeInfos and Actions.
 
-    - Replaced user messages by MassageIDs to improve the i18n support.
+    - Replaced user messages by Massage objects to improve the i18n support.
 
     - CMFDefault GenericSetup profile: Added CMF BTree Folder to the list of
       automatically instantiated types in the types tool.

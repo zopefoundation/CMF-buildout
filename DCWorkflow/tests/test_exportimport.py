@@ -1877,11 +1877,20 @@ class Test_importWorkflow( _WorkflowSetup
     def _importNormalWorkflow( self, wf_id, wf_title, wf_initial_state ):
         from Products.CMFCore.exportimport.workflow import importWorkflowTool
 
-        site = self._initSite()
-        wf_tool = site.portal_workflow
+        site, context = self._prepareImportNormalWorkflow(
+            wf_id, wf_title, wf_initial_state)
+
+        importWorkflowTool(context)
+
+        return site.portal_workflow
+
+    def _prepareImportNormalWorkflow(self, wf_id, wf_title, wf_initial_state,
+                                     site=None, purge=True):
+        if site is None:
+            site = self._initSite()
         workflow_filename = wf_id.replace(' ', '_')
 
-        context = DummyImportContext( site )
+        context = DummyImportContext(site, purge=purge)
         context._files[ 'workflows.xml'
                       ] = (_NORMAL_TOOL_EXPORT_WITH_FILENAME
                             % { 'workflow_id' : wf_id
@@ -1906,9 +1915,8 @@ class Test_importWorkflow( _WorkflowSetup
         context._files[ 'workflows/%s/scripts/before_open.py' % workflow_filename
                       ] = _BEFORE_OPEN_SCRIPT
 
-        importWorkflowTool( context )
+        return site, context
 
-        return wf_tool
 
     def _importOldWorkflow( self, wf_id, wf_title, wf_initial_state ):
         from Products.CMFCore.exportimport.workflow import importWorkflowTool
@@ -2061,6 +2069,43 @@ class Test_importWorkflow( _WorkflowSetup
         self.assertEqual( wf_tool._chains_by_type[ 'anothertype' ]
                         , ( WF_ID_NON % 3, )
                         )
+
+    def test_import_twice_nopurge(self):
+        from Products.CMFCore.exportimport.workflow import importWorkflowTool
+
+        WF_ID = 'dcworkflow_purge'
+        WF_TITLE = 'DC Workflow testing purge'
+        WF_INITIAL_STATE = 'closed'
+
+        # Import a first time
+        site, context = self._prepareImportNormalWorkflow(
+            WF_ID, WF_TITLE, WF_INITIAL_STATE)
+        importWorkflowTool(context)
+
+        # Now reimport without purge
+        site, context = self._prepareImportNormalWorkflow(
+            WF_ID, WF_TITLE, WF_INITIAL_STATE, site=site, purge=False)
+        importWorkflowTool(context)
+        workflow = site.portal_workflow.objectValues()[1]
+
+        self.assertEqual(workflow.getId(), WF_ID)
+        self.assertEqual(workflow.meta_type, DCWorkflowDefinition.meta_type)
+        self.assertEqual(workflow.title, WF_TITLE)
+        self.assertEqual(workflow.state_var, 'state')
+        self.assertEqual(workflow.initial_state, WF_INITIAL_STATE)
+        self.assertEqual(len(workflow.variables.objectItems()),
+                         len(_WF_VARIABLES))
+        self.assertEqual(len(workflow.states.objectItems()),
+                         len(_WF_STATES))
+        self.assertEqual(len(workflow.transitions.objectItems()),
+                         len(_WF_TRANSITIONS))
+        self.assertEqual(len(workflow.permissions),
+                         len(_WF_PERMISSIONS))
+        self.assertEqual(len(workflow.scripts.objectItems()),
+                         len(_WF_SCRIPTS))
+        self.assertEqual(len(workflow.worklists.objectItems()),
+                         len(_WF_WORKLISTS))
+
 
     def test_from_empty_dcworkflow_top_level( self ):
 

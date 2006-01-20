@@ -342,6 +342,49 @@ class importActionProvidersTests(_ActionSetup):
         self._compareDOM(text, _NORMAL_EXPORT)
         self.assertEqual(content_type, 'text/xml')
 
+    def test_import_extension(self):
+        from Products.CMFCore.exportimport.actions import importActionProviders
+
+        site = self._initSite(2, 2)
+        atool = site.portal_actions
+        foo = site.portal_foo
+        bar = site.portal_bar
+
+        # Normal import.
+        context = DummyImportContext(site)
+        context._files['actions.xml'] = _NORMAL_EXPORT
+        importActionProviders(context)
+
+        self.assertEqual(len(atool.listActionProviders()), 3)
+        self.assertEqual([a.id for a in foo.listActions()], ['foo'])
+        self.assertEqual([a.id for a in bar.listActions()], ['bar'])
+
+        # Add an action manually to bar, it shouldn't get
+        # removed by the next non-purge import.
+        bar.addAction(id='gee',
+                      name='Gee',
+                      action='geeman',
+                      condition='python:maybe()',
+                      permission=('Manage portal',),
+                      category='dummy',
+                      visible=0)
+        # Modify actions.
+        foo.listActions()[0].title = 'OtherFoo'
+        bar.listActions()[0].title = 'OtherBar'
+
+        self.assertEqual([a.id for a in bar.listActions()], ['bar', 'gee'])
+
+        # Now reimport as extension profile, without purge.
+        context = DummyImportContext(site, False)
+        context._files['actions.xml'] = _NORMAL_EXPORT
+        importActionProviders(context)
+
+        self.assertEqual(len(atool.listActionProviders()), 3)
+        self.assertEqual([a.id for a in foo.listActions()], ['foo'])
+        self.assertEqual(foo.listActions()[0].title, 'Foo')
+        self.assertEqual([a.id for a in bar.listActions()], ['gee', 'bar'])
+        self.assertEqual([a.title for a in bar.listActions()], ['Gee', 'Bar'])
+
     def test_remove_skip_purge(self):
         from Products.CMFCore.exportimport.actions \
                 import importActionProviders

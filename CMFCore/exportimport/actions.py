@@ -122,11 +122,12 @@ class ActionsToolXMLAdapter(XMLAdapterBase):
             if provider_id not in self.context.listActionProviders():
                 self.context.addActionProvider(provider_id)
 
-            # delete any actions that are auto-created
-            provider = getToolByName(self.context, provider_id)
-            num_actions = len(provider.listActions())
-            if num_actions:
-                provider.deleteActions(range(0,num_actions))
+            if self.environ.shouldPurge():
+                # Delete provider's actions
+                provider = getToolByName(self.context, provider_id)
+                num_actions = len(provider.listActions())
+                if num_actions:
+                    provider.deleteActions(range(0, num_actions))
 
             # BBB: for CMF 1.5 profiles
             self._initOldstyleActions(child)
@@ -163,6 +164,12 @@ class ActionsToolXMLAdapter(XMLAdapterBase):
                         break  # only one permission is allowed
                     if permission:
                         break
+
+            # Remove previous action with same id and category.
+            old = [i for (i, action) in enumerate(provider.listActions())
+                   if action.id == action_id and action.category == category]
+            if old:
+                provider.deleteActions(old)
 
             provider.addAction(action_id, title, url_expr,
                                condition_expr, permission,

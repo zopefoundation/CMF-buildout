@@ -1,10 +1,14 @@
 Guards
 
   Guard settings control access to the transitions, variables or work
-  lists. If a user possesses any of the permissions or roles
-  specified, or if one of the expressions evaluates as true, then
-  whatever is being guarded is accessible. If no permissions, roles
-  or expressions are specified, access is automatically granted.
+  lists. Guards can be applied based on permissions, roles, groups or
+  a TALES expression. These elements are applied sequentially if they
+  contain values. If one of the conditions in each of the specified
+  permissions, roles or groups is met the guard element will be
+  satisfied. For the guard to allow access, all specified element that
+  contain values must be satisfied.
+  If no permissions, roles or expressions are specified, access is 
+  automatically granted.
  
   You can supply several options in each field by separating them with
   a semicolon.

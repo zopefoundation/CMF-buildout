@@ -2,6 +2,9 @@ After CMF 1.5.5
 
   Bug Fixes
 
+    - Corrected the HelpSystem documentation for DCWorkflow Guards
+      (http://www.zope.org/Collectors/CMF/394)
+
     - CMFCore utils: Synced _checkPermission with Zope 2.8.5 code.
       checkPermission of Zope 2.8.5 and later contains bug fixes and respects
       proxy roles, but for backwards compatibility CMF 1.5 still needs its own

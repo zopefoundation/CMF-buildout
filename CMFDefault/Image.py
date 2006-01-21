@@ -67,23 +67,10 @@ def addImage( self
     self._getOb(id).manage_upload(file)
 
 
-class Image(OFS.Image.Image, PortalContent, DefaultDublinCoreImpl):
+class Image(PortalContent, OFS.Image.Image, DefaultDublinCoreImpl):
 
     """A Portal-managed Image.
     """
-
-    # The order of base classes is very significant in this case.
-    # Image.Image does not store it's id in it's 'id' attribute.
-    # Rather, it has an 'id' method which returns the contents of the
-    # instnace's __name__ attribute.  Inheriting in the other order
-    # obscures this method, resulting in much pulling of hair and
-    # gnashing of teeth and fraying of nerves.  Don't do it.
-    #
-    # Really.
-    # 
-    # Note that if you use getId() to retrieve an object's ID, you will avoid
-    # this problem altogether. getId is the new way, accessing .id is
-    # deprecated.
 
     implements(IDAVAware)
     __implements__ = ( PortalContent.__implements__
@@ -114,6 +101,8 @@ class Image(OFS.Image.Image, PortalContent, DefaultDublinCoreImpl):
                 ):
         OFS.Image.File.__init__( self, id, title, file
                                , content_type, precondition )
+        self._setId(id)
+        delattr(self, '__name__')
 
         # If no file format has been passed in, rely on what OFS.Image.File
         # detected.
@@ -123,6 +112,12 @@ class Image(OFS.Image.Image, PortalContent, DefaultDublinCoreImpl):
         DefaultDublinCoreImpl.__init__( self, title, subject, description
                                , contributors, effective_date, expiration_date
                                , format, language, rights )
+
+    # For old instances where bases had OFS.Image.Image first,
+    # the id was actually stored in __name__.
+    # getId() will do the correct thing here, as id() is callable
+    def id(self):
+        return self.__name__
 
     security.declareProtected(View, 'SearchableText')
     def SearchableText(self):

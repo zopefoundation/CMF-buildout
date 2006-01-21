@@ -280,6 +280,8 @@ HEAD only (unreleased)
 
     - Made unit tests close the request properly.
 
+    - Reordered base classes of File and Image, to allow use of super().
+
 CMF 1.5.x
 
   For a complete list see CHANGES.txt of CMF-1_5-branch.

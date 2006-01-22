@@ -96,7 +96,7 @@ CMF 2.0.0-alpha (2006/01/22)
       MassageID objects instead of strings. This allows to use different i18n
       domains for different TypeInfos and Actions.
 
-    - Replaced user messages by Massage objects to improve the i18n support.
+    - Replaced user messages by Message objects to improve the i18n support.
 
     - CMFDefault GenericSetup profile: Added CMF BTree Folder to the list of
       automatically instantiated types in the types tool.

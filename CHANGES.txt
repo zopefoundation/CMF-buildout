@@ -2,6 +2,10 @@ HEAD only (unreleased)
 
   New Features
 
+    - CMFCore.FSPythonScript:  Customized versions now track the "original"
+      source from which they were customized, and can present a diff between
+      that version and their current source text.
+
     - CMFDefault and CMFCalendar: Added locales directories with .pot files.
       A modified i18nextract.py script from Zope 3 is used to extract
       translatable strings from .py, .pt, .html and .xml files.

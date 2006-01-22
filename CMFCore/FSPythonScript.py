@@ -15,6 +15,7 @@
 $Id$
 """
 
+from difflib import unified_diff
 import new
 
 from AccessControl import ClassSecurityInfo
@@ -23,6 +24,7 @@ from ComputedAttribute import ComputedAttribute
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.Cache import Cacheable
+from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PythonScripts.PythonScript import PythonScript
 from Shared.DC.Scripts.Script import Script
 
@@ -42,6 +44,40 @@ class bad_func_code:
     co_varnames = ()
     co_argcount = 0
 
+
+class CustomizedPythonScript(PythonScript):
+    """ Subclass which captures the "source" version's text.
+    """
+    #meta_type = 'Customized Python Script'  #(need permissions here)
+    security = ClassSecurityInfo()
+
+    def __init__(self, id, text):
+        self._setId(id)
+        self.write(text)
+        self.original_source = text
+
+    security.declareProtected(ViewManagementScreens, 'getDiff')
+    def getDiff(self):
+        """ Return a diff of the current source with the original source.
+        """
+        return unified_diff( self.original_source.splitlines()
+                           , self.read().splitlines()
+                           , 'original'
+                           , 'modified'
+                           , ''
+                           , ''
+                           , lineterm=""
+                           )
+
+    security.declareProtected(ViewManagementScreens, 'manage_showDiff')
+    manage_showDiff = PageTemplateFile('www/cpsDiff.pt', globals())
+
+    manage_options = (PythonScript.manage_options[:1]
+                    + ({'label': 'Diff', 'action': 'manage_showDiff'},)
+                    + PythonScript.manage_options[1:]
+                     )
+
+InitializeClass(CustomizedPythonScript)
 
 class FSPythonScript (FSObject, Script):
     """FSPythonScripts act like Python Scripts but are not directly
@@ -77,8 +113,7 @@ class FSPythonScript (FSObject, Script):
 
     def _createZODBClone(self):
         """Create a ZODB (editable) equivalent of this object."""
-        obj = PythonScript(self.getId())
-        obj.write(self.read())
+        obj = CustomizedPythonScript(self.getId(), self.read())
         return obj
 
     def _readFile(self, reparse):

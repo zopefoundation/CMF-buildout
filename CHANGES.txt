@@ -1,4 +1,4 @@
-HEAD only (unreleased)
+CMF 2.0.0-alpha (2006/01/22)
 
   New Features
 
@@ -286,6 +286,6 @@ HEAD only (unreleased)
 
     - Reordered base classes of File and Image, to allow use of super().
 
-CMF 1.5.x
+CMF 1.5.x and previous
 
-  For a complete list see CHANGES.txt of CMF-1_5-branch.
+  For a complete list of changes see HISTORY.txt.

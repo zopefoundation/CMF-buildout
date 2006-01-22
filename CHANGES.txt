@@ -2,6 +2,10 @@ After CMF 1.5.5
 
   Bug Fixes
 
+    - CMFDefault.DiscussionItem: Deleting a discussion reply would not
+      recurse and left items below the deleted reply still cataloged
+      (http://www.zope.org/Collectors/CMF/391)
+
     - Corrected the HelpSystem documentation for DCWorkflow Guards
       (http://www.zope.org/Collectors/CMF/394)
 

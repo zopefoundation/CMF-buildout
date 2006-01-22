@@ -267,9 +267,11 @@ class DiscussionTests( SecurityTest ):
 
     def test_deleteReplies(self):
         dtool = self.site.portal_discussion
+        ctool = self.site._setObject( 'portal_catalog', CatalogTool() )
         test = self._makeDummyContent('test')
         test.allow_discussion = 1
 
+        # Create a structure 6 levels deep for testing
         talkback = dtool.getDiscussionFor(test)
         id1 = talkback.createReply(title='test1', text='blah')
         reply1 = talkback.getReply(id1)
@@ -278,19 +280,37 @@ class DiscussionTests( SecurityTest ):
         reply2 = talkback1.getReply(id2)
         talkback2 = dtool.getDiscussionFor(reply2)
         id3 = talkback2.createReply(title='test3', text='blah')
-        reply3 = talkback.getReply(id3)
+        reply3 = talkback2.getReply(id3)
         talkback3 = dtool.getDiscussionFor(reply3)
+        id4 = talkback3.createReply(title='test4', text='blah')
+        reply4 = talkback3.getReply(id4)
+        talkback4 = dtool.getDiscussionFor(reply4)
+        id5 = talkback4.createReply(title='test5', text='blah')
+        reply5 = talkback4.getReply(id5)
+        talkback5 = dtool.getDiscussionFor(reply5)
+        id6 = talkback5.createReply(title='test6', text='blah')
+        reply6 = talkback5.getReply(id6)
+        talkback6 = dtool.getDiscussionFor(reply6)
+
+        self.assertEqual(len(talkback.getReplies()), 1)
+        self.assertEqual(len(talkback1.getReplies()), 1)
+        self.assertEqual(len(talkback2.getReplies()), 1)
+        self.assertEqual(len(talkback3.getReplies()), 1)
+        self.assertEqual(len(talkback4.getReplies()), 1)
+        self.assertEqual(len(talkback5.getReplies()), 1)
+        self.assertEqual(len(talkback6.getReplies()), 0)
+        self.assertEqual(len(ctool), 6)
+
+        talkback3.deleteReply(id4)
         self.assertEqual(len(talkback.getReplies()), 1)
         self.assertEqual(len(talkback1.getReplies()), 1)
         self.assertEqual(len(talkback2.getReplies()), 1)
         self.assertEqual(len(talkback3.getReplies()), 0)
+        self.assertEqual(len(ctool), 3)
 
-        talkback.deleteReply(id2)
-        self.assertEqual(len(talkback.getReplies()), 1)
-        reply1 = talkback.getReply(id1)
-        talkback1 = dtool.getDiscussionFor(reply1)
-        self.assertEqual(len(talkback.getReplies()), 1)
-        self.assertEqual(len(talkback1.getReplies()), 0)
+        talkback.deleteReply(id1)
+        self.assertEqual(len(talkback.getReplies()), 0)
+        self.assertEqual(len(ctool), 0)
 
     def test_newTalkbackIsWrapped(self):
         test = self._makeDummyContent('test')

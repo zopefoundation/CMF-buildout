@@ -299,10 +299,7 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
             my_replies = reply.talkback.getReplies()
             for my_reply in my_replies:
                 my_reply_id = my_reply.getId()
-                if hasattr( my_reply, 'unindexObject' ):
-                    my_reply.unindexObject()
-
-                del self._container[my_reply_id]
+                self.deleteReply(my_reply_id)
 
             if hasattr( reply, 'unindexObject' ):
                 reply.unindexObject()

@@ -76,7 +76,7 @@ Upgrading from Earlier Versions
 
     3. Restart Zope.
 
-  Follow additionnal version-specific information below.
+  Follow additional version-specific information below.
 
 
 Upgrading from versions earlier than CMF 1.3

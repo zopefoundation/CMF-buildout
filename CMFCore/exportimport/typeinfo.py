@@ -131,11 +131,11 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
         for child in node.childNodes:
             if child.nodeName != 'action':
                 continue
-            title = child.getAttribute('title')
-            id = child.getAttribute('action_id')
-            category = child.getAttribute('category')
-            condition = child.getAttribute('condition_expr')
-            action = child.getAttribute('url_expr')
+            title = str(child.getAttribute('title'))
+            id = str(child.getAttribute('action_id'))
+            category = str(child.getAttribute('category'))
+            condition = str(child.getAttribute('condition_expr'))
+            action = str(child.getAttribute('url_expr'))
             visible = self._convertToBoolean(child.getAttribute('visible'))
             permissions = []
             for sub in child.childNodes:
@@ -147,8 +147,15 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
                 if not permission:
                     permission = self._getNodeText(sub)
                 permissions.append(permission)
-            self.context.addAction(id, title, action, condition,
-                                   tuple(permissions), category, visible)
+            action_obj = self.context.getActionObject(category+'/'+id)
+            if action_obj is None:
+                self.context.addAction(id, title, action, condition,
+                                       tuple(permissions), category, visible)
+            else:
+                action_obj.edit(title=title, action=action,
+                                condition=condition,
+                                permissions=tuple(permissions),
+                                visible=visible)
 
     def _initOldstyleProperties(self, node):
         if not node.hasAttribute('title'):

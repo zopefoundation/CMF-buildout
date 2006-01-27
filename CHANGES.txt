@@ -2,6 +2,10 @@ After CMF 1.5.5
 
   Bug Fixes
 
+    - CMFSetup.workflow: Workflows managing no permissions at all could
+      make the CMFSetup workflow exporter fail.
+      (http://www.zope.org/Collectors/CMF/397)
+
     - CMFDefault.DiscussionItem: Deleting a discussion reply would not
       recurse and left items below the deleted reply still cataloged
       (http://www.zope.org/Collectors/CMF/391)

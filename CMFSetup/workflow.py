@@ -616,16 +616,18 @@ class WorkflowDefinitionConfigurator( Implicit ):
           'acquired' -- whether roles are acquired for the permission
         """
         result = []
+        perm_roles = state.permission_roles
 
-        items = state.permission_roles.items()
-        items.sort()
+        if perm_roles:
+            items = state.permission_roles.items()
+            items.sort()
 
-        for k, v in items:
+            for k, v in items:
 
-            result.append( { 'name' : k
-                           , 'roles' : v
-                           , 'acquired' : not isinstance( v, tuple )
-                           } )
+                result.append( { 'name' : k
+                               , 'roles' : v
+                               , 'acquired' : not isinstance( v, tuple )
+                               } )
 
         return result
 

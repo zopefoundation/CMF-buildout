@@ -2,6 +2,10 @@ Before CMF 1.6 beta
 
   Bug Fixes
 
+    - DCWorkflow.exportimport: Workflows managing no permissions at all 
+      could make the DCWorkflow workflow exporter fail.
+      (http://www.zope.org/Collectors/CMF/397)
+
     - Removed BBBTransaction class from CMFCore.utils
 
     - Fixed import of actions from extension profiles, now they don't

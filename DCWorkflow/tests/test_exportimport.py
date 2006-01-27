@@ -122,7 +122,7 @@ class _WorkflowSetup(WorkflowSetupBase):
                                , transitions=v[ 2 ]
                                )
             if not v[ 3 ]:
-                state.permission_roles = {}
+                state.permission_roles = None
 
             for permission, roles in v[ 3 ].items():
                 state.setPermission( permission

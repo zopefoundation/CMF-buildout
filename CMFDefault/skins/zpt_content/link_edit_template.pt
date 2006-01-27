@@ -3,7 +3,7 @@
 
 <metal:slot metal:fill-slot="header" i18n:domain="cmf_default">
 <h1 i18n:translate="">Edit: <tal:span
-    tal:content="context/Title" i18n:name="obj_title">Title</tal:span></h1>
+    tal:content="options/title" i18n:name="obj_title">Title</tal:span></h1>
 </metal:slot>
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
@@ -15,13 +15,13 @@
 <table class="FormLayout">
  <tr>
   <th i18n:translate="">Title</th>
-  <td tal:content="context/Title">Title</td>
+  <td tal:content="options/title">Title</td>
  </tr>
  <tr>
   <th i18n:translate="">URL</th>
   <td>
    <input type="text" name="remote_url" value=""
-          tal:attributes="value context/remote_url" />
+          tal:attributes="value options/remote_url" />
   </td>
  </tr>
  <tr>

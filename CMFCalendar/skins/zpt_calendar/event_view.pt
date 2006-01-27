@@ -27,8 +27,9 @@
  </tr>
  <tr>
   <th width="10%" i18n:translate="">Event type</th>
-  <td valign="top" nowrap="nowrap"
-     tal:content="python:' '.join( context.Subject() )"></td>
+  <td valign="top" nowrap="nowrap"><tal:loop
+      tal:repeat="event_type context/Subject"><tal:span
+       tal:content="event_type" i18n:translate="" /> </tal:loop></td>
   <th width="10%" i18n:translate="">Contact Phone</th>
   <td nowrap="nowrap" tal:content="context/contact_phone">contact_phone</td>
  </tr>

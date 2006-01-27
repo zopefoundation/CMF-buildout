@@ -3,7 +3,7 @@
 
 <metal:slot metal:fill-slot="header" i18n:domain="cmf_calendar">
 <h1 i18n:translate="">Edit: <tal:span
-    tal:content="context/Title" i18n:name="obj_title">Title</tal:span></h1>
+    tal:content="options/title" i18n:name="obj_title">Title</tal:span></h1>
 </metal:slot>
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_calendar"
@@ -18,13 +18,13 @@
   <td>
    <input type="text"
       name="title" maxlength="100" size="35" value="Title"
-      tal:attributes="value context/Title">
+      tal:attributes="value options/title" />
   </td>
   <th i18n:translate="">Contact Name</th>
   <td>
    <input type="text"
       name="contact_name" maxlength="100" size="35" value="contact_name"
-      tal:attributes="value context/contact_name">
+      tal:attributes="value options/contact_name" />
   </td>
  </tr>
  <tr>
@@ -32,35 +32,34 @@
   <td>
    <input type="text"
       name="location" maxlength="100" size="35" value="location"
-      tal:attributes="value context/location">
+      tal:attributes="value options/location" />
   </td>
   <th i18n:translate="">Contact Email</th>
   <td>
    <input type="text"
       name="contact_email" maxlength="100" size="35" value="contact_email"
-      tal:attributes="value context/contact_email">
+      tal:attributes="value options/contact_email" />
   </td>
  </tr>
  <tr>
   <th i18n:translate="">Event type</th>
   <td>
-   <select name="event_type:list" multiple
-      tal:define="contentSubject context/Subject;
-                  allowedSubjects python:context.portal_metadata.listAllowedSubjects(context)">
+   <select name="event_type:list" multiple="multiple">
     <option tal:replace="nothing">Event Type 1</option>
     <option tal:replace="nothing">Event Type 2</option>
     <option tal:replace="nothing">...</option>
     <option value="subj"
-       tal:repeat="subj allowedSubjects"
-       tal:attributes="value subj; selected python:subj in contentSubject"
-       tal:content="subj">Event Type N</option>
+       tal:repeat="subj python: context.portal_metadata.listAllowedSubjects(context)"
+       tal:attributes="value subj;
+                       selected python: subj in options['event_type']"
+       tal:content="subj" i18n:translate="">Event Type N</option>
    </select>
   </td>
   <th i18n:translate="">Contact Phone</th>
   <td>
    <input type="text" name="contact_phone" maxlength="100" size="35"
       value="contact_phone" id="cb_contact_phone"
-      tal:attributes="value context/contact_phone" />
+      tal:attributes="value options/contact_phone" />
   </td>
  </tr>
  <tr>
@@ -68,108 +67,102 @@
   <td colspan="3">
    <input type="text" name="event_url" size="55" maxlength="100"
       value="event_url"
-      tal:attributes="value context/event_url" />
+      tal:attributes="value options/event_url" />
   </td>
  </tr>
  <tr>
   <th i18n:translate="">Start Date</th>
-  <td tal:define="startstrings context/getStartStrings">
+  <td>
    <select name="effectiveYear">
     <option value=""
-       tal:define="years context/buildYears"
-       tal:repeat="year years"
-       tal:attributes="value year; selected python:year == startstrings['year']"
+       tal:repeat="year context/buildYears"
+       tal:attributes="value year;
+                       selected python: year == options['effectiveYear']"
        tal:content="year">Year</option>
    </select>
    &nbsp;
    <select name="effectiveMo">
     <option value=""
-       tal:define="months context/buildMonths"
-       tal:repeat="month months"
-       tal:attributes="value month; selected python:month == startstrings['month']"
+       tal:repeat="month context/buildMonths"
+       tal:attributes="value month;
+                       selected python: month == options['effectiveMo']"
        tal:content="month">Month</option>
    </select>
    &nbsp;
    <select name="effectiveDay">
     <option value=""
-       tal:define="days context/buildDays"
-       tal:repeat="day days"
-       tal:attributes="value day; selected python:day == startstrings['day']"
+       tal:repeat="day context/buildDays"
+       tal:attributes="value day;
+                       selected python: day == options['effectiveDay']"
        tal:content="day">Day</option>
    </select>
   </td>
   <th i18n:translate="">Stop Date</th>
-  <td tal:define="endstrings context/getEndStrings">
+  <td>
    <select name="expirationYear">
     <option value=""
-       tal:define="years context/buildYears"
-       tal:repeat="year years"
-       tal:attributes="value year; selected python:year == endstrings['year']"
+       tal:repeat="year context/buildYears"
+       tal:attributes="value year;
+                       selected python: year == options['expirationYear']"
        tal:content="year">Day</option>
    </select>
    &nbsp;
    <select name="expirationMo">
     <option value=""
-       tal:define="months context/buildMonths"
-       tal:repeat="month months"
-       tal:attributes="value month; selected python:month == endstrings['month']"
+       tal:repeat="month context/buildMonths"
+       tal:attributes="value month;
+                       selected python: month == options['expirationMo']"
        tal:content="month">Month</option>
    </select>
    &nbsp;
    <select name="expirationDay">
     <option value=""
-       tal:define="days context/buildDays"
-       tal:repeat="day days"
-       tal:attributes="value day; selected python:day == endstrings['day']"
+       tal:repeat="day context/buildDays"
+       tal:attributes="value day;
+                       selected python: day == options['expirationDay']"
        tal:content="day">Day</option>
    </select>
   </td>
  </tr>
  <tr>
   <th i18n:translate="">Start Time</th>
-  <td tal:define="stTimeString python:context.getStartTimeString().split();
-                  amSel python:(len(stTimeString) == 2 and stTimeString[1] == 'am');
-                  pmSel python:(len(stTimeString) == 2 and stTimeString[1] == 'pm')">
+  <td>
    <select name="start_time">
     <option value=""
        tal:repeat="bt context/buildTimes"
-       tal:attributes="value bt; selected python:bt == stTimeString[0]"
+       tal:attributes="value bt; selected python: bt == options['start_time']"
        tal:content="bt">start time</option>
    </select>
    &nbsp;
    <input type="radio" name="startAMPM" value="am" id="cb_start_am"
-      tal:attributes="checked amSel" />
+      tal:attributes="checked python: options['startAMPM'] == 'am'" />
    <label for="cb_start_am" i18n:translate="">am</label>
    <input type="radio" name="startAMPM" value="pm" id="cb_start_pm"
-      tal:attributes="checked pmSel" />
+      tal:attributes="checked python: options['startAMPM'] == 'pm'" />
    <label for="cb_start_pm" i18n:translate="">pm</label>
-   <input type="hidden" name="startAMPM:default" value="pm" />
   </td>
   <th i18n:translate="">Stop Time</th>
-  <td tal:define="stTimeString python:context.getStopTimeString().split();
-                  amSel python:(len(stTimeString) == 2 and stTimeString[1] == 'am');
-                  pmSel python:(len(stTimeString) == 2 and stTimeString[1] == 'pm')">
+  <td>
    <select name="stop_time">
    <option value=""
       tal:repeat="bt context/buildTimes"
-      tal:attributes="value bt; selected python:bt == stTimeString[0]"
+      tal:attributes="value bt; selected python: bt == options['stop_time']"
       tal:content="bt">end time</option>
    </select>
    &nbsp;
    <input type="radio" name="stopAMPM" value="am" id="cb_stop_am"
-      tal:attributes="checked amSel" />
+      tal:attributes="checked python: options['stopAMPM'] == 'am'" />
    <label for="cb_stop_am" i18n:translate="">am</label>
    <input type="radio" name="stopAMPM" value="pm" id="cb_stop_pm"
-      tal:attributes="checked pmSel" />
+      tal:attributes="checked python: options['stopAMPM'] == 'pm'" />
    <label for="cb_stop_pm" i18n:translate="">pm</label>
-   <input type="hidden" name="stopAMPM:default" value="pm" />
   </td>
  </tr>
  <tr>
   <th i18n:translate="">Description</th>
   <td class="TextField" colspan="3">
    <textarea name="description:text" rows="5" cols="70" wrap="soft"
-      tal:content="context/Description"></textarea>
+      tal:content="options/description"></textarea>
   </td>
  </tr>
  <tr>

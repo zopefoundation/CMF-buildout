@@ -15,10 +15,13 @@ elif change_and_view and \
 
 options = {}
 
+options['title'] = context.Title()
+options['remote_url'] = form.get('remote_url', context.remote_url)
+
 buttons = []
 target = context.getActionInfo('object/edit')['url']
-buttons.append( {'name': 'change', 'value': _('Change')} )
-buttons.append( {'name': 'change_and_view', 'value': _('Change and View')} )
+buttons.append( {'name': 'change', 'value': _(u'Change')} )
+buttons.append( {'name': 'change_and_view', 'value': _(u'Change and View')} )
 options['form'] = { 'action': target,
                     'listButtonInfos': tuple(buttons) }
 

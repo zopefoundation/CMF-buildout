@@ -1,6 +1,10 @@
 ##parameters=change='', change_and_edit='', change_and_view=''
 ##
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import Message as _
+
+mdtool = getToolByName(script, 'portal_metadata')
+
 
 form = context.REQUEST.form
 if change and \
@@ -19,16 +23,30 @@ elif change_and_view and \
 
 options = {}
 
-buttons = []
-target = context.getActionInfo('object/metadata')['url']
 allow_discussion = getattr(context, 'allow_discussion', None)
 if allow_discussion is not None:
     allow_discussion = bool(allow_discussion)
-buttons.append( {'name': 'change', 'value': _('Change')} )
-buttons.append( {'name': 'change_and_edit', 'value': _('Change and Edit')} )
-buttons.append( {'name': 'change_and_view', 'value': _('Change and View')} )
+options['allow_discussion'] = allow_discussion
+
+options['identifier'] = context.Identifier()
+options['title'] = form.get('title', context.Title())
+options['description'] = form.get('description', context.Description())
+
+subject = form.get('subject', context.Subject())
+allowed_subjects = mdtool.listAllowedSubjects(context)
+extra_subjects = [ s for s in subject if not s in allowed_subjects ]
+options['allowed_subjects'] = tuple(allowed_subjects)
+options['extra_subjects'] = tuple(extra_subjects)
+options['subject'] = tuple(subject)
+options['format'] = form.get('format', context.Format())
+
+buttons = []
+target = context.getActionInfo('object/metadata')['url']
+buttons.append( {'name': 'change', 'value': _(u'Change')} )
+buttons.append( {'name': 'change_and_edit', 'value': _(u'Change and Edit')} )
+buttons.append( {'name': 'change_and_view', 'value': _(u'Change and View')} )
+
 options['form'] = { 'action': target,
-                    'allow_discussion': allow_discussion,
                     'listButtonInfos': tuple(buttons) }
 
 return context.full_metadata_edit_template(**options)

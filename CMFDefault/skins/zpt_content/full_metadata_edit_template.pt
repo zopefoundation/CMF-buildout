@@ -3,7 +3,7 @@
 
 <metal:slot metal:fill-slot="header" i18n:domain="cmf_default">
 <h1 i18n:translate="">Resource Metadata: <tal:span
-    tal:content="context/Title" i18n:name="obj_title">Title</tal:span></h1>
+    tal:content="options/title" i18n:name="obj_title">Title</tal:span></h1>
 </metal:slot>
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
@@ -18,20 +18,21 @@
   <td colspan="3">
    <select name="allow_discussion">
     <option value="default"
-       tal:attributes="selected python: form['allow_discussion'] is None"
+       tal:attributes="selected python: options['allow_discussion'] is None"
        i18n:translate="">Default</option>
     <option value="off"
-       tal:attributes="selected python: form['allow_discussion'] is False"
+       tal:attributes="selected python: options['allow_discussion'] is False"
        i18n:translate="">Off</option>
     <option value="on"
-       tal:attributes="selected python: form['allow_discussion'] is True"
+       tal:attributes="selected python: options['allow_discussion'] is True"
        i18n:translate="">On</option>
    </select>
   </td>
  </tr>
  <tr valign="top">
   <th align="right" i18n:translate="">Identifier</th>
-  <td colspan="3"> <span tal:replace="context/Identifier"></span>
+  <td colspan="3">
+   <tal:span tal:content="options/identifier" />
   </td>
  </tr>
  <tr valign="top">
@@ -41,32 +42,28 @@
           name="title"
           value=""
           size="65"
-          tal:attributes="value context/Title" />
+          tal:attributes="value options/title" />
   </td>
  </tr>
  <tr valign="top">
   <th align="right" i18n:translate="">Description</th>
   <td colspan="3">
-   <textarea name="description:text" rows="5"
-             cols="65" wrap="soft"
-             tal:content="context/Description"></textarea>
+   <textarea name="description:text" rows="5" cols="65" wrap="soft"
+      tal:content="options/description"></textarea>
   </td>
  </tr>
  <tr valign="top">
   <th align="right" i18n:translate="">Subject</th>
-  <td tal:define="subj_lines python: '\n'.join( context.subjectsList() )">
+  <td tal:define="subj_lines python: '\n'.join(options['extra_subjects'])">
    <textarea name="subject:lines" rows="3" cols="20"
              tal:content="subj_lines"></textarea>
    <br />
    <select name="subject:list" multiple>
     <option value=""
-            tal:define="
-                  mtool context/portal_metadata;
-                  items python: mtool.listAllowedSubjects(context);
-                  subjects context/Subject"
-            tal:repeat="item items"
-            tal:attributes="value item; selected python: item in subjects"
-            tal:content="item">
+       tal:repeat="subject options/allowed_subjects"
+       tal:attributes="value subject;
+                       selected python: subject in options['subject']"
+       tal:content="subject">
     </option>
    </select>
   </td>
@@ -98,8 +95,9 @@
  </tr>
  <tr valign="top">
   <th align="right" i18n:translate="">Format</th>
-  <td> <input type="text" name="format" value=""
-              tal:attributes="value context/Format" />
+  <td>
+   <input type="text" name="format" value=""
+      tal:attributes="value options/format" />
   </td>
  </tr>
  <tr valign="top">

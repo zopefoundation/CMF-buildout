@@ -13,7 +13,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CMF 2.0\n"
-"POT-Creation-Date: Thu Jan 19 12:44:21 2006\n"
+"POT-Creation-Date: Fri Jan 27 11:59:42 2006\n"
 "Language-Team: CMF Developers <zope-cmf@zope.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -409,38 +409,38 @@ msgstr ""
 msgid "Nothing to change."
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/document_edit_form.py:24
-#: CMFDefault/skins/zpt_content/file_edit_form.py:20
+#: CMFDefault/skins/zpt_content/document_edit_form.py:30
+#: CMFDefault/skins/zpt_content/file_edit_form.py:24
 #: CMFDefault/skins/zpt_content/folder_edit_form.py:20
-#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:27
-#: CMFDefault/skins/zpt_content/image_edit_form.py:20
-#: CMFDefault/skins/zpt_content/link_edit_form.py:20
-#: CMFDefault/skins/zpt_content/metadata_edit_form.py:27
-#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:22
+#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:45
+#: CMFDefault/skins/zpt_content/image_edit_form.py:24
+#: CMFDefault/skins/zpt_content/link_edit_form.py:23
+#: CMFDefault/skins/zpt_content/metadata_edit_form.py:45
+#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:27
 #: CMFDefault/skins/zpt_generic/reconfig_form.py:21
 #: CMFDefault/skins/zpt_generic/password_form.pt:44
 #: CMFDefault/skins/zpt_generic/personalize_form.pt:92
 msgid "Change"
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/document_edit_form.py:25
-#: CMFDefault/skins/zpt_content/file_edit_form.py:21
+#: CMFDefault/skins/zpt_content/document_edit_form.py:31
+#: CMFDefault/skins/zpt_content/file_edit_form.py:25
 #: CMFDefault/skins/zpt_content/folder_edit_form.py:21
-#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:29
-#: CMFDefault/skins/zpt_content/image_edit_form.py:21
-#: CMFDefault/skins/zpt_content/link_edit_form.py:21
-#: CMFDefault/skins/zpt_content/metadata_edit_form.py:29
-#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:23
+#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:47
+#: CMFDefault/skins/zpt_content/image_edit_form.py:25
+#: CMFDefault/skins/zpt_content/link_edit_form.py:24
+#: CMFDefault/skins/zpt_content/metadata_edit_form.py:47
+#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:28
 msgid "Change and View"
 msgstr ""
 
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:19
 #: CMFDefault/skins/zpt_content/file_edit_template.pt:17
 #: CMFDefault/skins/zpt_content/folder_edit_template.pt:17
-#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:38
+#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:39
 #: CMFDefault/skins/zpt_content/image_edit_template.pt:17
 #: CMFDefault/skins/zpt_content/link_edit_template.pt:17
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:44
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:45
 #: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:17
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:15
 #: CMFDefault/skins/zpt_generic/review.pt:28
@@ -452,17 +452,17 @@ msgstr ""
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:23
 #: CMFDefault/skins/zpt_content/file_edit_template.pt:21
 #: CMFDefault/skins/zpt_content/folder_edit_template.pt:27
-#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:48
+#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:49
 #: CMFDefault/skins/zpt_content/image_edit_template.pt:21
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:54
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:55
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:56
 #: CMFDefault/skins/zpt_generic/search_form.pt:73
 msgid "Description"
 msgstr ""
 
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:27
-#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:100
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:79
+#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:97
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:76
 #: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:21
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:128
 msgid "Format"
@@ -543,17 +543,17 @@ msgstr ""
 msgid "Folder changed."
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:28
-#: CMFDefault/skins/zpt_content/metadata_edit_form.py:28
+#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:46
+#: CMFDefault/skins/zpt_content/metadata_edit_form.py:46
 msgid "Change and Edit"
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:106
+#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:104
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:153
 msgid "Language"
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:112
+#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:110
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:203
 msgid "Rights"
 msgstr ""
@@ -595,23 +595,23 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:73
+#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:70
 msgid "Contributors"
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:80
+#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:77
 msgid "Creation Date"
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:83
+#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:80
 msgid "Last Modified Date"
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:88
+#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:85
 msgid "Effective Date"
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:93
+#: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:90
 msgid "Expiration Date"
 msgstr ""
 

@@ -3,7 +3,7 @@
 
 <metal:slot metal:fill-slot="header" i18n:domain="cmf_default">
 <h1 i18n:translate="">Edit: <tal:span
-    tal:content="context/Title" i18n:name="obj_title">Title</tal:span></h1>
+    tal:content="options/title" i18n:name="obj_title">Title</tal:span></h1>
 </metal:slot>
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
@@ -15,15 +15,15 @@
 <table class="FormLayout">
  <tr>
   <th i18n:translate="">Title</th>
-  <td tal:content="context/Title">Title</td>
+  <td tal:content="options/title">Title</td>
  </tr>
  <tr>
   <th i18n:translate="">Description</th>
-  <td tal:content="context/Description">Description</td>
+  <td tal:content="options/description">Description</td>
  </tr>
  <tr>
   <th i18n:translate="">Content type</th>
-  <td tal:content="context/Format">text/html</td>
+  <td tal:content="options/format">text/html</td>
  </tr>
  <tr>
   <th i18n:translate="">Upload file</th>

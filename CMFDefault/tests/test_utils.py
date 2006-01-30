@@ -190,9 +190,9 @@ Header: value
     def test_html_marshal(self):
         from Products.CMFDefault.utils import html_marshal
 
-        self.assertEqual( html_marshal(foo=1), ( ('foo:int', '1'), ) )
+        self.assertEqual( html_marshal(foo=1), ( ('foo:int', 1), ) )
         self.assertEqual( html_marshal(foo=1, bar='baz >&baz'),
-                          ( ('foo:int', '1'), ('bar', 'baz &gt;&amp;baz') ) )
+                          ( ('foo:int', 1), ('bar', 'baz >&baz') ) )
 
     def test_toUnicode(self):
         from Products.CMFDefault.utils import toUnicode

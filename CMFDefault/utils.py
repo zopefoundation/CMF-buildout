@@ -406,9 +406,8 @@ security.declarePublic('html_marshal')
 def html_marshal(**kw):
     """ Marshal variables for html forms.
     """
-    vars = []
-    for key, converter, value in complex_marshal( kw.items() ):
-        vars.append( ( key + converter, escape( str(value) ) ) )
+    vars = [ (key + converter, value)
+             for key, converter, value in complex_marshal(kw.items()) ]
     return tuple(vars)
 
 security.declarePublic('toUnicode')

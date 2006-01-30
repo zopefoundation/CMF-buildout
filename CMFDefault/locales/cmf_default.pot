@@ -13,7 +13,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CMF 2.0\n"
-"POT-Creation-Date: Fri Jan 27 11:59:42 2006\n"
+"POT-Creation-Date: Mon Jan 30 18:05:55 2006\n"
 "Language-Team: CMF Developers <zope-cmf@zope.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -77,8 +77,6 @@ msgid "Click here to Login"
 msgstr ""
 
 #: CMFDefault/profiles/default/actions.xml:113
-#: CMFDefault/skins/zpt_generic/discussion_reply_form.pt:32
-#: CMFDefault/skins/zpt_generic/discussion_reply_preview.pt:24
 msgid "Reply"
 msgstr ""
 
@@ -485,11 +483,6 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:42
 msgid "Upload"
-msgstr ""
-
-#: CMFDefault/skins/zpt_content/document_edit_template.pt:48
-#: CMFDefault/skins/zpt_generic/discussion_reply_preview.pt:21
-msgid "Edit"
 msgstr ""
 
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:5
@@ -933,16 +926,26 @@ msgstr ""
 msgid "Created by"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/discussion_reply_form.pt:14
+#: CMFDefault/skins/zpt_generic/discussion_reply_form.py:38
+#: CMFDefault/skins/zpt_generic/folder_factories_template.pt:36
+msgid "Add"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/discussion_reply_form.py:40
+#: CMFDefault/skins/zpt_content/document_edit_template.pt:48
+msgid "Edit"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/discussion_reply_form.py:42
+msgid "Preview"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/discussion_reply_template.pt:16
 msgid "Subject (Title)"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/discussion_reply_form.pt:21
+#: CMFDefault/skins/zpt_generic/discussion_reply_template.pt:22
 msgid "Reply body"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/discussion_reply_form.pt:29
-msgid "Preview"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/folder_contents.py:109
@@ -1030,10 +1033,6 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_generic/folder_factories_template.pt:33
 msgid "ID:"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/folder_factories_template.pt:36
-msgid "Add"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/folder_factories_template.pt:5
@@ -1906,4 +1905,10 @@ msgid "View"
 msgstr ""
 
 msgid "Local Roles"
+msgstr ""
+
+msgid "Retract"
+msgstr ""
+
+msgid "Submit"
 msgstr ""

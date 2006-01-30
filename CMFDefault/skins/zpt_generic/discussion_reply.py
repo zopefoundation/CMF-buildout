@@ -1,12 +1,12 @@
-## Script (Python) "discussion_reply"
-##parameters=title,text
+##parameters=title, text, **kw
 ##title=Reply to content
+##
+from Products.CMFCore.utils import getToolByName
 
-replyID = context.createReply( title = title
-                             , text = text
-                             )
+dtool = getToolByName(script, 'portal_discussion')
+talkback = dtool.getDiscussionFor(context)
+replyID = talkback.createReply(title=title, text=text)
 
-target = '%s/%s' % (context.absolute_url(), replyID)
+target = '%s/%s' % (talkback.absolute_url(), replyID)
 
 context.REQUEST.RESPONSE.redirect(target)
-

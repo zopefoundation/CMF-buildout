@@ -28,6 +28,8 @@ from ZPublisher.HTTPRequest import HTTPRequest
 from OFS.Folder import Folder
 from zExceptions import Redirect
 from zope.interface import implements
+from zope.app.container.interfaces import IObjectMovedEvent
+from OFS.interfaces import IObjectWillBeMovedEvent
 
 from interfaces import ICookieCrumbler
 
@@ -370,20 +372,6 @@ class CookieCrumbler(Folder):
         # We should not normally get here.
         return 'Logged out.'
 
-    # Installation and removal of traversal hooks.
-
-    def manage_beforeDelete(self, item, container):
-        if item is self:
-            handle = self.meta_type + '/' + self.getId()
-            BeforeTraverse.unregisterBeforeTraverse(container, handle)
-
-    def manage_afterAdd(self, item, container):
-        if item is self:
-            handle = self.meta_type + '/' + self.getId()
-            container = container.this()
-            nc = BeforeTraverse.NameCaller(self.getId())
-            BeforeTraverse.registerBeforeTraverse(container, nc, handle)
-
     security.declarePublic('propertyLabel')
     def propertyLabel(self, id):
         """Return a label for the given property id
@@ -395,6 +383,23 @@ class CookieCrumbler(Folder):
 
 Globals.InitializeClass(CookieCrumbler)
 
+def handleCookieCrumblerEvent(ob, event):
+    """ Event subscriber for (un)registering a CC as a before traverse hook.
+    """
+    if not ICookieCrumbler.providedBy(ob):
+        return
+
+    if IObjectMovedEvent.providedBy(event):
+        if event.newParent is not None:
+            # register before traverse hook
+            handle = ob.meta_type + '/' + ob.getId()
+            nc = BeforeTraverse.NameCaller(ob.getId())
+            BeforeTraverse.registerBeforeTraverse(event.newParent, nc, handle)
+    elif IObjectWillBeMovedEvent.providedBy(event):
+        if event.oldParent is not None:
+            # unregister before traverse hook
+            handle = ob.meta_type + '/' + ob.getId()
+            BeforeTraverse.unregisterBeforeTraverse(event.newParent, handle)
 
 class ResponseCleanup:
     def __init__(self, resp):

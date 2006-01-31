@@ -39,4 +39,10 @@
       global="False"
       />
 
+  <subscriber
+    for=".interfaces.ICookieCrumbler
+         zope.app.event.interfaces.IObjectEvent"
+    handler=".CookieCrumbler.handleCookieCrumblerEvent"
+    />
+
 </configure>

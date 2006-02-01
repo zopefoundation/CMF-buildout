@@ -177,6 +177,29 @@ class Test_importActionIconsTool(_ActionIconsToolSetup):
         self.assertEqual(action_icon.getPriority(), self.PRIORITY)
         self.assertEqual(action_icon.getExpression(), self.ICON_EXPR)
 
+    def test_nopurge(self):
+        from Products.CMFActionIcons.exportimport \
+            import importActionIconsTool
+
+        site = self._initSite(with_icon=True)
+        ait = site.portal_actionicons
+        ait.updateActionIcon(self.CATEGORY, self.ACTION_ID, 'somexpr',
+                             title='foo', priority=123)
+        self.assertEqual(len(ait.listActionIcons()), 1)
+
+        context = DummyImportContext(site, purge=False)
+        context._files['actionicons.xml'] = self._WITH_ICON_EXPORT
+        importActionIconsTool(context)
+
+        self.assertEqual(len(ait.listActionIcons()), 1)
+        action_icon = ait.listActionIcons()[0]
+
+        self.assertEqual(action_icon.getCategory(), self.CATEGORY)
+        self.assertEqual(action_icon.getActionId(), self.ACTION_ID)
+        self.assertEqual(action_icon.getTitle(), self.TITLE)
+        self.assertEqual(action_icon.getPriority(), self.PRIORITY)
+        self.assertEqual(action_icon.getExpression(), self.ICON_EXPR)
+
 
 def test_suite():
     return unittest.TestSuite((

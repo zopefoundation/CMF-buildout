@@ -8,8 +8,9 @@ Before CMF 1.6 beta
 
     - Removed BBBTransaction class from CMFCore.utils
 
-    - Fixed import of actions from extension profiles, now they don't
-      overwrite all previous actions in the action provider.
+    - Extension profiles: Fixed import of actions, now they don't
+      overwrite all previous actions in the action provider. Fixed
+      import of action icons.
 
   Features
 

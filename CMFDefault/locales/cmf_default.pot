@@ -13,7 +13,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CMF 2.0\n"
-"POT-Creation-Date: Mon Jan 30 18:05:55 2006\n"
+"POT-Creation-Date: Wed Feb 01 11:59:02 2006\n"
 "Language-Team: CMF Developers <zope-cmf@zope.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -755,24 +755,20 @@ msgstr ""
 msgid "Item moved down."
 msgstr ""
 
-#: CMFDefault/skins/zpt_control/folder_paste_control.py:12
+#: CMFDefault/skins/zpt_control/folder_paste_control.py:11
 msgid "Item pasted."
 msgstr ""
 
-#: CMFDefault/skins/zpt_control/folder_paste_control.py:14
+#: CMFDefault/skins/zpt_control/folder_paste_control.py:13
 msgid "Items pasted."
 msgstr ""
 
-#: CMFDefault/skins/zpt_control/folder_paste_control.py:16
+#: CMFDefault/skins/zpt_control/folder_paste_control.py:15
 msgid "CopyError: Paste failed."
 msgstr ""
 
-#: CMFDefault/skins/zpt_control/folder_paste_control.py:18
+#: CMFDefault/skins/zpt_control/folder_paste_control.py:17
 msgid "Unauthorized: Paste failed."
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/folder_paste_control.py:20
-msgid "Please copy or cut one or more items to paste first."
 msgstr ""
 
 #: CMFDefault/skins/zpt_control/folder_rename_control.py:11
@@ -884,6 +880,10 @@ msgstr ""
 msgid "UpdatePeriod"
 msgstr ""
 
+#: CMFDefault/skins/zpt_control/validateClipboardData.py:8
+msgid "Please copy or cut one or more items to paste first."
+msgstr ""
+
 #: CMFDefault/skins/zpt_control/validateId.py:11
 msgid "Please enter an ID."
 msgstr ""
@@ -948,48 +948,47 @@ msgstr ""
 msgid "Reply body"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:109
+#: CMFDefault/skins/zpt_generic/folder_contents.py:110
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:114
 #: CMFDefault/skins/zpt_generic/review.pt:29
 #: CMFDefault/skins/zpt_generic/search_results_template.pt:18
 msgid "Type"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:113
+#: CMFDefault/skins/zpt_generic/folder_contents.py:114
 msgid "Name"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:117
+#: CMFDefault/skins/zpt_generic/folder_contents.py:118
 msgid "Last Modified"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:121
+#: CMFDefault/skins/zpt_generic/folder_contents.py:122
 msgid "Position"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:168
+#: CMFDefault/skins/zpt_generic/folder_contents.py:169
 #: CMFDefault/skins/zpt_generic/members_manage_form.py:49
 msgid "New..."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:170
-#: CMFDefault/skins/zpt_generic/folder_rename_form.py:42
-msgid "Rename"
+#: CMFDefault/skins/zpt_generic/folder_contents.py:172
+msgid "Rename..."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:172
+#: CMFDefault/skins/zpt_generic/folder_contents.py:174
 msgid "Cut"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:173
+#: CMFDefault/skins/zpt_generic/folder_contents.py:175
 msgid "Copy"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:175
+#: CMFDefault/skins/zpt_generic/folder_contents.py:177
 msgid "Paste"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:177
+#: CMFDefault/skins/zpt_generic/folder_contents.py:179
 #: CMFDefault/skins/zpt_generic/members_delete_form.py:27
 #: CMFDefault/skins/zpt_generic/folder_localrole_form.pt:201
 msgid "Delete"
@@ -1134,6 +1133,10 @@ msgstr ""
 #: CMFDefault/skins/zpt_generic/folder_localrole_form.pt:76
 #: CMFDefault/skins/zpt_generic/personalize_form.pt:41
 msgid "Email address"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/folder_rename_form.py:42
+msgid "Rename"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/folder_rename_form.py:43

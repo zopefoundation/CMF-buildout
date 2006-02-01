@@ -128,6 +128,9 @@ CMF 2.0.0-alpha (2006/01/22)
 
   Bug Fixes
 
+    - CMFDefault skins: Fixed clipboard data validation.
+      Split off validateClipboardData from folder_paste_control.
+
     - CMFDefault skins: Refactored and improved discussion_reply_form.
 
     - CMFDefault utils: Fixed html_marshal function.

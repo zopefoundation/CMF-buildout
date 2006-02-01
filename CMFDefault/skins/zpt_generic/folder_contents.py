@@ -38,6 +38,7 @@ elif items_new and \
         context.setRedirect(context, 'object/new'):
     return
 elif items_paste and \
+        context.validateClipboardData(**form) and \
         context.folder_paste_control(**form) and \
         context.setRedirect(context, default_target, **default_kw):
     return
@@ -106,19 +107,19 @@ else:
     is_default = 0
 
 columns = ( {'key': 'Type',
-             'title': _('Type'),
+             'title': _(u'Type'),
              'width': '20',
              'colspan': '2'}
           , {'key': 'getId',
-             'title': _('Name'),
+             'title': _(u'Name'),
              'width': '360',
              'colspan': None}
           , {'key': 'modified',
-             'title': _('Last Modified'),
+             'title': _(u'Last Modified'),
              'width': '180',
              'colspan': None}
           , {'key': 'position',
-             'title': _('Position'),
+             'title': _(u'Position'),
              'width': '80',
              'colspan': None }
           )
@@ -165,16 +166,17 @@ for name, value in html_marshal(**default_kw):
 buttons = []
 if items_manage_allowed:
     if items_add_allowed and context.allowedContentTypes():
-        buttons.append( {'name': 'items_new', 'value': _('New...')} )
+        buttons.append( {'name': 'items_new', 'value': _(u'New...')} )
         if items:
-            buttons.append( {'name': 'items_rename', 'value': _('Rename')} )
+            buttons.append( {'name': 'items_rename',
+                             'value': _(u'Rename...')} )
     if items:
-        buttons.append( {'name': 'items_cut', 'value': _('Cut')} )
-        buttons.append( {'name': 'items_copy', 'value': _('Copy')} )
+        buttons.append( {'name': 'items_cut', 'value': _(u'Cut')} )
+        buttons.append( {'name': 'items_copy', 'value': _(u'Copy')} )
     if items_add_allowed and context.cb_dataValid():
-        buttons.append( {'name': 'items_paste', 'value': _('Paste')} )
+        buttons.append( {'name': 'items_paste', 'value': _(u'Paste')} )
     if items_delete_allowed and items:
-        buttons.append( {'name': 'items_delete', 'value': _('Delete')} )
+        buttons.append( {'name': 'items_delete', 'value': _(u'Delete')} )
 length = batch_obj.sequence_length
 is_orderable = items_move_allowed and (key == 'position') and length > 1
 is_sortable = items_move_allowed and not is_default

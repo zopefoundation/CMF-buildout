@@ -60,7 +60,12 @@ def importActionIconsTool(context):
     ait_info = configurator.parseXML(body)
 
     for action_icon in ait_info['action_icons']:
-        ait.addActionIcon(**action_icon)
+        category = action_icon['category']
+        action_id = action_icon['action_id']
+        if ait.queryActionInfo(category, action_id) is not None:
+            ait.updateActionIcon(**action_icon)
+        else:
+            ait.addActionIcon(**action_icon)
 
     return 'Action icons settings imported.'
 

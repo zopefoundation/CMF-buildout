@@ -382,7 +382,7 @@ class CookieCrumblerTests(unittest.TestCase, PlacelessSetup):
         container._delObject(self._CC_ID)
 
         bt_removed = getattr(container, '__before_traverse__')
-        self.assertEqual(len(bt_removed.items()), 1)
+        self.assertEqual(len(bt_removed.items()), 0)
 
 def test_suite():
     return unittest.TestSuite((

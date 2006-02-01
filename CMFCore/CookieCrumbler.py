@@ -399,7 +399,7 @@ def handleCookieCrumblerEvent(ob, event):
         if event.oldParent is not None:
             # unregister before traverse hook
             handle = ob.meta_type + '/' + ob.getId()
-            BeforeTraverse.unregisterBeforeTraverse(event.newParent, handle)
+            BeforeTraverse.unregisterBeforeTraverse(event.oldParent, handle)
 
 class ResponseCleanup:
     def __init__(self, resp):

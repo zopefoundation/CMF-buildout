@@ -59,7 +59,7 @@ class Topic(SkinnedFolder):
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)
 
-    acquireCriteria = 1
+    acquireCriteria = True
     _criteriaTypes = []
 
     security.declareProtected(ChangeTopics, 'listCriteria')
@@ -111,7 +111,7 @@ class Topic(SkinnedFolder):
         
         o Also update metadata about the Topic.
         """
-        self.acquireCriteria = acquireCriteria
+        self.acquireCriteria = bool(acquireCriteria)
         if title is not None:
             self.title = title
         self.description = description

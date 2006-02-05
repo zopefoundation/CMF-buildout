@@ -13,7 +13,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CMF 2.0\n"
-"POT-Creation-Date: Sun Feb 05 22:33:10 2006\n"
+"POT-Creation-Date: Sun Feb 05 22:53:33 2006\n"
 "Language-Team: CMF Developers <zope-cmf@zope.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -512,6 +512,26 @@ msgstr ""
 msgid "Upload file"
 msgstr ""
 
+#: CMFDefault/skins/zpt_content/file_view_template.pt:21
+msgid "File Properties"
+msgstr ""
+
+#: CMFDefault/skins/zpt_content/file_view_template.pt:25
+msgid "Filename"
+msgstr ""
+
+#: CMFDefault/skins/zpt_content/file_view_template.pt:29
+msgid "Size"
+msgstr ""
+
+#: CMFDefault/skins/zpt_content/file_view_template.pt:33
+msgid "Content-type"
+msgstr ""
+
+#: CMFDefault/skins/zpt_content/file_view_template.pt:38
+msgid "Download File"
+msgstr ""
+
 #: CMFDefault/skins/zpt_content/folder_edit_control.py:7
 msgid "Folder changed."
 msgstr ""
@@ -602,6 +622,10 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_content/link_edit_template.pt:21
 msgid "URL"
+msgstr ""
+
+#: CMFDefault/skins/zpt_content/link_view_template.pt:22
+msgid "Link: ${link}"
 msgstr ""
 
 #: CMFDefault/skins/zpt_content/metadata_edit_control.py:67

@@ -17,7 +17,7 @@
 <metal:macro metal:use-macro="context/content_byline/macros/byline" />
 </metal:slot>
 
-<metal:slot metal:fill-slot="main">
+<metal:slot metal:fill-slot="main" i18n:domain="cmf_default">
 <h2 i18n:translate="">File Properties</h2>
 
 <table>

@@ -2,6 +2,9 @@ CMF 2.0.0-alpha (2006/01/22)
 
   New Features
 
+    - CMFDefault utils: Added 'decode' function.
+      It decodes values using the default_charset of the site.
+
     - CMFCore.FSPythonScript:  Customized versions now track the "original"
       source from which they were customized, and can present a diff between
       that version and their current source text.

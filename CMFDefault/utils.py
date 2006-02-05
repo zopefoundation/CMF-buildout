@@ -27,6 +27,8 @@ from Globals import package_home
 from ZTUtils.Zope import complex_marshal
 from zope.i18nmessageid import MessageFactory
 
+from Products.CMFCore.utils import getToolByName
+
 from exceptions import IllegalHTML
 
 
@@ -426,6 +428,14 @@ def toUnicode(value, charset=None):
         return value
     else:
         return value
+
+security.declarePublic('decode')
+def decode(value, context):
+    """ Decode value using default_charset.
+    """
+    ptool = getToolByName(context, 'portal_properties')
+    default_charset = ptool.getProperty('default_charset', None)
+    return toUnicode(value, default_charset)
 
 security.declarePublic('Message')
 Message = MessageFactory('cmf_default')

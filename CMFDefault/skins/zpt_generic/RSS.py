@@ -3,9 +3,8 @@
 from ZTUtils import Batch
 from ZTUtils import LazyFilter
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.utils import toUnicode
+from Products.CMFDefault.utils import decode
 
-ptool = getToolByName(script, 'portal_properties')
 stool = getToolByName(script, 'portal_syndication')
 
 
@@ -42,5 +41,4 @@ for item in batch_obj:
                     'url': item.absolute_url() } )
 options['listItemInfos'] = tuple(items)
 
-options = toUnicode( options, ptool.getProperty('default_charset', None) )
-return context.RSS_template(**options)
+return context.RSS_template(**decode(options, script))

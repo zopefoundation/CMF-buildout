@@ -12,47 +12,47 @@
 <table class="Event" border="0" cellpadding="5" width="100%" cellspacing="3">
  <tr>
   <th width="10%" i18n:translate="">Event Name</th>
-  <td nowrap="nowrap" tal:content="context/Title">Title</td>
+  <td nowrap="nowrap" tal:content="options/title">Title</td>
   <th width="10%" i18n:translate="">Contact Name</th>
-  <td nowrap="nowrap" tal:content="context/contact_name">contact_name</td>
+  <td nowrap="nowrap" tal:content="options/contact_name">contact_name</td>
  </tr>
  <tr>
   <th width="10%" i18n:translate="">Location</th>
-  <td nowrap="nowrap" tal:content="context/location">location</td>
+  <td nowrap="nowrap" tal:content="options/location">location</td>
   <th width="10%" i18n:translate="">Contact Email</th>
-  <td nowrap="nowrap" tal:condition="context/contact_email">
-   <a tal:attributes="href python:'mailto:' + context.contact_email"
-      tal:content="context/contact_email"
+  <td nowrap="nowrap" tal:condition="options/contact_email">
+   <a tal:attributes="href string:mailto:${options/contact_email}"
+      tal:content="options/contact_email"
       href="mailto:contact_email">contact_email</a></td>
  </tr>
  <tr>
   <th width="10%" i18n:translate="">Event type</th>
   <td valign="top" nowrap="nowrap"><tal:loop
-      tal:repeat="event_type context/Subject"><tal:span
+      tal:repeat="event_type options/event_types"><tal:span
        tal:content="event_type" i18n:translate="" /> </tal:loop></td>
   <th width="10%" i18n:translate="">Contact Phone</th>
-  <td nowrap="nowrap" tal:content="context/contact_phone">contact_phone</td>
+  <td nowrap="nowrap" tal:content="options/contact_phone">contact_phone</td>
  </tr>
- <tr tal:condition="context/event_url|nothing">
+ <tr tal:condition="options/event_url">
   <th width="10%" i18n:translate="">Event URL</th>
   <td colspan="3" nowrap="nowrap"><a href="event_url"
-     tal:attributes="href context/event_url"
-     tal:content="context/event_url">event_url</a></td>
+     tal:attributes="href options/event_url"
+     tal:content="options/event_url">event_url</a></td>
  </tr>
  <tr>
   <td colspan="4"><hr /></td>
  </tr>
  <tr>
   <th width="10%" i18n:translate="">Start Date</th>
-  <td tal:content="python:DateTime.Date(context.start())">start</td>
+  <td tal:content="options/start_date">start</td>
   <th width="10%" i18n:translate="">Stop Date</th>
-  <td tal:content="python:DateTime.Date(context.end())">end</td>
+  <td tal:content="options/stop_date">end</td>
  </tr>
  <tr>
   <th width="10%" i18n:translate="">Start Time</th>
-  <td tal:content="python:DateTime.Time(context.start())">start</td>
+  <td tal:content="options/start_time">start</td>
   <th width="10%" i18n:translate="">Stop Time</th>
-  <td tal:content="python:DateTime.Time(context.end())">end</td>
+  <td tal:content="options/stop_time">end</td>
  </tr>
  <tr>
   <td colspan="4"><hr /></td>
@@ -60,7 +60,7 @@
  <tr>
   <th width="10%" i18n:translate="">Description</th>
   <td colspan="3" valign="top" nowrap="nowrap"
-     tal:content="context/Description">Description</td>
+     tal:content="options/description">Description</td>
  </tr>
  <tr>
   <td colspan="4">&nbsp;</td>

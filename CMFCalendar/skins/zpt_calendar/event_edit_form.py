@@ -1,6 +1,7 @@
 ##parameters=change='', change_and_view=''
 ##
 from Products.CMFCalendar.utils import Message as _
+from Products.CMFDefault.utils import decode
 
 form = context.REQUEST.form
 if change and \
@@ -51,4 +52,4 @@ buttons.append( {'name': 'change_and_view', 'value': _(u'Change and View')} )
 options['form'] = { 'action': target,
                     'listButtonInfos': tuple(buttons) }
 
-return context.event_edit_template(**options)
+return context.event_edit_template(**decode(options, script))

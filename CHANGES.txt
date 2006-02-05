@@ -2,6 +2,9 @@ CMF 2.0.0-alpha (2006/01/22)
 
   New Features
 
+    - skins: All page templates now use unicode.
+      Please make sure to pass only 'ascii' strings or unicode to them.
+
     - CMFDefault utils: Added 'decode' function.
       It decodes values using the default_charset of the site.
 

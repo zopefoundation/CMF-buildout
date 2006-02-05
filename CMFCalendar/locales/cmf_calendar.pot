@@ -13,7 +13,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CMF 2.0\n"
-"POT-Creation-Date: Fri Jan 27 11:59:47 2006\n"
+"POT-Creation-Date: Sun Feb 05 22:33:15 2006\n"
 "Language-Team: CMF Developers <zope-cmf@zope.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -54,7 +54,7 @@ msgstr ""
 #: CMFCalendar/skins/zpt_calendar/calendarBox.pt:28
 #: CMFCalendar/skins/zpt_calendar/calendarBox.pt:41
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:51
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:31
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:31
 msgid "${DYNAMIC_CONTENT}"
 msgstr ""
 
@@ -62,21 +62,21 @@ msgstr ""
 msgid "Event changed."
 msgstr ""
 
-#: CMFCalendar/skins/zpt_calendar/event_edit_form.py:49
+#: CMFCalendar/skins/zpt_calendar/event_edit_form.py:50
 msgid "Change"
 msgstr ""
 
-#: CMFCalendar/skins/zpt_calendar/event_edit_form.py:50
+#: CMFCalendar/skins/zpt_calendar/event_edit_form.py:51
 msgid "Change and View"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:100
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:48
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:48
 msgid "Stop Date"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:128
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:52
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:52
 msgid "Start Time"
 msgstr ""
 
@@ -91,37 +91,37 @@ msgid "pm"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:144
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:54
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:54
 msgid "Stop Time"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:162
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:61
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:61
 msgid "Description"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:17
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:14
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:14
 msgid "Event Name"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:23
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:16
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:16
 msgid "Contact Name"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:31
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:20
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:20
 msgid "Location"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:37
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:22
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:22
 msgid "Contact Email"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:45
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:29
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:29
 msgid "Event type"
 msgstr ""
 
@@ -130,17 +130,17 @@ msgid "Edit: ${obj_title}"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:58
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:33
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:33
 msgid "Contact Phone"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:66
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:37
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:37
 msgid "Event URL"
 msgstr ""
 
 #: CMFCalendar/skins/zpt_calendar/event_edit_template.pt:74
-#: CMFCalendar/skins/zpt_calendar/event_view.pt:46
+#: CMFCalendar/skins/zpt_calendar/event_view_template.pt:46
 msgid "Start Date"
 msgstr ""
 

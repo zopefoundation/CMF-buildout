@@ -13,7 +13,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CMF 2.0\n"
-"POT-Creation-Date: Wed Feb 01 11:59:02 2006\n"
+"POT-Creation-Date: Sun Feb 05 22:33:10 2006\n"
 "Language-Team: CMF Developers <zope-cmf@zope.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -329,7 +329,6 @@ msgstr ""
 #: CMFDefault/skins/zpt_content/content_status_history.pt:34
 #: CMFDefault/skins/zpt_content/transition_form.pt:28
 #: CMFDefault/skins/zpt_content/transition_form.pt:58
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:87
 #: CMFDefault/skins/zpt_generic/folder_contents_template.pt:35
 #: CMFDefault/skins/zpt_generic/folder_contents_template.pt:49
 #: CMFDefault/skins/zpt_generic/folder_factories_template.pt:23
@@ -344,19 +343,19 @@ msgstr ""
 #: CMFDefault/skins/zpt_generic/index_html_utils.html:106
 #: CMFDefault/skins/zpt_generic/join_template.pt:5
 #: CMFDefault/skins/zpt_generic/logged_out.pt:6
-#: CMFDefault/skins/zpt_generic/main_template.pt:69
-#: CMFDefault/skins/zpt_generic/main_template.pt:116
-#: CMFDefault/skins/zpt_generic/main_template.pt:155
-#: CMFDefault/skins/zpt_generic/main_template.pt:173
-#: CMFDefault/skins/zpt_generic/main_template.pt:199
-#: CMFDefault/skins/zpt_generic/main_template.pt:205
-#: CMFDefault/skins/zpt_generic/main_template.pt:219
-#: CMFDefault/skins/zpt_generic/main_template.pt:233
-#: CMFDefault/skins/zpt_generic/main_template.pt:268
+#: CMFDefault/skins/zpt_generic/main_template.pt:71
+#: CMFDefault/skins/zpt_generic/main_template.pt:118
+#: CMFDefault/skins/zpt_generic/main_template.pt:157
+#: CMFDefault/skins/zpt_generic/main_template.pt:175
+#: CMFDefault/skins/zpt_generic/main_template.pt:201
+#: CMFDefault/skins/zpt_generic/main_template.pt:207
+#: CMFDefault/skins/zpt_generic/main_template.pt:221
+#: CMFDefault/skins/zpt_generic/main_template.pt:235
+#: CMFDefault/skins/zpt_generic/main_template.pt:270
 #: CMFDefault/skins/zpt_generic/review.pt:59
 #: CMFDefault/skins/zpt_generic/roster.pt:46
-#: CMFDefault/skins/zpt_generic/search_form.pt:126
-#: CMFDefault/skins/zpt_generic/search_results_template.pt:38
+#: CMFDefault/skins/zpt_generic/search_results_template.pt:37
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:68
 msgid "${DYNAMIC_CONTENT}"
 msgstr ""
 
@@ -404,31 +403,34 @@ msgstr ""
 #: CMFDefault/skins/zpt_control/folder_rename_control.py:17
 #: CMFDefault/skins/zpt_control/folder_top_control.py:13
 #: CMFDefault/skins/zpt_control/folder_up_control.py:13
+#: CMFTopic/skins/zpt_topic/topic_edit_control.py:11
 msgid "Nothing to change."
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/document_edit_form.py:30
-#: CMFDefault/skins/zpt_content/file_edit_form.py:24
-#: CMFDefault/skins/zpt_content/folder_edit_form.py:20
-#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:45
-#: CMFDefault/skins/zpt_content/image_edit_form.py:24
-#: CMFDefault/skins/zpt_content/link_edit_form.py:23
-#: CMFDefault/skins/zpt_content/metadata_edit_form.py:45
-#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:27
-#: CMFDefault/skins/zpt_generic/reconfig_form.py:21
+#: CMFDefault/skins/zpt_content/document_edit_form.py:31
+#: CMFDefault/skins/zpt_content/file_edit_form.py:25
+#: CMFDefault/skins/zpt_content/folder_edit_form.py:24
+#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:49
+#: CMFDefault/skins/zpt_content/image_edit_form.py:25
+#: CMFDefault/skins/zpt_content/link_edit_form.py:24
+#: CMFDefault/skins/zpt_content/metadata_edit_form.py:46
+#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:28
+#: CMFDefault/skins/zpt_generic/reconfig_form.py:22
+#: CMFTopic/skins/zpt_topic/topic_edit_form.py:26
 #: CMFDefault/skins/zpt_generic/password_form.pt:44
 #: CMFDefault/skins/zpt_generic/personalize_form.pt:92
 msgid "Change"
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/document_edit_form.py:31
-#: CMFDefault/skins/zpt_content/file_edit_form.py:25
-#: CMFDefault/skins/zpt_content/folder_edit_form.py:21
-#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:47
-#: CMFDefault/skins/zpt_content/image_edit_form.py:25
-#: CMFDefault/skins/zpt_content/link_edit_form.py:24
-#: CMFDefault/skins/zpt_content/metadata_edit_form.py:47
-#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:28
+#: CMFDefault/skins/zpt_content/document_edit_form.py:32
+#: CMFDefault/skins/zpt_content/file_edit_form.py:26
+#: CMFDefault/skins/zpt_content/folder_edit_form.py:25
+#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:51
+#: CMFDefault/skins/zpt_content/image_edit_form.py:26
+#: CMFDefault/skins/zpt_content/link_edit_form.py:25
+#: CMFDefault/skins/zpt_content/metadata_edit_form.py:48
+#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:29
+#: CMFTopic/skins/zpt_topic/topic_edit_form.py:27
 msgid "Change and View"
 msgstr ""
 
@@ -442,19 +444,21 @@ msgstr ""
 #: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:17
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:15
 #: CMFDefault/skins/zpt_generic/review.pt:28
-#: CMFDefault/skins/zpt_generic/search_form.pt:52
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:48
 #: CMFDefault/skins/zpt_generic/search_results_template.pt:17
+#: CMFTopic/skins/zpt_topic/topic_edit_template.pt:17
 msgid "Title"
 msgstr ""
 
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:23
 #: CMFDefault/skins/zpt_content/file_edit_template.pt:21
-#: CMFDefault/skins/zpt_content/folder_edit_template.pt:27
+#: CMFDefault/skins/zpt_content/folder_edit_template.pt:24
 #: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:49
 #: CMFDefault/skins/zpt_content/image_edit_template.pt:21
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:55
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:56
-#: CMFDefault/skins/zpt_generic/search_form.pt:73
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:67
+#: CMFTopic/skins/zpt_topic/topic_edit_template.pt:24
 msgid "Description"
 msgstr ""
 
@@ -491,12 +495,8 @@ msgstr ""
 #: CMFDefault/skins/zpt_content/image_edit_template.pt:5
 #: CMFDefault/skins/zpt_content/link_edit_template.pt:5
 #: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:5
+#: CMFTopic/skins/zpt_topic/topic_edit_template.pt:5
 msgid "Edit: ${obj_title}"
-msgstr ""
-
-#: CMFDefault/skins/zpt_content/favorite_view.pt:26
-#: CMFDefault/skins/zpt_content/link_view.pt:26
-msgid "Link: ${link}"
 msgstr ""
 
 #: CMFDefault/skins/zpt_content/file_edit_control.py:8
@@ -512,32 +512,12 @@ msgstr ""
 msgid "Upload file"
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/file_view.pt:26
-msgid "File Properties"
-msgstr ""
-
-#: CMFDefault/skins/zpt_content/file_view.pt:31
-msgid "Filename"
-msgstr ""
-
-#: CMFDefault/skins/zpt_content/file_view.pt:36
-msgid "Size"
-msgstr ""
-
-#: CMFDefault/skins/zpt_content/file_view.pt:41
-msgid "Content-type"
-msgstr ""
-
-#: CMFDefault/skins/zpt_content/file_view.pt:52
-msgid "Download File"
-msgstr ""
-
 #: CMFDefault/skins/zpt_content/folder_edit_control.py:7
 msgid "Folder changed."
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:46
-#: CMFDefault/skins/zpt_content/metadata_edit_form.py:46
+#: CMFDefault/skins/zpt_content/full_metadata_edit_form.py:50
+#: CMFDefault/skins/zpt_content/metadata_edit_form.py:47
 msgid "Change and Edit"
 msgstr ""
 
@@ -584,7 +564,7 @@ msgstr ""
 #: CMFDefault/skins/zpt_content/full_metadata_edit_template.pt:56
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:62
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:43
-#: CMFDefault/skins/zpt_generic/search_form.pt:59
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:55
 msgid "Subject"
 msgstr ""
 
@@ -820,66 +800,6 @@ msgstr ""
 msgid "CMF Settings changed."
 msgstr ""
 
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:100
-msgid "UpdateFrequency"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:109
-msgid "UpdateBase"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:117
-msgid "Max Syndicated Items"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:124
-msgid "Save"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:147
-msgid "Disable Syndication"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:15
-msgid "Default Syndication Properties"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:159
-msgid "Enable Syndication"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:165
-msgid "Syndication is Disabled"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:26
-msgid "Channel Properties"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:39
-msgid "Channel Title:"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:46
-msgid "Channel Description:"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:66
-msgid "Syndication Module Properties"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:79
-msgid "Element"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:80
-msgid "Default Value"
-msgstr ""
-
-#: CMFDefault/skins/zpt_control/synPropertiesForm.pt:84
-msgid "UpdatePeriod"
-msgstr ""
-
 #: CMFDefault/skins/zpt_control/validateClipboardData.py:8
 msgid "Please copy or cut one or more items to paste first."
 msgstr ""
@@ -909,12 +829,12 @@ msgid "root"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/content_byline.pt:14
-#: CMFDefault/skins/zpt_generic/recent_news.pt:36
+#: CMFDefault/skins/zpt_generic/recent_news_template.pt:29
 msgid "and"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/content_byline.pt:22
-#: CMFDefault/skins/zpt_generic/recent_news.pt:40
+#: CMFDefault/skins/zpt_generic/recent_news_template.pt:32
 msgid "unknown"
 msgstr ""
 
@@ -926,17 +846,17 @@ msgstr ""
 msgid "Created by"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/discussion_reply_form.py:38
+#: CMFDefault/skins/zpt_generic/discussion_reply_form.py:39
 #: CMFDefault/skins/zpt_generic/folder_factories_template.pt:36
 msgid "Add"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/discussion_reply_form.py:40
+#: CMFDefault/skins/zpt_generic/discussion_reply_form.py:41
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:48
 msgid "Edit"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/discussion_reply_form.py:42
+#: CMFDefault/skins/zpt_generic/discussion_reply_form.py:43
 msgid "Preview"
 msgstr ""
 
@@ -948,47 +868,47 @@ msgstr ""
 msgid "Reply body"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:110
+#: CMFDefault/skins/zpt_generic/folder_contents.py:113
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:114
 #: CMFDefault/skins/zpt_generic/review.pt:29
 #: CMFDefault/skins/zpt_generic/search_results_template.pt:18
 msgid "Type"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:114
+#: CMFDefault/skins/zpt_generic/folder_contents.py:117
 msgid "Name"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:118
+#: CMFDefault/skins/zpt_generic/folder_contents.py:121
 msgid "Last Modified"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:122
+#: CMFDefault/skins/zpt_generic/folder_contents.py:125
 msgid "Position"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:169
+#: CMFDefault/skins/zpt_generic/folder_contents.py:172
 #: CMFDefault/skins/zpt_generic/members_manage_form.py:49
 msgid "New..."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:172
+#: CMFDefault/skins/zpt_generic/folder_contents.py:175
 msgid "Rename..."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:174
+#: CMFDefault/skins/zpt_generic/folder_contents.py:177
 msgid "Cut"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:175
+#: CMFDefault/skins/zpt_generic/folder_contents.py:178
 msgid "Copy"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:177
+#: CMFDefault/skins/zpt_generic/folder_contents.py:180
 msgid "Paste"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_contents.py:179
+#: CMFDefault/skins/zpt_generic/folder_contents.py:182
 #: CMFDefault/skins/zpt_generic/members_delete_form.py:27
 #: CMFDefault/skins/zpt_generic/folder_localrole_form.pt:201
 msgid "Delete"
@@ -1112,11 +1032,6 @@ msgstr ""
 msgid "Search Term"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_localrole_form.pt:38
-#: CMFDefault/skins/zpt_generic/search_form.pt:158
-msgid "Search"
-msgstr ""
-
 #: CMFDefault/skins/zpt_generic/folder_localrole_form.pt:60
 msgid "Assign local roles: Search Results"
 msgstr ""
@@ -1155,21 +1070,6 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_generic/index_html_utils.html:102
 msgid "Folders"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/index_html_utils.html:145
-#: CMFDefault/skins/zpt_generic/news_box.pt:12
-msgid "News"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/index_html_utils.html:157
-#: CMFDefault/skins/zpt_generic/news_box.pt:27
-msgid "No news is no news."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/index_html_utils.html:163
-#: CMFDefault/skins/zpt_generic/news_box.pt:33
-msgid "More..."
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/index_html_utils.html:28
@@ -1350,23 +1250,23 @@ msgstr ""
 msgid "${portal_title}: Membership reminder"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/main_template.pt:197
+#: CMFDefault/skins/zpt_generic/main_template.pt:199
 msgid "Status:"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/main_template.pt:305
+#: CMFDefault/skins/zpt_generic/main_template.pt:297
 msgid "Permanent Link:"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/main_template.pt:65
+#: CMFDefault/skins/zpt_generic/main_template.pt:67
 msgid "home"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/main_template.pt:74
+#: CMFDefault/skins/zpt_generic/main_template.pt:76
 msgid "news"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/main_template.pt:77
+#: CMFDefault/skins/zpt_generic/main_template.pt:79
 msgid "search"
 msgstr ""
 
@@ -1452,7 +1352,7 @@ msgid "copyright and other IP information related to the document. Most portals 
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:28
-#: CMFDefault/skins/zpt_generic/search_form.pt:142
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:115
 msgid "Creator"
 msgstr ""
 
@@ -1492,6 +1392,18 @@ msgstr ""
 #: CMFDefault/skins/zpt_generic/review.pt:30
 #: CMFDefault/skins/zpt_generic/search_results_template.pt:19
 msgid "Date"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/news_box_template.pt:19
+msgid "No news is no news."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/news_box_template.pt:23
+msgid "More..."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/news_box_template.pt:8
+msgid "News"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/password_form.pt:34
@@ -1542,16 +1454,16 @@ msgstr ""
 msgid "Skin"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/recent_news.pt:13
-msgid "${count} more recent articles"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/recent_news.pt:51
+#: CMFDefault/skins/zpt_generic/recent_news_template.pt:41
 msgid "No news is good news!"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/recent_news.pt:56
+#: CMFDefault/skins/zpt_generic/recent_news_template.pt:46
 msgid "${count} older articles"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/recent_news_template.pt:8
+msgid "${count} more recent articles"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/reconfig_template.pt:12
@@ -1678,97 +1590,102 @@ msgstr ""
 msgid "Listed?"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/search.py:37
+#: CMFDefault/skins/zpt_generic/search.py:47
 msgid "item"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/search.py:37
+#: CMFDefault/skins/zpt_generic/search.py:47
 msgid "items"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/search_form.pt:102
-msgid "Yesterday"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:105
-msgid "Last week"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:108
-msgid "Last month"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:114
-msgid "You may find only recent items by selecting a time-frame."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:122
-msgid "Item type"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:133
-msgid "You may limit your results to particular kinds of items by selecting them above. To find all kinds of items, do not select anything."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:147
-msgid "To find items by a particular user only, enter their username above. Note that you must enter their username <i>exactly</i>."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:19
-msgid "Review Status"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:22
-#: CMFDefault/skins/zpt_generic/search_form.pt:62
-#: CMFDefault/skins/zpt_generic/search_form.pt:125
-msgid "-- any --"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:23
-msgid "private"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:24
-msgid "pending"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:25
-msgid "published"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:28
-msgid "As a reviewer, you may search for items based on their review state. If you wish to constrain results to items in certain states, select them from this list."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:37
-msgid "Full Text"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:41
-msgid "For a simple text search, enter your search term here. Multiple words may be found by combining them with <b>AND</b> and <b>OR</b>. This will find text in items' contents, title and description."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:77
-msgid "You may also search the items' descriptions and titles specifically. Multiple words may be found by combining them with <b>AND</b> and <b>OR</b>."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:86
-msgid "Find new items since..."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:9
-msgid "Search ${title}"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/search_form.pt:96
+#: CMFDefault/skins/zpt_generic/search_form.py:25
 msgid "Ever"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/search_form.pt:98
+#: CMFDefault/skins/zpt_generic/search_form.py:28
 msgid "Last login"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/search_results_template.pt:34
+#: CMFDefault/skins/zpt_generic/search_form.py:29
+msgid "Yesterday"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form.py:30
+msgid "Last week"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form.py:31
+msgid "Last month"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form.py:38
+#: CMFDefault/skins/zpt_generic/folder_localrole_form.pt:38
+msgid "Search"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:106
+msgid "You may limit your results to particular kinds of items by selecting them above. To find all kinds of items, do not select anything."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:120
+msgid "To find items by a particular user only, enter their username above. Note that you must enter their username <i>exactly</i>."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:15
+msgid "Review Status"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:18
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:58
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:100
+msgid "-- any --"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:19
+msgid "private"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:20
+msgid "pending"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:21
+msgid "published"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:24
+msgid "As a reviewer, you may search for items based on their review state. If you wish to constrain results to items in certain states, select them from this list."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:33
+msgid "Full Text"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:37
+msgid "For a simple text search, enter your search term here. Multiple words may be found by combining them with <b>AND</b> and <b>OR</b>. This will find text in items' contents, title and description."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:5
+msgid "Search ${obj_title}"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:71
+msgid "You may also search the items' descriptions and titles specifically. Multiple words may be found by combining them with <b>AND</b> and <b>OR</b>."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:80
+msgid "Find new items since..."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:89
+msgid "You may find only recent items by selecting a time-frame."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:97
+msgid "Item type"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/search_results_template.pt:35
 msgid "(No title)"
 msgstr ""
 
@@ -1828,6 +1745,66 @@ msgstr ""
 msgid "Show Error Log Entry"
 msgstr ""
 
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:102
+msgid "Save"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:120
+msgid "Disable Syndication"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:129
+msgid "Enable Syndication"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:134
+msgid "Syndication is Disabled"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:16
+msgid "Channel Properties"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:27
+msgid "Channel Title:"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:33
+msgid "Channel Description:"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:51
+msgid "Syndication Module Properties"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:61
+msgid "Element"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:62
+msgid "Default Value"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:65
+msgid "UpdatePeriod"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:8
+msgid "Default Syndication Properties"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:80
+msgid "UpdateFrequency"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:88
+msgid "UpdateBase"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:95
+msgid "Max Syndicated Items"
+msgstr ""
+
 #: CMFDefault/skins/zpt_generic/undo_form.pt:110
 msgid "There are no transactions that can be undone."
 msgstr ""
@@ -1878,6 +1855,26 @@ msgstr ""
 
 #: CMFTopic/profiles/default/types/Topic.xml:5
 msgid "Topics are canned queries for organizing content with up to date queries into the catalog."
+msgstr ""
+
+#: CMFTopic/skins/zpt_topic/topic_edit_control.py:9
+msgid "Topic changed."
+msgstr ""
+
+#: CMFTopic/skins/zpt_topic/topic_edit_template.pt:31
+msgid "Acquire Criteria from Parent"
+msgstr ""
+
+#: CMFTopic/skins/zpt_topic/topic_view_template.pt:16
+msgid "Subtopics:"
+msgstr ""
+
+#: CMFTopic/skins/zpt_topic/topic_view_template.pt:23
+msgid "Topic Matches:"
+msgstr ""
+
+#: CMFTopic/skins/zpt_topic/topic_view_template.pt:33
+msgid "Query Parameters:"
 msgstr ""
 
 msgid "Next ${count} items"

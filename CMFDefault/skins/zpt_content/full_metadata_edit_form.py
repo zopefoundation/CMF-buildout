@@ -1,6 +1,7 @@
 ##parameters=change='', change_and_edit='', change_and_view=''
 ##
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import Message as _
 
 mdtool = getToolByName(script, 'portal_metadata')
@@ -39,6 +40,9 @@ options['allowed_subjects'] = tuple(allowed_subjects)
 options['extra_subjects'] = tuple(extra_subjects)
 options['subject'] = tuple(subject)
 options['format'] = form.get('format', context.Format())
+options['contributors'] = form.get('contributors', context.Contributors())
+options['language'] = form.get('language', context.Language())
+options['rights'] = form.get('rights', context.Rights())
 
 buttons = []
 target = context.getActionInfo('object/metadata')['url']
@@ -49,4 +53,4 @@ buttons.append( {'name': 'change_and_view', 'value': _(u'Change and View')} )
 options['form'] = { 'action': target,
                     'listButtonInfos': tuple(buttons) }
 
-return context.full_metadata_edit_template(**options)
+return context.full_metadata_edit_template(**decode(options, script))

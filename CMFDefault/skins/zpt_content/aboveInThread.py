@@ -1,6 +1,7 @@
-## Script (Python) "aboveInThread"
 ##parameters=
 ##title=Discussion parent breadcrumbs
+##
+from Products.CMFDefault.utils import decode
 
 breadcrumbs = ''
 parents = context.parentsInThread()
@@ -12,6 +13,5 @@ if parents:
         breadcrumbs = breadcrumbs + p_str + ':'
 
     breadcrumbs = breadcrumbs[:-1] + '<p>'
-        
-return breadcrumbs
 
+return decode(breadcrumbs, script)

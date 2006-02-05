@@ -1,36 +1,38 @@
 <metal:macro metal:define-macro="master"
 ><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
-<html tal:define="utool nocall:here/portal_url;
-                  mtool here/portal_membership;
-                  atool here/portal_actions;
-                  wtool here/portal_workflow;
-                  portal_object utool/getPortalObject;
-                  portal_title portal_object/Title;
-                  object_title here/Title;
-                  portal_url utool;
-                  member mtool/getAuthenticatedMember;
-                  membersfolder mtool/getMembersFolder;
-                  isAnon mtool/isAnonymousUser;
-                  actions python: atool.listFilteredActionsFor( here );
+<html tal:define="globals context/getMainGlobals;
+                  utool globals/utool;
+                  mtool globals/mtool;
+                  atool globals/atool;
+                  wtool globals/wtool;
+                  portal_object globals/portal_object;
+                  portal_title globals/portal_title;
+                  object_title globals/object_title;
+                  object_description globals/object_description;
+                  portal_url globals/portal_url;
+                  member globals/member;
+                  membersfolder globals/membersfolder;
+                  isAnon globals/isAnon;
+                  actions python: atool.listFilteredActionsFor(context);
                   user_actions actions/user;
                   object_actions actions/object;
                   workflow_actions actions/workflow;
                   folder_actions actions/folder;
                   global_actions actions/global;
-                  wf_state python:wtool.getInfoFor(here,'review_state','');
+                  wf_state globals/wf_state;
                  "
 >
 
 <head>
- <title tal:content="here/expanded_title"> Title goes here </title>
+ <title tal:content="context/expanded_title">Title goes here</title>
 
  <metal:slot define-slot="base" />
 
  <link rel="stylesheet" type="text/css" href="zpt_stylesheet.css"
-       tal:attributes="href here/zpt_stylesheet.css/absolute_url" />
+       tal:attributes="href context/zpt_stylesheet.css/absolute_url" />
  <link rel="stylesheet" type="text/css" href="CalendarStyle.css"
-       tal:condition="here/CalendarStyle.css|nothing"
-       tal:attributes="href here/CalendarStyle.css/absolute_url" />
+       tal:condition="context/CalendarStyle.css|nothing"
+       tal:attributes="href context/CalendarStyle.css/absolute_url" />
  <metal:slot define-slot="style_slot" />
 </head>
 
@@ -147,10 +149,10 @@
    <tr class="ContextActionsRow">
 
     <td class="ActionTitle"
-        tal:define="getIcon python:hasattr(here, 'getIcon') and here.getIcon();
-                    icon python:getIcon or getattr(here, 'icon', '');
-                    typ python:getattr(here, 'Type', '');
-                    objID python:here.truncID( here.getId(), size=15 )">
+        tal:define="getIcon python: hasattr(context, 'getIcon') and context.getIcon();
+                    icon python: getIcon or getattr(context, 'icon', '');
+                    typ python: getattr(context, 'Type', '');
+                    objID python: context.truncID(context.getId(), size=15)">
 
      <img src="icon" align="left" title="Type" alt="[X]"
           height="16" width="16"
@@ -240,7 +242,7 @@
 
    <tr>
     <td>
-     <div metal:use-macro="here/calendarBox/macros/calendarBox | default">
+     <div metal:use-macro="context/calendarBox/macros/calendarBox | default">
       <!-- CMFCalendar not Installed -->
      </div>
     </td>
@@ -258,7 +260,7 @@
  <td id="ForematterCell" width="78%">
 
   <p id="Breadcrumbs" style="padding-top: 5px">
-   <span tal:repeat="bc here/breadcrumbs"
+   <span tal:repeat="bc context/breadcrumbs"
     ><a href="."
         tal:attributes="href bc/url" tal:content="bc/id"
      >ID</a><span tal:condition="not: repeat/bc/end">&nbsp;/&nbsp;</span>
@@ -270,37 +272,27 @@
      tal:content="request/portal_status_message"
      i18n:translate="">Status message.</p>
 
-  <div metal:define-slot="header">
+<metal:slot metal:define-slot="header">
+<h1 id="DesktopTitle" tal:content="object_title">Page Title</h1>
 
-    <h1 id="DesktopTitle"
-        tal:content="here/Title"> Page Title </h1>
+<div id="DesktopDescription" tal:content="object_description">Description
+ of the resource goes here, perhaps even wrapping lines;  this is to make it
+ long enough to test.</div>
+</metal:slot>
+<!-- end formatter -->
 
-    <div id="DesktopDescription"
-        tal:content="here/Description">
-        Description of the resource goes here, perhaps even wrapping
-        lines;  this is to make it long enough to test.
-    </div>
+<div id="Desktop">
 
-  </div>
+<metal:slot metal:define-slot="main">
+<h2>Section Header</h2>
 
- <!-- end formatter -->
+<p>The content of the object is <a href="render">rendered</a> hre. Lorem ipsum
+ dolorem. Nihil obstat imprimatur. Semper ubi sub ubi. Non illegitimi
+ carborundum.  In vino veritas.  E pluribus unam.</p>
+</metal:slot>
 
- <div id="Desktop">
-
- <div metal:define-slot="main">
-
- <h2> Section Header </h2>
-
- <p> The content of the object is <a href="render">rendered</a> hre.
-     Lorem ipsum dolorem.  Nihil obstat imprimatur.  Semper ubi sub ubi.
-     Non illegitimi carborundum.  In vino veritas.  E pluribus unam.
- </p>
-
- <!-- end main slot -->
- </div>
- 
  <div id="Permalink"
-      tal:define="url here/get_permalink | nothing"
+      tal:define="url context/get_permalink | nothing"
       tal:condition="url">
   <span i18n:translate="" tal:omit-tag="">Permanent Link:</span>
   <a href="" tal:content="url" tal:attributes="href url">

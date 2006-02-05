@@ -68,7 +68,7 @@
    </select>
   </td>
   <th align="right" i18n:translate="">Contributors</th>
-  <td tal:define="contrib_lines python: '\n'.join( context.Contributors() )">
+  <td tal:define="contrib_lines python: '\n'.join(options['contributors'])">
    <textarea name="contributors:lines" rows="5" cols="30"
              tal:content="contrib_lines"></textarea>
   </td>
@@ -103,13 +103,13 @@
  <tr valign="top">
   <th align="right" i18n:translate="">Language</th>
   <td> <input type="text" name="language" value=""
-              tal:attributes="value context/Language" />
+              tal:attributes="value options/language" />
   </td>
  </tr>
  <tr valign="top">
   <th align="right" i18n:translate="">Rights</th>
   <td> <input type="text" name="rights" value=""
-              tal:attributes="value context/Rights" />
+              tal:attributes="value options/rights" />
   </td>
  </tr>
  <tr>

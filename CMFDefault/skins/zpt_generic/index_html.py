@@ -2,6 +2,7 @@
 ##
 from ZTUtils import Batch
 from ZTUtils import LazyFilter
+from Products.CMFDefault.utils import decode
 
 options = {}
 
@@ -18,4 +19,4 @@ navigation = context.getBatchNavigation(batch_obj, target)
 options['batch'] = { 'listItemInfos': listItemInfos,
                      'navigation': navigation }
 
-return context.index_html_template(**options)
+return context.index_html_template(**decode(options, script))

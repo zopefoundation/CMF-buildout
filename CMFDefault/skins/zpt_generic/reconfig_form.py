@@ -1,6 +1,7 @@
 ##parameters=change=''
 ##
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import Message as _
 
 atool = getToolByName(script, 'portal_actions')
@@ -18,7 +19,7 @@ options = {}
 
 target = atool.getActionInfo('global/configPortal')['url']
 buttons = []
-buttons.append( {'name': 'change', 'value': _('Change')} )
+buttons.append( {'name': 'change', 'value': _(u'Change')} )
 options['form'] = { 'action': target,
                     'email_from_name': ptool.getProperty('email_from_name'),
                     'email_from_address':
@@ -31,4 +32,4 @@ options['form'] = { 'action': target,
                                     ptool.getProperty('default_charset', ''),
                     'listButtonInfos': tuple(buttons) }
 
-return context.reconfig_template(**options)
+return context.reconfig_template(**decode(options, script))

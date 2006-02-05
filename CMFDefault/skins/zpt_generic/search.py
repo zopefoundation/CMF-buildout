@@ -3,6 +3,7 @@
 from Products.PythonScripts.standard import thousands_commas
 from ZTUtils import Batch
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import Message as _
 
 ctool = getToolByName(script, 'portal_catalog')
@@ -32,13 +33,22 @@ for k, v in kw.items():
             del kw[k]
 items = ctool.searchResults(kw)
 batch_obj = Batch(items, 25, b_start, orphan=1)
+
+items = [ {'description': item.Description,
+           'icon': item.getIcon,
+           'title': item.Title,
+           'type': item.Type,
+           'date': item.Date,
+           'url': item.getURL()+'/view'}
+          for item in batch_obj ]
+
 length = batch_obj.sequence_length
 summary = { 'length': length and thousands_commas(length) or '',
-            'type': (length == 1) and _('item') or _('items'),
+            'type': (length == 1) and _(u'item') or _(u'items'),
             'match': kw.get('SearchableText') }
 navigation = context.getBatchNavigation(batch_obj, target, **kw)
 options['batch'] = { 'summary': summary,
-                     'listItemBrains': batch_obj,
+                     'listItemInfos': tuple(items),
                      'navigation': navigation }
 
-return context.search_results_template(**options)
+return context.search_results_template(**decode(options, script))

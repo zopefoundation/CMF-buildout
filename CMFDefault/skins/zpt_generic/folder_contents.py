@@ -8,6 +8,7 @@ from Products.CMFDefault.permissions import DeleteObjects
 from Products.CMFDefault.permissions import ListFolderContents
 from Products.CMFDefault.permissions import ManageProperties
 from Products.CMFDefault.permissions import ViewManagementScreens
+from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import html_marshal
 from Products.CMFDefault.utils import Message as _
 
@@ -74,6 +75,8 @@ elif items_bottom and \
 
 
 options = {}
+
+options['title'] = context.Title()
 
 items_manage_allowed = mtool.checkPermission(ViewManagementScreens, context)
 items_delete_allowed = mtool.checkPermission(DeleteObjects, context)
@@ -188,4 +191,4 @@ options['form'] = { 'action': target,
                     'is_orderable': is_orderable,
                     'is_sortable': is_sortable }
 
-return context.folder_contents_template(**options)
+return context.folder_contents_template(**decode(options, script))

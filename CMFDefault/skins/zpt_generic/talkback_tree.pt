@@ -1,51 +1,36 @@
 <html>
 <body>
 
-<table cellspacing="0" border="0"
-       metal:define-macro="tree"
-       tal:define="t python:here.setup_talkback_tree(here);
-                   height t/root/height;
-                   mtool here/portal_membership;
-                   member mtool/getAuthenticatedMember;
-                  ">
- <tr tal:repeat="row t/rows">
+<table cellspacing="0" border="0" metal:define-macro="tree">
+ <tr tal:repeat="item python: context.setup_talkback_tree(context)">
   <td colspan="1"
-      tal:define="indent python: row.depth - 1"
-      tal:condition="indent"
-      tal:attributes="colspan indent" ></td>
-  <td width="16"
-      tal:define="rlink row/branch">
+     tal:condition="item/tree_indent"
+     tal:attributes="colspan item/tree_indent"></td>
+  <td width="16">
    <a href="#" name=""
-      tal:condition="rlink"
-      tal:attributes="name row/id;
-                      href rlink/link"
-      tal:content="structure rlink/img"><img src="/p_/pl"></a>
+      tal:condition="item/tree_url"
+      tal:attributes="name item/tree_id;
+                      href item/tree_url"
+      tal:content="structure item/tree_icon"><img src="/p_/pl"></a>
   </td>
-  <td colspan="1" width="99%"
-      tal:attributes="colspan python: height - row.depth"
-      tal:define="obj nocall: row/object;
-                  url obj/absolute_url">
-   <a href=""
-      tal:attributes="href url"
-   ><img border="0" src=""
-         tal:attributes="src string:${obj/portal_url}/${obj/getIcon}" /></a>
-   <a href=""
-       tal:attributes="href url"
-       tal:content="obj/Title">Title</a>,
-   by <tal:case tal:condition="obj/listCreators"
-  ><tal:loop tal:repeat="creator obj/listCreators"
-   ><tal:case tal:condition="not: repeat/creator/start"
-    ><tal:case tal:condition="not: repeat/creator/end">, </tal:case
-    ><tal:case tal:condition="repeat/creator/end"
-     > <span tal:omit-tag="" i18n:translate="">and</span> </tal:case
-   ></tal:case
-   ><tal:span tal:content="creator">creator</tal:span></tal:loop></tal:case
- ><tal:case tal:condition="not: obj/listCreators"
-  ><span tal:omit-tag="" i18n:translate="">unknown</span></tal:case>
-   on <span tal:replace="obj/CreationDate">Today</span>
-  <a href="#"
-     tal:condition="python: member.has_permission('Manage portal', here)"
-     tal:attributes="href python: url + '/discitem_delete'">[ delete reply ]</a>
+  <td colspan="1" tal:attributes="colspan item/tree_colspan">
+   <a href="" tal:attributes="href item/url"
+   ><img border="0" src="" tal:attributes="src item/icon" /></a>
+   <a href="" tal:attributes="href item/url"
+      tal:content="item/title">Title</a>,
+   by <tal:case tal:condition="item/creators"
+   ><tal:loop tal:repeat="creator item/creators"
+    ><tal:case tal:condition="not: repeat/creator/start"
+     ><tal:case tal:condition="not: repeat/creator/end">, </tal:case
+     ><tal:case tal:condition="repeat/creator/end"
+      > <i18n:span i18n:translate="">and</i18n:span> </tal:case></tal:case
+    ><tal:span tal:content="creator">creator</tal:span></tal:loop></tal:case
+  ><tal:case tal:condition="not: item/creators"
+   ><i18n:span i18n:translate="">unknown</i18n:span></tal:case>
+   on <tal:span tal:content="item/date">Today</tal:span
+  ><tal:case tal:condition="item/delete_url"> [
+   <a href="#" tal:attributes="href item/delete_url"
+        i18n:translate="">delete reply</a> ]</tal:case>
   </td>
  </tr>
 </table>

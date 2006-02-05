@@ -1,9 +1,9 @@
-<html metal:use-macro="here/main_template/macros/master" >
+<html metal:use-macro="context/main_template/macros/master">
 <body style="position: relative">
 
 <div metal:fill-slot="header"
-     tal:define="global has_local python: 'local_pt' in here.objectIds();
-                 global util_macros here/index_html_utils/macros;
+     tal:define="global has_local python: 'local_pt' in context.objectIds();
+                 global util_macros context/index_html_utils/macros;
                 " >
 
   <div tal:condition="not: has_local">
@@ -14,7 +14,7 @@
 
   <div tal:condition="has_local">
 
-    <div metal:use-macro="here/local_pt/macros/header | default">
+    <div metal:use-macro="context/local_pt/macros/header | default">
       'local_pt' header goes here.
     </div>
 
@@ -32,7 +32,7 @@
       <br />
 
       <div metal:use-macro="util_macros/index_content" />
-  
+
       <div metal:use-macro="util_macros/index_links" />
 
       <div metal:use-macro="util_macros/index_folders" />
@@ -41,7 +41,7 @@
 
     <div tal:condition="has_local">
 
-      <div metal:use-macro="here/local_pt/macros/body | default">
+      <div metal:use-macro="context/local_pt/macros/body | default">
         'local_pt' body goes here.
       </div>
 
@@ -51,9 +51,7 @@
 
   <div id="right_sidebar"
        style="width: 20%">
-
-    <div metal:use-macro="util_macros/news_box" />
-
+<tal:span tal:replace="structure context/news_box" />
   </div>
 
 </div>

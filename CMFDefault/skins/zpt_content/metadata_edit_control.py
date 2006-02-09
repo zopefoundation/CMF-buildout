@@ -64,6 +64,6 @@ try:
                         , language=language
                         , rights=rights
                         )
-    return context.setStatus(True, _('Metadata changed.'))
+    return context.setStatus(True, _(u'Metadata changed.'))
 except ResourceLockedError, errmsg:
     return context.setStatus(False, errmsg)

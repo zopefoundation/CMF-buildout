@@ -8,8 +8,8 @@ if description != context.description or \
     try:
         context.edit(text=text, description=description,
                      text_format=text_format)
-        return context.setStatus(True, _('News Item changed.'))
+        return context.setStatus(True, _(u'News Item changed.'))
     except ResourceLockedError, errmsg:
         return context.setStatus(False, errmsg)
 else:
-    return context.setStatus(False, _('Nothing to change.'))
+    return context.setStatus(False, _(u'Nothing to change.'))

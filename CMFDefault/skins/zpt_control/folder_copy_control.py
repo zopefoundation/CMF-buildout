@@ -7,8 +7,8 @@ from Products.CMFDefault.utils import Message as _
 try:
     context.manage_copyObjects(ids, context.REQUEST)
     if len(ids) == 1:
-        return context.setStatus(True, _('Item copied.'))
+        return context.setStatus(True, _(u'Item copied.'))
     else:
-        return context.setStatus(True, _('Items copied.'))
+        return context.setStatus(True, _(u'Items copied.'))
 except CopyError:
-    return context.setStatus(False, _('CopyError: Copy failed.'))
+    return context.setStatus(False, _(u'CopyError: Copy failed.'))

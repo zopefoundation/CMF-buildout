@@ -51,14 +51,14 @@ class RegistrationTool(BaseTool):
         o If not, return a string explaining why.
         """
         if not password:
-            return _('You must enter a password.')
+            return _(u'You must enter a password.')
 
         if len(password) < 5 and not _checkPermission(ManagePortal, self):
-            return _('Your password must contain at least 5 characters.')
+            return _(u'Your password must contain at least 5 characters.')
 
         if confirm is not None and confirm != password:
-            return _('Your password and confirmation did not match. '
-                     'Please try again.')
+            return _(u'Your password and confirmation did not match. '
+                     u'Please try again.')
 
         return None
 
@@ -74,19 +74,19 @@ class RegistrationTool(BaseTool):
 
             username = props.get('username', '')
             if not username:
-                return _('You must enter a valid name.')
+                return _(u'You must enter a valid name.')
 
             if not self.isMemberIdAllowed(username):
-                return _('The login name you selected is already in use or '
-                         'is not valid. Please choose another.')
+                return _(u'The login name you selected is already in use or '
+                         u'is not valid. Please choose another.')
 
             email = props.get('email')
             if email is None:
-                return _('You must enter an email address.')
+                return _(u'You must enter an email address.')
 
             ok, message =  _checkEmail( email )
             if not ok:
-                return _('You must enter a valid email address.')
+                return _(u'You must enter a valid email address.')
 
         else: # Existing member.
             email = props.get('email')
@@ -95,13 +95,13 @@ class RegistrationTool(BaseTool):
 
                 ok, message =  _checkEmail( email )
                 if not ok:
-                    return _('You must enter a valid email address.')
+                    return _(u'You must enter a valid email address.')
 
             # Not allowed to clear an existing non-empty email.
             existing = member.getProperty('email')
 
             if existing and email == '':
-                return _('You must enter a valid email address.')
+                return _(u'You must enter a valid email address.')
 
         return None
 
@@ -115,13 +115,13 @@ class RegistrationTool(BaseTool):
         member = membership.getMemberById(forgotten_userid)
 
         if member is None:
-            raise ValueError(_('The username you entered could not be '
-                               'found.'))
+            raise ValueError(_(u'The username you entered could not be '
+                               u'found.'))
 
         # assert that we can actually get an email address, otherwise
         # the template will be made with a blank To:, this is bad
         if not member.getProperty('email'):
-            raise ValueError(_('That user does not have an email address.'))
+            raise ValueError(_(u'That user does not have an email address.'))
 
         check, msg = _checkEmail(member.getProperty('email'))
         if not check:
@@ -149,8 +149,8 @@ class RegistrationTool(BaseTool):
         member = membership.getMemberById( new_member_id )
 
         if member is None:
-            raise ValueError(_('The username you entered could not be '
-                               'found.'))
+            raise ValueError(_(u'The username you entered could not be '
+                               u'found.'))
 
         if password is None:
             password = member.getPassword()
@@ -158,8 +158,8 @@ class RegistrationTool(BaseTool):
         email = member.getProperty( 'email' )
 
         if email is None:
-            msg = _('No email address is registered for member: ${member_id}')
-            msg.mapping = {'member_id': new_member_id}
+            msg = _(u'No email address is registered for member: '
+                    u'${member_id}', mapping={'member_id': new_member_id})
             raise ValueError(msg)
 
         check, msg = _checkEmail(email)

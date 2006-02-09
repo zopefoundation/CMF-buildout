@@ -39,8 +39,8 @@ hidden_vars = []
 for name, value in html_marshal(**default_kw):
     hidden_vars.append( {'name': name, 'value': value} )
 buttons = []
-buttons.append( {'name': 'rename', 'value': _('Rename')} )
-buttons.append( {'name': 'cancel', 'value': _('Cancel')} )
+buttons.append( {'name': 'rename', 'value': _(u'Rename')} )
+buttons.append( {'name': 'cancel', 'value': _(u'Cancel')} )
 options['form'] = { 'action': target,
                     'listHiddenVarInfos': tuple(hidden_vars),
                     'listButtonInfos': tuple(buttons) }

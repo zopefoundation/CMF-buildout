@@ -7,8 +7,8 @@ from Products.CMFDefault.utils import Message as _
 if text_format != context.text_format or text != context.text:
     try:
         context.edit(text_format, text, safety_belt=SafetyBelt)
-        return context.setStatus(True, _('Document changed.'))
+        return context.setStatus(True, _(u'Document changed.'))
     except (ResourceLockedError, EditingConflict), errmsg:
         return context.setStatus(False, errmsg)
 else:
-    return context.setStatus(False, _('Nothing to change.'))
+    return context.setStatus(False, _(u'Nothing to change.'))

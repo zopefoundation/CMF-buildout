@@ -28,12 +28,12 @@ elif cancel and \
 
 options = {}
 
-if context.REQUEST.get('portal_status_message', '') == _('Success!'):
+if context.REQUEST.get('portal_status_message', '') == _(u'Success!'):
     is_anon = False
     is_newmember = True
 
-options['title'] = is_usermanager and _('Register Member') \
-                                  or _('Become a Member')
+options['title'] = is_usermanager and _(u'Register Member') \
+                                  or _(u'Become a Member')
 options['member_id'] = member_id
 options['member_email'] = member_email
 options['password'] = is_newmember and context.REQUEST.get('password', '') or ''
@@ -48,11 +48,11 @@ options['validate_email'] = validate_email
 buttons = []
 if is_newmember:
     target = atool.getActionInfo('user/logged_in')['url']
-    buttons.append( {'name': 'login', 'value': _('Log in')} )
+    buttons.append( {'name': 'login', 'value': _(u'Log in')} )
 else:
     target = atool.getActionInfo('user/join')['url']
-    buttons.append( {'name': 'add', 'value': _('Register')} )
-    buttons.append( {'name': 'cancel', 'value': _('Cancel')} )
+    buttons.append( {'name': 'add', 'value': _(u'Register')} )
+    buttons.append( {'name': 'cancel', 'value': _(u'Cancel')} )
 options['form'] = { 'action': target,
                     'listButtonInfos': tuple(buttons) }
 

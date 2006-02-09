@@ -10,7 +10,7 @@ portal_url = utool()
 result = []
 
 if include_root:
-    result.append( { 'id'      : _('root')
+    result.append( { 'id'      : _(u'root')
                    , 'title'   : ptool.title()
                    , 'url'     : portal_url
                    }

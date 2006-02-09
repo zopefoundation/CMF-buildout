@@ -8,10 +8,10 @@ if not ids == new_ids:
     try:
         context.manage_renameObjects(ids, new_ids)
         if len(ids) == 1:
-            return context.setStatus(True, _('Item renamed.'))
+            return context.setStatus(True, _(u'Item renamed.'))
         else:
-            return context.setStatus(True, _('Items renamed.'))
+            return context.setStatus(True, _(u'Items renamed.'))
     except CopyError:
-        return context.setStatus(False, _('CopyError: Rename failed.'))
+        return context.setStatus(False, _(u'CopyError: Rename failed.'))
 else:
-    return context.setStatus(False, _('Nothing to change.'))
+    return context.setStatus(False, _(u'Nothing to change.'))

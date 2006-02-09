@@ -9,6 +9,6 @@ mtool = getToolByName(script, 'portal_membership')
 mtool.deleteMembers(ids)
 
 if len(ids) == 1:
-    return context.setStatus(True, _('Selected member deleted.'))
+    return context.setStatus(True, _(u'Selected member deleted.'))
 else:
-    return context.setStatus(True, _('Selected members deleted.'))
+    return context.setStatus(True, _(u'Selected members deleted.'))

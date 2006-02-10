@@ -134,6 +134,10 @@ CMF 2.0.0-alpha (2006/01/22)
 
   Bug Fixes
 
+    - CMFDefault skins: Refactored 'logged_in' page and 'password_form'.
+      'logged_in' now redirects to the 'password_form' if a new member has to
+      change her password.
+
     - CMFDefault skins: Fixed clipboard data validation.
       Split off validateClipboardData from folder_paste_control.
 

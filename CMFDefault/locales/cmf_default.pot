@@ -13,7 +13,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CMF 2.0\n"
-"POT-Creation-Date: Sun Feb 05 22:53:33 2006\n"
+"POT-Creation-Date: Fri Feb 10 13:04:50 2006\n"
 "Language-Team: CMF Developers <zope-cmf@zope.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,6 +22,10 @@ msgstr ""
 #: CMFCore/RegistrationTool.py:144
 #: CMFDefault/RegistrationTool.py:80
 msgid "The login name you selected is already in use or is not valid. Please choose another."
+msgstr ""
+
+#: CMFDefault/Document.py:108
+msgid "Intervening changes from elsewhere detected. Please refetch the document and reapply your changes. (You may be able to recover your version using the browser 'back' button, but will have to apply them to a freshly fetched copy.)"
 msgstr ""
 
 #: CMFDefault/RegistrationTool.py:118
@@ -34,6 +38,7 @@ msgid "That user does not have an email address."
 msgstr ""
 
 #: CMFDefault/RegistrationTool.py:161
+# Default: ""
 msgid "No email address is registered for member: ${member_id}"
 msgstr ""
 
@@ -342,7 +347,6 @@ msgstr ""
 #: CMFDefault/skins/zpt_generic/index_html_utils.html:106
 #: CMFDefault/skins/zpt_generic/index_html_utils.html:106
 #: CMFDefault/skins/zpt_generic/join_template.pt:5
-#: CMFDefault/skins/zpt_generic/logged_out.pt:6
 #: CMFDefault/skins/zpt_generic/main_template.pt:71
 #: CMFDefault/skins/zpt_generic/main_template.pt:118
 #: CMFDefault/skins/zpt_generic/main_template.pt:157
@@ -415,9 +419,9 @@ msgstr ""
 #: CMFDefault/skins/zpt_content/link_edit_form.py:24
 #: CMFDefault/skins/zpt_content/metadata_edit_form.py:46
 #: CMFDefault/skins/zpt_content/newsitem_edit_form.py:28
+#: CMFDefault/skins/zpt_generic/password_form.py:37
 #: CMFDefault/skins/zpt_generic/reconfig_form.py:22
 #: CMFTopic/skins/zpt_topic/topic_edit_form.py:26
-#: CMFDefault/skins/zpt_generic/password_form.pt:44
 #: CMFDefault/skins/zpt_generic/personalize_form.pt:92
 msgid "Change"
 msgstr ""
@@ -674,6 +678,10 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_content/transition_form.pt:45
 msgid "Transition"
+msgstr ""
+
+#: CMFDefault/skins/zpt_control/change_password.py:21
+msgid "Password changed."
 msgstr ""
 
 #: CMFDefault/skins/zpt_control/finish_portal_construction.pt:12
@@ -1081,6 +1089,7 @@ msgstr ""
 #: CMFDefault/skins/zpt_generic/folder_rename_form.py:43
 #: CMFDefault/skins/zpt_generic/join_form.py:55
 #: CMFDefault/skins/zpt_generic/members_delete_form.py:28
+#: CMFDefault/skins/zpt_generic/password_form.py:39
 msgid "Cancel"
 msgstr ""
 
@@ -1151,6 +1160,7 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_generic/join_template.pt:59
 #: CMFDefault/skins/zpt_generic/login_form.pt:24
+#: CMFDefault/skins/zpt_generic/password_form_template.pt:26
 msgid "Member ID"
 msgstr ""
 
@@ -1171,54 +1181,27 @@ msgstr ""
 msgid "Check this box to have the password mailed."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/logged_in.pt:117
-msgid "Login success"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/logged_in.pt:119
-msgid "Welcome. You are currently logged in."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/logged_in.pt:27
+#: CMFDefault/skins/zpt_generic/logged_in.py:24
 msgid "Login failure"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/logged_in.pt:32
+#: CMFDefault/skins/zpt_generic/logged_in.py:46
+msgid "Login success"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/logged_in_template.pt:13
 msgid "You are not currently logged in. Your username and or password may be incorrect. Your browser may also not be configured to accept HTTP cookies. If you need help please contact ${admin_email}."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/logged_in.pt:50
-msgid "Welcome!"
+#: CMFDefault/skins/zpt_generic/logged_in_template.pt:19
+msgid "Welcome. You are currently logged in."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/logged_in.pt:54
-msgid "This is the first time that you've logged in to ${portal_title}. Before you start exploring you need to change your original password. This will ensure that the password we sent you via email cannot be used in a malicious manner."
+#: CMFDefault/skins/zpt_generic/logged_out.pt:5
+msgid "You have been logged out."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/logged_in.pt:59
-msgid "Please use the form below to change your password."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/logged_in.pt:74
-#: CMFDefault/skins/zpt_generic/password_form.pt:19
-msgid "Username"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/logged_in.pt:79
-#: CMFDefault/skins/zpt_generic/password_form.pt:24
-msgid "New password"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/logged_in.pt:84
-#: CMFDefault/skins/zpt_generic/password_form.pt:29
-msgid "Confirm new password"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/logged_in.pt:91
-msgid "Change password"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/logged_out.pt:9
+#: CMFDefault/skins/zpt_generic/logged_out.pt:7
 msgid "You are logged in outside the portal. You may need to <a href=\"/manage_zmi_logout\">log out of the Zope management interface</a>."
 msgstr ""
 
@@ -1430,16 +1413,36 @@ msgstr ""
 msgid "News"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/password_form.pt:34
+#: CMFDefault/skins/zpt_generic/password_form.py:29
+msgid "Welcome!"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/password_form.py:32
+msgid "Change your Password"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/password_form_template.pt:13
+msgid "This is the first time that you've logged in to ${portal_title}. Before you start exploring you need to change your original password. This will ensure that the password we sent you via email cannot be used in a malicious manner."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/password_form_template.pt:19
+msgid "Please use the form below to change your password."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/password_form_template.pt:30
+msgid "New password"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/password_form_template.pt:34
+msgid "Confirm new password"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/password_form_template.pt:38
 msgid "Domains"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/password_form.pt:37
+#: CMFDefault/skins/zpt_generic/password_form_template.pt:42
 msgid "If you do not know what this field is for, leave it blank."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/password_form.pt:9
-msgid "Change your Password"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/personalize_form.pt:25

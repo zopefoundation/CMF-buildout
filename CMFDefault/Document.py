@@ -43,6 +43,7 @@ from utils import _dtmldir
 from utils import bodyfinder
 from utils import formatRFC822Headers
 from utils import html_headcheck
+from utils import Message as _
 from utils import parseHeadersBody
 from utils import SimpleHTMLParser
 
@@ -104,11 +105,11 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         """ Edit the Document and cook the body.
         """
         if not self._safety_belt_update(safety_belt=safety_belt):
-            msg = ("Intervening changes from elsewhere detected."
-                   " Please refetch the document and reapply your changes."
-                   " (You may be able to recover your version using the"
-                   " browser 'back' button, but will have to apply them"
-                   " to a freshly fetched copy.)")
+            msg = _(u'Intervening changes from elsewhere detected. '
+                    u'Please refetch the document and reapply your changes. '
+                    u'(You may be able to recover your version using the '
+                    u"browser 'back' button, but will have to apply them to "
+                    u'a freshly fetched copy.)')
             raise EditingConflict(msg)
 
         self.text = text

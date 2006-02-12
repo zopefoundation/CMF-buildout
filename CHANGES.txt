@@ -22,16 +22,14 @@ Before CMF 1.6 beta
     - FSFile: autodetect the encoding of UTF-8 text files with a
       suitable Byte Order Mark (0xEF 0xBB 0xBF).
 
-  Others
+    - CMFSetup: Split off GenericSetup.
+      GenericSetup allows to use CMFSetup functionality outside CMF. See
+      the README.txt of GenericSetup for details. 
 
-    - Removed GenericSetup as a package inside CMF, it is now a standalone
-      product, but still distributed as part of the CMF package.
+  Others
 
     - CMFCore utils: Made _checkPermission depend on Zope's checkPermission.
       There is no longer a need to modify the checkPermission behavior in CMF.
-
-    - Converted CMFSetup into a pure legacy package. CMFSetup will be removed
-      in CMF 2.0.
 
     - Reordered base classes of File and Image, to allow use of super().
 

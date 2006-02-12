@@ -23,7 +23,7 @@ elif cancel and \
 
 options = {}
 
-is_first_login = (member.getProperty('last_login_time').Date() == '1999/01/01')
+is_first_login = (member.getProperty('last_login_time') == DateTime('1999/01/01'))
 options['is_first_login'] = is_first_login
 if is_first_login:
     options['title'] = _(u'Welcome!')

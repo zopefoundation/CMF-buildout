@@ -30,7 +30,7 @@
     </div>
   </div>
   <div id="right_sidebar"
-       style="width: 20%">
+       style="float: right; width: 20%">
 <tal:span tal:replace="structure context/news_box" />
   </div>
 </metal:slot>

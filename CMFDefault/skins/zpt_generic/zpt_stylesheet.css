@@ -56,9 +56,15 @@ table {
 }
 
 td {
+    border: 0;
+    margin: 0;
     vertical-align: top;
 }
 
+th {
+    border: 0;
+    margin: 0;
+}
 
 #Masthead {
     background-color: #336699;
@@ -203,8 +209,8 @@ td {
 }
 
 #Desktop {
-    margin-left: 2pt;
-    margin-right: 2pt;
+    margin-left: 0px;
+    margin-right: 16px;
 }
 
 #Permalink {
@@ -225,10 +231,6 @@ td {
     font-style: italic;
 }
 
-table.FormLayout {
-    width: 80%;
-}
-
 table.FormLayout tr {
     vertical-align: top;
 }
@@ -244,12 +246,15 @@ table.FormLayout tr td.TextField {
 }
 
 table.FormLayout th {
-    width: 72pt;
-    padding-right: 8pt;
-    vertical-align: top;
+    padding: 1pt 2pt 1pt 2pt;
+    width: 100px;
     text-align: right;
     font-size: 80%;
     font-weight: bold;
+}
+
+table.FormLayout td {
+    padding: 1pt 2pt 1pt 2pt;
 }
 
 table.FormLayout dl.FieldHelp dd {
@@ -258,7 +263,8 @@ table.FormLayout dl.FieldHelp dd {
 }
 
 table.FormLayout td.ListName {
-    background-color:  #336699;
+    padding: 0pt 2pt 0pt 2pt;
+    background-color: #336699;
     color: #FFFFFF;
     font-weight: bold;
     vertical-align: middle;
@@ -308,7 +314,6 @@ div.NewsBar {
 table.NewsItems {
     border: 0;
 }
-
 
 td.NewsBorder {
     background-color: #336699;
@@ -384,6 +389,15 @@ p.NewsHeadline {
 .BatchTable {
     border-spacing: 0;
     border-collapse: collapse;
+}
+
+.BatchTable th {
+    padding: 1pt 2pt 1pt 2pt;
+
+}
+
+.BatchTable td {
+    padding: 1pt 2pt 1pt 2pt;
 }
 
 .BatchTable tr.list-header {

@@ -16,9 +16,6 @@ CMF 2.0.0-alpha (2006/01/22)
       A modified i18nextract.py script from Zope 3 is used to extract
       translatable strings from .py, .pt, .html and .xml files.
 
-    - FSFile: autodetect the encoding of UTF-8 text files with a
-      suitable Byte Order Mark (0xEF 0xBB 0xBF).
-
     - CMFDefault.MetadataTool:  support arbitrary additional schemas.
       The "stock" DublinCore-specific API is still accessible, implemented
       via a special "DCMI" subobject.
@@ -75,14 +72,6 @@ CMF 2.0.0-alpha (2006/01/22)
     - CMFCore.exportimport:  Added framework and interfaces for exporting
       and importing content using the export / import contexts provided by
       GenericSetup.
-
-    - CMFSetup: Split off GenericSetup.
-      GenericSetup allows to use CMFSetup functionality outside CMF. See the
-      README.txt of GenericSetup for details.
-
-    - Interfaces: Converted all interfaces to zope 3 style interfaces.
-      Most interfaces are bridged back to zope 2 style interfaces to provide
-      backwards compatibility.
 
     - The features of CMFonFive have been folder into CMFCore and
       CMFDefault:
@@ -204,9 +193,6 @@ CMF 2.0.0-alpha (2006/01/22)
     - Replaced use of deprecated 'zLOG' module with standard Python
       'logging' module.
 
-    - CMFCore utils: Made _checkPermission depend on Zope's checkPermission.
-      There is no longer a need to modify the checkPermission behavior in CMF.
-
     - TypeInformation: Removed support for old setting formats.
       If TypeInformation objects are initialized with keyword arguments,
       'actions' and 'aliases' keys have to use the format introduced in
@@ -305,9 +291,6 @@ CMF 2.0.0-alpha (2006/01/22)
 
     - Workflow: Removed deprecated WorkflowMethod machinery.
 
-    - Made unit tests close the request properly.
-
-    - Reordered base classes of File and Image, to allow use of super().
 
 CMF 1.5.x and previous
 

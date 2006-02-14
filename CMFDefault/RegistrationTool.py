@@ -131,8 +131,7 @@ class RegistrationTool(BaseTool):
         # Rather than have the template try to use the mailhost, we will
         # render the message ourselves and send it from here (where we
         # don't need to worry about 'UseMailHost' permissions).
-        method = getattr(self, 'member_password_mail',
-                         getattr(self, 'mail_password_template'))
+        method = getattr(self, 'member_password_mail')
         kw = {'member': member, 'password': member.getPassword()}
 
         if getattr(aq_base(method), 'isDocTemp', 0):
@@ -173,8 +172,7 @@ class RegistrationTool(BaseTool):
         # Rather than have the template try to use the mailhost, we will
         # render the message ourselves and send it from here (where we
         # don't need to worry about 'UseMailHost' permissions).
-        method = getattr(self, 'member_registered_mail',
-                         getattr(self, 'registered_notify_template'))
+        method = getattr(self, 'member_registered_mail')
         kw = {'member': member, 'password': password, 'email': email}
 
         if getattr(aq_base(method), 'isDocTemp', 0):

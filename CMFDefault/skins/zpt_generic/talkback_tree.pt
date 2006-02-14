@@ -23,10 +23,10 @@
     ><tal:case tal:condition="not: repeat/creator/start"
      ><tal:case tal:condition="not: repeat/creator/end">, </tal:case
      ><tal:case tal:condition="repeat/creator/end"
-      > <i18n:span i18n:translate="">and</i18n:span> </tal:case></tal:case
+      > <tal:span i18n:translate="">and</tal:span> </tal:case></tal:case
     ><tal:span tal:content="creator">creator</tal:span></tal:loop></tal:case
   ><tal:case tal:condition="not: item/creators"
-   ><i18n:span i18n:translate="">unknown</i18n:span></tal:case>
+   ><tal:span i18n:translate="">unknown</tal:span></tal:case>
    on <tal:span tal:content="item/date">Today</tal:span
   ><tal:case tal:condition="item/delete_url"> [
    <a href="#" tal:attributes="href item/delete_url"

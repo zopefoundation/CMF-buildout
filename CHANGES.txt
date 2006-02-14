@@ -123,9 +123,9 @@ CMF 2.0.0-alpha (2006/01/22)
 
   Bug Fixes
 
-    - CMFDefault skins: Refactored 'logged_in' page and 'password_form'.
-      'logged_in' now redirects to the 'password_form' if a new member has to
-      change her password.
+    - CMFDefault setuphandlers: Disabled password encryption.
+      'registeredNotify' and 'mailPassword' don't work with encrypted
+      passwords.
 
     - CMFDefault skins: Fixed clipboard data validation.
       Split off validateClipboardData from folder_paste_control.
@@ -182,6 +182,15 @@ CMF 2.0.0-alpha (2006/01/22)
       if no default view could be found for a piece of content.
 
   Others
+
+    - CMFDefault RegistrationTool and skins: Refactored mail creation.
+      'mailPassword' now calls the 'member_password_mail' script and
+      'registeredNotify' the 'member_registered_mail' script. These scripts
+      call the templates and do the necessary string decoding and encoding.
+
+    - CMFDefault skins: Refactored 'logged_in' page and 'password_form'.
+      'logged_in' now redirects to the 'password_form' if a new member has to
+      change her password.
 
     - Replaced deprecated 'manage_afterAdd' and 'manage_beforeDelete' hooks
       in CookieCrumbler with a Z3-style event subscriber which does the

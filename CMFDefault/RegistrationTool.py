@@ -18,6 +18,7 @@ $Id$
 import re
 
 from AccessControl import ClassSecurityInfo
+from Acquisition import aq_base
 from Globals import InitializeClass
 
 from Products.CMFCore.RegistrationTool import RegistrationTool as BaseTool
@@ -130,11 +131,14 @@ class RegistrationTool(BaseTool):
         # Rather than have the template try to use the mailhost, we will
         # render the message ourselves and send it from here (where we
         # don't need to worry about 'UseMailHost' permissions).
-        mail_text = self.mail_password_template( self
-                                               , REQUEST
-                                               , member=member
-                                               , password=member.getPassword()
-                                               )
+        method = getattr(self, 'member_password_mail',
+                         getattr(self, 'mail_password_template'))
+        kw = {'member': member, 'password': member.getPassword()}
+
+        if getattr(aq_base(method), 'isDocTemp', 0):
+            mail_text = method(self, self.REQUEST, **kw)
+        else:
+            mail_text = method(**kw)
 
         host = self.MailHost
         host.send( mail_text )
@@ -169,12 +173,14 @@ class RegistrationTool(BaseTool):
         # Rather than have the template try to use the mailhost, we will
         # render the message ourselves and send it from here (where we
         # don't need to worry about 'UseMailHost' permissions).
-        mail_text = self.registered_notify_template( self
-                                                   , self.REQUEST
-                                                   , member=member
-                                                   , password=password
-                                                   , email=email
-                                                   )
+        method = getattr(self, 'member_registered_mail',
+                         getattr(self, 'registered_notify_template'))
+        kw = {'member': member, 'password': password, 'email': email}
+
+        if getattr(aq_base(method), 'isDocTemp', 0):
+            mail_text = method(self, self.REQUEST, **kw)
+        else:
+            mail_text = method(**kw)
 
         host = self.MailHost
         host.send( mail_text )

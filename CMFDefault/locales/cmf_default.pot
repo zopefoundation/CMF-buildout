@@ -13,14 +13,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CMF 2.0\n"
-"POT-Creation-Date: Fri Feb 10 13:04:50 2006\n"
+"POT-Creation-Date: Tue Feb 14 21:58:36 2006\n"
 "Language-Team: CMF Developers <zope-cmf@zope.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: CMFCore/RegistrationTool.py:144
-#: CMFDefault/RegistrationTool.py:80
+#: CMFDefault/RegistrationTool.py:81
 msgid "The login name you selected is already in use or is not valid. Please choose another."
 msgstr ""
 
@@ -28,43 +28,43 @@ msgstr ""
 msgid "Intervening changes from elsewhere detected. Please refetch the document and reapply your changes. (You may be able to recover your version using the browser 'back' button, but will have to apply them to a freshly fetched copy.)"
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:118
-#: CMFDefault/RegistrationTool.py:152
+#: CMFDefault/RegistrationTool.py:119
+#: CMFDefault/RegistrationTool.py:156
 msgid "The username you entered could not be found."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:124
+#: CMFDefault/RegistrationTool.py:125
 msgid "That user does not have an email address."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:161
+#: CMFDefault/RegistrationTool.py:165
 # Default: ""
 msgid "No email address is registered for member: ${member_id}"
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:54
+#: CMFDefault/RegistrationTool.py:55
 msgid "You must enter a password."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:57
+#: CMFDefault/RegistrationTool.py:58
 msgid "Your password must contain at least 5 characters."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:60
+#: CMFDefault/RegistrationTool.py:61
 msgid "Your password and confirmation did not match. Please try again."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:77
+#: CMFDefault/RegistrationTool.py:78
 msgid "You must enter a valid name."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:85
+#: CMFDefault/RegistrationTool.py:86
 msgid "You must enter an email address."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:89
-#: CMFDefault/RegistrationTool.py:98
-#: CMFDefault/RegistrationTool.py:104
+#: CMFDefault/RegistrationTool.py:90
+#: CMFDefault/RegistrationTool.py:99
+#: CMFDefault/RegistrationTool.py:105
 msgid "You must enter a valid email address."
 msgstr ""
 
@@ -355,7 +355,7 @@ msgstr ""
 #: CMFDefault/skins/zpt_generic/main_template.pt:207
 #: CMFDefault/skins/zpt_generic/main_template.pt:221
 #: CMFDefault/skins/zpt_generic/main_template.pt:235
-#: CMFDefault/skins/zpt_generic/main_template.pt:270
+#: CMFDefault/skins/zpt_generic/main_template.pt:268
 #: CMFDefault/skins/zpt_generic/review.pt:59
 #: CMFDefault/skins/zpt_generic/roster.pt:46
 #: CMFDefault/skins/zpt_generic/search_results_template.pt:37
@@ -1160,12 +1160,14 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_generic/join_template.pt:59
 #: CMFDefault/skins/zpt_generic/login_form.pt:24
+#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:27
 #: CMFDefault/skins/zpt_generic/password_form_template.pt:26
 msgid "Member ID"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/join_template.pt:73
 #: CMFDefault/skins/zpt_generic/login_form.pt:31
+#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:29
 msgid "Password"
 msgstr ""
 
@@ -1245,23 +1247,11 @@ msgstr ""
 msgid "Your password has been mailed. <br /> It should arrive in your mailbox momentarily."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/mail_password_template.pt:12
-msgid "Your password: ${password}"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/mail_password_template.pt:17
-msgid "Request made by IP ${ip} at ${time}"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/mail_password_template.pt:4
-msgid "${portal_title}: Membership reminder"
-msgstr ""
-
 #: CMFDefault/skins/zpt_generic/main_template.pt:199
 msgid "Status:"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/main_template.pt:297
+#: CMFDefault/skins/zpt_generic/main_template.pt:295
 msgid "Permanent Link:"
 msgstr ""
 
@@ -1275,6 +1265,46 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_generic/main_template.pt:79
 msgid "search"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/member_password_mail_template.pt:13
+msgid "Request made by IP ${ip} at ${time}"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/member_password_mail_template.pt:2
+msgid "${portal_title}: Membership reminder"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/member_password_mail_template.pt:8
+msgid "Your password: ${password}"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:10
+msgid "You have been registered as a member of \"${portal_title}\", which allows you to personalize your view of the website and participate in the community."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:15
+msgid "This describes the purpose of the website:"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:2
+msgid "${portal_title}: Your Membership Information"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:21
+msgid "Visit us at ${portal_url}"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:24
+msgid "Here is your login data (mind upper and lower case):"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:32
+msgid "You can use this URL to log in:"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:37
+msgid "Be aware that this URL might wrap over two lines. If your browser shows an error message when you try to access the URL please make sure that you put in the complete string."
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/members_delete_template.pt:15
@@ -1561,34 +1591,6 @@ msgstr ""
 msgid "Charset used to decode portal content strings. If empty, 'ascii' is used."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/registered_notify_template.pt:16
-msgid "You have been registered as a member of \"${portal_title}\", which allows you to personalize your view of the website and participate in the community."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/registered_notify_template.pt:21
-msgid "This describes the purpose of the website:"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/registered_notify_template.pt:27
-msgid "Visit us at ${portal_url}"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/registered_notify_template.pt:35
-msgid "Your member id and password are: Member ID: ${member_id} Password: ${password}"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/registered_notify_template.pt:38
-msgid "You can use this URL to log in:"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/registered_notify_template.pt:43
-msgid "Be aware that this URL might wrap over two lines. If your browser shows an error message when you try to access the URL please make sure that you put in the complete string."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/registered_notify_template.pt:7
-msgid "${portal_title}: Your Membership Information"
-msgstr ""
-
 #: CMFDefault/skins/zpt_generic/review.pt:106
 msgid "There are no items matching your specified criteria."
 msgstr ""
@@ -1625,27 +1627,27 @@ msgstr ""
 msgid "items"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/search_form.py:25
+#: CMFDefault/skins/zpt_generic/search_form.py:24
 msgid "Ever"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/search_form.py:28
+#: CMFDefault/skins/zpt_generic/search_form.py:27
 msgid "Last login"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/search_form.py:29
+#: CMFDefault/skins/zpt_generic/search_form.py:28
 msgid "Yesterday"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/search_form.py:30
+#: CMFDefault/skins/zpt_generic/search_form.py:29
 msgid "Last week"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/search_form.py:31
+#: CMFDefault/skins/zpt_generic/search_form.py:30
 msgid "Last month"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/search_form.py:38
+#: CMFDefault/skins/zpt_generic/search_form.py:37
 #: CMFDefault/skins/zpt_generic/folder_localrole_form.pt:38
 msgid "Search"
 msgstr ""

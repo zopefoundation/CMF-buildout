@@ -32,5 +32,6 @@ def importVarious(context):
         return 'Various settings: Nothing to import.'
     site.Members.manage_addProduct['OFSP'].manage_addDTMLMethod('index_html',
                                         'Member list', '<dtml-return roster>')
+    site.acl_users.encrypt_passwords = False
 
     return 'Various settings from PortalGenerator imported.'

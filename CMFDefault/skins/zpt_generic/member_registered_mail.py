@@ -1,4 +1,4 @@
-##parameters=tool=None, request=None, member=None, password='baz', email='foo@example.org', **kw
+##parameters=member=None, password='baz', email='foo@example.org'
 ##
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode

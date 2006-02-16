@@ -26,12 +26,14 @@ from thread import start_new_thread
 from time import sleep
 
 from OFS.Folder import Folder
+from OFS.SimpleItem import SimpleItem
 from Products.StandardCacheManagers import RAMCacheManager
 
 from Products.CMFCore.FSPythonScript import FSPythonScript
 from Products.CMFCore.FSMetadata import FSMetadata
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.testcase import WarningInterceptor
 
 
 class FSPSMaker(FSDVTest):
@@ -236,11 +238,46 @@ class CustomizedPythonScriptTests(unittest.TestCase):
         cps.write(_REPLACEMENT_TEXT)
         self.assertEqual(list(cps.getDiff()), _DIFF_TEXT.splitlines())
 
+
+class WarnMe(SimpleItem):
+    """Emits a UserWarning when called"""
+
+    def __init__(self, stacklevel):
+        self._stacklevel = stacklevel
+
+    def __call__(self):
+        import warnings
+        warnings.warn('foo', stacklevel=self._stacklevel)
+
+
+class FSPythonScriptWarningsTests(SecurityTest, FSPSMaker, WarningInterceptor):
+
+    def setUp( self ):
+        SecurityTest.setUp(self)
+        FSPSMaker.setUp(self)
+        self._trap_warning_output()
+
+    def tearDown(self):
+        self._free_warning_output()
+        FSPSMaker.tearDown(self)
+        SecurityTest.tearDown(self)
+
+    def testFSPSWarn(self):
+        self.root._setObject('warn_me', WarnMe(2))
+        self.root._setObject('warn1', self._makeOne('warn1', 'test_warn.py'))
+        # This used to raise an error:
+        #   File "/usr/local/python2.3/lib/python2.3/warnings.py", line 63, in warn_explicit
+        #     if module[-3:].lower() == ".py":
+        # TypeError: unsubscriptable object
+        self.root.warn1()
+
+
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(FSPythonScriptTests),
         unittest.makeSuite(FSPythonScriptCustomizationTests),
         unittest.makeSuite(CustomizedPythonScriptTests),
+        unittest.makeSuite(FSPythonScriptWarningsTests),
         ))
 
 if __name__ == '__main__':

@@ -13,7 +13,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CMF 2.0\n"
-"POT-Creation-Date: Tue Feb 14 21:58:36 2006\n"
+"POT-Creation-Date: Thu Feb 16 09:16:59 2006\n"
 "Language-Team: CMF Developers <zope-cmf@zope.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -29,7 +29,7 @@ msgid "Intervening changes from elsewhere detected. Please refetch the document 
 msgstr ""
 
 #: CMFDefault/RegistrationTool.py:119
-#: CMFDefault/RegistrationTool.py:156
+#: CMFDefault/RegistrationTool.py:155
 msgid "The username you entered could not be found."
 msgstr ""
 
@@ -37,7 +37,7 @@ msgstr ""
 msgid "That user does not have an email address."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:165
+#: CMFDefault/RegistrationTool.py:164
 # Default: ""
 msgid "No email address is registered for member: ${member_id}"
 msgstr ""
@@ -1160,14 +1160,14 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_generic/join_template.pt:59
 #: CMFDefault/skins/zpt_generic/login_form.pt:24
-#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:27
 #: CMFDefault/skins/zpt_generic/password_form_template.pt:26
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:27
 msgid "Member ID"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/join_template.pt:73
 #: CMFDefault/skins/zpt_generic/login_form.pt:31
-#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:29
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:29
 msgid "Password"
 msgstr ""
 
@@ -1265,46 +1265,6 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_generic/main_template.pt:79
 msgid "search"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/member_password_mail_template.pt:13
-msgid "Request made by IP ${ip} at ${time}"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/member_password_mail_template.pt:2
-msgid "${portal_title}: Membership reminder"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/member_password_mail_template.pt:8
-msgid "Your password: ${password}"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:10
-msgid "You have been registered as a member of \"${portal_title}\", which allows you to personalize your view of the website and participate in the community."
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:15
-msgid "This describes the purpose of the website:"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:2
-msgid "${portal_title}: Your Membership Information"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:21
-msgid "Visit us at ${portal_url}"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:24
-msgid "Here is your login data (mind upper and lower case):"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:32
-msgid "You can use this URL to log in:"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/member_registered_mail_template.pt:37
-msgid "Be aware that this URL might wrap over two lines. If your browser shows an error message when you try to access the URL please make sure that you put in the complete string."
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/members_delete_template.pt:15
@@ -1441,6 +1401,18 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_generic/news_box_template.pt:8
 msgid "News"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/password_email_template.pt:13
+msgid "Request made by IP ${ip} at ${time}"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/password_email_template.pt:2
+msgid "${portal_title}: Membership reminder"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/password_email_template.pt:8
+msgid "Your password: ${password}"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/password_form.py:29
@@ -1589,6 +1561,34 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_generic/reconfig_template.pt:92
 msgid "Charset used to decode portal content strings. If empty, 'ascii' is used."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:10
+msgid "You have been registered as a member of \"${portal_title}\", which allows you to personalize your view of the website and participate in the community."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:15
+msgid "This describes the purpose of the website:"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:2
+msgid "${portal_title}: Your Membership Information"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:21
+msgid "Visit us at ${portal_url}"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:24
+msgid "Here is your login data (mind upper and lower case):"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:32
+msgid "You can use this URL to log in:"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:37
+msgid "Be aware that this URL might wrap over two lines. If your browser shows an error message when you try to access the URL please make sure that you put in the complete string."
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/review.pt:106

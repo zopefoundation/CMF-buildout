@@ -1,4 +1,4 @@
-##parameters=member=None, password='baz', email='foo@example.org'
+##parameters=member=None, password='baz'
 ##
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
@@ -15,22 +15,14 @@ options = {}
 email_from_name = ptool.getProperty('email_from_name')
 email_from_address = ptool.getProperty('email_from_address')
 options['portal_address'] = '%s <%s>' % (email_from_name, email_from_address)
-options['member_address'] = '<%s>' % email
+member_address = member and member.email or 'foo@example.org'
+options['member_address'] = '<%s>' % member_address
 options['content_type'] = 'text/plain; charset=%s' % default_charset
 
 options['portal_title'] = ptool.title()
-options['portal_description'] = ptool.getProperty('description')
-options['portal_url'] = portal_url
-
-member_id = member and member.getId() or 'foo'
-options['member_id'] = member_id
 options['password'] = password
 
-target = atool.getActionInfo('user/login')['url']
-options['login_url'] = '%s' % target
-options['signature'] = email_from_name
-
-rendered = context.member_registered_mail_template(**decode(options, script))
+rendered = context.password_email_template(**decode(options, script))
 if isinstance(rendered, unicode):
     return rendered.encode(default_charset)
 else:

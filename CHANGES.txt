@@ -184,9 +184,9 @@ CMF 2.0.0-alpha (2006/01/22)
   Others
 
     - CMFDefault RegistrationTool and skins: Refactored mail creation.
-      'mailPassword' now calls the 'member_password_mail' script and
-      'registeredNotify' the 'member_registered_mail' script. These scripts
-      call the templates and do the necessary string decoding and encoding.
+      'mailPassword' now calls the 'password_email' script and
+      'registeredNotify' the 'registered_email' script. These scripts call the
+      templates and do the necessary string decoding and encoding.
 
     - CMFDefault skins: Refactored 'logged_in' page and 'password_form'.
       'logged_in' now redirects to the 'password_form' if a new member has to

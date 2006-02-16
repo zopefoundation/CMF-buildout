@@ -2,6 +2,10 @@ After CMF 1.5.5
 
   Bug Fixes
 
+    - CMFCore.FSPythonScript: FSPythonScripts forgot to add __file__ to
+      the script globals. This broke warnings.warn() when a stacklevel
+      argument pointing into the script was passed (2).
+
     - CMFSetup.workflow: Workflows managing no permissions at all could
       make the CMFSetup workflow exporter fail.
       (http://www.zope.org/Collectors/CMF/397)

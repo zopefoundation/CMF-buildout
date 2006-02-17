@@ -13,11 +13,6 @@
       global="False"
       />
 
-  <adapter
-      factory=".exportimport.DCWorkflowDefinitionBodyAdapter"
-      provides="Products.GenericSetup.interfaces.IBody"
-      for=".interfaces.IDCWorkflowDefinition
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
+  <adapter factory=".exportimport.DCWorkflowDefinitionBodyAdapter"/>
 
 </configure>

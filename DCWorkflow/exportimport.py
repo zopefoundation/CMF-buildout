@@ -22,7 +22,9 @@ from AccessControl import ClassSecurityInfo
 from Acquisition import Implicit
 from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from zope.component import adapts
 
+from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import BodyAdapterBase
 
 from utils import _xmldir
@@ -40,7 +42,7 @@ class DCWorkflowDefinitionBodyAdapter(BodyAdapterBase):
     """Body im- and exporter for DCWorkflowDefinition.
     """
 
-    __used_for__ = IDCWorkflowDefinition
+    adapts(IDCWorkflowDefinition, ISetupEnviron)
 
     def _exportBody(self):
         """Export the object as a file body.

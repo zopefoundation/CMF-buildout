@@ -16,7 +16,9 @@ $Id$
 """
 
 import Products
+from zope.component import adapts
 
+from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import ObjectManagerHelpers
@@ -33,7 +35,7 @@ class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
     """XML im- and exporter for WorkflowTool.
     """
 
-    __used_for__ = IWorkflowTool
+    adapts(IWorkflowTool, ISetupEnviron)
 
     _LOGGER_ID = 'workflow'
 

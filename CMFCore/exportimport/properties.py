@@ -16,8 +16,10 @@ $Id$
 """
 
 from zope.app import zapi
+from zope.component import adapts
 
 from Products.GenericSetup.interfaces import IBody
+from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import PropertyManagerHelpers
 from Products.GenericSetup.utils import XMLAdapterBase
 
@@ -31,7 +33,7 @@ class PropertiesXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
     """XML im- and exporter for properties.
     """
 
-    __used_for__ = ISiteRoot
+    adapts(ISiteRoot, ISetupEnviron)
 
     _LOGGER_ID = 'properties'
 

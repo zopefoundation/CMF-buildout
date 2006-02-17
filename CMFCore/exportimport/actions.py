@@ -15,6 +15,9 @@
 $Id$
 """
 
+from zope.component import adapts
+
+from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import I18NURI
 from Products.GenericSetup.utils import importObjects
@@ -40,7 +43,7 @@ class ActionCategoryNodeAdapter(NodeAdapterBase, ObjectManagerHelpers,
     """Node im- and exporter for ActionCategory.
     """
 
-    __used_for__ = IActionCategory
+    adapts(IActionCategory, ISetupEnviron)
 
     def _exportNode(self):
         """Export the object as a DOM node.
@@ -71,7 +74,7 @@ class ActionNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
     """Node im- and exporter for Action.
     """
 
-    __used_for__ = IAction
+    adapts(IAction, ISetupEnviron)
 
     def _exportNode(self):
         """Export the object as a DOM node.
@@ -99,7 +102,7 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
     """XML im- and exporter for ActionsTool.
     """
 
-    __used_for__ = IActionsTool
+    adapts(IActionsTool, ISetupEnviron)
 
     _LOGGER_ID = 'actions'
 

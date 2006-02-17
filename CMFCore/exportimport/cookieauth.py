@@ -15,6 +15,9 @@
 $Id$
 """
 
+from zope.component import adapts
+
+from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import PropertyManagerHelpers
@@ -29,7 +32,7 @@ class CookieCrumblerXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
     """XML im- and exporter for CookieCrumbler.
     """
 
-    __used_for__ = ICookieCrumbler
+    adapts(ICookieCrumbler, ISetupEnviron)
 
     _LOGGER_ID = 'cookies'
 

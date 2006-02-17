@@ -17,7 +17,9 @@ $Id$
 
 from Acquisition import aq_inner
 from Acquisition import aq_parent
+from zope.component import adapts
 
+from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import NodeAdapterBase
@@ -35,7 +37,7 @@ class DirectoryViewNodeAdapter(NodeAdapterBase):
     """Node im- and exporter for DirectoryView.
     """
 
-    __used_for__ = IDirectoryView
+    adapts(IDirectoryView, ISetupEnviron)
 
     def _exportNode(self):
         """Export the object as a DOM node.
@@ -57,7 +59,7 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
     """XML im- and exporter for SkinsTool.
     """
 
-    __used_for__ = ISkinsTool
+    adapts(ISkinsTool, ISetupEnviron)
 
     _LOGGER_ID = 'skins'
 

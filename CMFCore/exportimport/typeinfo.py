@@ -18,7 +18,9 @@ $Id$
 from xml.dom.minidom import parseString
 
 import Products
+from zope.component import adapts
 
+from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import I18NURI
 from Products.GenericSetup.utils import importObjects
@@ -36,7 +38,7 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
     """XML im- and exporter for TypeInformation.
     """
 
-    __used_for__ = ITypeInformation
+    adapts(ITypeInformation, ISetupEnviron)
 
     _LOGGER_ID = 'types'
 
@@ -208,7 +210,7 @@ class TypesToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
     """XML im- and exporter for TypesTool.
     """
 
-    __used_for__ = ITypesTool
+    adapts(ITypesTool, ISetupEnviron)
 
     _LOGGER_ID = 'types'
 

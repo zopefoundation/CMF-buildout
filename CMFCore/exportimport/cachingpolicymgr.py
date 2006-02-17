@@ -16,10 +16,12 @@ $Id$
 """
 
 from zope.app import zapi
+from zope.component import adapts
 
+from Products.GenericSetup.interfaces import INode
+from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
-from Products.GenericSetup.interfaces import INode
 from Products.GenericSetup.utils import NodeAdapterBase
 from Products.GenericSetup.utils import XMLAdapterBase
 
@@ -33,7 +35,7 @@ class CachingPolicyNodeAdapter(NodeAdapterBase):
     """Node im- and exporter for CachingPolicy.
     """
 
-    __used_for__ = ICachingPolicy
+    adapts(ICachingPolicy, ISetupEnviron)
 
     def _exportNode(self):
         """Export the object as a DOM node.
@@ -117,7 +119,7 @@ class CachingPolicyManagerXMLAdapter(XMLAdapterBase):
     """XML im- and exporter for CachingPolicyManager.
     """
 
-    __used_for__ = ICachingPolicyManager
+    adapts(ICachingPolicyManager, ISetupEnviron)
 
     _LOGGER_ID = 'cachingpolicies'
 

@@ -1,41 +1,5 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope"
-    >
-
-  <adapter
-      factory=".actions.ActionCategoryNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INode"
-      for="Products.CMFCore.interfaces.IActionCategory
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
-
-  <adapter
-      factory=".actions.ActionNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INode"
-      for="Products.CMFCore.interfaces.IAction
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
-
-  <adapter
-      factory=".actions.ActionsToolXMLAdapter"
-      provides="Products.GenericSetup.interfaces.IBody"
-      for="Products.CMFCore.interfaces.IActionsTool
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
-
-  <adapter
-      factory=".cachingpolicymgr.CachingPolicyNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INode"
-      for="Products.CMFCore.interfaces.ICachingPolicy
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
-
-  <adapter
-      factory=".cachingpolicymgr.CachingPolicyManagerXMLAdapter"
-      provides="Products.GenericSetup.interfaces.IBody"
-      for="Products.CMFCore.interfaces.ICachingPolicyManager
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
+    xmlns="http://namespaces.zope.org/zope">
 
   <adapter
       factory=".content.StructureFolderWalkingAdapter"
@@ -49,60 +13,30 @@
       for="Products.CMFCore.interfaces.IFolderish"
       />
 
-  <adapter
-      factory=".contenttyperegistry.ContentTypeRegistryXMLAdapter"
-      provides="Products.GenericSetup.interfaces.IBody"
-      for="Products.CMFCore.interfaces.IContentTypeRegistry
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
+  <adapter factory=".actions.ActionCategoryNodeAdapter"/>
 
-  <adapter
-      factory=".cookieauth.CookieCrumblerXMLAdapter"
-      provides="Products.GenericSetup.interfaces.IBody"
-      for="Products.CMFCore.interfaces.ICookieCrumbler
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
+  <adapter factory=".actions.ActionNodeAdapter"/>
 
-  <adapter
-      factory=".properties.PropertiesXMLAdapter"
-      provides="Products.GenericSetup.interfaces.IBody"
-      for="Products.CMFCore.interfaces.ISiteRoot
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
+  <adapter factory=".actions.ActionsToolXMLAdapter"/>
 
-  <adapter
-      factory=".skins.DirectoryViewNodeAdapter"
-      provides="Products.GenericSetup.interfaces.INode"
-      for="Products.CMFCore.interfaces.IDirectoryView
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
+  <adapter factory=".cachingpolicymgr.CachingPolicyNodeAdapter"/>
 
-  <adapter
-      factory=".skins.SkinsToolXMLAdapter"
-      provides="Products.GenericSetup.interfaces.IBody"
-      for="Products.CMFCore.interfaces.ISkinsTool
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
+  <adapter factory=".cachingpolicymgr.CachingPolicyManagerXMLAdapter"/>
 
-  <adapter
-      factory=".typeinfo.TypeInformationXMLAdapter"
-      provides="Products.GenericSetup.interfaces.IBody"
-      for="Products.CMFCore.interfaces.ITypeInformation
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
+  <adapter factory=".contenttyperegistry.ContentTypeRegistryXMLAdapter"/>
 
-  <adapter
-      factory=".typeinfo.TypesToolXMLAdapter"
-      provides="Products.GenericSetup.interfaces.IBody"
-      for="Products.CMFCore.interfaces.ITypesTool
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
+  <adapter factory=".cookieauth.CookieCrumblerXMLAdapter"/>
 
-  <adapter
-      factory=".workflow.WorkflowToolXMLAdapter"
-      provides="Products.GenericSetup.interfaces.IBody"
-      for="Products.CMFCore.interfaces.IWorkflowTool
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
+  <adapter factory=".properties.PropertiesXMLAdapter"/>
+
+  <adapter factory=".skins.DirectoryViewNodeAdapter"/>
+
+  <adapter factory=".skins.SkinsToolXMLAdapter"/>
+
+  <adapter factory=".typeinfo.TypeInformationXMLAdapter"/>
+
+  <adapter factory=".typeinfo.TypesToolXMLAdapter"/>
+
+  <adapter factory=".workflow.WorkflowToolXMLAdapter"/>
 
 </configure>

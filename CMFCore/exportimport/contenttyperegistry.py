@@ -15,6 +15,9 @@
 $Id$
 """
 
+from zope.component import adapts
+
+from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import XMLAdapterBase
@@ -28,7 +31,7 @@ class ContentTypeRegistryXMLAdapter(XMLAdapterBase):
     """XML im- and exporter for ContentTypeRegistry.
     """
 
-    __used_for__ = IContentTypeRegistry
+    adapts(IContentTypeRegistry, ISetupEnviron)
 
     _LOGGER_ID = 'contenttypes'
 

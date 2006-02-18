@@ -18,6 +18,10 @@ Before CMF 1.6 beta
 
   Features
 
+    - CMFCore.FSDTMLMethod/FSImage/FSFile: Added 304 Not Modified support
+      analogous to the support added for FSPageTemplates earlier on.
+      (http://www.zope.org/Collectors/CMF/402)
+
     - Replaced Z2 interfaces w/ Z3 interfaces, dynamically creating Z2
       interfaces via bridge
 

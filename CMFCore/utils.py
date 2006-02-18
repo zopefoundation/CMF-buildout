@@ -48,7 +48,7 @@ from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
 from StructuredText.StructuredText import HTML
 from thread import allocate_lock
-
+from webdav.common import rfc1123_date
 from exceptions import AccessControl_Unauthorized
 from exceptions import NotFound
 
@@ -190,6 +190,38 @@ def _getViewFor(obj, view='view'):
         raise NotFound('Cannot find default view for "%s"' %
                             '/'.join(obj.getPhysicalPath()))
 
+def _FSCacheHeaders(obj):
+
+    REQUEST = getattr(obj, 'REQUEST', None)
+    if REQUEST is None:
+        return False
+
+    RESPONSE = REQUEST.RESPONSE
+    header = REQUEST.get_header('If-Modified-Since', None)
+    last_mod = obj._file_mod_time
+
+    if header is not None:
+        header = header.split(';')[0]
+        # Some proxies seem to send invalid date strings for this
+        # header. If the date string is not valid, we ignore it
+        # rather than raise an error to be generally consistent
+        # with common servers such as Apache (which can usually
+        # understand the screwy date string as a lucky side effect
+        # of the way they parse it).
+        try:
+            mod_since=DateTime(header)
+            mod_since=long(mod_since.timeTime())
+        except TypeError:
+            mod_since=None
+               
+        if mod_since is not None:
+            if last_mod > 0 and last_mod <= mod_since:
+                RESPONSE.setStatus(304)
+                return True
+
+    #Last-Modified will get stomped on by a cache policy if there is
+    #one set....
+    RESPONSE.setHeader('Last-Modified', rfc1123_date(last_mod))
 
 # If Zope ever provides a call to getRolesInContext() through
 # the SecurityManager API, the method below needs to be updated.

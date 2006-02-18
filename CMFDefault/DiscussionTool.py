@@ -112,7 +112,7 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
     def isDiscussionAllowedFor( self, content ):
         """ Get boolean indicating whether discussion is allowed for content.
         """
-        if hasattr( content, 'allow_discussion' ):
+        if hasattr( aq_base(content), 'allow_discussion' ):
             return bool(content.allow_discussion)
         typeInfo = getToolByName(self, 'portal_types').getTypeInfo( content )
         if typeInfo:

@@ -22,6 +22,8 @@ from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.PortalContent import PortalContent
 from security import OmnipotentUser
 
+from DateTime import DateTime
+from webdav.common import rfc1123_date
 
 class DummyObject(Implicit):
     """
@@ -351,7 +353,6 @@ class DummyTool(Implicit,ActionProviderBase):
     def notifyCreated(self, ob):
         self.test_notified = ob
 
-
 class DummyCachingManager:
 
     def getHTTPCachingHeaders( self, content, view_name, keywords, time=None ):
@@ -360,5 +361,32 @@ class DummyCachingManager:
              ('test_path', '/'.join(content.getPhysicalPath())),
              )
 
+    def getModTimeAndETag(self, content, view_method, keywords, time=None ):
+         return (None, None, False)
+
     def getPhysicalPath(self):
         return ('baz',)
+
+
+FAKE_ETAG = None # '--FAKE ETAG--'
+
+class DummyCachingManagerWithPolicy(DummyCachingManager):
+
+    # dummy fixture implementing a single policy:
+    #  - always set the last-modified date if available
+    #  - calculate the date using the modified method on content
+
+    def getHTTPCachingHeaders( self, content, view_name, keywords, time=None ):
+
+         # if the object has a modified method, add it as last-modified
+         if hasattr(content, 'modified'):
+             headers = ( ('Last-modified', rfc1123_date(content.modified()) ), )
+         return headers
+
+    def getModTimeAndETag(self, content, view_method, keywords, time=None ):
+         modified_date = None
+         if hasattr(content, 'modified'):
+            modified_date = content.modified()
+         set_last_modified = (modified_date is not None)
+         return (modified_date, FAKE_ETAG, set_last_modified)
+

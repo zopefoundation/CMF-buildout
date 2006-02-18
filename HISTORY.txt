@@ -1,3 +1,62 @@
+After CMF 1.5.5
+
+  Bug Fixes
+
+    - CMFDefault.RegistrationTool: Adding single quotes to the allowed
+      characters in the local part of an email address.
+      (http://www.zope.org/Collectors/CMF/401)
+
+    - CMFCore.FSPythonScript: FSPythonScripts forgot to add __file__ to
+      the script globals. This broke warnings.warn() when a stacklevel
+      argument pointing into the script was passed (2).
+
+    - CMFSetup.workflow: Workflows managing no permissions at all could
+      make the CMFSetup workflow exporter fail.
+      (http://www.zope.org/Collectors/CMF/397)
+
+    - CMFDefault.DiscussionItem: Deleting a discussion reply would not
+      recurse and left items below the deleted reply still cataloged
+      (http://www.zope.org/Collectors/CMF/391)
+
+    - Corrected the HelpSystem documentation for DCWorkflow Guards
+      (http://www.zope.org/Collectors/CMF/394)
+
+    - CMFCore utils: Synced _checkPermission with Zope 2.8.5 code.
+      checkPermission of Zope 2.8.5 and later contains bug fixes and respects
+      proxy roles, but for backwards compatibility CMF 1.5 still needs its own
+      implementation.
+
+  Others
+
+    - Made unit tests close the request properly.
+
+    - Made cut / copy / paste tests more independent from implementation
+      details of '_verifyObjectPaste'.
+
+    - Modified several deprecation warnings to indicate point-of-use of the
+      deprecated feature.
+
+
+CMF 1.5.5 (2005/11/20)
+
+  Bug Fixes
+
+    - DefaultWorkflowDefinition: Changed meta_type to make it unique.
+      (http://www.zope.org/Collectors/CMF/298)
+
+    - CMFSetup: fixed empty attribute parsing when an encoding is
+      defined.
+
+  Others
+
+    - CMFCore: removed old backward compatibility code that slowed down
+      TypeInformation.allowType and gave PortalFolder.allowedContentTypes
+      quadratic complexity.
+
+    - Removed deprecated 'all_cmf_tests.py' and supporting 'test_all.py'
+      from products (use 'zopectl test' to run CMF tests instead).
+
+
 CMF 1.5.5-beta (2005/11/06)
 
   Bug Fixes

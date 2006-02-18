@@ -78,6 +78,9 @@ class DummyType(DummyObject):
     def queryMethodID(self, alias, default=None, context=None):
         return self._actions.get(alias, default)
 
+    def allowDiscussion(self):
+        return False
+
 class DummyContent( PortalContent, Item ):
     """
     A Dummy piece of PortalContent

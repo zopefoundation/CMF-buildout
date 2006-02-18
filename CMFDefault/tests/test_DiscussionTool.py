@@ -39,6 +39,7 @@ class DiscussionToolTests(TestCase):
         self.site = DummySite('site')
         self.site._setObject( 'portal_discussion', self._makeOne() )
         self.site._setObject( 'portal_membership', DummyTool() )
+        self.site._setObject( 'portal_types', DummyTool() )
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -78,6 +79,16 @@ class DiscussionToolTests(TestCase):
                       'KeyError raised')
         dtool.overrideDiscussionFor(foo, None)
         self.failIf( hasattr(foo.aq_base, 'allow_discussion') )
+
+    def test_isDiscussionAllowedFor(self):
+        # Test for Collector issue #398 (allow_discussion wrongly
+        # acquired and used from parent)
+        dtool = self.site.portal_discussion
+        foo = self.site._setObject( 'foo', DummyFolder() )
+        baz = foo._setObject( 'baz', DummyFolder() )
+        dtool.overrideDiscussionFor(foo, 1)
+
+        self.failIf(dtool.isDiscussionAllowedFor(baz))
 
     def test_getDiscussionFor(self):
         dtool = self.site.portal_discussion

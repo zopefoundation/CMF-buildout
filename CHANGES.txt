@@ -123,10 +123,6 @@ CMF 2.0.0-alpha (2006/01/22)
 
   Bug Fixes
 
-    - CMFCore.FSPythonScript: FSPythonScripts forgot to add __file__ to
-      the script globals. This broke warnings.warn() when a stacklevel
-      argument pointing into the script was passed (2).
-
     - CMFDefault setuphandlers: Disabled password encryption.
       'registeredNotify' and 'mailPassword' don't work with encrypted
       passwords.

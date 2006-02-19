@@ -46,6 +46,10 @@ RELEASE.txt - how to create a CMF release
       - Find all 'version.txt' files throughout the CMF package and adjust 
         the version number, in this case 'CMF-1.8.4-beta2'.
 
+      - Check all DEPENDENCIES.txt files and ensure the lowest common
+        denominator for packages not being shipped as part of the CMF tarball 
+        is correctly mentioned in INSTALL.txt
+
       - Check these changes into the Subversion repository
 
       - Create the Subversion tag by svn copying the head of the release

@@ -189,9 +189,9 @@ class IDiscussionResponse(Interface):
 #
 #   DublinCore interfaces
 #
-class IDublinCore(Interface):
+class IMinimalDublinCore(Interface):
 
-    """ Dublin Core metadata elements supported by CMF and their semantics.
+    """ Minimal set of Dublin Core metadata elements.
     """
 
     def Title():
@@ -199,6 +199,29 @@ class IDublinCore(Interface):
 
         o Permission:  View
         """
+
+    def Description():
+        """ Return the DCMI Description element (resource summary).
+
+        o Result is a natural language description of this object.
+
+        o Permission:  View
+        """
+
+    def Type():
+        """ Return the DCMI Type element (resource type).
+
+        o Result a human-readable type name for the resource (typically
+          the Title of its type info object).
+
+        o Permission:  View
+        """
+
+
+class IDublinCore(IMinimalDublinCore):
+
+    """ Dublin Core metadata elements supported by CMF and their semantics.
+    """
 
     def listCreators():
         """ Return a sequence of DCMI Creator elements (resource authors).
@@ -219,14 +242,6 @@ class IDublinCore(Interface):
         """ Return a sequence of DCMI Subject elements (resource keywords).
 
         o Result is zero or more keywords associated with the content object.
-
-        o Permission:  View
-        """
-
-    def Description():
-        """ Reuturn the DCMI Description element (resource summary).
-
-        o Result is a natural language description of this object.
 
         o Permission:  View
         """
@@ -298,15 +313,6 @@ class IDublinCore(Interface):
         o Permission:  View
         """
 
-    def Type():
-        """ Return the DCMI Type element (resource type).
-
-        o Result a human-readable type name for the resource (typically
-          the Title of its type info object).
-
-        o Permission:  View
-        """
-
     def Format():
         """ Return the DCMI Format element (resource format).
 
@@ -373,9 +379,9 @@ class ICatalogableDublinCore(Interface):
         """
 
 
-class IMutableDublinCore(Interface):
+class IMutableMinimalDublinCore(IMinimalDublinCore):
 
-    """ Update interface for mutable metadata.
+    """ Update interface for minimal set of mutable metadata.
     """
 
     def setTitle(title):
@@ -383,6 +389,18 @@ class IMutableDublinCore(Interface):
 
         o Permission:  Modify portal content
         """
+
+    def setDescription(description):
+        """ Set DCMI Description element - resource summary.
+
+        o Permission:  Modify portal content
+        """
+
+
+class IMutableDublinCore(IMutableMinimalDublinCore, IDublinCore):
+
+    """ Update interface for mutable metadata.
+    """
 
     def setCreators(creators):
         """ Set DCMI Creator elements - resource authors.
@@ -392,12 +410,6 @@ class IMutableDublinCore(Interface):
 
     def setSubject(subject):
         """ Set DCMI Subject element - resource keywords.
-
-        o Permission:  Modify portal content
-        """
-
-    def setDescription(description):
-        """ Set DCMI Description element - resource summary.
 
         o Permission:  Modify portal content
         """
@@ -491,7 +503,7 @@ class IDynamicType(Interface):
 
 
 #
-#   Folderish interface
+#   Folderish interfaces
 #
 class IFolderish(Interface):
 
@@ -541,9 +553,12 @@ class IFolderish(Interface):
         o Permission -- List folder contents
         """
 
+
 class ISiteRoot(IFolderish):
+
     """ Marker interface for the object which serves as the root of a site.
     """
+
 
 #
 #   IOpaqueItems interfaces

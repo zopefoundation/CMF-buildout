@@ -17,8 +17,11 @@ $Id$
 
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
+from zope.interface import implements
 
 from Document import Document
+from interfaces import IMutableNewsItem
+from interfaces import INewsItem
 from permissions import ModifyPortalContent
 from permissions import View
 
@@ -46,6 +49,7 @@ class NewsItem(Document):
     """A News Item.
     """
 
+    implements(IMutableNewsItem, INewsItem)
     __implements__ = Document.__implements__  # redundant, but explicit
 
     meta_type='News Item'
@@ -55,8 +59,7 @@ class NewsItem(Document):
 
     security.declareProtected(ModifyPortalContent, 'edit')
     def edit( self, text, description=None, text_format=None ):
-        """
-            Edit the News Item
+        """Edit the News Item.
         """
         if text_format is None:
             text_format = getattr(self, 'text_format', 'structured-text')

@@ -20,10 +20,13 @@ import urlparse
 from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
+from zope.interface import implements
 
 from Products.CMFCore.utils import getToolByName
 
 from DublinCore import DefaultDublinCoreImpl
+from interfaces import IFavorite
+from interfaces import IMutableFavorite
 from Link import Link
 from permissions import View
 
@@ -45,6 +48,7 @@ class Favorite(Link):
     """A Favorite (special kind of Link).
     """
 
+    implements(IMutableFavorite, IFavorite)
     __implements__ = Link.__implements__ # redundant, but explicit
 
     meta_type='Favorite'
@@ -145,9 +149,7 @@ class Favorite(Link):
 
     security.declareProtected(View, 'getObject')
     def getObject(self):
-        """
-        Return the actual object that the Favorite is 
-        linking to
+        """ Get the actual object that the Favorite is linking to.
         """
         # try getting the remote object by unique id
         remote_obj = self._getObjectByUid()

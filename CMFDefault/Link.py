@@ -30,6 +30,8 @@ from Products.GenericSetup.interfaces import IDAVAware
 
 from DublinCore import DefaultDublinCoreImpl
 from exceptions import ResourceLockedError
+from interfaces import ILink
+from interfaces import IMutableLink
 from permissions import ModifyPortalContent
 from permissions import View
 from utils import _dtmldir
@@ -54,7 +56,7 @@ class Link(PortalContent, DefaultDublinCoreImpl):
     """A Link.
     """
 
-    implements(IDAVAware)
+    implements(IMutableLink, ILink, IDAVAware)
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )

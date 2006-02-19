@@ -37,6 +37,19 @@ class NewsItemTests(ConformsToContent, unittest.TestCase):
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
 
+    def test_z3interfaces(self):
+        from zope.interface.verify import verifyClass
+        from Products.CMFDefault.interfaces import IDocument
+        from Products.CMFDefault.interfaces import IMutableDocument
+        from Products.CMFDefault.interfaces import IMutableNewsItem
+        from Products.CMFDefault.interfaces import INewsItem
+
+        verifyClass(IDocument, self._getTargetClass())
+        # XXX: different signature
+        # verifyClass(IMutableDocument, self._getTargetClass())
+        verifyClass(IMutableNewsItem, self._getTargetClass())
+        verifyClass(INewsItem, self._getTargetClass())
+
     def test_Empty_html(self):
         d = self._makeOne('empty', text_format='html')
 

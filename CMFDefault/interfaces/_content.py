@@ -20,10 +20,12 @@ from zope.interface import Attribute
 
 
 class IDocument(Interface):
+
     """ Textual content, in one of several formats.
 
     o Allowed formats include: structured text, HTML, plain text.
     """
+
     def CookedBody():
         """ Get the "cooked" (ready for presentation) form of the text.
         """
@@ -34,8 +36,10 @@ class IDocument(Interface):
 
 
 class IMutableDocument(IDocument):
+
     """ Updatable form of IDocument.
     """
+
     def edit(text_format, text, file='', safety_belt=''):
         """ Update the document.
 
@@ -44,9 +48,27 @@ class IMutableDocument(IDocument):
         """
 
 
+class INewsItem(IDocument):
+
+    """A special document for news.
+    """
+
+    def edit(text, description=None, text_format=None):
+        """Edit the News Item.
+        """
+
+
+class IMutableNewsItem(INewsItem):
+
+    """Updatable form of INewsItem.
+    """
+
+
 class ILink(Interface):
+
     """ URL as content.
     """
+
     def getRemoteUrl():
         """ Return the URL to which the link points, as a string.
         """
@@ -56,6 +78,7 @@ class IMutableLink(ILink):
 
     """ Updatable form of ILink.
     """
+
     def edit(remote_url):
         """ Update the link.
 
@@ -63,3 +86,19 @@ class IMutableLink(ILink):
 
         o If 'remote_url' is unparseable by urllib, raise ValueError.
         """
+
+
+class IFavorite(ILink):
+
+    """ Link to an internal object.
+    """
+
+    def getObject():
+        """ Get the actual object that the Favorite is linking to.
+        """
+
+
+class IMutableFavorite(IFavorite, IMutableLink):
+
+    """ Updatable form of IFavorite.
+    """

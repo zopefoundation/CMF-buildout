@@ -46,6 +46,14 @@ class LinkTests(ConformsToContent, unittest.TestCase):
             d.edit(orig)
             self.assertEqual(d.getRemoteUrl(), wanted)
 
+    def test_z3interfaces(self):
+        from zope.interface.verify import verifyClass
+        from Products.CMFDefault.interfaces import ILink
+        from Products.CMFDefault.interfaces import IMutableLink
+
+        verifyClass(ILink, self._getTargetClass())
+        verifyClass(IMutableLink, self._getTargetClass())
+
     def test_Empty( self ):
         d = self._makeOne('foo')
         self.assertEqual( d.Title(), '' )

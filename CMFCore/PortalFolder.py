@@ -34,6 +34,7 @@ from exceptions import AccessControl_Unauthorized
 from exceptions import BadRequest
 from exceptions import zExceptions_Unauthorized
 from interfaces import IFolderish
+from interfaces import IMutableMinimalDublinCore
 from interfaces.Folderish import Folderish as z2IFolderish
 from permissions import AddPortalContent
 from permissions import AddPortalFolders
@@ -53,7 +54,7 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
 
     meta_type = 'Portal Folder Base'
 
-    implements(IFolderish)
+    implements(IFolderish, IMutableMinimalDublinCore)
     __implements__ = (z2IFolderish, DynamicType.__implements__,
                       Folder.__implements__)
 
@@ -69,16 +70,35 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
         self.title = title
 
     #
-    #   'MutableDublinCore' interface methods
+    #   'IMutableMinimalDublinCore' interface methods
     #
+    security.declareProtected(View, 'Title')
+    def Title(self):
+        """ Dublin Core Title element - resource name.
+        """
+        return self.title
+
+    security.declareProtected(View, 'Description')
+    def Description(self):
+        """ Dublin Core Description element - resource summary.
+        """
+        return self.description
+
+    security.declareProtected(View, 'Type')
+    def Type(self):
+        """ Dublin Core Type element - resource type.
+        """
+        ti = self.getTypeInfo()
+        return ti is not None and ti.Title() or 'Unknown'
+
     security.declareProtected(ManageProperties, 'setTitle')
-    def setTitle( self, title ):
+    def setTitle(self, title):
         """ Set Dublin Core Title element - resource name.
         """
         self.title = title
 
     security.declareProtected(ManageProperties, 'setDescription')
-    def setDescription( self, description ):
+    def setDescription(self, description):
         """ Set Dublin Core Description element - resource summary.
         """
         self.description = description
@@ -153,7 +173,7 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
         return result
 
     #
-    #   'Folderish' interface methods
+    #   'IFolderish' interface methods
     #
     security.declarePublic('contentItems')
     def contentItems(self, filter=None):
@@ -205,28 +225,6 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
             return self.objectValues()
         else:
             return self.listFolderContents()
-
-    #
-    #   'DublinCore' interface methods
-    #
-    security.declareProtected(View, 'Title')
-    def Title( self ):
-        """ Dublin Core Title element - resource name.
-        """
-        return self.title
-
-    security.declareProtected(View, 'Description')
-    def Description( self ):
-        """ Dublin Core Description element - resource summary.
-        """
-        return self.description
-
-    security.declareProtected(View, 'Type')
-    def Type( self ):
-        """ Dublin Core Type element - resource type.
-        """
-        ti = self.getTypeInfo()
-        return ti is not None and ti.Title() or 'Unknown'
 
     #
     #   other methods

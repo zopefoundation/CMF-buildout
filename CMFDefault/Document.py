@@ -60,8 +60,8 @@ class Document(PortalContent, DefaultDublinCoreImpl):
     """A Document - Handles both StructuredText and HTML.
     """
 
-    implements(IDocument, IMutableDocument, IDAVAware)
-    __implements__ = (z2IDocument, z2IMutableDocument,
+    implements(IMutableDocument, IDocument, IDAVAware)
+    __implements__ = (z2IMutableDocument, z2IDocument,
                       PortalContent.__implements__,
                       DefaultDublinCoreImpl.__implements__)
 

@@ -39,6 +39,18 @@ class FavoriteTests(ConformsToContent, unittest.TestCase):
         self.site._setObject( 'portal_membership', DummyTool() )
         self.site._setObject( 'portal_url', DummyTool() )
 
+    def test_z3interfaces(self):
+        from zope.interface.verify import verifyClass
+        from Products.CMFDefault.interfaces import IFavorite
+        from Products.CMFDefault.interfaces import ILink
+        from Products.CMFDefault.interfaces import IMutableFavorite
+        from Products.CMFDefault.interfaces import IMutableLink
+
+        verifyClass(IFavorite, self._getTargetClass())
+        verifyClass(ILink, self._getTargetClass())
+        verifyClass(IMutableFavorite, self._getTargetClass())
+        verifyClass(IMutableLink, self._getTargetClass())
+
     def test_Empty( self ):
         utool = self.site.portal_url
         f = self.site._setObject('foo', self._makeOne('foo'))

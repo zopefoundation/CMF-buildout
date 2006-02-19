@@ -117,10 +117,14 @@ class PortalFolderTests(SecurityTest):
         SecurityTest.setUp(self)
         self.site = DummySite('site').__of__(self.root)
 
-    def _makeOne(self, id, *args, **kw):
+    def _getTargetClass(self):
         from Products.CMFCore.PortalFolder import PortalFolder
 
-        return self.site._setObject( id, PortalFolder(id, *args, **kw) )
+        return PortalFolder
+
+    def _makeOne(self, id, *args, **kw):
+        return self.site._setObject(id,
+                                    self._getTargetClass()(id, *args, **kw))
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -130,21 +134,21 @@ class PortalFolderTests(SecurityTest):
                 import DynamicType as IDynamicType
         from Products.CMFCore.interfaces.Folderish \
                 import Folderish as IFolderish
-        from Products.CMFCore.PortalFolder import PortalFolder
 
-        verifyClass(IDynamicType, PortalFolder)
-        verifyClass(IFolderish, PortalFolder)
-        verifyClass(IOrderedContainer, PortalFolder)
-        verifyClass(WriteLockInterface, PortalFolder)
+        verifyClass(IDynamicType, self._getTargetClass())
+        verifyClass(IFolderish, self._getTargetClass())
+        verifyClass(IOrderedContainer, self._getTargetClass())
+        verifyClass(WriteLockInterface, self._getTargetClass())
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
         from Products.CMFCore.interfaces import IDynamicType
         from Products.CMFCore.interfaces import IFolderish
-        from Products.CMFCore.PortalFolder import PortalFolder
+        from Products.CMFCore.interfaces import IMutableMinimalDublinCore
 
-        verifyClass(IDynamicType, PortalFolder)
-        verifyClass(IFolderish, PortalFolder)
+        verifyClass(IDynamicType, self._getTargetClass())
+        verifyClass(IFolderish, self._getTargetClass())
+        verifyClass(IMutableMinimalDublinCore, self._getTargetClass())
 
     def test_contents_methods(self):
         ttool = self.site._setObject( 'portal_types', TypesTool() )

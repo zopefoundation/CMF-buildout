@@ -2,7 +2,9 @@ Installing CMF 1.6.x
 
   Requirements
 
-    - Zope 2.8.1 or later
+    - Zope 2.8.5 or later
+
+    - Five 1.2 (See http://codespeak.net/z3/five/)
 
   Assumptions
 

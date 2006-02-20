@@ -29,34 +29,31 @@
    </select>
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Identifier</th>
+ <tr>
+  <th i18n:translate="">Identifier</th>
   <td colspan="3">
    <tal:span tal:content="options/identifier" />
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Title</th>
+ <tr>
+  <th i18n:translate="">Title</th>
   <td colspan="3">
-   <input type="text"
-          name="title"
-          value=""
-          size="65"
-          tal:attributes="value options/title" />
+   <input type="text" name="title" value="" size="80"
+      tal:attributes="value options/title" />
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Description</th>
+ <tr>
+  <th i18n:translate="">Description</th>
   <td colspan="3">
-   <textarea name="description:text" rows="5" cols="65" wrap="soft"
+   <textarea name="description:text" rows="3" cols="80" wrap="soft"
       tal:content="options/description"></textarea>
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Subject</th>
+ <tr>
+  <th i18n:translate="">Subject</th>
   <td tal:define="subj_lines python: '\n'.join(options['extra_subjects'])">
-   <textarea name="subject:lines" rows="3" cols="20"
-             tal:content="subj_lines"></textarea>
+   <textarea name="subject:lines" rows="3" cols="31"
+      tal:content="subj_lines"></textarea>
    <br />
    <select name="subject:list" multiple>
     <option value=""
@@ -67,49 +64,49 @@
     </option>
    </select>
   </td>
-  <th align="right" i18n:translate="">Contributors</th>
+  <th i18n:translate="">Contributors</th>
   <td tal:define="contrib_lines python: '\n'.join(options['contributors'])">
-   <textarea name="contributors:lines" rows="5" cols="30"
-             tal:content="contrib_lines"></textarea>
+   <textarea name="contributors:lines" rows="5" cols="31"
+      tal:content="contrib_lines"></textarea>
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Creation Date</th>
-  <td> <span tal:replace="context/CreationDate"></span>
-  </td>
-  <th align="right" i18n:translate="">Last Modified Date</th>
-  <td> <span tal:replace="context/ModificationDate"></span>
-  </td>
+ <tr>
+  <th i18n:translate="">Creation Date</th>
+  <td tal:content="context/CreationDate"></td>
+  <th i18n:translate="">Last Modified Date</th>
+  <td tal:content="context/ModificationDate"></td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Effective Date</th>
+ <tr>
+  <th i18n:translate="">Effective Date</th>
   <td>
    <input type="text" name="effective_date" value=""
-          tal:attributes="value context/EffectiveDate" />
+      tal:attributes="value context/EffectiveDate" />
   </td>
-  <th align="right" i18n:translate="">Expiration Date</th>
+  <th i18n:translate="">Expiration Date</th>
   <td>
    <input type="text" name="expiration_date" value=""
-          tal:attributes="value context/ExpirationDate" />
+      tal:attributes="value context/ExpirationDate" />
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Format</th>
-  <td>
+ <tr>
+  <th i18n:translate="">Format</th>
+  <td colspan="3">
    <input type="text" name="format" value=""
       tal:attributes="value options/format" />
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Language</th>
-  <td> <input type="text" name="language" value=""
-              tal:attributes="value options/language" />
+ <tr>
+  <th i18n:translate="">Language</th>
+  <td colspan="3">
+   <input type="text" name="language" value=""
+      tal:attributes="value options/language" />
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Rights</th>
-  <td> <input type="text" name="rights" value=""
-              tal:attributes="value options/rights" />
+ <tr>
+  <th i18n:translate="">Rights</th>
+  <td colspan="3">
+   <input type="text" name="rights" value=""
+      tal:attributes="value options/rights" />
   </td>
  </tr>
  <tr>

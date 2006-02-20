@@ -249,6 +249,7 @@ table.FormLayout th {
     padding: 1pt 2pt 1pt 2pt;
     width: 100px;
     text-align: right;
+    vertical-align: top;
     font-size: 80%;
     font-weight: bold;
 }

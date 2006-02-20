@@ -16,14 +16,14 @@
  <tr>
   <th i18n:translate="">Title</th>
   <td>
-   <input type="text" name="title" value="" size="65"
+   <input type="text" name="title" value="" size="80"
       tal:attributes="value options/title" />
   </td>
  </tr>
  <tr>
   <th i18n:translate="">Description</th>
   <td>
-   <textarea name="description:text" rows="5" cols="65" wrap="soft"
+   <textarea name="description:text" rows="3" cols="80" wrap="soft"
       tal:content="options/description"></textarea>
   </td>
  </tr>

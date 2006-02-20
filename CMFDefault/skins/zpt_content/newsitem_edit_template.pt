@@ -21,28 +21,27 @@
   <th i18n:translate="">Format</th>
   <td>
    <input type="radio" name="text_format" value="structured-text" id="cb_stx"
-      tal:attributes="
-             checked python:path('options/text_format')=='structured-text'" />
+      tal:attributes="checked python: options['text_format']=='structured-text'" />
    <label for="cb_stx" i18n:translate="">structured-text</label>
    <input type="radio" name="text_format" value="plain" id="cb_plain"
-      tal:attributes="checked python:path('options/text_format')=='plain'" />
+      tal:attributes="checked python: options['text_format']=='plain'" />
    <label for="cb_plain" i18n:translate="">plain text</label>
    <input type="radio" name="text_format" value="html" id="cb_html"
-      tal:attributes="checked python:path('options/text_format')=='html'" />
+      tal:attributes="checked python: options['text_format']=='html'" />
    <label for="cb_html" i18n:translate="">html</label>
   </td>
  </tr>
  <tr>
-  <th class="TextField" i18n:translate="">Lead-in</th>
-  <td class="TextField">
-   <textarea name="description:text" rows="10" cols="65" wrap="soft"
+  <th i18n:translate="">Lead-in</th>
+  <td>
+   <textarea name="description:text" rows="8" cols="80" wrap="soft"
       tal:content="options/description"></textarea>
   </td>
  </tr>
  <tr>
-  <th class="TextField" i18n:translate="">Body</th>
-  <td class="TextField">
-   <textarea name="text:text" rows="20" cols="65" wrap="soft"
+  <th i18n:translate="">Body</th>
+  <td>
+   <textarea name="text:text" rows="16" cols="80" wrap="soft"
       tal:content="options/text"></textarea>
   </td>
  </tr>

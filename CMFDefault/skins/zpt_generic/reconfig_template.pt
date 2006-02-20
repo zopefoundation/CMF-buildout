@@ -18,7 +18,7 @@
  <tr>
   <th i18n:translate="">Portal 'From' name</th>
   <td>
-   <input name="email_from_name" value=""
+   <input type="text" name="email_from_name" value="" size="40"
       tal:attributes="value form/email_from_name" />
    <dl class="FieldHelp">
     <dd i18n:translate="">When the portal generates mail, it uses this name as
@@ -29,7 +29,7 @@
  <tr>
   <th i18n:translate="">Portal 'From' address</th>
   <td>
-   <input name="email_from_address" value=""
+   <input type="text" name="email_from_address" value="" size="40"
       tal:attributes="value form/email_from_address" />
    <dl class="FieldHelp">
     <dd i18n:translate="">When the portal generates mail, it uses this address
@@ -40,7 +40,7 @@
  <tr>
   <th i18n:translate="">SMTP server</th>
   <td>
-   <input name="smtp_server" value=""
+   <input type="text" name="smtp_server" value="" size="40"
       tal:attributes="value form/smtp_server" />
    <dl class="FieldHelp">
     <dd i18n:translate="">This is the address of your local SMTP (out-going
@@ -51,7 +51,8 @@
  <tr>
   <th i18n:translate="">Portal title</th>
   <td>
-   <input name="title" value="" tal:attributes="value form/title" />
+   <input type="text" name="title" value="" size="80"
+      tal:attributes="value form/title" />
    <dl class="FieldHelp">
     <dd i18n:translate="">This is the title which appears at the top of every
      portal page.</dd>
@@ -60,9 +61,9 @@
  </tr>
  <tr>
   <th i18n:translate="">Portal description</th>
-  <td class="TextField">
-   <textarea name="description" rows="6" cols="40" wrap="soft"
-             tal:content="form/description"></textarea>
+  <td>
+   <textarea name="description:text" rows="3" cols="80" wrap="soft"
+       tal:content="form/description"></textarea>
    <dl class="FieldHelp">
     <dd i18n:translate="">This description is made available via syndicated
      content and elsewhere. It should be fairly brief.</dd>

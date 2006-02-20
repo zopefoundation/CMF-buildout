@@ -16,7 +16,7 @@
  <tr>
   <th i18n:translate="">Enable Discussion?</th>
   <td>
-   <select name="allow_discussion">
+   <select name="allow_discussion" style="float: left">
     <option value="default"
        tal:attributes="selected python: options['allow_discussion'] is None"
        i18n:translate="">Default</option>
@@ -27,42 +27,37 @@
        tal:attributes="selected python: options['allow_discussion'] is True"
        i18n:translate="">On</option>
    </select>
-  </td>
-  <td colspan="2" align="right">
-   <a href="full_metadata_edit_form"
+   <a href="full_metadata_edit_form" style="float: right"
       tal:attributes="href string:${context/absolute_url}/full_metadata_edit_form"
       i18n:translate=""
      >Edit all metadata</a>
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Identifier</th>
-  <td colspan="3">
+ <tr>
+  <th i18n:translate="">Identifier</th>
+  <td>
    <tal:span tal:content="options/identifier" />
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Title</th>
-  <td colspan="3">
-   <input type="text"
-          name="title"
-          value=""
-          size="65"
-          tal:attributes="value options/title" />
+ <tr>
+  <th i18n:translate="">Title</th>
+  <td>
+   <input type="text" name="title" value="" size="80"
+      tal:attributes="value options/title" />
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Description</th>
-  <td colspan="3">
-   <textarea name="description:text" rows="5" cols="65" wrap="soft"
+ <tr>
+  <th i18n:translate="">Description</th>
+  <td>
+   <textarea name="description:text" rows="3" cols="80" wrap="soft"
       tal:content="options/description"></textarea>
   </td>
  </tr>
- <tr valign="top">
-  <th align="right" i18n:translate="">Subject</th>
+ <tr>
+  <th i18n:translate="">Subject</th>
   <td tal:define="subj_lines python: '\n'.join(options['extra_subjects'])">
-   <textarea name="subject:lines" rows="3" cols="20"
-             tal:content="subj_lines"></textarea>
+   <textarea name="subject:lines" rows="3" cols="31"
+      tal:content="subj_lines"></textarea>
    <br />
    <select name="subject:list" multiple>
     <option value=""
@@ -73,7 +68,9 @@
     </option>
    </select>
   </td>
-  <th align="right" i18n:translate="">Format</th>
+ </tr>
+ <tr>
+  <th i18n:translate="">Format</th>
   <td>
    <input type="text" name="format" value=""
       tal:attributes="value options/format" />
@@ -81,7 +78,7 @@
  </tr>
  <tr>
   <td>&nbsp;</td>
-  <td colspan="3">
+  <td>
    <metal:macro metal:use-macro="context/form_widgets/macros/buttons" />
   </td>
  </tr>

@@ -3,8 +3,8 @@
 from Products.CMFDefault.exceptions import ResourceLockedError
 from Products.CMFDefault.utils import Message as _
 
-if description != context.description or \
-        text_format != context.text_format or text != context.text:
+if description != context.Description() or \
+        text_format != context.text_format or text != context.EditableBody():
     try:
         context.edit(text=text, description=description,
                      text_format=text_format)

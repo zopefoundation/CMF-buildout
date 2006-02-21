@@ -8,11 +8,10 @@
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
    tal:define="batch options/batch;
-               form options/form;
-               up_info options/up_info">
+               form options/form">
 <div class="Desktop">
 
-<p tal:condition="up_info"
+<p tal:define="up_info options/up_info" tal:condition="up_info"
 ><tal:case tal:condition="up_info/url"
  ><a href="" tal:attributes="href up_info/url"
   ><img src="" alt="[Link]" border="0" tal:attributes="src up_info/icon"
@@ -33,7 +32,7 @@
     <th width="80" tal:repeat="column_info batch/listColumnInfos"
        tal:attributes="width column_info/width; colspan column_info/colspan"
     ><a href="" tal:attributes="href column_info/url"
-        tal:content="column_info/title" i18n:translate="">Type</a></th>
+        tal:content="column_info/title">COLUMN TITLE</a></th>
    </tr>
   </thead>
   <tbody tal:repeat="item_info batch/listItemInfos">

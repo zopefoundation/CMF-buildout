@@ -1,0 +1,42 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <five:traversable class="Products.CMFCore.PortalFolder.PortalFolder"/>
+
+  <browser:page
+      for="Products.CMFCore.interfaces.IFolderish"
+      name="index_html"
+      class=".folder.FolderView"
+      template="templates/folder.pt"
+      permission="zope2.View"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="Products.CMFCore.interfaces.IFolderish"
+      name="folder_contents"
+      class=".folder.FolderContentsView"
+      template="templates/folder_contents.pt"
+      permission="cmf.ListFolderContents"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="*"
+      name="form_widget"
+      template="templates/form_widgets.pt"
+      permission="zope2.View"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="*"
+      name="batch_widget"
+      template="templates/batch_widgets.pt"
+      permission="zope2.View"
+      layer="cmf"
+      />
+
+</configure>

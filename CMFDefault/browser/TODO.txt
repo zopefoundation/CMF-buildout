@@ -32,30 +32,30 @@ Converting skins to views:
       folder_top_control.py -> FolderContentsView.top_control
       folder_bottom_control.py -> FolderContentsView.bottom_control
 
-  [ ] folder_edit_form:
+  [x] folder_edit_form:
 
       folder_edit_form.py -> MetadataMinimalEditView
       folder_edit_template.pt -> templates/metadata_minimal_edit.pt
       folder_edit_control.py -> MetadataMinimalEditView.edit_control
 
-  [ ] metadata_edit_form:
+  [x] metadata_edit_form:
 
       metadata_edit_form.py -> MetadataEditView
       metadata_edit_template.pt -> templates/metadata_edit.pt
       metadata_edit_control.py -> MetadataEditView.edit_control
 
-  [ ] full_metadata_edit_form:
+  [x] full_metadata_edit_form:
 
       full_metadata_edit_form.py -> MetadataEditView
       full_metadata_edit_template.pt -> templates/metadata_full_edit.pt
       metadata_edit_control.py -> MetadataEditView.edit_control
 
-  [ ] document_view:
+  [x] document_view:
 
       document_view.py -> DocumentView
       document_view_template.pt -> document.pt
 
-  [ ] document_edit_form:
+  [x] document_edit_form:
 
       document_edit_form.py -> DocumentEditView
       document_edit_template.pt -> templates/document_edit.pt
@@ -63,12 +63,12 @@ Converting skins to views:
       validateTextFile.py -> DocumentEditView.validateTextFile
       document_edit_control.py -> DocumentEditView.edit_control
 
-  [ ] newsitem_view:
+  [x] newsitem_view:
 
       newsitem_view.py -> DocumentView
       document_view_template.pt -> document.pt
 
-  [ ] newsitem_edit_form:
+  [x] newsitem_edit_form:
 
       newsitem_edit_form.py -> NewsItemEditView
       newsitem_edit_template.pt -> templates/newsitem_edit.pt

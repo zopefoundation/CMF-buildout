@@ -3,7 +3,7 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:five="http://namespaces.zope.org/five">
 
-  <five:traversable class="Products.CMFCore.PortalFolder.PortalFolder"/>
+  <five:traversable class="Products.CMFCore.DynamicType.DynamicType"/>
 
   <browser:page
       for="Products.CMFCore.interfaces.IFolderish"
@@ -20,6 +20,69 @@
       class=".folder.FolderContentsView"
       template="templates/folder_contents.pt"
       permission="cmf.ListFolderContents"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="Products.CMFCore.interfaces.IMutableMinimalDublinCore"
+      name="folder_edit_form"
+      class=".metadata.MetadataMinimalEditView"
+      template="templates/metadata_minimal_edit.pt"
+      permission="zope2.ManageProperties"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="Products.CMFCore.interfaces.IMutableDublinCore"
+      name="metadata_edit_form"
+      class=".metadata.MetadataEditView"
+      template="templates/metadata_edit.pt"
+      permission="cmf.ModifyPortalContent"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="Products.CMFCore.interfaces.IMutableDublinCore"
+      name="full_metadata_edit_form"
+      class=".metadata.MetadataEditView"
+      template="templates/metadata_full_edit.pt"
+      permission="cmf.ModifyPortalContent"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="Products.CMFDefault.interfaces.IDocument"
+      name="document_view"
+      class=".document.DocumentView"
+      template="templates/document.pt"
+      permission="zope2.View"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="Products.CMFDefault.interfaces.IMutableDocument"
+      name="document_edit_form"
+      class=".document.DocumentEditView"
+      template="templates/document_edit.pt"
+      permission="cmf.ModifyPortalContent"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="Products.CMFDefault.interfaces.INewsItem"
+      name="newsitem_view"
+      class=".document.DocumentView"
+      template="templates/document.pt"
+      permission="zope2.View"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="Products.CMFDefault.interfaces.IMutableNewsItem"
+      name="newsitem_edit_form"
+      class=".newsitem.NewsItemEditView"
+      template="templates/newsitem_edit.pt"
+      permission="cmf.ModifyPortalContent"
       layer="cmf"
       />
 

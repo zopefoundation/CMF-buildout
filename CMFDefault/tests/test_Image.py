@@ -30,6 +30,7 @@ from Products.Five import zcml
 
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
+from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
 from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFDefault import tests
@@ -114,6 +115,7 @@ class TestImageCopyPaste(PlacelessSetup, RequestTest):
         zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.CMFCore)
         zcml.load_config('configure.zcml', Products.DCWorkflow)
+        zcml.load_string(_TRAVERSE_ZCML)
         try:
             newSecurityManager(None, UnrestrictedUser('manager', '', ['Manager'], []))
             factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite

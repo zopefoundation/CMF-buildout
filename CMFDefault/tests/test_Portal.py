@@ -22,6 +22,7 @@ import Products
 from Acquisition import aq_base
 from Products.Five import zcml
 
+from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
 from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 
@@ -53,6 +54,7 @@ class CMFSiteTests(PlacelessSetup, SecurityRequestTest):
         zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.CMFCore)
         zcml.load_config('configure.zcml', Products.DCWorkflow)
+        zcml.load_string(_TRAVERSE_ZCML)
 
     def tearDown(self):
         SecurityRequestTest.tearDown(self)

@@ -2,6 +2,10 @@ CMF 2.0.0-alpha (2006/01/22)
 
   New Features
 
+    - CMFDefault: Added experimental Zope 3-style browser views.
+      The views are disabled by default. See README.txt of the browser
+      sub-package for further information.
+
     - skins: All page templates now use unicode.
       Please make sure to pass only 'ascii' strings or unicode to them.
 

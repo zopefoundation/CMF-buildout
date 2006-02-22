@@ -61,6 +61,26 @@ Installing CMF 2.0
        site creation.
 
 
+Installing Translations for CMF
+
+  Assumptions
+
+    - CMF is installed as described above.
+
+  Procedure
+
+    1. Add a custom Zope product with the following subdirectories:
+       'locales/<locale>/LC_MESSAGES/' for each locale you want to support.
+
+    2. Translate the .pot files shipped with CMF using a catalog editor like
+       poEdit or KBabel. Place the created .mo files in LC_MESSAGES.
+
+    3. Register your translations using the i18n:registerTranslations ZCML
+       directive.
+
+    4. Restart Zope.
+
+
 Upgrading from Earlier Versions
 
   Install the New Software.

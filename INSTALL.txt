@@ -58,6 +58,49 @@ Installing CMF 1.6.x
     4. Create a "Configured CMF Site" object. join, and begin adding 
        content. Enjoy!
 
+    5. If you want to use addon functionalities such as CMFCalendar, CMFTopic
+       or CMFUid choose the extension when you set up the CMF site object,
+       or apply the extension from the portal_setup tool at any time after 
+       site creation.
+
+
+Installing Internationalization (I18N) Support for CMF
+
+  Requirements
+
+    - "Localizer":http://www.localizer.org
+
+    - "TranslationService":http://www.zope.org/Members/efge/TranslationService
+
+    - If you don't have the right language files (.po), you have to translate
+      the messages yourself!
+
+  Assumptions
+
+    - CMF is installed as described above.
+
+  Procedure
+
+    1. From the ZMI of your CMFSite, select "Localizer" from the Add list. Use
+       the default values.
+
+    2. From the "Contents" tab of Localizer, select "MessageCatalog" from the
+       Add list. Use 'CMFMessages' as id.
+
+    3. Use the "Languages" tab of CMFMessages to select the languages you want
+       to support.
+
+    4. From the ZMI of your CMFSite, select "Translation Service" from the Add
+       list. Use the default id.
+
+    5. Use the "Configuration" tab of translation_service to set the
+       MessageCatalog for the default domain to 'Localizer/CMFMessages'.
+
+    6. Go again to the MessageCatalog 'CMFMessages'. If you have the right .po
+       files, import them using the "Import/Export" tab.
+       If you have no .po files, collect the message ids by using your site.
+       Use the 'Messages' tab to translate the collected messages.
+
 
 Upgrading from Earlier Versions
 

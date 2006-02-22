@@ -76,18 +76,18 @@ Converting skins to views:
       validateTextFile.py -> DocumentEditView.validateTextFile
       newsitem_edit_control.py -> NewsItemEditView.edit_control
 
-  [ ] link_view:
+  [x] link_view:
 
       link_view.py -> LinkView
       link_view_template.pt -> templates/link.pt
 
-  [ ] link_edit_form:
+  [x] link_edit_form:
 
       link_edit_form.py -> LinkEditView
       link_edit_template.pt -> templates/link_edit.pt
       link_edit_control.py -> LinkEditView.edit_control
 
-  [ ] favorite_view:
+  [x] favorite_view:
 
       favorite_view.py -> LinkView
       link_view_template.pt -> templates/link.pt
@@ -113,3 +113,5 @@ Converting skins to views:
       image_edit_form.py -> ImageEditView
       image_edit_template.pt -> templates/image_edit.pt
       image_edit_control.py -> ImageEditView.edit_control
+
+  [ ] complete this todo list

@@ -1,22 +1,10 @@
-msgid "Next ${count} items"
-msgstr ""
-
 msgid "Next ${count} members"
-msgstr ""
-
-msgid "Next item"
 msgstr ""
 
 msgid "Next member"
 msgstr ""
 
-msgid "Previous ${count} items"
-msgstr ""
-
 msgid "Previous ${count} members"
-msgstr ""
-
-msgid "Previous item"
 msgstr ""
 
 msgid "Previous member"

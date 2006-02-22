@@ -81,7 +81,7 @@ pot_header = '''\
 msgid ""
 msgstr ""
 "Project-Id-Version: CMF 2.0\\n"
-"POT-Creation-Date: %(time)s\\n"
+"POT-Creation-Date: $Date$\\n"
 "Language-Team: CMF Developers <zope-cmf@zope.org>\\n"
 "MIME-Version: 1.0\\n"
 "Content-Type: text/plain; charset=%(charset)s\\n"

@@ -123,7 +123,7 @@ class FSPythonScript (FSObject, Script):
         data if necessary.
         """
         fp = expandpath(self._filepath)
-        file = open(fp, 'r')
+        file = open(fp, 'rU')
         try: data = file.read()
         finally: file.close()
         if reparse:

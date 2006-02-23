@@ -73,6 +73,15 @@ class FSPythonScriptTests(FSPSMaker):
                 sleep(0.05)
             self.assertEqual(res, ['test1', 'test1'], res)
 
+    def test_foreign_line_endings( self ):
+        # Load the various line ending files and get their output
+        container = Folder('container_for_execution')
+        for fformat in ('unix', 'dos', 'mac'):
+            container._setObject(fformat,
+                self._makeOne(fformat, 'test_%s.py' % fformat))
+            script = getattr(container, fformat)
+            self.assertEqual(script(), fformat)
+
 
 class FSPythonScriptCustomizationTests(SecurityTest, FSPSMaker):
 

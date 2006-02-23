@@ -2,6 +2,7 @@
 ##
 from ZTUtils import Batch
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import html_marshal
 from Products.CMFDefault.utils import Message as _
 
@@ -53,4 +54,4 @@ options['form'] = { 'action': target,
                     'listHiddenVarInfos': tuple(hidden_vars),
                     'listButtonInfos': tuple(buttons) }
 
-return context.members_manage_template(**options)
+return context.members_manage_template(**decode(options, script))

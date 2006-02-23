@@ -1,5 +1,7 @@
 ##parameters=add=''
 ##
+from Products.CMFDefault.utils import decode
+
 form = context.REQUEST.form
 if add and \
         context.validateType(**form) and \
@@ -28,4 +30,4 @@ id = form.get('id', '')
 options['form'] = { 'action': target,
                     'id': id }
 
-return context.folder_factories_template(**options)
+return context.folder_factories_template(**decode(options, script))

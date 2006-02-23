@@ -2,6 +2,7 @@
 ##
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.permissions import ManageUsers
+from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import Message as _
 
 atool = getToolByName(script, 'portal_actions')
@@ -56,4 +57,4 @@ else:
 options['form'] = { 'action': target,
                     'listButtonInfos': tuple(buttons) }
 
-return context.join_template(**options)
+return context.join_template(**decode(options, script))

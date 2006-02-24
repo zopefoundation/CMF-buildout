@@ -2,6 +2,14 @@ HEAD only (unreleased)
 
   New Features
 
+    - CMFDefault skins: Improved support for custom i18n domains.
+      If setStatus is used portal status messages are now translated before
+      they are added to the query string of a redirect.
+
+    - CMFDefault utils:  Added 'translate' function.
+      This should only be used if the message can't be translated in the
+      template. It is a small shortcut to getGlobalTranslationService.
+
     - CMFDefault: Added experimental Zope 3-style browser views.
       The views are disabled by default. See README.txt of the browser
       sub-package for further information.

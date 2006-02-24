@@ -24,6 +24,8 @@ from sgmllib import SGMLParser
 
 from AccessControl import ModuleSecurityInfo
 from Globals import package_home
+from Products.PageTemplates.GlobalTranslationService \
+        import getGlobalTranslationService
 from ZTUtils.Zope import complex_marshal
 from zope.i18nmessageid import MessageFactory
 
@@ -436,6 +438,13 @@ def decode(value, context):
     ptool = getToolByName(context, 'portal_properties')
     default_charset = ptool.getProperty('default_charset', None)
     return toUnicode(value, default_charset)
+
+security.declarePublic('translate')
+def translate(message, context):
+    """ Translate i18n message.
+    """
+    GTS = getGlobalTranslationService()
+    return GTS.translate('cmf_default', message, context=context)
 
 security.declarePublic('Message')
 Message = MessageFactory('cmf_default')

@@ -266,8 +266,8 @@
   </p>
 
   <p id="DesktopStatusBar"
-     tal:condition="request/portal_status_message|nothing"
-     tal:content="request/portal_status_message"
+     tal:condition="globals/status_message"
+     tal:content="globals/status_message"
      i18n:translate="">Status message.</p>
 
 <metal:slot metal:define-slot="header">

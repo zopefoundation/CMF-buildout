@@ -22,6 +22,7 @@ from ZTUtils import make_query
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import html_marshal
 from Products.CMFDefault.utils import Message as _
+from Products.CMFDefault.utils import translate
 from Products.CMFDefault.utils import toUnicode
 
 
@@ -95,6 +96,8 @@ class FormViewBase(ViewBase):
         kw = {}
         message = self.request.other.get('portal_status_message', '')
         if message:
+            if isinstance(message, unicode):
+                message = message.encode(self._getDefaultCharset())
             kw['portal_status_message'] = message
         for k in keys.split(','):
             k = k.strip()
@@ -122,7 +125,8 @@ class FormViewBase(ViewBase):
                         if isinstance(status, bool):
                             status = (status,)
                         if len(status) > 1:
-                            self.request.other['portal_status_message'] = status[1]
+                            message = translate(status[1], self.context)
+                            self.request.other['portal_status_message'] = message
                         if not status[0]:
                             return self.index()
                     if self._setRedirect(*button['redirect']):

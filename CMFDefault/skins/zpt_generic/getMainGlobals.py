@@ -15,6 +15,10 @@ if default_charset:
     context.REQUEST.RESPONSE.setHeader('Content-Type',
                                      'text/html;charset=%s' % default_charset)
 
+message = context.REQUEST.get('portal_status_message')
+if message and isinstance(message, str):
+    message = message.decode(default_charset)
+
 globals = {'utool': utool,
            'mtool': mtool,
            'atool': atool,
@@ -27,6 +31,7 @@ globals = {'utool': utool,
            'member': mtool.getAuthenticatedMember(),
            'membersfolder': mtool.getMembersFolder(),
            'isAnon': mtool.isAnonymousUser(),
-           'wf_state': wtool.getInfoFor(context, 'review_state', '')}
+           'wf_state': wtool.getInfoFor(context, 'review_state', ''),
+           'status_message': message}
 
 return decode(globals, context)

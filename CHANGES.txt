@@ -1,13 +1,4 @@
 HEAD only (unreleased)
-  
-  Bug Fixes
-
-    - In certain circumstances file-based PythonScripts with foreign line
-      endings were not handled correctly. PythonScripts are now read using
-      python's universal line-endings support.
-      (http://www.zope.org/Collectors/CMF/403)
-      
-CMF 2.0.0-alpha (2006/01/22)
 
   New Features
 
@@ -20,6 +11,45 @@ CMF 2.0.0-alpha (2006/01/22)
 
     - CMFDefault utils: Added 'decode' function.
       It decodes values using the default_charset of the site.
+
+  Bug Fixes
+
+    - In certain circumstances file-based PythonScripts with foreign line
+      endings were not handled correctly. PythonScripts are now read using
+      python's universal line-endings support.
+      (http://www.zope.org/Collectors/CMF/403)
+
+    - CMFDefault setuphandlers: Disabled password encryption.
+      'registeredNotify' and 'mailPassword' don't work with encrypted
+      passwords.
+
+    - CMFDefault skins: Fixed clipboard data validation.
+      Split off validateClipboardData from folder_paste_control.
+
+    - CMFDefault skins: Refactored and improved discussion_reply_form.
+
+    - CMFDefault utils: Fixed html_marshal function.
+      The return values are no longer escaped to avoid double quoting and no
+      longer stringified. The page templates take care of these steps.
+
+  Others
+
+    - CMFDefault RegistrationTool and skins: Refactored mail creation.
+      'mailPassword' now calls the 'password_email' script and
+      'registeredNotify' the 'registered_email' script. These scripts call the
+      templates and do the necessary string decoding and encoding.
+
+    - CMFDefault skins: Refactored 'logged_in' page and 'password_form'.
+      'logged_in' now redirects to the 'password_form' if a new member has to
+      change her password.
+
+    - Replaced deprecated 'manage_afterAdd' and 'manage_beforeDelete' hooks
+      in CookieCrumbler with a Z3-style event subscriber which does the
+      registration with the container's __before_traverse__.
+
+CMF 2.0.0-alpha (2006/01/22)
+
+  New Features
 
     - CMFCore.FSPythonScript:  Customized versions now track the "original"
       source from which they were customized, and can present a diff between
@@ -136,19 +166,6 @@ CMF 2.0.0-alpha (2006/01/22)
 
   Bug Fixes
 
-    - CMFDefault setuphandlers: Disabled password encryption.
-      'registeredNotify' and 'mailPassword' don't work with encrypted
-      passwords.
-
-    - CMFDefault skins: Fixed clipboard data validation.
-      Split off validateClipboardData from folder_paste_control.
-
-    - CMFDefault skins: Refactored and improved discussion_reply_form.
-
-    - CMFDefault utils: Fixed html_marshal function.
-      The return values are no longer escaped to avoid double quoting and no
-      longer stringified. The page templates take care of these steps.
-
     - PortalFolder: Synced _verifyObjectPaste code with OFS.CopySupport.
       The behavior is almost the same as before, but the code is less tolerant
       if content types are not registered properly.
@@ -195,19 +212,6 @@ CMF 2.0.0-alpha (2006/01/22)
       if no default view could be found for a piece of content.
 
   Others
-
-    - CMFDefault RegistrationTool and skins: Refactored mail creation.
-      'mailPassword' now calls the 'password_email' script and
-      'registeredNotify' the 'registered_email' script. These scripts call the
-      templates and do the necessary string decoding and encoding.
-
-    - CMFDefault skins: Refactored 'logged_in' page and 'password_form'.
-      'logged_in' now redirects to the 'password_form' if a new member has to
-      change her password.
-
-    - Replaced deprecated 'manage_afterAdd' and 'manage_beforeDelete' hooks
-      in CookieCrumbler with a Z3-style event subscriber which does the
-      registration with the container's __before_traverse__.
 
     - Moved GenericSetup out of the CMF package, it is now a standalone
       product, but still distributed as part of the CMF package.
@@ -314,6 +318,6 @@ CMF 2.0.0-alpha (2006/01/22)
     - Workflow: Removed deprecated WorkflowMethod machinery.
 
 
-CMF 1.5.x and previous
+CMF 1.6.x and previous
 
   For a complete list of changes see HISTORY.txt.

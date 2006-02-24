@@ -21,3 +21,6 @@ msgstr ""
 
 msgid "Submit"
 msgstr ""
+
+msgid "Transaction(s) undone"
+msgstr ""

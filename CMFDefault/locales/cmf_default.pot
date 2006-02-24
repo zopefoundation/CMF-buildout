@@ -280,7 +280,7 @@ msgstr ""
 
 #: CMFDefault/browser/folder.py:65
 #: CMFDefault/skins/zpt_generic/folder_contents.py:172
-#: CMFDefault/skins/zpt_generic/members_manage_form.py:49
+#: CMFDefault/skins/zpt_generic/members_manage_form.py:50
 msgid "New..."
 msgstr ""
 
@@ -306,7 +306,7 @@ msgstr ""
 
 #: CMFDefault/browser/folder.py:98
 #: CMFDefault/skins/zpt_generic/folder_contents.py:182
-#: CMFDefault/skins/zpt_generic/members_delete_form.py:27
+#: CMFDefault/skins/zpt_generic/members_delete_form.py:28
 #: CMFDefault/skins/zpt_generic/folder_localrole_form.pt:201
 msgid "Delete"
 msgstr ""
@@ -619,30 +619,30 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:238
+#: CMFDefault/browser/utils.py:242
 msgid "Previous item"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:240
+#: CMFDefault/browser/utils.py:244
 # Default: ""
 msgid "Previous ${count} items"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:252
+#: CMFDefault/browser/utils.py:256
 msgid "Next item"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:254
+#: CMFDefault/browser/utils.py:258
 # Default: ""
 msgid "Next ${count} items"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:265
+#: CMFDefault/browser/utils.py:269
 #: CMFDefault/skins/zpt_generic/search.py:47
 msgid "item"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:265
+#: CMFDefault/browser/utils.py:269
 #: CMFDefault/skins/zpt_generic/search.py:47
 msgid "items"
 msgstr ""
@@ -1050,7 +1050,6 @@ msgid "Member registered."
 msgstr ""
 
 #: CMFDefault/skins/zpt_control/members_add_control.py:24
-#: CMFDefault/skins/zpt_generic/join_form.py:31
 msgid "Success!"
 msgstr ""
 
@@ -1227,13 +1226,13 @@ msgstr ""
 msgid "Email address"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_rename_form.py:42
+#: CMFDefault/skins/zpt_generic/folder_rename_form.py:43
 msgid "Rename"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/folder_rename_form.py:43
-#: CMFDefault/skins/zpt_generic/join_form.py:55
-#: CMFDefault/skins/zpt_generic/members_delete_form.py:28
+#: CMFDefault/skins/zpt_generic/folder_rename_form.py:44
+#: CMFDefault/skins/zpt_generic/join_form.py:56
+#: CMFDefault/skins/zpt_generic/members_delete_form.py:29
 #: CMFDefault/skins/zpt_generic/password_form.py:39
 msgid "Cancel"
 msgstr ""
@@ -1258,20 +1257,20 @@ msgstr ""
 msgid "Related Resources"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/join_form.py:35
+#: CMFDefault/skins/zpt_generic/join_form.py:36
 msgid "Register Member"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/join_form.py:36
+#: CMFDefault/skins/zpt_generic/join_form.py:37
 msgid "Become a Member"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/join_form.py:51
+#: CMFDefault/skins/zpt_generic/join_form.py:52
 #: CMFDefault/skins/zpt_generic/login_form.pt:5
 msgid "Log in"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/join_form.py:54
+#: CMFDefault/skins/zpt_generic/join_form.py:55
 msgid "Register"
 msgstr ""
 
@@ -1420,7 +1419,7 @@ msgstr ""
 msgid "Delete Members"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/members_manage_form.py:51
+#: CMFDefault/skins/zpt_generic/members_manage_form.py:52
 msgid "Delete..."
 msgstr ""
 
@@ -2065,4 +2064,7 @@ msgid "Retract"
 msgstr ""
 
 msgid "Submit"
+msgstr ""
+
+msgid "Transaction(s) undone"
 msgstr ""

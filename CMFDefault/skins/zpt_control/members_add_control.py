@@ -21,4 +21,4 @@ else:
     if mtool.checkPermission(ManageUsers, mtool):
         return context.setStatus(True, _(u'Member registered.'))
     else:
-        return context.setStatus(False, _(u'Success!'))
+        return context.setStatus(False, _(u'Success!'), is_newmember=True)

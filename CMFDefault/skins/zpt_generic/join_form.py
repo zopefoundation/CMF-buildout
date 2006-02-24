@@ -29,7 +29,7 @@ elif cancel and \
 
 options = {}
 
-if context.REQUEST.get('portal_status_message', '') == _(u'Success!'):
+if context.REQUEST.get('is_newmember', False) == True:
     is_anon = False
     is_newmember = True
 

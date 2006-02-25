@@ -1,14 +1,9 @@
-After CMF 1.6.0-beta
+CMF 1.6.0 (2006/02/26)
 
   Bug Fixes
 
     - Correct software dependencies in INSTALL.txt
 
-    - In certain circumstances file-based PythonScripts with foreign line
-      endings were not handled correctly. PythonScripts are now read using
-      python's universal line-endings support.
-      (http://www.zope.org/Collectors/CMF/403)
-      
 
 CMF 1.6.0-beta (2006/02/19)
 

@@ -1,4 +1,4 @@
-HEAD only (unreleased)
+CMF 2.0.0-beta (2006/02/26)
 
   New Features
 
@@ -21,11 +21,6 @@ HEAD only (unreleased)
       It decodes values using the default_charset of the site.
 
   Bug Fixes
-
-    - In certain circumstances file-based PythonScripts with foreign line
-      endings were not handled correctly. PythonScripts are now read using
-      python's universal line-endings support.
-      (http://www.zope.org/Collectors/CMF/403)
 
     - CMFDefault setuphandlers: Disabled password encryption.
       'registeredNotify' and 'mailPassword' don't work with encrypted

@@ -1,1 +1,1 @@
-CMF-2.0.0-alpha
+CMF-2.0.0-beta

@@ -85,7 +85,7 @@ Upgrading from Earlier Versions
 
   Install the New Software.
 
-    0. "Download":CMF-2.X.tar.gz the tarball.
+    0. Download the CMF tarball from http://www.zope.org/Products/CMF/
 
     1. Copy your "working" products off to one side (in case
        you need / choose to revert).

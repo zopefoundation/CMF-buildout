@@ -44,12 +44,6 @@ Converting skins to views:
       metadata_edit_template.pt -> templates/metadata_edit.pt
       metadata_edit_control.py -> MetadataEditView.edit_control
 
-  [x] full_metadata_edit_form:
-
-      full_metadata_edit_form.py -> MetadataEditView
-      full_metadata_edit_template.pt -> templates/metadata_full_edit.pt
-      metadata_edit_control.py -> MetadataEditView.edit_control
-
   [x] document_view:
 
       document_view.py -> DocumentView

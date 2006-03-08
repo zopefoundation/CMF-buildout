@@ -1,3 +1,10 @@
+CMF 2.0.0-beta2 (unreleased)
+
+  Others
+
+    - CMFDefault skins and views: Removed 'full_metadata_edit_form'.
+      'metadata_edit_form' is now used for the full set of metadata.
+
 CMF 2.0.0-beta (2006/02/26)
 
   New Features

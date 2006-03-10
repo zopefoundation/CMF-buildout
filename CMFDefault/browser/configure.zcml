@@ -7,7 +7,7 @@
 
   <browser:page
       for="Products.CMFCore.interfaces.IFolderish"
-      name="index_html"
+      name="view.html"
       class=".folder.FolderView"
       template="templates/folder.pt"
       permission="zope2.View"
@@ -16,7 +16,7 @@
 
   <browser:page
       for="Products.CMFCore.interfaces.IFolderish"
-      name="folder_contents"
+      name="edit.html"
       class=".folder.FolderContentsView"
       template="templates/folder_contents.pt"
       permission="cmf.ListFolderContents"
@@ -25,7 +25,7 @@
 
   <browser:page
       for="Products.CMFCore.interfaces.IMutableMinimalDublinCore"
-      name="folder_edit_form"
+      name="properties.html"
       class=".metadata.MetadataMinimalEditView"
       template="templates/metadata_minimal_edit.pt"
       permission="zope2.ManageProperties"
@@ -34,7 +34,7 @@
 
   <browser:page
       for="Products.CMFCore.interfaces.IMutableDublinCore"
-      name="metadata_edit_form"
+      name="properties.html"
       class=".metadata.MetadataEditView"
       template="templates/metadata_edit.pt"
       permission="cmf.ModifyPortalContent"
@@ -43,7 +43,7 @@
 
   <browser:page
       for="Products.CMFDefault.interfaces.IDocument"
-      name="document_view"
+      name="view.html"
       class=".document.DocumentView"
       template="templates/document.pt"
       permission="zope2.View"
@@ -52,7 +52,7 @@
 
   <browser:page
       for="Products.CMFDefault.interfaces.IMutableDocument"
-      name="document_edit_form"
+      name="edit.html"
       class=".document.DocumentEditView"
       template="templates/document_edit.pt"
       permission="cmf.ModifyPortalContent"
@@ -60,17 +60,8 @@
       />
 
   <browser:page
-      for="Products.CMFDefault.interfaces.INewsItem"
-      name="newsitem_view"
-      class=".document.DocumentView"
-      template="templates/document.pt"
-      permission="zope2.View"
-      layer="cmf"
-      />
-
-  <browser:page
       for="Products.CMFDefault.interfaces.IMutableNewsItem"
-      name="newsitem_edit_form"
+      name="edit.html"
       class=".newsitem.NewsItemEditView"
       template="templates/newsitem_edit.pt"
       permission="cmf.ModifyPortalContent"
@@ -79,7 +70,7 @@
 
   <browser:page
       for="Products.CMFDefault.interfaces.ILink"
-      name="link_view"
+      name="view.html"
       class=".link.LinkView"
       template="templates/link.pt"
       permission="zope2.View"
@@ -88,19 +79,10 @@
 
   <browser:page
       for="Products.CMFDefault.interfaces.IMutableLink"
-      name="link_edit_form"
+      name="edit.html"
       class=".link.LinkEditView"
       template="templates/link_edit.pt"
       permission="cmf.ModifyPortalContent"
-      layer="cmf"
-      />
-
-  <browser:page
-      for="Products.CMFDefault.interfaces.IFavorite"
-      name="favorite_view"
-      class=".link.LinkView"
-      template="templates/link.pt"
-      permission="zope2.View"
       layer="cmf"
       />
 

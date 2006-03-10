@@ -3,8 +3,6 @@
 
   <include package=".skin"/>
 
-  <!-- uncomment this to enable browser views
   <include package=".browser"/>
-  -->
 
 </configure>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<object name="Image">
+ <alias from="metadata_edit_form" to="@@properties.html"/>
+</object>

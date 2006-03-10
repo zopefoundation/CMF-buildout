@@ -78,7 +78,7 @@ class FSPageTemplate(FSObject, Script, PageTemplate):
 
     def _readFile(self, reparse):
         fp = expandpath(self._filepath)
-        file = open(fp, 'r')    # not 'rb', as this is a text file!
+        file = open(fp, 'rU')    # not 'rb', as this is a text file!
         try:
             data = file.read()
         finally:

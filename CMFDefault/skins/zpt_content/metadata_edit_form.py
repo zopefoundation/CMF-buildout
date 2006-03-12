@@ -40,6 +40,9 @@ options['allowed_subjects'] = tuple(allowed_subjects)
 options['extra_subjects'] = tuple(extra_subjects)
 options['subject'] = tuple(subject)
 options['format'] = form.get('format', context.Format())
+options['contributors'] = form.get('contributors', context.Contributors())
+options['language'] = form.get('language', context.Language())
+options['rights'] = form.get('rights', context.Rights())
 
 buttons = []
 target = context.getActionInfo('object/metadata')['url']

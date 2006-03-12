@@ -42,15 +42,6 @@
       />
 
   <browser:page
-      for="Products.CMFCore.interfaces.IMutableDublinCore"
-      name="full_metadata_edit_form"
-      class=".metadata.MetadataEditView"
-      template="templates/metadata_full_edit.pt"
-      permission="cmf.ModifyPortalContent"
-      layer="cmf"
-      />
-
-  <browser:page
       for="Products.CMFDefault.interfaces.IDocument"
       name="document_view"
       class=".document.DocumentView"

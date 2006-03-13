@@ -1,5 +1,12 @@
 CMF 2.0.0-beta2 (unreleased)
 
+  Bug Fixes
+
+    - CMFDefault: Changed the way browser views are hooked up.
+      To become independent of the lookup order views are now named different
+      than the corresponding skin methods. The views are now enabled by
+      default and hooked up by a new extension profile.
+
   Others
 
     - CMFDefault skins and views: Removed 'full_metadata_edit_form'.

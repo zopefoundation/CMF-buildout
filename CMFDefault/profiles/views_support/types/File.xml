@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<object name="File">
+ <alias from="metadata_edit_form" to="@@properties.html"/>
+</object>

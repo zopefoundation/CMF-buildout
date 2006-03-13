@@ -128,6 +128,15 @@ def initialize( context ):
                                      for_=ISiteRoot,
                                     )
 
+    profile_registry.registerProfile('views_support',
+                                     'Experimental CMFDefault Browser Views',
+                                     'Hooks up the browser views.',
+                                     'profiles/views_support',
+                                     'CMFDefault',
+                                     EXTENSION,
+                                     for_=ISiteRoot,
+                                    )
+
     context.registerClass( Portal.CMFSite
                          , constructors=(factory.addConfiguredSiteForm,
                                          factory.addConfiguredSite)

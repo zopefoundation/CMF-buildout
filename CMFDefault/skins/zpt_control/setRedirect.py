@@ -17,7 +17,7 @@ except ValueError:
 message = context.REQUEST.other.get('portal_status_message', '')
 if message:
     if isinstance(message, unicode):
-        message = message.encode(default_charset)
+        message = unicode(message).encode(default_charset)
     kw['portal_status_message'] = message
 for k, v in kw.items():
     if not v:

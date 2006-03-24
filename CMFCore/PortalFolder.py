@@ -339,6 +339,11 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
         if id == 'syndication_information':
             return
 
+        # IDs starting with '@@' are reserved for views.
+        if id[:2] == '@@':
+            raise BadRequest('The id "%s" is invalid because it begins with '
+                             '"@@".' % id)
+
         # This code prevents people other than the portal manager from
         # overriding skinned names and tools.
         if not getSecurityManager().checkPermission(ManagePortal, self):

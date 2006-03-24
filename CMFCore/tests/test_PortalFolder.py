@@ -252,9 +252,7 @@ class PortalFolderTests(SecurityTest):
         wftool.notifyCreated(test)
         self.assertEqual( len(ctool), 0 )
 
-
     def test_tracker261(self):
-
         #
         #   Tracker issue #261 says that content in a deleted folder
         #   is not being uncatalogued.  Try creating a subfolder with
@@ -401,14 +399,6 @@ class PortalFolderTests(SecurityTest):
         newSecurityManager(None, acl_users.user_foo)
         self.assertRaises(BadRequest, test._checkId, 'view.html')
 
-    def test_checkIdAvailableCatchesBadRequest(self):
-        #
-        #   checkIdAvailable() should catch BadRequest
-        #
-        test = self._makeOne('test')
-        test._setObject('foo', DummyContent('foo'))
-        self.failIf(test.checkIdAvailable('foo'))
-
     def test__checkId_starting_with_dot(self):
         #
         # doted prefixed names at the root of the portal can be overriden
@@ -426,6 +416,20 @@ class PortalFolderTests(SecurityTest):
         newSecurityManager(None, acl_users.user_foo)
 
         self.assert_(sub.checkIdAvailable('.foo'))
+
+    def test__checkId_Five(self):
+        test = self._makeOne('test')
+        self.assertRaises(BadRequest, test._checkId, '@@view.html')
+        self.assertRaises(BadRequest, test._checkId, '++resource++icon.png')
+
+    def test_checkIdAvailableCatchesBadRequest(self):
+        #
+        #   checkIdAvailable() should catch BadRequest
+        #
+        test = self._makeOne('test')
+        test._setObject('foo', DummyContent('foo'))
+        self.failIf(test.checkIdAvailable('foo'))
+
 
 class PortalFolderMoveTests(SecurityTest):
 

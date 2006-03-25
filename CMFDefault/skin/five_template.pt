@@ -1,15 +1,15 @@
-<metal:block define-macro="page"><metal:block use-macro="here/main_template/macros/master">
- <metal:block fill-slot="base">
-   <metal:block define-slot="base" />
- </metal:block>
- <metal:block fill-slot="header">
-   <metal:block define-slot="header" />
- </metal:block>
- <metal:block fill-slot="css_slot">
-   <metal:block define-slot="style_slot" />
- </metal:block>
- <metal:block fill-slot="main">
-   <metal:block define-slot="body" />
- </metal:block>
-</metal:block>
-</metal:block>
+<metal:macro metal:define-macro="page"
+><html metal:use-macro="context/main_template/macros/master">
+<head>
+<metal:slot metal:fill-slot="base"
+><metal:slot metal:define-slot="base" /></metal:slot>
+<metal:slot metal:fill-slot="style_slot"
+><metal:slot metal:define-slot="style_slot" /></metal:slot>
+</head>
+<body>
+<metal:slot metal:fill-slot="body"
+><metal:slot metal:define-slot="body"
+><metal:slot metal:define-slot="header" />
+ <metal:slot metal:define-slot="main" /></metal:slot></metal:slot>
+</body>
+</html></metal:macro>

@@ -6,7 +6,7 @@
     tal:content="view/title" i18n:name="obj_title">Title</tal:span></h1>
 </metal:slot>
 
-<metal:slot metal:fill-slot="body" i18n:domain="cmf_default">
+<metal:slot metal:fill-slot="main" i18n:domain="cmf_default">
 <div class="Desktop">
 
 <form action="newsitem_edit_form" method="post"

@@ -209,8 +209,7 @@ th {
 }
 
 #Desktop {
-    margin-left: 0px;
-    margin-right: 16px;
+    margin: 16px 16px 16px 0;
 }
 
 #Permalink {

@@ -256,8 +256,9 @@
  <td width="16px">&nbsp;</td>
 
  <td id="ForematterCell">
+  <div id="Desktop">
 
-  <p id="Breadcrumbs" style="padding-top: 5px">
+  <p id="Breadcrumbs">
    <span tal:repeat="bc context/breadcrumbs"
     ><a href="."
         tal:attributes="href bc/url" tal:content="bc/id"
@@ -270,24 +271,9 @@
      tal:content="globals/status_message"
      i18n:translate="">Status message.</p>
 
-<metal:slot metal:define-slot="header">
-<h1 id="DesktopTitle" tal:content="object_title">Page Title</h1>
-
-<div id="DesktopDescription" tal:content="object_description">Description
- of the resource goes here, perhaps even wrapping lines;  this is to make it
- long enough to test.</div>
-</metal:slot>
-<!-- end formatter -->
-
-<div id="Desktop">
-
-<metal:slot metal:define-slot="main">
-<h2>Section Header</h2>
-
-<p>The content of the object is <a href="render">rendered</a> hre. Lorem ipsum
- dolorem. Nihil obstat imprimatur. Semper ubi sub ubi. Non illegitimi
- carborundum.  In vino veritas.  E pluribus unam.</p>
-</metal:slot>
+<metal:slot metal:define-slot="body"
+><metal:slot metal:define-slot="header" />
+<metal:slot metal:define-slot="main" /></metal:slot>
 
  <div id="Permalink"
       tal:define="url context/get_permalink | nothing"
@@ -298,9 +284,7 @@
   </a>
  </div>
 
- <!-- end Desktop -->
- </div>
-
+  </div>
  </td>
  </tr>
  </table>

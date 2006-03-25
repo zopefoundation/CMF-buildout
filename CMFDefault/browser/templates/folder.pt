@@ -13,7 +13,7 @@
  header goes here.</div></tal:case
 ></metal:slot>
 
-<metal:slot metal:fill-slot="body" i18n:domain="cmf_default">
+<metal:slot metal:fill-slot="main" i18n:domain="cmf_default">
   <div id="content_well"
        style="float: left; top: 0; width: 78%;">
     <div tal:condition="not: view/has_local">

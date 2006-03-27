@@ -16,9 +16,6 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
 from Testing.makerequest import makerequest
-from zope.app.testing.placelesssetup import PlacelessSetup
-from zope.app.testing.placelesssetup import setUp as placelessSetUp
-from zope.app.testing.placelesssetup import tearDown as placelessTearDown
 
 from dummy import DummyFolder
 from security import AnonymousUser
@@ -33,7 +30,7 @@ _TRAVERSE_ZCML = """
 
   <adapter
       for="*"
-      factory=".traversable.FiveTraversable"
+      factory="Products.Five.traversable.FiveTraversable"
       provides="zope.app.traversing.interfaces.ITraversable"
       />
 

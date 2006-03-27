@@ -22,16 +22,15 @@ from csv import reader
 from ConfigParser import ConfigParser
 from StringIO import StringIO
 
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
+from zope.testing.cleanup import cleanUp
+
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
 from conformance import ConformsToIFilesystemImporter
 
 
-class SiteStructureExporterTests(PlacelessSetup,
-                                 unittest.TestCase,
-                                ):
+class SiteStructureExporterTests(unittest.TestCase):
 
     def _getExporter(self):
         from Products.CMFCore.exportimport.content import exportSiteStructure
@@ -95,6 +94,8 @@ class SiteStructureExporterTests(PlacelessSetup,
                              INIAwareFileAdapter,
                             )
 
+    def tearDown(self):
+        cleanUp()
 
     def test_export_empty_site(self):
         self._setUpAdapters()

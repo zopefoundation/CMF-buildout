@@ -19,13 +19,12 @@ import unittest
 import Testing
 
 from Products.Five import zcml
+from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
-
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 _PROPERTIES_BODY = """\
 <?xml version="1.0"?>
@@ -82,7 +81,7 @@ class PropertiesXMLAdapterTests(BodyAdapterTestCase):
         self._BODY = _PROPERTIES_BODY
 
 
-class _SitePropertiesSetup(PlacelessSetup, BaseRegistryTests):
+class _SitePropertiesSetup(BaseRegistryTests):
 
     def _initSite(self, foo=2, bar=2):
         from Products.CMFCore.PortalObject import PortalObjectBase
@@ -107,14 +106,13 @@ class _SitePropertiesSetup(PlacelessSetup, BaseRegistryTests):
     def setUp(self):
         import Products.CMFCore.exportimport
 
-        PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
 
 class exportSitePropertiesTests(_SitePropertiesSetup):

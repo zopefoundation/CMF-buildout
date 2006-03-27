@@ -22,16 +22,15 @@ import Products
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from Products.Five import zcml
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import RequestTest
 
 
-class DiscussionReplyTest(PlacelessSetup, RequestTest):
+class DiscussionReplyTest(RequestTest):
 
     def setUp(self):
-        PlacelessSetup.setUp(self)
         RequestTest.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('permissions.zcml', Products.Five)
@@ -61,7 +60,7 @@ class DiscussionReplyTest(PlacelessSetup, RequestTest):
     def tearDown(self):
         noSecurityManager()
         RequestTest.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
     def login(self, name):
         user = self.uf.getUserById(name)

@@ -26,10 +26,6 @@ def test_fiveactionstool():
 
     Some basic setup:
 
-      >>> from Products.CMFCore.tests.base.testcase import placelessSetUp
-      >>> from Products.CMFCore.tests.base.testcase import placelessTearDown
-      >>> placelessSetUp()
-
       >>> import Products.Five
       >>> import Products.CMFCore
       >>> from Products.Five import zcml
@@ -104,8 +100,10 @@ def test_fiveactionstool():
 
     Cleanup:
 
-      >>> placelessTearDown()
+      >>> from zope.testing.cleanup import cleanUp
+      >>> cleanUp()
     """
+
 
 def test_suite():
     from Testing.ZopeTestCase import ZopeDocTestSuite

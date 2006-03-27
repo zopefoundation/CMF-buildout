@@ -27,13 +27,13 @@ from Products.ZCTextIndex.Lexicon import CaseNormalizer
 from Products.ZCTextIndex.Lexicon import Splitter
 from Products.ZCTextIndex.Lexicon import StopWordRemover
 from Products.ZCTextIndex.ZCTextIndex import PLexicon
+from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
 from Products.CMFCore.CatalogTool import CatalogTool
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 _EMPTY_EXPORT = """\
 <?xml version="1.0"?>
@@ -76,7 +76,7 @@ class _extra:
     pass
 
 
-class _CatalogToolSetup(PlacelessSetup, BaseRegistryTests):
+class _CatalogToolSetup(BaseRegistryTests):
 
     def _initSite(self, foo=2):
         site = self.root.site = Folder(id='site')
@@ -104,7 +104,6 @@ class _CatalogToolSetup(PlacelessSetup, BaseRegistryTests):
         return site
 
     def setUp(self):
-        PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('configure.zcml',
@@ -114,7 +113,7 @@ class _CatalogToolSetup(PlacelessSetup, BaseRegistryTests):
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
 
 class exportCatalogToolTests(_CatalogToolSetup):

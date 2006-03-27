@@ -20,15 +20,14 @@ import Testing
 
 import Products
 from Products.Five import zcml
+from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import TransactionalTest
 
 
-class MembershipTests(PlacelessSetup, TransactionalTest):
+class MembershipTests(TransactionalTest):
 
     def setUp(self):
-        PlacelessSetup.setUp(self)
         TransactionalTest.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('permissions.zcml', Products.Five)
@@ -38,7 +37,7 @@ class MembershipTests(PlacelessSetup, TransactionalTest):
 
     def tearDown(self):
         TransactionalTest.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
     def _makePortal(self):
         # Create a portal instance suitable for testing

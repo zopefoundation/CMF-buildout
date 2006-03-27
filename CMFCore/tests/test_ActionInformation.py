@@ -22,6 +22,7 @@ import Products.Five
 from OFS.Folder import manage_addFolder
 from Products.Five import zcml
 from Products.PythonScripts.PythonScript import manage_addPythonScript
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.Expression import createExprContext
 from Products.CMFCore.Expression import Expression
@@ -29,7 +30,6 @@ from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool as DummyMembershipTool
 from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import TransactionalTest
 
@@ -289,11 +289,10 @@ class ActionInfoSecurityTests(SecurityTest):
         self.assertEqual( ai2['allowed'], True )
 
 
-class ActionInformationTests(PlacelessSetup, TransactionalTest):
+class ActionInformationTests(TransactionalTest):
 
     def setUp(self):
         import Products.CMFCore
-        PlacelessSetup.setUp(self)
         TransactionalTest.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('permissions.zcml', Products.Five)
@@ -309,7 +308,7 @@ class ActionInformationTests(PlacelessSetup, TransactionalTest):
 
     def tearDown(self):
         TransactionalTest.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ActionInformation import ActionInformation

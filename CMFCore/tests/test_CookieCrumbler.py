@@ -14,8 +14,11 @@
 
 $Id$
 """
+
 import unittest
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
+import Testing
+
+from zope.app.testing.placelesssetup import PlacelessSetup
 
 def makerequest(root, stdout, stdin=None):
     # Customized version of Testing.makerequest.makerequest()
@@ -384,10 +387,11 @@ class CookieCrumblerTests(unittest.TestCase, PlacelessSetup):
         bt_removed = getattr(container, '__before_traverse__')
         self.assertEqual(len(bt_removed.items()), 0)
 
+
 def test_suite():
     return unittest.TestSuite((
-                        unittest.makeSuite(CookieCrumblerTests),
-                        ))
+        unittest.makeSuite(CookieCrumblerTests),
+        ))
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

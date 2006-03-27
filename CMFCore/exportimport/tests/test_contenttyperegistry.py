@@ -21,13 +21,12 @@ import Testing
 import Products
 from OFS.Folder import Folder
 from Products.Five import zcml
+from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
-
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 _TEST_PREDICATES = (
  ('plain_text', 'major_minor', ('text', 'plain,javascript'), 'File'),
@@ -93,7 +92,7 @@ class ContentTypeRegistryXMLAdapterTests(BodyAdapterTestCase):
         self._BODY = _CTR_BODY
 
 
-class _ContentTypeRegistrySetup(PlacelessSetup, BaseRegistryTests):
+class _ContentTypeRegistrySetup(BaseRegistryTests):
 
     MAJOR_MINOR_ID = _TEST_PREDICATES[0][0]
     MAJOR = _TEST_PREDICATES[0][2][0]
@@ -169,14 +168,13 @@ class _ContentTypeRegistrySetup(PlacelessSetup, BaseRegistryTests):
         return site
 
     def setUp(self):
-        PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
 
 class exportContentTypeRegistryTests(_ContentTypeRegistrySetup):

@@ -27,11 +27,11 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.User import UnrestrictedUser
 from Products.Five import zcml
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFDefault import tests
 
@@ -102,13 +102,12 @@ class TestImageElement(ConformsToContent, unittest.TestCase):
         self.assertEqual(image.content_type, 'image/jpeg')
 
 
-class TestImageCopyPaste(PlacelessSetup, RequestTest):
+class TestImageCopyPaste(RequestTest):
 
     # Tests related to http://www.zope.org/Collectors/CMF/176
     # Copy/pasting an image (or file) should reset the object's workflow state.
 
     def setUp(self):
-        PlacelessSetup.setUp(self)
         RequestTest.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('permissions.zcml', Products.Five)
@@ -136,7 +135,7 @@ class TestImageCopyPaste(PlacelessSetup, RequestTest):
     def tearDown(self):
         noSecurityManager()
         RequestTest.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
     def test_File_CopyPasteResetsWorkflowState(self):
         # Copy/pasting a File should reset wf state to private

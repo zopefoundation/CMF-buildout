@@ -21,6 +21,7 @@ import Testing
 import Products
 from OFS.Folder import Folder
 from Products.Five import zcml
+from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
@@ -28,7 +29,6 @@ from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
 from Products.CMFCore.CookieCrumbler import CookieCrumbler
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 _COOKIECRUMBLER_BODY = """\
 <?xml version="1.0"?>
@@ -98,7 +98,7 @@ class CookieCrumblerXMLAdapterTests(BodyAdapterTestCase):
         self._BODY = _COOKIECRUMBLER_BODY
 
 
-class _CookieCrumblerSetup(PlacelessSetup, BaseRegistryTests):
+class _CookieCrumblerSetup(BaseRegistryTests):
 
     def _initSite(self, use_changed=False):
         self.root.site = Folder(id='site')
@@ -120,14 +120,13 @@ class _CookieCrumblerSetup(PlacelessSetup, BaseRegistryTests):
         return site
 
     def setUp(self):
-        PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
 
 class exportCookieCrumblerTests(_CookieCrumblerSetup):

@@ -23,6 +23,7 @@ from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
 from Products.Five import zcml
 from zope.interface import implements
+from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
@@ -32,7 +33,6 @@ from Products.GenericSetup.utils import BodyAdapterBase
 
 from Products.CMFCore.interfaces import IWorkflowDefinition
 from Products.CMFCore.interfaces import IWorkflowTool
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 _DUMMY_ZCML = """\
 <configure
@@ -213,7 +213,7 @@ class WorkflowToolXMLAdapterTests(BodyAdapterTestCase):
         self._BODY = _WORKFLOWTOOL_BODY
 
 
-class _WorkflowSetup(PlacelessSetup, BaseRegistryTests):
+class _WorkflowSetup(BaseRegistryTests):
 
     def _initSite(self):
         self.root.site = Folder(id='site')
@@ -222,7 +222,6 @@ class _WorkflowSetup(PlacelessSetup, BaseRegistryTests):
         return site
 
     def setUp(self):
-        PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
@@ -230,7 +229,7 @@ class _WorkflowSetup(PlacelessSetup, BaseRegistryTests):
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
 
 class exportWorkflowToolTests(_WorkflowSetup):

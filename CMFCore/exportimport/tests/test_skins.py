@@ -26,6 +26,7 @@ import Products
 from OFS.Folder import Folder
 from Products.Five import zcml
 from zope.interface import implements
+from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.testing import NodeAdapterTestCase
@@ -35,7 +36,6 @@ from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
 from Products.CMFCore.interfaces import ISkinsTool
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 _TESTS_PATH = os.path.split(__file__)[0]
 
@@ -323,7 +323,7 @@ class SkinsToolXMLAdapterTests(_DVRegistrySetup, BodyAdapterTestCase):
         BodyAdapterTestCase.tearDown(self)
 
 
-class _SkinsSetup(_DVRegistrySetup, PlacelessSetup, BaseRegistryTests):
+class _SkinsSetup(_DVRegistrySetup, BaseRegistryTests):
 
     def _initSite(self, selections={}, ids=()):
         from Products.CMFCore.DirectoryView import DirectoryView
@@ -336,7 +336,6 @@ class _SkinsSetup(_DVRegistrySetup, PlacelessSetup, BaseRegistryTests):
         return site
 
     def setUp(self):
-        PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         _DVRegistrySetup.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
@@ -345,7 +344,7 @@ class _SkinsSetup(_DVRegistrySetup, PlacelessSetup, BaseRegistryTests):
     def tearDown(self):
         _DVRegistrySetup.tearDown(self)
         BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
 
 class exportSkinsToolTests(_SkinsSetup):

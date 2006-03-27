@@ -21,6 +21,7 @@ import Testing
 import Products
 from OFS.Folder import Folder
 from Products.Five import zcml
+from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
@@ -30,7 +31,6 @@ from Products.GenericSetup.tests.common import DummyImportContext
 from Products.CMFCore.permissions import View
 from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.permissions import ModifyPortalContent
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.TypesTool import FactoryTypeInformation
 from Products.CMFCore.TypesTool import ScriptableTypeInformation
 from Products.CMFCore.TypesTool import TypesTool
@@ -452,7 +452,7 @@ class TypesToolXMLAdapterTests(BodyAdapterTestCase):
         self._BODY = _TYPESTOOL_BODY
 
 
-class _TypeInfoSetup(PlacelessSetup, BaseRegistryTests):
+class _TypeInfoSetup(BaseRegistryTests):
 
     def _initSite(self, foo=0):
         self.root.site = Folder(id='site')
@@ -473,7 +473,6 @@ class _TypeInfoSetup(PlacelessSetup, BaseRegistryTests):
         return site
 
     def setUp(self):
-        PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('permissions.zcml', Products.Five)
@@ -481,7 +480,7 @@ class _TypeInfoSetup(PlacelessSetup, BaseRegistryTests):
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
 
 class exportTypesToolTests(_TypeInfoSetup):

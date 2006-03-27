@@ -25,13 +25,13 @@ from OFS.Folder import Folder
 from OFS.OrderedFolder import OrderedFolder
 from Products.Five import zcml
 from zope.interface import implements
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces import IActionsTool
 from Products.CMFCore.interfaces.portal_actions \
     import ActionProvider as IActionProvider
 from Products.CMFCore.tests.base.dummy import DummySite
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.testing import NodeAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
@@ -346,7 +346,7 @@ class ActionsToolXMLAdapterTests(BodyAdapterTestCase):
         self._BODY = _ACTIONSTOOL_BODY
 
 
-class _ActionSetup(PlacelessSetup, BaseRegistryTests):
+class _ActionSetup(BaseRegistryTests):
 
     def _initSite(self, foo=2, bar=2):
         self.root.site = Folder(id='site')
@@ -385,7 +385,6 @@ class _ActionSetup(PlacelessSetup, BaseRegistryTests):
         return site
 
     def setUp(self):
-        PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('permissions.zcml', Products.Five)
@@ -393,7 +392,7 @@ class _ActionSetup(PlacelessSetup, BaseRegistryTests):
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
 
 class exportActionProvidersTests(_ActionSetup):

@@ -28,6 +28,7 @@ from Products.Five import zcml
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.PythonScripts.standard import html_quote
 from webdav.NullResource import NullResource
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.PortalFolder import PortalFolder
@@ -39,7 +40,6 @@ from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.security import UserWithRoles
 from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.tests.base.tidata import FTIDATA_ACTIONS
@@ -48,17 +48,16 @@ from Products.CMFCore.tests.base.tidata import FTIDATA_DUMMY
 from Products.CMFCore.tests.base.tidata import STI_SCRIPT
 
 
-class TypesToolTests(PlacelessSetup, SecurityTest, WarningInterceptor):
+class TypesToolTests(SecurityTest, WarningInterceptor):
 
     def _makeOne(self):
         from Products.CMFCore.TypesTool import TypesTool
 
         return TypesTool()
 
-    def setUp( self ):
+    def setUp(self):
         from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 
-        PlacelessSetup.setUp(self)
         SecurityTest.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('permissions.zcml', Products.Five)
@@ -74,7 +73,7 @@ class TypesToolTests(PlacelessSetup, SecurityTest, WarningInterceptor):
 
     def tearDown(self):
         SecurityTest.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
         self._free_warning_output()
 
     def test_z2interfaces(self):

@@ -21,14 +21,13 @@ import Testing
 import Products
 from OFS.Folder import Folder
 from Products.Five import zcml
+from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.testing import NodeAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
-
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 _CP_XML = """\
 <caching-policy name="foo_policy" enable_304s="False" etag_func=""
@@ -94,7 +93,7 @@ class CachingPolicyManagerXMLAdapterTests(BodyAdapterTestCase):
         self._BODY = _CPM_BODY
 
 
-class _CachingPolicyManagerSetup(PlacelessSetup, BaseRegistryTests):
+class _CachingPolicyManagerSetup(BaseRegistryTests):
 
     POLICY_ID = 'policy_id'
     PREDICATE = "python:object.getId() == 'foo'"
@@ -156,14 +155,13 @@ class _CachingPolicyManagerSetup(PlacelessSetup, BaseRegistryTests):
         return site
 
     def setUp(self):
-        PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
 
 class exportCachingPolicyManagerTests(_CachingPolicyManagerSetup):

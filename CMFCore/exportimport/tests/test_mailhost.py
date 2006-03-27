@@ -20,12 +20,11 @@ import Testing
 
 from OFS.Folder import Folder
 from Products.Five import zcml
+from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
-
-from Products.CMFCore.tests.base.testcase import PlacelessSetup
 
 _DEFAULT_EXPORT = """\
 <?xml version="1.0"?>
@@ -40,7 +39,7 @@ _CHANGED_EXPORT = """\
 """
 
 
-class _MailHostSetup(PlacelessSetup, BaseRegistryTests):
+class _MailHostSetup(BaseRegistryTests):
 
     def _initSite(self, use_changed=False):
         from Products.MailHost.MailHost import MailHost
@@ -60,14 +59,13 @@ class _MailHostSetup(PlacelessSetup, BaseRegistryTests):
     def setUp(self):
         import Products.GenericSetup.MailHost
 
-        PlacelessSetup.setUp(self)
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.GenericSetup.MailHost)
 
     def tearDown(self):
         BaseRegistryTests.tearDown(self)
-        PlacelessSetup.tearDown(self)
+        cleanUp()
 
 
 class exportMailHostTests(_MailHostSetup):

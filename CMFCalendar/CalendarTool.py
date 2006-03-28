@@ -190,8 +190,8 @@ class CalendarTool (UniqueObject, SimpleItem):
                     eventDays[eventday]['event'] = 1
 
                 if result.end == result.end.earliestTime():
-                    last_day = eventDays[allEventDays[-2]]
-                    last_days_event = last_day['eventslist'][-1]
+                    last_day_data = eventDays[allEventDays[-2]]
+                    last_days_event = last_day_data['eventslist'][-1]
                     last_days_event['end'] = (result.end-1).latestTime().Time()
                 else:
                     eventDays[eventEndDay]['eventslist'].append( {'end':

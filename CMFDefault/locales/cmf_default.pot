@@ -331,11 +331,11 @@ msgstr ""
 msgid "News Item changed."
 msgstr ""
 
-#: CMFDefault/browser/templates/document_edit.pt:17
-#: CMFDefault/browser/templates/link_edit.pt:16
-#: CMFDefault/browser/templates/metadata_edit.pt:38
-#: CMFDefault/browser/templates/metadata_minimal_edit.pt:16
-#: CMFDefault/browser/templates/newsitem_edit.pt:16
+#: CMFDefault/browser/templates/document_edit.pt:15
+#: CMFDefault/browser/templates/link_edit.pt:14
+#: CMFDefault/browser/templates/metadata_edit.pt:36
+#: CMFDefault/browser/templates/metadata_minimal_edit.pt:14
+#: CMFDefault/browser/templates/newsitem_edit.pt:14
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:18
 #: CMFDefault/skins/zpt_content/file_edit_template.pt:17
 #: CMFDefault/skins/zpt_content/folder_edit_template.pt:17
@@ -351,9 +351,9 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: CMFDefault/browser/templates/document_edit.pt:21
-#: CMFDefault/browser/templates/metadata_edit.pt:45
-#: CMFDefault/browser/templates/metadata_minimal_edit.pt:23
+#: CMFDefault/browser/templates/document_edit.pt:19
+#: CMFDefault/browser/templates/metadata_edit.pt:43
+#: CMFDefault/browser/templates/metadata_minimal_edit.pt:21
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:22
 #: CMFDefault/skins/zpt_content/file_edit_template.pt:21
 #: CMFDefault/skins/zpt_content/folder_edit_template.pt:24
@@ -365,9 +365,9 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: CMFDefault/browser/templates/document_edit.pt:25
-#: CMFDefault/browser/templates/metadata_edit.pt:91
-#: CMFDefault/browser/templates/newsitem_edit.pt:20
+#: CMFDefault/browser/templates/document_edit.pt:23
+#: CMFDefault/browser/templates/metadata_edit.pt:89
+#: CMFDefault/browser/templates/newsitem_edit.pt:18
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:26
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:92
 #: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:21
@@ -375,28 +375,28 @@ msgstr ""
 msgid "Format"
 msgstr ""
 
-#: CMFDefault/browser/templates/document_edit.pt:29
-#: CMFDefault/browser/templates/newsitem_edit.pt:24
+#: CMFDefault/browser/templates/document_edit.pt:27
+#: CMFDefault/browser/templates/newsitem_edit.pt:22
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:30
 #: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:25
 msgid "structured-text"
 msgstr ""
 
-#: CMFDefault/browser/templates/document_edit.pt:32
-#: CMFDefault/browser/templates/newsitem_edit.pt:27
+#: CMFDefault/browser/templates/document_edit.pt:30
+#: CMFDefault/browser/templates/newsitem_edit.pt:25
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:33
 #: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:28
 msgid "plain text"
 msgstr ""
 
-#: CMFDefault/browser/templates/document_edit.pt:35
-#: CMFDefault/browser/templates/newsitem_edit.pt:30
+#: CMFDefault/browser/templates/document_edit.pt:33
+#: CMFDefault/browser/templates/newsitem_edit.pt:28
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:36
 #: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:31
 msgid "html"
 msgstr ""
 
-#: CMFDefault/browser/templates/document_edit.pt:39
+#: CMFDefault/browser/templates/document_edit.pt:37
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:40
 msgid "Upload"
 msgstr ""
@@ -415,22 +415,22 @@ msgstr ""
 msgid "Edit: ${obj_title}"
 msgstr ""
 
-#: CMFDefault/browser/templates/folder_contents.pt:15
+#: CMFDefault/browser/templates/folder_contents.pt:13
 #: CMFDefault/skins/zpt_generic/folder_contents_template.pt:17
 msgid "[Link]"
 msgstr ""
 
-#: CMFDefault/browser/templates/folder_contents.pt:17
+#: CMFDefault/browser/templates/folder_contents.pt:15
 #: CMFDefault/skins/zpt_generic/folder_contents_template.pt:19
 msgid "Up to"
 msgstr ""
 
-#: CMFDefault/browser/templates/folder_contents.pt:21
+#: CMFDefault/browser/templates/folder_contents.pt:19
 #: CMFDefault/skins/zpt_generic/folder_contents_template.pt:23
 msgid "Root"
 msgstr ""
 
-#: CMFDefault/browser/templates/folder_contents.pt:46
+#: CMFDefault/browser/templates/folder_contents.pt:44
 #: CMFDefault/skins/zpt_content/content_status_history.pt:27
 #: CMFDefault/skins/zpt_content/content_status_history.pt:34
 #: CMFDefault/skins/zpt_content/transition_form.pt:28
@@ -455,7 +455,7 @@ msgstr ""
 #: CMFDefault/skins/zpt_generic/main_template.pt:207
 #: CMFDefault/skins/zpt_generic/main_template.pt:221
 #: CMFDefault/skins/zpt_generic/main_template.pt:235
-#: CMFDefault/skins/zpt_generic/main_template.pt:268
+#: CMFDefault/skins/zpt_generic/main_template.pt:269
 #: CMFDefault/skins/zpt_generic/review.pt:59
 #: CMFDefault/skins/zpt_generic/roster.pt:46
 #: CMFDefault/skins/zpt_generic/search_results_template.pt:37
@@ -468,68 +468,68 @@ msgstr ""
 msgid "Folder Contents: ${obj_title}"
 msgstr ""
 
-#: CMFDefault/browser/templates/folder_contents.pt:67
+#: CMFDefault/browser/templates/folder_contents.pt:65
 #: CMFDefault/skins/zpt_generic/folder_contents_template.pt:69
 msgid "Up"
 msgstr ""
 
-#: CMFDefault/browser/templates/folder_contents.pt:70
+#: CMFDefault/browser/templates/folder_contents.pt:68
 #: CMFDefault/skins/zpt_generic/folder_contents_template.pt:72
 msgid "Down"
 msgstr ""
 
-#: CMFDefault/browser/templates/folder_contents.pt:80
+#: CMFDefault/browser/templates/folder_contents.pt:78
 #: CMFDefault/skins/zpt_generic/folder_contents_template.pt:82
 msgid "Top"
 msgstr ""
 
-#: CMFDefault/browser/templates/folder_contents.pt:82
+#: CMFDefault/browser/templates/folder_contents.pt:80
 #: CMFDefault/skins/zpt_generic/folder_contents_template.pt:84
 msgid "Bottom"
 msgstr ""
 
-#: CMFDefault/browser/templates/folder_contents.pt:85
+#: CMFDefault/browser/templates/folder_contents.pt:83
 #: CMFDefault/skins/zpt_generic/folder_contents_template.pt:87
 msgid "Set Sorting as Default"
 msgstr ""
 
-#: CMFDefault/browser/templates/link.pt:22
+#: CMFDefault/browser/templates/link.pt:20
 #: CMFDefault/skins/zpt_content/link_view_template.pt:22
 msgid "Link: ${link}"
 msgstr ""
 
-#: CMFDefault/browser/templates/link_edit.pt:20
+#: CMFDefault/browser/templates/link_edit.pt:18
 #: CMFDefault/skins/zpt_content/link_edit_template.pt:21
 msgid "URL"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:105
+#: CMFDefault/browser/templates/metadata_edit.pt:103
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:106
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:203
 msgid "Rights"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:16
+#: CMFDefault/browser/templates/metadata_edit.pt:14
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:17
 msgid "Enable Discussion?"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:19
+#: CMFDefault/browser/templates/metadata_edit.pt:17
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:20
 msgid "Default"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:22
+#: CMFDefault/browser/templates/metadata_edit.pt:20
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:23
 msgid "Off"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:25
+#: CMFDefault/browser/templates/metadata_edit.pt:23
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:26
 msgid "On"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:32
+#: CMFDefault/browser/templates/metadata_edit.pt:30
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:33
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:140
 msgid "Identifier"
@@ -540,50 +540,50 @@ msgstr ""
 msgid "Resource Metadata: ${obj_title}"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:52
+#: CMFDefault/browser/templates/metadata_edit.pt:50
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:53
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:43
 #: CMFDefault/skins/zpt_generic/search_form_template.pt:55
 msgid "Subject"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:66
+#: CMFDefault/browser/templates/metadata_edit.pt:64
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:67
 msgid "Contributors"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:73
+#: CMFDefault/browser/templates/metadata_edit.pt:71
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:74
 msgid "Creation Date"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:75
+#: CMFDefault/browser/templates/metadata_edit.pt:73
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:76
 msgid "Last Modified Date"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:79
+#: CMFDefault/browser/templates/metadata_edit.pt:77
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:80
 msgid "Effective Date"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:84
+#: CMFDefault/browser/templates/metadata_edit.pt:82
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:85
 msgid "Expiration Date"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:98
+#: CMFDefault/browser/templates/metadata_edit.pt:96
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:99
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:153
 msgid "Language"
 msgstr ""
 
-#: CMFDefault/browser/templates/newsitem_edit.pt:34
+#: CMFDefault/browser/templates/newsitem_edit.pt:32
 #: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:35
 msgid "Lead-in"
 msgstr ""
 
-#: CMFDefault/browser/templates/newsitem_edit.pt:41
+#: CMFDefault/browser/templates/newsitem_edit.pt:39
 #: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:42
 msgid "Body"
 msgstr ""
@@ -1086,7 +1086,7 @@ msgid "Add"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/discussion_reply_form.py:41
-#: CMFDefault/browser/templates/document_edit.pt:45
+#: CMFDefault/browser/templates/document_edit.pt:43
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:46
 msgid "Edit"
 msgstr ""
@@ -1372,7 +1372,7 @@ msgstr ""
 msgid "Status:"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/main_template.pt:295
+#: CMFDefault/skins/zpt_generic/main_template.pt:281
 msgid "Permanent Link:"
 msgstr ""
 

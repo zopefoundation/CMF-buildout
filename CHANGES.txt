@@ -2,6 +2,9 @@ CMF 1.5.7-beta (unreleased)
 
   Bug Fixes
 
+    - A re-used variable name led to rendering errors in some cases
+      (http://www.zope.org/Collectors/CMF/411)
+
     - The line-endings problem fixed for file-based PythonScripts applies to
       multi-line python code in file-based PageTemplates as well. The same
       fix (universal line-endings support) is now used here too.

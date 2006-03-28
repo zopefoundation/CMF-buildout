@@ -274,6 +274,54 @@ class CalendarRequestTests(unittest.TestCase, WarningInterceptor):
         result = self.Tool.getEventsForCalendar(month='5', year='2002')
         self.assertEqual(result, data)
 
+    def test_eventCalendarRenderingIssue411(self):
+        #  http://www.zope.org/Collectors/CMF/411
+        self.Site.Members.invokeFactory(type_name="Event",id='Event1')
+        event = self.app.restrictedTraverse('/CalendarTest/Members/Event1')
+        event.edit( title='title'
+                    , description='description'
+                    , eventType=( 'eventType', )
+                    , effectiveDay=31
+                    , effectiveMo=3
+                    , effectiveYear=2006
+                    , expirationDay=1
+                    , expirationMo=4
+                    , expirationYear=2006
+                    , start_time="00:00"
+                    , startAMPM="AM"
+                    , stop_time="00:00"
+                    , stopAMPM="AM"
+                    )
+        self.Site.portal_workflow.doActionFor(
+                                              event,
+                                              'publish',
+                                              comment='testing')
+
+        self.Site.Members.invokeFactory(type_name="Event",id='Event2')
+        event = self.app.restrictedTraverse('/CalendarTest/Members/Event2')
+        event.edit( title='title'
+                    , description='description'
+                    , eventType=( 'eventType', )
+                    , effectiveDay=29
+                    , effectiveMo=3
+                    , effectiveYear=2006
+                    , expirationDay=30
+                    , expirationMo=3
+                    , expirationYear=2006
+                    , start_time="00:00"
+                    , startAMPM="AM"
+                    , stop_time="00:00"
+                    , stopAMPM="AM"
+                    )
+        self.Site.portal_workflow.doActionFor(
+                                              event,
+                                              'publish',
+                                              comment='testing')
+
+        # With the bug unfixed, this raises a TypeError
+        ignored = self.Site.portal_calendar.catalog_getevents(2006, 3)
+
+
     def test_spanningEventCalendarRendering(self):
 
         self.Site.Members.invokeFactory(type_name="Event",id='Event1')

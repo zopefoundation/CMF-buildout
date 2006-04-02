@@ -22,6 +22,10 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from Products.ZCatalog.ZCatalog import ZCatalog
 from zope.interface import implements
+from zope.interface import providedBy
+from zope.interface.declarations import getObjectSpecification
+from zope.interface.declarations import ObjectSpecification
+from zope.interface.declarations import ObjectSpecificationDescriptor
 
 from ActionProviderBase import ActionProviderBase
 from interfaces import ICatalogTool
@@ -40,14 +44,33 @@ from utils import getToolByName
 from utils import UniqueObject
 
 
-class IndexableObjectWrapper:
+class IndexableObjectSpecification(ObjectSpecificationDescriptor):
+
+    def __get__(self, inst, cls=None):
+        if inst is None:
+            return getObjectSpecification(cls)
+        else:
+            provided = providedBy(inst._IndexableObjectWrapper__ob)
+            cls = type(inst)
+            return ObjectSpecification(provided, cls)
+
+
+class IndexableObjectWrapper(object):
 
     implements(IIndexableObjectWrapper)
     __implements__ = z2IIndexableObjectWrapper
+    __providedBy__ = IndexableObjectSpecification()
 
     def __init__(self, vars, ob):
         self.__vars = vars
         self.__ob = ob
+
+    def __str__(self):
+        try:
+            # __str__ is used to get the data of File objects
+            return self.__ob.__str__()
+        except AttributeError:
+            return object.__str__(self)
 
     def __getattr__(self, name):
         vars = self.__vars

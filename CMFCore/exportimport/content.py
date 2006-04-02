@@ -14,6 +14,10 @@
 
 $Id: content.py 39878 2005-11-03 23:07:34Z tseaver $
 """
+try:
+    set = set
+except NameError:
+    from sets import Set as set
 
 from csv import reader
 from csv import register_dialect
@@ -58,6 +62,18 @@ class StructureFolderWalkingAdapter(object):
 
     Subobjects themselves are represented as individual files or
     subdirectories within the parent's directory.
+
+    If the import step finds that any objects specified to be created by the
+    'structure' directory setup already exist, these objects will be deleted
+    and then recreated by the profile.  The existence of a '.preserve' file
+    within the 'structure' hierarchy allows specification of objects that
+    should not be deleted.  '.preserve' files should contain one preserve
+    rule per line, with shell-style globbing supported (i.e. 'b*' will match
+    all objects w/ id starting w/ 'b'.
+
+    Similarly, a '.delete' file can be used to specify the deletion of any
+    objects that exist in the site but are NOT in the 'structure' hierarchy,
+    and thus will not be recreated during the import process.
     """
 
     implements(IFilesystemExporter, IFilesystemImporter)
@@ -124,19 +140,30 @@ class StructureFolderWalkingAdapter(object):
         stream = StringIO(objects)
         rowiter = reader(stream, dialect)
         ours = tuple(rowiter)
-        our_ids = [item[0] for item in ours]
+        our_ids = set([item[0] for item in ours])
+
+        prior = set(context.contentIds())
 
         preserve = import_context.readDataFile('.preserve', subdir)
-        prior = context.contentIds()
-
         if not preserve:
-            preserve = []
+            preserve = set()
         else:
-            preserve = _globtest(preserve, prior)
+            preservable = prior.intersection(our_ids)
+            preserve = set(_globtest(preserve, preservable))
 
-        for id in prior:
-            if id in our_ids and id not in preserve:
-                context._delObject(id)
+        delete = import_context.readDataFile('.delete', subdir)
+        if not delete:
+            delete= set()
+        else:
+            deletable = prior.difference(our_ids)
+            delete = set(_globtest(delete, deletable))
+
+        # if it's in our_ids and NOT in preserve, or if it's not in
+        # our_ids but IS in delete, we're gonna delete it
+        delete = our_ids.difference(preserve).union(delete)
+
+        for id in prior.intersection(delete):
+            context._delObject(id)
 
         existing = context.objectIds()
 

@@ -539,6 +539,36 @@ class SiteStructureExporterTests(PlacelessSetup,
             else:
                 self.assertEqual(getattr(obj, 'before', None), None)
 
+    def test_reimport_with_structure_partial_preserve_and_delete(self):
+        self._setUpAdapters()
+        ITEM_IDS = ('foo', 'bar', 'baz')
+
+        site = _makeFolder('site', site_folder=True)
+        for id in ITEM_IDS:
+            site._setObject(id, _makeINIAware(id))
+            site._getOb(id).before = True
+
+        context = DummyImportContext(site)
+        context._files['structure/.objects'] = '\n'.join(
+            ['%s,%s' % (x, TEST_INI_AWARE) for x in ITEM_IDS[:-1]])
+        for index in range(len(ITEM_IDS)):
+            id = ITEM_IDS[index]
+            context._files[
+                    'structure/%s.ini' % id] = KNOWN_INI % ('Title: %s' % id,
+                                                            'xyzzy',
+                                                           )
+        context._files['structure/.preserve'] = 'foo'
+        context._files['structure/.delete'] = 'baz'
+
+        importer = self._getImporter()
+        importer(context)
+
+        after = site.objectIds()
+        self.assertEqual(len(after), len(ITEM_IDS) - 1)
+        self.failIf('baz' in after)
+        self.assertEqual(getattr(site.foo, 'before', None), True)
+        self.failIf(hasattr(site.bar, 'before'))
+
     def test_import_site_with_subfolders_and_preserve(self):
         self._setUpAdapters()
 

@@ -1,3 +1,15 @@
+CMF 2.0.0 (unreleased)
+
+  Bug Fixes
+
+    - IndexableObjectWrapper: Fixed list of provided interfaces.
+      The interfaces declared for the wrapped object are no longer masked.
+
+    - CMFDefault: Removed CMF specific slots from five_template.
+      The CMF specific slots added in CMF 2.0.0-alpha have been removed again
+      from the five_template.
+
+
 CMF 2.0.0-beta2 (2006/03/26)
 
   Bug Fixes
@@ -5,8 +17,6 @@ CMF 2.0.0-beta2 (2006/03/26)
     - CMFDefault: Refactored slots in five_template and main_template.
       main_template has now a new 'body' slot that wraps around 'header' and
       'main' slot. main_template's 'header' slot is now empty by default.
-      The CMF specific slots added in CMF 2.0.0-alpha have been removed again
-      from the five_template.
 
     - PortalFolder: Content IDs starting with '@@' are now disallowed.
       These names are reserved for browser views.

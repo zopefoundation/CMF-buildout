@@ -112,11 +112,21 @@ class StructureFolderWalkingAdapter(object):
         """ See IFilesystemImporter.
         """
         context = self.context
+
         if not root:
             subdir = '%s/%s' % (subdir, context.getId())
 
-        preserve = import_context.readDataFile('.preserve', subdir)
+        objects = import_context.readDataFile('.objects', subdir)
+        if objects is None:
+            return
 
+        dialect = 'excel'
+        stream = StringIO(objects)
+        rowiter = reader(stream, dialect)
+        ours = tuple(rowiter)
+        our_ids = [item[0] for item in ours]
+
+        preserve = import_context.readDataFile('.preserve', subdir)
         prior = context.contentIds()
 
         if not preserve:
@@ -125,21 +135,12 @@ class StructureFolderWalkingAdapter(object):
             preserve = _globtest(preserve, prior)
 
         for id in prior:
-            if id not in preserve:
+            if id in our_ids and id not in preserve:
                 context._delObject(id)
-
-        objects = import_context.readDataFile('.objects', subdir)
-        if objects is None:
-            return
-
-        dialect = 'excel'
-        stream = StringIO(objects)
-
-        rowiter = reader(stream, dialect)
 
         existing = context.objectIds()
 
-        for object_id, portal_type in rowiter:
+        for object_id, portal_type in ours:
 
             if object_id not in existing:
                 object = self._makeInstance(object_id, portal_type,

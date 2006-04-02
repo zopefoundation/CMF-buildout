@@ -434,7 +434,7 @@ class SiteStructureExporterTests(PlacelessSetup,
             self.assertEqual(component, 'SFWA')
             self.failUnless(message.startswith("Couldn't make"))
 
-    def test_import_site_with_subitems_and_no_preserve(self):
+    def test_reimport_no_structure_no_delete(self):
         self._setUpAdapters()
         ITEM_IDS = ('foo', 'bar', 'baz')
 
@@ -443,25 +443,59 @@ class SiteStructureExporterTests(PlacelessSetup,
             site._setObject(id, _makeItem(id))
 
         context = DummyImportContext(site)
-        # We want to add 'baz' to 'foo', without losing 'bar'
+        # no defined structure => no deletion
         context._files['structure/.objects'] = ''
 
         importer = self._getImporter()
         importer(context)
 
-        self.assertEqual(len(site.objectIds()), 0)
+        self.assertEqual(len(site.objectIds()), len(ITEM_IDS))
 
-    def test_import_site_with_subitemss_and_preserve(self):
+    def test_reimport_with_structure_does_delete(self):
         self._setUpAdapters()
         ITEM_IDS = ('foo', 'bar', 'baz')
 
         site = _makeFolder('site', site_folder=True)
         for id in ITEM_IDS:
             site._setObject(id, _makeItem(id))
+            site._getOb(id).before = True
 
         context = DummyImportContext(site)
-        # We want to add 'baz' to 'foo', without losing 'bar'
-        context._files['structure/.objects'] = ''
+        # defined structure => object deleted and recreated
+        context._files['structure/.objects'] = '\n'.join(
+            ['%s,%s' % (x, TEST_INI_AWARE) for x in ITEM_IDS])
+        for index in range(len(ITEM_IDS)):
+            id = ITEM_IDS[index]
+            context._files[
+                    'structure/%s.ini' % id] = KNOWN_INI % ('Title: %s' % id,
+                                                            'xyzzy',
+                                                           )
+
+        importer = self._getImporter()
+        importer(context)
+
+        self.assertEqual(len(site.objectIds()), len(ITEM_IDS))
+        for obj in site.objectValues():
+            self.failIf(hasattr(obj, 'before'))
+
+    def test_reimport_with_structure_and_preserve(self):
+        self._setUpAdapters()
+        ITEM_IDS = ('foo', 'bar', 'baz')
+
+        site = _makeFolder('site', site_folder=True)
+        for id in ITEM_IDS:
+            site._setObject(id, _makeINIAware(id))
+            site._getOb(id).before = True
+
+        context = DummyImportContext(site)
+        context._files['structure/.objects'] = '\n'.join(
+            ['%s,%s' % (x, TEST_INI_AWARE) for x in ITEM_IDS])
+        for index in range(len(ITEM_IDS)):
+            id = ITEM_IDS[index]
+            context._files[
+                    'structure/%s.ini' % id] = KNOWN_INI % ('Title: %s' % id,
+                                                            'xyzzy',
+                                                           )
         context._files['structure/.preserve'] = '*'
 
         importer = self._getImporter()
@@ -471,27 +505,39 @@ class SiteStructureExporterTests(PlacelessSetup,
         self.assertEqual(len(after), len(ITEM_IDS))
         for i in range(len(ITEM_IDS)):
             self.assertEqual(after[i], ITEM_IDS[i])
+            self.assertEqual(getattr(site._getOb(after[i]), 'before', None),
+                             True)
 
-    def test_import_site_with_subitemss_and_preserve_partial(self):
+    def test_reimport_with_structure_and_preserve_partial(self):
         self._setUpAdapters()
         ITEM_IDS = ('foo', 'bar', 'baz')
 
         site = _makeFolder('site', site_folder=True)
         for id in ITEM_IDS:
-            site._setObject(id, _makeItem(id))
+            site._setObject(id, _makeINIAware(id))
+            site._getOb(id).before = True
 
         context = DummyImportContext(site)
-        # We want to add 'baz' to 'foo', without losing 'bar'
-        context._files['structure/.objects'] = ''
+        context._files['structure/.objects'] = '\n'.join(
+            ['%s,%s' % (x, TEST_INI_AWARE) for x in ITEM_IDS])
+        for index in range(len(ITEM_IDS)):
+            id = ITEM_IDS[index]
+            context._files[
+                    'structure/%s.ini' % id] = KNOWN_INI % ('Title: %s' % id,
+                                                            'xyzzy',
+                                                           )
         context._files['structure/.preserve'] = 'b*'
 
         importer = self._getImporter()
         importer(context)
 
-        after = site.objectIds()
-        self.assertEqual(len(after), 2)
-        self.assertEqual(after[0], 'bar')
-        self.assertEqual(after[1], 'baz')
+        after = site.objectValues()
+        self.assertEqual(len(after), len(ITEM_IDS))
+        for obj in after:
+            if obj.getId().startswith('b'):
+                self.assertEqual(getattr(obj, 'before', None), True)
+            else:
+                self.assertEqual(getattr(obj, 'before', None), None)
 
     def test_import_site_with_subfolders_and_preserve(self):
         self._setUpAdapters()

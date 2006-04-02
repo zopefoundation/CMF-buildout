@@ -1,3 +1,11 @@
+CMF 1.6.1-beta (unreleased)
+
+  Bug Fixes
+
+    - IndexableObjectWrapper: Fixed list of provided interfaces.
+      The interfaces declared for the wrapped object are no longer masked.
+
+
 CMF 1.6.0 (2006/02/26)
 
   Bug Fixes

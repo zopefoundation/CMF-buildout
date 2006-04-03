@@ -1,0 +1,9 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+
+  <!-- Load CMFDefault.skin first, we use the layer named "cmf" it defines -->
+  <include package="Products.CMFDefault.skin"/>
+
+  <include package=".browser"/>
+
+</configure>

@@ -40,6 +40,21 @@ class CalendarTests(unittest.TestCase):
 
         return CalendarTool(*args, **kw)
 
+    def test_z2interfaces(self):
+        from Interface.Verify import verifyClass
+        from Products.CMFCalendar.interfaces.portal_calendar \
+                import portal_calendar as ICalendarTool
+        from Products.CMFCalendar.CalendarTool import CalendarTool
+
+        verifyClass(ICalendarTool, CalendarTool)
+
+    def test_z3interfaces(self):
+        from zope.interface.verify import verifyClass
+        from Products.CMFCalendar.interfaces import ICalendarTool
+        from Products.CMFCalendar.CalendarTool import CalendarTool
+
+        verifyClass(ICalendarTool, CalendarTool)
+
     def test_new(self):
         ctool = self._makeOne()
         self.assertEqual( ctool.getId(), 'portal_calendar' )
@@ -113,17 +128,31 @@ class CalendarRequestTests(unittest.TestCase):
             params=(obj, Site.REQUEST)
         obj(*params)
 
-    def test_sessions(self):
+    def test_sessions_skinsview(self):
         self.Tool.edit_configuration(show_types=['Event'], use_session="True")
 
         self._testURL('/CalendarTest/calendarBox', ())
 
         self.failUnless(self.app.REQUEST.SESSION.get('calendar_year',None))
 
-    def test_noSessions(self):
+    def test_sessions_fiveview(self):
+        self.Tool.edit_configuration(show_types=['Event'], use_session="True")
+
+        self._testURL('/CalendarTest/@@calendar_widget', ())
+
+        self.failUnless(self.app.REQUEST.SESSION.get('calendar_year',None))
+
+    def test_noSessions_skinsview(self):
         self.Tool.edit_configuration(show_types=['Event'], use_session="")
 
         self._testURL('/CalendarTest/calendarBox', ())
+
+        self.failIf(self.app.REQUEST.SESSION.get('calendar_year',None))
+
+    def test_noSessions_fiveview(self):
+        self.Tool.edit_configuration(show_types=['Event'], use_session="")
+
+        self._testURL('/CalendarTest/@@calendar_widget', ())
 
         self.failIf(self.app.REQUEST.SESSION.get('calendar_year',None))
 

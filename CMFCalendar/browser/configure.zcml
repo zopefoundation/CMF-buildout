@@ -1,0 +1,42 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <browser:page
+      for="Products.CMFCalendar.interfaces.IEvent"
+      name="view.html"
+      class=".event.EventView"
+      template="templates/event.pt"
+      permission="zope2.View"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="Products.CMFCalendar.interfaces.IMutableEvent"
+      name="edit.html"
+      class=".event.EventEditView"
+      template="templates/event_edit.pt"
+      permission="cmf.ModifyPortalContent"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="*"
+      name="calendar_day.html"
+      class=".calendar.CalendarView"
+      template="templates/calendar_day.pt"
+      permission="zope2.View"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="*"
+      name="calendar_widget"
+      class=".calendar.CalendarView"
+      template="templates/calendar_widgets.pt"
+      permission="zope2.View"
+      layer="cmf"
+      />
+
+</configure>

@@ -19,6 +19,7 @@ from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
 from Globals import InitializeClass
 import transaction
+from zope.interface import implements
 
 from Products.CMFCore.PortalContent import PortalContent
 from Products.CMFCore.utils import contributorsplitter
@@ -31,40 +32,47 @@ from Products.CMFDefault.utils import html_headcheck
 from Products.CMFDefault.utils import parseHeadersBody
 from Products.CMFDefault.utils import SimpleHTMLParser
 
+from Products.GenericSetup.interfaces import IDAVAware
+
 from exceptions import ResourceLockedError
+from interfaces import IEvent
+from interfaces import IMutableEvent
+from interfaces.Event import IEvent as z2IEvent
+from interfaces.Event import IMutableEvent as z2IMutableEvent
 from permissions import ChangeEvents
 from permissions import ModifyPortalContent
 from permissions import View
 
 
-def addEvent(self
-             , id
-             , title=''
-             , description=''
-             , effective_date = None 
-             , expiration_date = None 
-             , start_date = None 
-             , end_date = None
-             , location=''
-             , contact_name=''
-             , contact_email=''
-             , contact_phone=''
-             , event_url=''
-             , REQUEST=None):
+def addEvent( self
+            , id
+            , title=''
+            , description=''
+            , effective_date = None 
+            , expiration_date = None 
+            , start_date = None 
+            , end_date = None
+            , location=''
+            , contact_name=''
+            , contact_email=''
+            , contact_phone=''
+            , event_url=''
+            , REQUEST=None
+            ):
     """Create an empty event.
     """
-    event = Event(id
-                  , title
-                  , description
-                  , effective_date
-                  , expiration_date
-                  , start_date
-                  , end_date
-                  , location
-                  , contact_name
-                  , contact_email
-                  , contact_phone
-                  , event_url
+    event = Event( id
+                 , title
+                 , description
+                 , effective_date
+                 , expiration_date
+                 , start_date
+                 , end_date
+                 , location
+                 , contact_name
+                 , contact_email
+                 , contact_phone
+                 , event_url
                  )
     self._setObject(id, event)
 
@@ -95,23 +103,26 @@ class Event(PortalContent, DefaultDublinCoreImpl):
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)
 
-    __implements__ = ( PortalContent.__implements__
+    implements(IMutableEvent, IEvent, IDAVAware)
+    __implements__ = ( z2IMutableEvent
+                     , z2IEvent
+                     , PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )
 
-    def __init__(self
-                 , id
-                 , title=''
-                 , description=''
-                 , effective_date = None 
-                 , expiration_date = None 
-                 , start_date = None
-                 , end_date = None
-                 , location=''
-                 , contact_name=''
-                 , contact_email=''
-                 , contact_phone=''
-                 , event_url=''
+    def __init__( self
+                , id
+                , title=''
+                , description=''
+                , effective_date = None 
+                , expiration_date = None 
+                , start_date = None
+                , end_date = None
+                , location=''
+                , contact_name=''
+                , contact_email=''
+                , contact_phone=''
+                , event_url=''
                 ):
         DefaultDublinCoreImpl.__init__(self)
         self.id=id
@@ -147,36 +158,40 @@ class Event(PortalContent, DefaultDublinCoreImpl):
 
     security.declarePublic('getEndStrings')
     def getEndStrings(self):
-        """
+        """ Returns a mapping with string representations for the end time
+
+        o keys are 'day', 'month' and 'year'
         """
         return _dateStrings(self.end())
 
     security.declarePublic('getStartStrings')
     def getStartStrings(self):
-        """
+        """ Returns a mapping with string representations for the start time
+
+        o keys are 'day', 'month' and 'year'
         """
         return _dateStrings(self.start())
 
     security.declareProtected(ChangeEvents, 'edit')
-    def edit(self
-             , title=None
-             , description=None
-             , eventType=None
-             , effectiveDay=None
-             , effectiveMo=None
-             , effectiveYear=None
-             , expirationDay=None
-             , expirationMo=None
-             , expirationYear=None
-             , start_time=None
-             , startAMPM=None
-             , stop_time=None
-             , stopAMPM=None
-             , location=None
-             , contact_name=None
-             , contact_email=None
-             , contact_phone=None
-             , event_url=None
+    def edit( self
+            , title=None
+            , description=None
+            , eventType=None
+            , effectiveDay=None
+            , effectiveMo=None
+            , effectiveYear=None
+            , expirationDay=None
+            , expirationMo=None
+            , expirationYear=None
+            , start_time=None
+            , startAMPM=None
+            , stop_time=None
+            , stopAMPM=None
+            , location=None
+            , contact_name=None
+            , contact_email=None
+            , contact_phone=None
+            , event_url=None
             ):
         """\
         """
@@ -262,45 +277,39 @@ class Event(PortalContent, DefaultDublinCoreImpl):
 
     security.declareProtected(ChangeEvents, 'setStartDate')
     def setStartDate(self, start):
-        """
-        Setting the event start date, when the event is scheduled to begin.
+        """ Setting the event start date when the event is scheduled to begin.
         """
         self.start_date = self._datify(start)
 
     security.declareProtected(ChangeEvents, 'setEndDate')
     def setEndDate(self, end):
-        """
-        Setting the event end date, when the event ends.
+        """ Setting the event end date, when the event ends.
         """
         self.end_date = self._datify(end)
 
     security.declarePublic('start')
     def start(self):
-        """
-            Return our start time as a string.
+        """ Return our start time as a DateTime object
         """
         date = getattr( self, 'start_date', None )
         return date is None and self.created() or date
 
     security.declarePublic('end')
     def end(self):
-        """
-            Return our stop time as a string.
+        """ Return our end time as a DateTime object
         """
         date = getattr( self, 'end_date', None )
         return date is None and self.start() or date    
 
     security.declarePublic('getStartTimeString')
     def getStartTimeString( self ):
-        """
-            Return our start time as a string.
+        """ Return our start time as a string.
         """
         return self.start().AMPMMinutes() 
 
     security.declarePublic('getStopTimeString')
     def getStopTimeString( self ):
-        """
-            Return our stop time as a string.
+        """ Return our stop time as a string.
         """
         return self.end().AMPMMinutes() 
 
@@ -324,6 +333,13 @@ class Event(PortalContent, DefaultDublinCoreImpl):
 
     security.declareProtected(ModifyPortalContent, 'setMetadata')
     def setMetadata(self, headers):
+        """ Set an Event's metadata
+
+        o headers is a mapping containing keys corresponding to
+        Dublin Core metadata fields
+        o Only those attributes that are passed in with the mapping are
+        manipulated
+        """
         headers['Format'] = self.Format()
         new_subject = keywordsplitter(headers)
         headers['Subject'] = new_subject or self.Subject()
@@ -346,7 +362,8 @@ class Event(PortalContent, DefaultDublinCoreImpl):
 
     security.declarePublic( 'getMetadataHeaders' )
     def getMetadataHeaders(self):
-        """Return RFC-822-style header spec."""
+        """ Return metadata attributes in RFC-822-style header spec.
+        """
         hdrlist = DefaultDublinCoreImpl.getMetadataHeaders(self)
         hdrlist.append( ('StartDate', self.start().strftime("%Y-%m-%d %H:%M:%S") ) )
         hdrlist.append( ('EndDate',  self.end().strftime("%Y-%m-%d %H:%M:%S") ) )

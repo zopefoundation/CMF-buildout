@@ -22,10 +22,13 @@ from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
+from zope.interface import implements
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 from Products.CMFCore.utils import UniqueObject
 
+from interfaces import ICalendarTool
+from interfaces.portal_calendar import portal_calendar as z2ICalendarTool
 from permissions import ManagePortal
 
 class CalendarTool (UniqueObject, SimpleItem):
@@ -33,6 +36,9 @@ class CalendarTool (UniqueObject, SimpleItem):
     id = 'portal_calendar'
     meta_type= 'CMF Calendar Tool'
     security = ClassSecurityInfo()
+
+    implements(ICalendarTool)
+    __implements__ = (z2ICalendarTool,)
 
     calendar_types = ('Event',)
     calendar_states = ('published',)

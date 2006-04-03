@@ -64,3 +64,12 @@ def initialize( context ):
                                      EXTENSION,
                                      for_=ISiteRoot,
                                     )
+
+    profile_registry.registerProfile('views_support',
+                                     'Experimental CMFCalendar Browser Views',
+                                     'Hooks up the browser views.',
+                                     'profiles/views_support',
+                                     'CMFCalendar',
+                                     EXTENSION,
+                                     for_=ISiteRoot,
+                                    )

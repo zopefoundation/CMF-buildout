@@ -1,5 +1,11 @@
 CMF 2.0.0 (unreleased)
 
+  New Features
+
+    - CMFCalendar: Added experimental Zope 3-style browser views.
+      The views are disabled by default. See README.txt of the browser
+      sub-package for further information.
+
   Bug Fixes
 
     - IndexableObjectWrapper: Fixed list of provided interfaces.

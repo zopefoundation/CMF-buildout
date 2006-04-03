@@ -15,10 +15,14 @@
 $Id$
 """
 
+from AccessControl.SecurityInfo import ClassSecurityInfo
+from DateTime.DateTime import DateTime
+from Globals import InitializeClass
 from Products.PythonScripts.standard import thousands_commas
 from ZTUtils import Batch
 from ZTUtils import make_query
 
+from Products.CMFCore.permissions import View
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import html_marshal
 from Products.CMFDefault.utils import Message as _
@@ -43,6 +47,14 @@ def memoize(meth):
 
 
 class ViewBase:
+
+    # The following allows to traverse the view/class and reach
+    # macros defined in page templates, e.g. in a use-macro.
+    security = ClassSecurityInfo()
+    def _macros(self):
+        return self.index.macros
+    security.declareProtected(View, 'macros')
+    macros = property(_macros, None, None)
 
     # helpers
 
@@ -81,6 +93,96 @@ class ViewBase:
     def description(self):
         return self.context.Description()
 
+
+    # Calendar widgets helpers
+    # When CMFCalendar is enabled, the month calendar widget shows up
+    # everywhere - that's why these methods are currently here.
+
+    @memoize
+    @decode
+    def getMonthAndYear(self):
+        """ Retrieve month/year tuple
+        """
+        current = DateTime()
+        
+        year = None
+        month = None
+        use_session = self._getTool('portal_calendar').getUseSession()
+        
+        # First priority goes to the data in the request
+        year  = self.request.get('year',  None)
+        month = self.request.get('month', None)
+        session = None
+        
+        # Next get the data from the SESSION
+        if use_session == "True":
+            session = self.request.get('SESSION', None)
+            if session:
+                if not year:   year  = session.get('calendar_year',  None)
+                if not month:  month = session.get('calendar_month', None)
+        
+        # Last resort to Today
+        if not year:   year  = current.year()
+        if not month:  month = current.month()
+        
+        # Then store the results in the session for next time
+        if session:
+            session.set('calendar_year',  year)
+            session.set('calendar_month', month)
+        
+        # Finally return the results
+        return (year, month) 
+
+    @memoize
+    @decode
+    def getNextMonthLink(self, base_url, month, year):
+        """ Return URL for the next month link
+        """
+        calendar_tool = self._getTool('portal_calendar')
+        nextMonthTime = calendar_tool.getNextMonth(month, year)
+        
+        x = '%s?month:int=%d&year:int=%d' % ( base_url
+                                            , nextMonthTime.month()
+                                            , nextMonthTime.year()
+                                            )
+        
+        return x
+
+    @memoize
+    @decode
+    def getPreviousMonthLink(self, base_url, month, year):
+        """ Return URL for the previous month link
+        """
+        calendar_tool = self._getTool('portal_calendar')
+        prevMonthTime = calendar_tool.getPreviousMonth(month, year)
+        
+        x = '%s?month:int=%d&year:int=%d' % ( base_url
+                                            , prevMonthTime.month()
+                                            , prevMonthTime.year()
+                                            )
+        
+        return x
+
+    @memoize
+    def getDaysClass(self, day, month, year, event=None):
+        """ Determine the CSS class to use for the given day
+        """
+        current = DateTime()
+        
+        if ( current.year()==year and 
+             current.month()==month and 
+             current.day()==int(day) ):
+            if event:
+                return "todayevent"
+            else:
+                return "todaynoevent"
+        
+        if event:
+            return "event"
+        else:
+            return ""
+
+InitializeClass(ViewBase)
 
 class FormViewBase(ViewBase):
 

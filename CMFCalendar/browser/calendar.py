@@ -32,56 +32,66 @@ class CalendarView(ViewBase):
     """ Helper class for calendar-related templates
     """
 
-    @memoize
     @decode
-    def dayInfo(self):
-        """ Event info for a specific day
-        """
-        info = {}
-        caltool = self._getTool('portal_calendar')
-        view_url = self._getViewURL()
-        date_string = self.request.get('date',DateTime().aCommon()[:12])
-        thisDay = DateTime(date_string)
-
-        info['previous_url'] = '%s?date=%s' % (view_url, (thisDay-1).Date())
-        info['date'] = thisDay.aCommon()[:12]
-        info['next_url'] =  '%s?date=%s' % (view_url, (thisDay+1).Date())
-        
-        items = [ {'title': item.Title,
-                   'url': item.getURL(),
-                   'start': self.getStartAsString(thisDay, item),
-                   'stop': self.getEndAsString(thisDay, item)}
-                  for item in caltool.getEventsForThisDay(thisDay) ]
-        
-        info['listItemInfos'] = tuple(items)
-        
-        return info
-
-    @memoize
-    @decode
-    def getStartAsString(self, day, event):
+    def getStartAsString(self, day, event_brain):
         """ Retrieve formatted start string
         """
+        event_start = event_brain.getObject().start()
         first_date = DateTime(day.Date()+" 00:00:00")
         
-        if event.start < first_date:
-            return event.start.aCommon()[:12]
+        if event_start < first_date:
+            return event_start.aCommon()[:12]
         else:
-            return event.start.TimeMinutes()
+            return event_start.TimeMinutes()
 
-    @memoize
     @decode
-    def getEndAsString(self, day, event):
+    def getEndAsString(self, day, event_brain):
         """ Retrieve formatted end string
         """
+        event_end = event_brain.getObject().end()
         last_date = DateTime(day.Date()+" 23:59:59")
         
-        if event.end > last_date:
-            return event.end.aCommon()[:12]
+        if event_end > last_date:
+            return event_end.aCommon()[:12]
         else:
-            return event.end.TimeMinutes()
+            return event_end.TimeMinutes()
 
     @memoize
+    def viewDay(self):
+        """ Return a DateTime for a passed-in date or today
+        """
+        date = self.request.get('date', None) or DateTime().aCommon()[:12]
+
+        return DateTime(date)
+
+    def formattedDate(self, day):
+        """ Return a simple formatted date string
+        """
+        return day.aCommon()[:12]
+
+    def eventsForDay(self, day):
+        """ Get all event catalog records for a specific day
+        """
+        caltool = self._getTool('portal_calendar')
+
+        return caltool.getEventsForThisDay(day)
+
+    @memoize
+    def previousDayURL(self, day):
+        """ URL to the previous day's view
+        """
+        view_url = self._getViewURL()
+
+        return '%s?date=%s' % (view_url, (day-1).Date())
+
+    @memoize
+    def nextDayURL(self, day):
+        """ URL to the next day's view
+        """
+        view_url = self._getViewURL()
+
+        return '%s?date=%s' % (view_url, (day+1).Date())
+
     @decode
     def getNextDayLink(self, base_url, day):
         """ Return URL for the next day link
@@ -90,7 +100,6 @@ class CalendarView(ViewBase):
         
         return '%s?date=%s' % (base_url, day.Date())
 
-    @memoize
     @decode
     def getPreviousDayLink(self, base_url, day):
         """ Return URL for the previous day link

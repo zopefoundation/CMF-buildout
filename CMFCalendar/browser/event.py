@@ -18,7 +18,7 @@ $Id$
 from DateTime.DateTime import DateTime
 
 from Products.CMFDefault.exceptions import ResourceLockedError
-from Products.CMFDefault.utils import Message as _
+from Products.CMFCalendar.utils import Message as _
 
 from Products.CMFDefault.browser.utils import decode
 from Products.CMFDefault.browser.utils import FormViewBase
@@ -103,108 +103,134 @@ class EventEditView(FormViewBase):
     @memoize
     @decode
     def title(self):
-        return self.request.form.get('title', self.context.Title())
+        form = self.request.form
+        return form.get('title', None) or self.context.Title()
 
     @memoize
     @decode
     def description(self):
-        return self.request.form.get('description', self.context.Description())
+        form = self.request.form
+        return form.get('description', None) or self.context.Description()
 
     @memoize
     @decode
     def contact_name(self):
-        return self.request.form.get('contact_name', self.context.contact_name)
+        form = self.request.form
+        return form.get('contact_name', None) or self.context.contact_name
 
     @memoize
     @decode
     def location(self):
-        return self.request.form.get('location', self.context.location)
+        form = self.request.form
+        return form.get('location', None) or self.context.location
 
     @memoize
     @decode
     def contact_email(self):
-        return self.request.form.get( 'contact_email'
-                                    , self.context.contact_email
-                                    )
+        form = self.request.form
+        return form.get('contact_email', None) or self.context.contact_email
 
     @memoize
     @decode
     def event_type(self):
-        return self.request.form.get('event_type', self.context.Subject())
+        form = self.request.form
+        return form.get('event_type', None) or self.context.Subject()
 
     @memoize
     @decode
     def contact_phone(self):
-        return self.request.form.get( 'contact_phone'
-                                    , self.context.contact_phone
-                                    )
+        form = self.request.form
+        return form.get('contact_phone', None) or self.context.contact_phone
 
     @memoize
     @decode
     def event_url(self):
-        return self.request.form.get('event_url', self.context.event_url)
+        form = self.request.form
+        return form.get('event_url', None) or self.context.event_url
 
     @memoize
     @decode
     def start_time(self):
-        time_strings = self.context.getStartTimeString().split()
-        return self.request.form.get('start_time', time_strings[0])
+        start_string = self.request.form.get('start_time', None)
+
+        if start_string is None:
+            start_string = self.context.getStartTimeString().split()[0]
+
+        return start_string
 
     @memoize
     @decode
     def startAMPM(self):
-        time_strings = self.context.getStartTimeString().split()
-        AMPM = (len(time_strings) == 2 and time_strings[1] or 'pm')
-        return self.request.form.get('startAMPM', AMPM)
+        start_ampm = self.request.form.get('startAMPM', None)
+
+        if start_ampm is None:
+            time_strings = self.context.getStartTimeString().split()
+            start_ampm = (len(time_strings) == 2 and time_strings[1] or 'pm')
+
+        return start_ampm
 
     @memoize
     @decode
     def stop_time(self):
-        time_strings = self.context.getStopTimeString().split()
-        return self.request.form.get('stop_time', time_strings[0])
+        stop_string = self.request.form.get('stop_time', None)
+
+        if stop_string is None:
+            stop_string = self.context.getStopTimeString().split()[0]
+
+        return stop_string
 
     @memoize
     @decode
     def stopAMPM(self):
-        time_strings = self.context.getStopTimeString().split()
-        AMPM = (len(time_strings) == 2 and time_strings[1] or 'pm')
-        return self.request.form.get('stopAMPM', AMPM)
+        stop_ampm = self.request.form.get('stopAMPM', None)
+
+        if stop_ampm is None:
+            time_strings = self.context.getStopTimeString().split()
+            stop_ampm = (len(time_strings) == 2 and time_strings[1] or 'pm')
+
+        return stop_ampm
 
     @memoize
     @decode
     def effectiveYear(self):
-        date_strings = self.context.getStartStrings()
-        return self.request.form.get('effectiveYear', date_strings['year'])
+        eff_year = self.request.form.get('effectiveYear', None)
+
+        return eff_year or self.context.getStartStrings()['year']
 
     @memoize
     @decode
     def effectiveMo(self):
-        date_strings = self.context.getStartStrings()
-        return self.request.form.get('effectiveMo', date_strings['month'])
+        eff_month = self.request.form.get('effectiveMo', None)
+
+        return eff_month or self.context.getStartStrings()['month']
 
     @memoize
     @decode
     def effectiveDay(self):
-        date_strings = self.context.getStartStrings()
-        return self.request.form.get('effectiveDay', date_strings['day'])
+        eff_day = self.request.form.get('effectiveDay', None)
+
+        return eff_day or self.context.getStartStrings()['day']
 
     @memoize
     @decode
     def expirationYear(self):
-        date_strings = self.context.getEndStrings()
-        return self.request.form.get('expirationYear', date_strings['year'])
+        exp_year = self.request.form.get('expirationYear', None)
+
+        return exp_year or self.context.getEndStrings()['year']
 
     @memoize
     @decode
     def expirationMo(self):
-        date_strings = self.context.getEndStrings()
-        return self.request.form.get('expirationMo', date_strings['month'])
+        exp_month = self.request.form.get('expirationMo', None)
+
+        return exp_month or self.context.getEndStrings()['month']
 
     @memoize
     @decode
     def expirationDay(self):
-        date_strings = self.context.getEndStrings()
-        return self.request.form.get('expirationDay', date_strings['day'])
+        exp_day = self.request.form.get('expirationDay', None)
+
+        return exp_day or self.context.getEndStrings()['day']
 
     # controllers
 

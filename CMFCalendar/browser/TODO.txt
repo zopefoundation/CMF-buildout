@@ -2,7 +2,11 @@ Converting skins to views:
 
   [x] @@calendar_day.html:
 
-      [x] calendar_day_view.py -> CalendarView.dayInfo
+      [x] calendar_day_view.py -> CalendarView.viewDay
+                                  CalendarView.formattedDate
+                                  CalendarView.eventsForDay
+                                  CalendarView.previousDayURL
+                                  CalendarView.nextDayURL
       [x] calendar_day_view_template.pt -> templates/calendar_day.pt
       [x] getEndAsString.py -> CalendarView.getEndAsString
       [x] getStartAsString.py -> CalendarView.getStartAsString

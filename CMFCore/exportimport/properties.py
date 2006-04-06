@@ -15,8 +15,8 @@
 $Id$
 """
 
-from zope.app import zapi
 from zope.component import adapts
+from zope.component import queryMultiAdapter
 
 from Products.GenericSetup.interfaces import IBody
 from Products.GenericSetup.interfaces import ISetupEnviron
@@ -68,7 +68,7 @@ def importSiteProperties(context):
         logger.info('Nothing to import.')
         return
 
-    importer = zapi.queryMultiAdapter((site, context), IBody)
+    importer = queryMultiAdapter((site, context), IBody)
     if importer is None:
         logger.warning('Import adapter misssing.')
         return
@@ -81,7 +81,7 @@ def exportSiteProperties(context):
     site = context.getSite()
     logger = context.getLogger('properties')
 
-    exporter = zapi.queryMultiAdapter((site, context), IBody)
+    exporter = queryMultiAdapter((site, context), IBody)
     if exporter is None:
         logger.warning('Export adapter misssing.')
         return

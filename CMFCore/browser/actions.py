@@ -17,7 +17,7 @@ $Id$
 
 from xml.dom.minidom import parseString
 
-from zope.app import zapi
+from zope.component import queryMultiAdapter
 
 from Products.CMFCore.ActionInformation import Action
 from Products.CMFCore.ActionInformation import ActionCategory
@@ -96,7 +96,7 @@ class ActionAddView(AddWithPresettingsViewBase):
                         node = child
                     break
 
-        importer = zapi.queryMultiAdapter((obj, context), INode)
+        importer = queryMultiAdapter((obj, context), INode)
         if importer is None:
             return
 

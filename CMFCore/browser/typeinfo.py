@@ -17,7 +17,7 @@ $Id$
 
 from xml.dom.minidom import parseString
 
-from zope.app import zapi
+from zope.component import queryMultiAdapter
 
 from Products.CMFCore.TypesTool import FactoryTypeInformation
 from Products.CMFCore.TypesTool import ScriptableTypeInformation
@@ -96,7 +96,7 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
             if meta_type != self.klass.meta_type:
                 continue
 
-            importer = zapi.queryMultiAdapter((obj, context), IBody)
+            importer = queryMultiAdapter((obj, context), IBody)
             if importer is None:
                 continue
 

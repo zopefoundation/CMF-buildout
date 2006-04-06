@@ -15,27 +15,27 @@
 $Id$
 """
 
+import zope.thread
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
+from Products.Five import security
+from zope.app.publisher.interfaces.browser import IBrowserMenu
+from zope.app.publisher.browser.menu import getMenu
+from zope.component import getUtilitiesFor
 
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.Expression import Expression
 from Products.CMFCore.utils import UniqueObject
 
-from zope.app import zapi
-from zope.app.publisher.interfaces.browser import IBrowserMenu
-from zope.app.publisher.browser.menu import getMenu
-    
 def _listMenuIds():
-    return [id for id, utility in zapi.getUtilitiesFor(IBrowserMenu)]
+    return [id for id, utility in getUtilitiesFor(IBrowserMenu)]
 
-from Products.Five import security
-import zope.thread
 
 class FiveActionsTool( UniqueObject, SimpleItem, ActionProviderBase ):
+
     """ Links content to discussions.
     """
 
@@ -95,6 +95,5 @@ class FiveActionsTool( UniqueObject, SimpleItem, ActionProviderBase ):
                 actions.append(act)
                 
         return tuple(actions)
-
 
 InitializeClass( FiveActionsTool )

@@ -15,8 +15,8 @@
 $Id$
 """
 
-from zope.app import zapi
 from zope.component import adapts
+from zope.component import queryMultiAdapter
 
 from Products.GenericSetup.interfaces import INode
 from Products.GenericSetup.interfaces import ISetupEnviron
@@ -147,7 +147,7 @@ class CachingPolicyManagerXMLAdapter(XMLAdapterBase):
     def _extractCachingPolicies(self):
         fragment = self._doc.createDocumentFragment()
         for policy_id, policy in self.context.listPolicies():
-            exporter = zapi.queryMultiAdapter((policy, self.environ), INode)
+            exporter = queryMultiAdapter((policy, self.environ), INode)
             if exporter:
                 fragment.appendChild(exporter.node)
         return fragment
@@ -167,7 +167,7 @@ class CachingPolicyManagerXMLAdapter(XMLAdapterBase):
                                  0, 0, 0, 0, '', '')
 
             policy = self.context._policies[policy_id]
-            importer = zapi.queryMultiAdapter((policy, self.environ), INode)
+            importer = queryMultiAdapter((policy, self.environ), INode)
             if importer:
                 importer.node = child
 

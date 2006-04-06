@@ -17,7 +17,7 @@ $Id$
 
 from xml.dom.minidom import parseString
 
-from zope.app import zapi
+from zope.component import queryMultiAdapter
 
 from Products.CMFCore.utils import getToolByName
 from Products.GenericSetup.browser.utils import AddWithPresettingsViewBase
@@ -76,7 +76,7 @@ class DCWorkflowDefinitionAddView(AddWithPresettingsViewBase):
             if not root.getAttribute('workflow_id') == obj_path[0]:
                 continue
 
-            importer = zapi.queryMultiAdapter((obj, context), IBody)
+            importer = queryMultiAdapter((obj, context), IBody)
             if importer is None:
                 continue
 

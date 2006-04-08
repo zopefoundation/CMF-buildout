@@ -155,7 +155,7 @@ class WorkflowDefinition(Interface):
         '''
 
     # security.declarePrivate('isActionSupported')
-    def isActionSupported(ob, action):
+    def isActionSupported(ob, action, **kw):
         '''
         Invoked by the portal_workflow tool.
         Returns a true value if the given action name is supported.

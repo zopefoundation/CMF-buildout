@@ -2,6 +2,10 @@ CMF 1.5.7-beta (unreleased)
 
   Bug Fixes
 
+    - CMFCore.interfaces.portal_workflow: Corrected the API given for
+      WorkflowDefinition.isActionSupported.
+      (http://www.zope.org/Collectors/CMF/407)
+
     - A re-used variable name led to rendering errors in some cases
       (http://www.zope.org/Collectors/CMF/411)
 

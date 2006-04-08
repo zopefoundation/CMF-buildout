@@ -33,9 +33,10 @@ class CalendarView(ViewBase):
     """
 
     @decode
-    def getStartAsString(self, day, event_brain):
+    def getStartAsString(self, event_brain):
         """ Retrieve formatted start string
         """
+        day = self.viewDay()
         event_start = event_brain.getObject().start()
         first_date = DateTime(day.Date()+" 00:00:00")
         
@@ -45,9 +46,10 @@ class CalendarView(ViewBase):
             return event_start.TimeMinutes()
 
     @decode
-    def getEndAsString(self, day, event_brain):
+    def getEndAsString(self, event_brain):
         """ Retrieve formatted end string
         """
+        day = self.viewDay()
         event_end = event_brain.getObject().end()
         last_date = DateTime(day.Date()+" 23:59:59")
         
@@ -64,46 +66,50 @@ class CalendarView(ViewBase):
 
         return DateTime(date)
 
-    def formattedDate(self, day):
+    def formattedDate(self):
         """ Return a simple formatted date string
         """
-        return day.aCommon()[:12]
+        return self.viewDay().aCommon()[:12]
 
-    def eventsForDay(self, day):
+    def eventsForDay(self):
         """ Get all event catalog records for a specific day
         """
         caltool = self._getTool('portal_calendar')
 
-        return caltool.getEventsForThisDay(day)
+        return caltool.getEventsForThisDay(self.viewDay())
 
     @memoize
-    def previousDayURL(self, day):
+    def previousDayURL(self):
         """ URL to the previous day's view
         """
+        day = self.viewDay()
         view_url = self._getViewURL()
 
         return '%s?date=%s' % (view_url, (day-1).Date())
 
     @memoize
-    def nextDayURL(self, day):
+    def nextDayURL(self):
         """ URL to the next day's view
         """
+        day = self.viewDay()
         view_url = self._getViewURL()
 
         return '%s?date=%s' % (view_url, (day+1).Date())
 
     @decode
-    def getNextDayLink(self, base_url, day):
+    def getNextDayLink(self, base_url):
         """ Return URL for the next day link
         """
+        day = self.viewDay()
         day += 1
         
         return '%s?date=%s' % (base_url, day.Date())
 
     @decode
-    def getPreviousDayLink(self, base_url, day):
+    def getPreviousDayLink(self, base_url):
         """ Return URL for the previous day link
         """
+        day = self.viewDay()
         day -= 1
         
         return '%s?date=%s' % (base_url, day.Date())

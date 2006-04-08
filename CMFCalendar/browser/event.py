@@ -103,50 +103,82 @@ class EventEditView(FormViewBase):
     @memoize
     @decode
     def title(self):
-        form = self.request.form
-        return form.get('title', None) or self.context.Title()
+        title = self.request.form.get('title', None)
+
+        if title is None:
+            title = self.context.Title()
+
+        return title
 
     @memoize
     @decode
     def description(self):
-        form = self.request.form
-        return form.get('description', None) or self.context.Description()
+        description = self.request.form.get('description', None)
+
+        if description is None:
+            description = self.context.Description()
+
+        return description
 
     @memoize
     @decode
     def contact_name(self):
-        form = self.request.form
-        return form.get('contact_name', None) or self.context.contact_name
+        contact_name = self.request.form.get('contact_name', None)
+
+        if contact_name is None:
+            contact_name = self.context.contact_name
+
+        return contact_name
 
     @memoize
     @decode
     def location(self):
-        form = self.request.form
-        return form.get('location', None) or self.context.location
+        location = self.request.form.get('location', None)
+
+        if location is None:
+            location = self.context.location
+
+        return location
 
     @memoize
     @decode
     def contact_email(self):
-        form = self.request.form
-        return form.get('contact_email', None) or self.context.contact_email
+        contact_email = self.request.form.get('contact_email', None)
+
+        if contact_email is None:
+            contact_email = self.context.contact_email
+
+        return contact_email
 
     @memoize
     @decode
     def event_type(self):
-        form = self.request.form
-        return form.get('event_type', None) or self.context.Subject()
+        event_type = self.request.form.get('event_type', None)
+
+        if event_type is None:
+            event_type = self.context.Subject()
+
+        return event_type
 
     @memoize
     @decode
     def contact_phone(self):
-        form = self.request.form
-        return form.get('contact_phone', None) or self.context.contact_phone
+        contact_phone = self.request.form.get('contact_phone', None)
+
+        if contact_phone is None:
+            contact_phone = self.context.contact_phone
+
+        return contact_phone
 
     @memoize
     @decode
     def event_url(self):
-        form = self.request.form
-        return form.get('event_url', None) or self.context.event_url
+        event_url = self.request.form.get('event_url', None)
+
+        if event_url is None:
+            event_url = self.context.event_url
+
+        return event_url
 
     @memoize
     @decode
@@ -193,44 +225,62 @@ class EventEditView(FormViewBase):
     @memoize
     @decode
     def effectiveYear(self):
-        eff_year = self.request.form.get('effectiveYear', None)
+        effective_year = self.request.form.get('effectiveYear', None)
 
-        return eff_year or self.context.getStartStrings()['year']
+        if effective_year is None:
+            effective_year = self.context.getStartStrings()['year']
+
+        return effective_year
 
     @memoize
     @decode
     def effectiveMo(self):
-        eff_month = self.request.form.get('effectiveMo', None)
+        effective_month = self.request.form.get('effectiveMo', None)
 
-        return eff_month or self.context.getStartStrings()['month']
+        if effective_month is None:
+            effective_month = self.context.getStartStrings()['month']
+
+        return effective_month
 
     @memoize
     @decode
     def effectiveDay(self):
-        eff_day = self.request.form.get('effectiveDay', None)
+        effective_day = self.request.form.get('effectiveDay', None)
 
-        return eff_day or self.context.getStartStrings()['day']
+        if effective_day is None:
+            effective_day = self.context.getStartStrings()['day']
+
+        return effective_day
 
     @memoize
     @decode
     def expirationYear(self):
-        exp_year = self.request.form.get('expirationYear', None)
+        expiration_year = self.request.form.get('expirationYear', None)
 
-        return exp_year or self.context.getEndStrings()['year']
+        if expiration_year is None:
+            expiration_year = self.context.getEndStrings()['year']
+
+        return expiration_year
 
     @memoize
     @decode
     def expirationMo(self):
-        exp_month = self.request.form.get('expirationMo', None)
+        expiration_month = self.request.form.get('expirationMo', None)
 
-        return exp_month or self.context.getEndStrings()['month']
+        if expiration_month is None:
+            expiration_month = self.context.getEndStrings()['month']
+
+        return expiration_month
 
     @memoize
     @decode
     def expirationDay(self):
-        exp_day = self.request.form.get('expirationDay', None)
+        expiration_day = self.request.form.get('expirationDay', None)
 
-        return exp_day or self.context.getEndStrings()['day']
+        if expiration_day is None:
+            expiration_day = self.context.getEndStrings()['day']
+
+        return expiration_day
 
     # controllers
 
@@ -266,3 +316,4 @@ class EventEditView(FormViewBase):
             return True, _(u'Event changed.')
         except ResourceLockedError, errmsg:
             return False, errmsg
+

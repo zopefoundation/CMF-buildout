@@ -17,15 +17,3 @@ $Id$
 
 from _content import *
 from _tools import *
-
-# BBB: will be removed in CMF 2.2
-#      create zope2 interfaces
-from Interface.bridge import createZope3Bridge
-import Event
-import portal_calendar
-
-createZope3Bridge(IEvent, Event, 'IEvent')
-createZope3Bridge(IMutableEvent, Event, 'IMutableEvent')
-createZope3Bridge(ICalendarTool, portal_calendar, 'portal_calendar')
-
-del createZope3Bridge

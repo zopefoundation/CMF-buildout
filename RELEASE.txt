@@ -55,6 +55,12 @@ RELEASE.txt - how to create a CMF release
       - Create the Subversion tag by svn copying the head of the release
         branch to the tag in the tags repository directory.
 
+      - Even though checking into a tag is an insidious thing to do, it is
+        OK for changing SVN Externals definitions. Specifically, a CMF
+        release tag should not contain SVN Externals pointing to branches.
+        If needed, a tag on the external package should be cut and then
+        the external definition adjusted to point to the tag.
+
 
   **Creating and publishing the release**
 

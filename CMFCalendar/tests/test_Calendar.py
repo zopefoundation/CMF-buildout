@@ -37,8 +37,10 @@ class CalendarTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCalendar.CalendarTool import CalendarTool
+        ctool = CalendarTool(*args, **kw)
+        ctool.firstweekday = 6
 
-        return CalendarTool(*args, **kw)
+        return ctool
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
@@ -76,6 +78,30 @@ class CalendarTests(unittest.TestCase):
         try:
             self.assertEqual( ctool.getDays(),
                               ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] )
+        finally:
+            locale.setlocale(locale.LC_ALL, old_locale)
+
+    def test_firstweekday(self):
+        ctool = self._makeOne()
+        self.assertEqual(ctool.getFirstWeekDay(), 6)
+
+        # Try setting it to invalid values, the setting should not stick
+        ctool.edit_configuration([], None, firstweekday='insane')
+        self.assertEqual(ctool.getFirstWeekDay(), 6)
+
+        ctool.edit_configuration([], None, firstweekday=42)
+        self.assertEqual(ctool.getFirstWeekDay(), 6)
+
+        # Set it to a sane value
+        ctool.edit_configuration([], None, firstweekday=0)
+        self.assertEqual(ctool.getFirstWeekDay(), 0)
+
+        # Make sure the setting is being used...
+        old_locale = locale.getlocale(locale.LC_ALL)[0]
+        locale.setlocale(locale.LC_ALL, 'C')
+        try:
+            self.assertEqual( ctool.getDays(),
+                              ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa','Su'] )
         finally:
             locale.setlocale(locale.LC_ALL, old_locale)
 

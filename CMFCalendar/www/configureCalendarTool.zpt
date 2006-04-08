@@ -56,6 +56,21 @@
 
   </tal:define>
   <br>
+
+  <h3>First day of week</h3>
+  <p>
+    <select name="firstweekday:int" 
+            tal:define="firstweekday here/portal_calendar/getFirstWeekDay;
+                        days python: [(0, 'Monday'), (1, 'Tuesday'), (2, 'Wednesday'), (3, 'Thursday'), (4, 'Friday'), (5, 'Saturday'), (6, 'Sunday')]">
+      <span tal:repeat="day days">
+        <option value="" 
+                tal:attributes="value python: day[0];
+                                selected python: day[0] == firstweekday"
+                tal:content="python: day[1]"/>
+       </span>
+    </select>
+  </p>
+  <br/>
   
  <input type="submit" value="Submit">
 </form>

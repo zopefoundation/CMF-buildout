@@ -1735,7 +1735,7 @@ class IWorkflowDefinition(Interface):
         o Permission:  Private (Python only)
         """
 
-    def isActionSupported(ob, action):
+    def isActionSupported(ob, action, **kw):
         """ Return True if the given workflow action is supported by this
             workfow for a content object, else False.
 

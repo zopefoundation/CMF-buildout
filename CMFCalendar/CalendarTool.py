@@ -16,7 +16,6 @@ $Id$
 """
 
 import calendar
-calendar.setfirstweekday(6) #start day  Mon(0)-Sun(6)
 
 from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
@@ -31,7 +30,8 @@ from interfaces import ICalendarTool
 from permissions import ManagePortal
 
 class CalendarTool (UniqueObject, SimpleItem):
-    """ a calendar tool for encapsualting how calendars work and are displayed """
+    """ A tool for encapsulating how calendars work and are displayed """
+
     id = 'portal_calendar'
     meta_type= 'CMF Calendar Tool'
     security = ClassSecurityInfo()
@@ -41,6 +41,7 @@ class CalendarTool (UniqueObject, SimpleItem):
     calendar_types = ('Event',)
     calendar_states = ('published',)
     use_session = ''
+    firstweekday = 6 # 6 is Sunday
 
     manage_options = ( ({ 'label' : 'Overview', 'action' : 'manage_overview' }
                      ,  { 'label' : 'Configure', 'action' : 'manage_configure' }
@@ -60,49 +61,85 @@ class CalendarTool (UniqueObject, SimpleItem):
                                    __name__='manage_configure')
 
     security.declareProtected( ManagePortal, 'edit_configuration' )
-    def edit_configuration(self, show_types, use_session, show_states=None):
-        """ Change the configuration of the calendar tool """
+    def edit_configuration( self
+                          , show_types
+                          , use_session
+                          , show_states=None
+                          , firstweekday=None
+                          ):
+        """ Change the configuration of the calendar tool 
+        """
         self.calendar_types = tuple(show_types)
         self.use_session = use_session
+
         if show_states is not None:
             self.calendar_states = tuple(show_states)
+
+        if firstweekday is not None:
+            try:
+                fwd = int(firstweekday)
+
+                if 0 <= fwd <= 6:
+                    # Do nothing with illegal values
+                    self.firstweekday = fwd
+            except ValueError:
+                # Do nothing with illegal values
+                pass
+
         if hasattr(self.REQUEST, 'RESPONSE'):
             self.REQUEST.RESPONSE.redirect('manage_configure')
 
+    security.declarePrivate('_getCalendar')
+    def _getCalendar(self):
+        """ Wrapper to ensure we set the first day of the week every time
+        """
+        calendar.setfirstweekday(self.getFirstWeekDay())
+        return calendar
+
+    security.declarePublic('getFirstWeekDay')
+    def getFirstWeekDay(self):
+        """ Get our first weekday setting
+        """
+        return self.firstweekday
+
     security.declarePublic('getCalendarTypes')
     def getCalendarTypes(self):
-        """ Returns a list of type that will show in the calendar """
+        """ Returns a list of type that will show in the calendar 
+        """
         return self.calendar_types
 
     security.declarePublic('getCalendarStates')
     def getCalendarStates(self):
-        """ Returns a list of workflow states that will show in the calendar """
+        """ Returns a list of workflow states that will show in the calendar 
+        """
         return self.calendar_states
 
     security.declarePublic('getUseSession')
     def getUseSession(self):
-        """ Returns the Use_Session option """
+        """ Returns the Use_Session option 
+        """
         return self.use_session
 
     security.declarePublic('getDays')
     def getDays(self):
-        """ Returns a list of days with the correct start day first """
-        return calendar.weekheader(2).split()
+        """ Returns a list of days with the correct start day first 
+        """
+        return self._getCalendar().weekheader(2).split()
 
     security.declarePublic('getWeeksList')
     def getWeeksList(self, month='1', year='2002'):
-        """Creates a series of weeks, each of which contains an integer day number.
-           A day number of 0 means that day is in the previous or next month.
+        """ Return a series of weeks, each containing an integer day number.
+        A day number of 0 means that day is in the previous or next month.
         """
-        year=int(year)
-        month=int(month)
+        year = int(year)
+        month = int(month)
         # daysByWeek is a list of days inside a list of weeks, like so:
         # [[0, 1, 2, 3, 4, 5, 6],
         #  [7, 8, 9, 10, 11, 12, 13],
         #  [14, 15, 16, 17, 18, 19, 20],
         #  [21, 22, 23, 24, 25, 26, 27],
         #  [28, 29, 30, 31, 0, 0, 0]]
-        daysByWeek=calendar.monthcalendar(year, month)
+        daysByWeek = self._getCalendar().monthcalendar(year, month)
 
         return daysByWeek
 
@@ -111,21 +148,21 @@ class CalendarTool (UniqueObject, SimpleItem):
         """ recreates a sequence of weeks, by days each day is a mapping.
             {'day': #, 'url': None}
         """
-        year=int(year)
-        month=int(month)
+        year = int(year)
+        month = int(month)
         # daysByWeek is a list of days inside a list of weeks, like so:
         # [[0, 1, 2, 3, 4, 5, 6],
         #  [7, 8, 9, 10, 11, 12, 13],
         #  [14, 15, 16, 17, 18, 19, 20],
         #  [21, 22, 23, 24, 25, 26, 27],
         #  [28, 29, 30, 31, 0, 0, 0]]
-        daysByWeek=calendar.monthcalendar(year, month)
-        weeks=[]
+        daysByWeek = self._getCalendar().monthcalendar(year, month)
+        weeks = []
 
-        events=self.catalog_getevents(year, month)
+        events = self.catalog_getevents(year, month)
 
         for week in daysByWeek:
-            days=[]
+            days = []
             for day in week:
                 if events.has_key(day):
                     days.append(events[day])
@@ -138,12 +175,13 @@ class CalendarTool (UniqueObject, SimpleItem):
 
     security.declarePublic('catalog_getevents')
     def catalog_getevents(self, year, month):
-        """ given a year and month return a list of days that have events """
-        year=int(year)
-        month=int(month)
-        last_day=calendar.monthrange(year, month)[1]
-        first_date=self.getBeginAndEndTimes(1, month, year)[0]
-        last_date=self.getBeginAndEndTimes(last_day, month, year)[1]
+        """ given a year and month return a list of days that have events 
+        """
+        year = int(year)
+        month = int(month)
+        last_day = self._getCalendar().monthrange(year, month)[1]
+        first_date = self.getBeginAndEndTimes(1, month, year)[0]
+        last_date = self.getBeginAndEndTimes(last_day, month, year)[1]
 
         query = self.portal_catalog(
                         portal_type=self.getCalendarTypes(),
@@ -173,7 +211,7 @@ class CalendarTool (UniqueObject, SimpleItem):
                 eventEndDay = result.end.day()
                 event['end'] = result.end.Time()
             # and events that started last month
-            if result.start.month() != month:  # same as above re: 12 month thing
+            if result.start.month() != month:  # same as above (12 month thing)
                 eventStartDay = 1
                 event['start'] = None
             else:
@@ -198,8 +236,9 @@ class CalendarTool (UniqueObject, SimpleItem):
                     last_days_event = last_day_data['eventslist'][-1]
                     last_days_event['end'] = (result.end-1).latestTime().Time()
                 else:
-                    eventDays[eventEndDay]['eventslist'].append( {'end':
-                        result.end.Time(), 'start': None, 'title': event['title']} )
+                    eventDays[eventEndDay]['eventslist'].append( 
+                        { 'end': result.end.Time()
+                        , 'start': None, 'title': event['title']} )
                     eventDays[eventEndDay]['event'] = 1
             else:
                 eventDays[eventStartDay]['eventslist'].append(event)
@@ -217,8 +256,8 @@ class CalendarTool (UniqueObject, SimpleItem):
         """ given an exact day return ALL events that:
             A) Start on this day  OR
             B) End on this day  OR
-            C) Start before this day  AND  end after this day"""
-
+            C) Start before this day  AND  end after this day
+        """
         catalog = self.portal_catalog
         day, month, year = ( int(thisDay.day())
                            , int(thisDay.month())
@@ -273,49 +312,43 @@ class CalendarTool (UniqueObject, SimpleItem):
 
     security.declarePublic('getPreviousMonth')
     def getPreviousMonth(self, month, year):
-        # given any particular year and month, this method will return a 
-        # datetime object for one month prior
+        """ Get a DateTime object for one month prior to the given year/month
+        """
+        month = int(month)
+        year = int(year)
 
-        try: month=int(month)
-        except: raise "Calendar Type Error", month
-        try: year=int(year)
-        except: raise "Calendar Type Error", year
-
-        if month==0 or month==1:
+        if month == 0 or month == 1:
             month, year = 12, year - 1
         else:
-            month-=1
+            month -= 1
 
         return DateTime(year, month, 1)
 
     security.declarePublic('getNextMonth')
     def getNextMonth(self, month, year):
-        # given any particular year and month, this method will return a datetime object
-        # for one month after
+        """ Get a DateTime object for one month after the given year/month
+        """
+        month = int(month)
+        year = int(year)
 
-        try: month=int(month)
-        except: raise "Calendar Type Error", month
-        try: year=int(year)
-        except: raise "Calendar Type Error", year
-
-        if month==12:
+        if month == 12:
             month, year = 1, year + 1
         else:
-            month+=1
+            month += 1
 
         return DateTime(year, month, 1)
 
     security.declarePublic('getBeginAndEndTimes')
     def getBeginAndEndTimes(self, day, month, year):
-        # Given any day, month and year this method returns 2 DateTime objects
-        # That represent the exact start and the exact end of that particular day.
+        """ Get two DateTime objects representing the beginning and end
+        of the given day
+        """
+        day = int(day)
+        month = int(month)
+        year = int(year)
 
-        day=int(day)
-        month=int(month)
-        year=int(year)
-
-        begin=DateTime('%d-%02d-%02d 00:00:00' % (year, month, day))
-        end=DateTime('%d-%02d-%02d 23:59:59' % (year, month, day))
+        begin = DateTime('%d-%02d-%02d 00:00:00' % (year, month, day))
+        end = DateTime('%d-%02d-%02d 23:59:59' % (year, month, day))
 
         return (begin, end)
 

@@ -2,6 +2,10 @@ CMF 2.0.0 (unreleased)
 
   New Features
 
+    - CMFCalendar.CalendarTool: The first day of the week preference can
+      now be set on the calendar tool through the ZMI.
+      (http://www.zope.org/Collectors/CMF/400)
+
     - CMFCalendar: Added experimental Zope 3-style browser views.
       The views are disabled by default. See README.txt of the browser
       sub-package for further information.

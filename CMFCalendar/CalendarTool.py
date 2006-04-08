@@ -28,7 +28,6 @@ from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.CMFCore.utils import UniqueObject
 
 from interfaces import ICalendarTool
-from interfaces.portal_calendar import portal_calendar as z2ICalendarTool
 from permissions import ManagePortal
 
 class CalendarTool (UniqueObject, SimpleItem):
@@ -38,7 +37,6 @@ class CalendarTool (UniqueObject, SimpleItem):
     security = ClassSecurityInfo()
 
     implements(ICalendarTool)
-    __implements__ = (z2ICalendarTool,)
 
     calendar_types = ('Event',)
     calendar_states = ('published',)

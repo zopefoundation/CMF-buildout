@@ -43,16 +43,12 @@ class TestEvent(unittest.TestCase):
         from Products.CMFCore.interfaces.Dynamic \
                 import DynamicType as IDynamicType
         from Products.CMFCalendar.Event import Event
-        from Products.CMFCalendar.interfaces.Event import IEvent
-        from Products.CMFCalendar.interfaces.Event import IMutableEvent
 
         verifyClass(ICatalogableDublinCore, Event)
         verifyClass(IContentish, Event)
         verifyClass(IDublinCore, Event)
         verifyClass(IDynamicType, Event)
         verifyClass(IMutableDublinCore, Event)
-        verifyClass(IEvent, Event)
-        verifyClass(IMutableEvent, Event)
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass

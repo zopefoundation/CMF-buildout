@@ -37,8 +37,6 @@ from Products.GenericSetup.interfaces import IDAVAware
 from exceptions import ResourceLockedError
 from interfaces import IEvent
 from interfaces import IMutableEvent
-from interfaces.Event import IEvent as z2IEvent
-from interfaces.Event import IMutableEvent as z2IMutableEvent
 from permissions import ChangeEvents
 from permissions import ModifyPortalContent
 from permissions import View
@@ -104,9 +102,7 @@ class Event(PortalContent, DefaultDublinCoreImpl):
     security.declareObjectProtected(View)
 
     implements(IMutableEvent, IEvent, IDAVAware)
-    __implements__ = ( z2IMutableEvent
-                     , z2IEvent
-                     , PortalContent.__implements__
+    __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )
 

@@ -40,14 +40,6 @@ class CalendarTests(unittest.TestCase):
 
         return CalendarTool(*args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCalendar.interfaces.portal_calendar \
-                import portal_calendar as ICalendarTool
-        from Products.CMFCalendar.CalendarTool import CalendarTool
-
-        verifyClass(ICalendarTool, CalendarTool)
-
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
         from Products.CMFCalendar.interfaces import ICalendarTool

@@ -153,24 +153,30 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
 
     def test_reindexObjectSecurity_missing_raise(self):
         # Exception raised for missing object (Zope 2.8 brains)
-        self._catch_log_errors()
         foo = self.site.foo
         missing = TheClass('missing').__of__(foo)
         missing.GETOBJECT_RAISES = True
         cat = self.site.portal_catalog
-        cat.setObs([foo, missing])
+        try:
+            self._catch_log_errors()
+            cat.setObs([foo, missing])
+        finally:
+            self._ignore_log_errors()
         self.assertRaises(NotFound, foo.reindexObjectSecurity)
-        self.failUnless( self.logged is None ) # no logging due to raise
+        self.failIf( self.logged ) # no logging due to raise
 
     def test_reindexObjectSecurity_missing_noraise(self):
         # Raising disabled
-        self._catch_log_errors()
         foo = self.site.foo
         missing = TheClass('missing').__of__(foo)
         missing.GETOBJECT_RAISES = False
         cat = self.site.portal_catalog
-        cat.setObs([foo, missing])
-        foo.reindexObjectSecurity()
+        try:
+            self._catch_log_errors()
+            cat.setObs([foo, missing])
+            foo.reindexObjectSecurity()
+        finally:
+            self._ignore_log_errors()
         self.assertEquals(cat.log,
                           ["reindex /site/foo %s"%str(CMF_SECURITY_INDEXES)])
         self.failIf(foo.notified)

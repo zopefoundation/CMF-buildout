@@ -8,18 +8,16 @@ Converting skins to views:
                                   CalendarView.previousDayURL
                                   CalendarView.nextDayURL
       [x] calendar_day_view_template.pt -> templates/calendar_day.pt
-      [x] getEndAsString.py -> CalendarView.getEndAsString
-      [x] getStartAsString.py -> CalendarView.getStartAsString
-      [x] getNextDayLink.py -> CalendarView.getNextDayLink
-      [x] getPreviousDayLink.py -> CalendarView.getPreviousDayLink
+      [x] getEndAsString.py -> CalendarView._getEndAsString
+      [x] getStartAsString.py -> CalendarView._getStartAsString
 
   [x] @@calendar_widget:
 
       [x] calendarBox.pt -> templates/calendar_widgets.pt
-      [x] getDaysClass.py -> ViewBase.getDaysClass
-      [x] getMonthAndYear.py -> ViewBase.getMonthAndYear
-      [x] getNextMonthLink.py -> ViewBase.getNextMonthLink
-      [x] getPreviousMonthLink.py -> ViewBase.getPreviousMonthLink
+      [x] getDaysClass.py -> CalendarBoxView.getDaysClass
+      [x] getMonthAndYear.py -> CalendarBoxView.getMonthAndYear
+      [x] getNextMonthLink.py -> CalendarBoxView.getNextMonthLink
+      [x] getPreviousMonthLink.py -> CalendarBoxView.getPreviousMonthLink
 
   [x] IEvent @@view.html:
 

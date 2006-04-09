@@ -19,6 +19,11 @@ CMF 2.0.0 (unreleased)
       The CMF specific slots added in CMF 2.0.0-alpha have been removed again
       from the five_template.
 
+  Others
+
+    - CalendarTool: Slightly modified the behavior of getUseSession.
+      This method now explicitly returns a boolean value.
+
 
 CMF 2.0.0-beta2 (2006/03/26)
 

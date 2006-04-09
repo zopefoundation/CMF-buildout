@@ -33,8 +33,16 @@
   <browser:page
       for="*"
       name="calendar_widget"
-      class=".calendar.CalendarView"
+      class="Products.CMFDefault.browser.utils.MacroView"
       template="templates/calendar_widgets.pt"
+      permission="zope2.View"
+      layer="cmf"
+      />
+
+  <browser:page
+      for="*"
+      name="calendar_box_view"
+      class=".calendar.CalendarBoxView"
       permission="zope2.View"
       layer="cmf"
       />

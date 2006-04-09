@@ -40,7 +40,7 @@ class CalendarTool (UniqueObject, SimpleItem):
 
     calendar_types = ('Event',)
     calendar_states = ('published',)
-    use_session = ''
+    use_session = False
     firstweekday = 6 # 6 is Sunday
 
     manage_options = ( ({ 'label' : 'Overview', 'action' : 'manage_overview' }
@@ -70,7 +70,7 @@ class CalendarTool (UniqueObject, SimpleItem):
         """ Change the configuration of the calendar tool 
         """
         self.calendar_types = tuple(show_types)
-        self.use_session = use_session
+        self.use_session = bool(use_session)
 
         if show_states is not None:
             self.calendar_states = tuple(show_states)
@@ -118,7 +118,7 @@ class CalendarTool (UniqueObject, SimpleItem):
     def getUseSession(self):
         """ Returns the Use_Session option 
         """
-        return self.use_session
+        return bool(self.use_session)
 
     security.declarePublic('getDays')
     def getDays(self):

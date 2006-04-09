@@ -1,4 +1,11 @@
 <html metal:use-macro="context/main_template/macros/master">
+<head>
+
+<metal:slot fill-slot="base">
+<tal:span tal:replace="structure context/getBaseTag" />
+</metal:slot>
+
+</head>
 <body>
 
 <metal:slot metal:fill-slot="header">&nbsp;</metal:slot>
@@ -29,7 +36,7 @@
   <td class="endDate" colspan="2" nowrap="nowrap"
      tal:content="item_info/stop">Event End</td>
  </tr>
-</tal:loop>
+ </tal:loop>
 </table>
 </div>
 </metal:slot>

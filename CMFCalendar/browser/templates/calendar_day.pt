@@ -9,10 +9,8 @@
 <body>
 
 <metal:slot metal:fill-slot="body">
-
 <div class="dayViewBox" metal:define-macro="dayViewBox">
-<table class="dayView" cellpadding="0" cellspacing="0" border="0"
-       tal:define="events view/eventsForDay">
+<table class="dayView" cellpadding="0" cellspacing="0" border="0">
  <tr>
   <th>
    <a href="#" 
@@ -25,26 +23,23 @@
       tal:attributes="href view/nextDayURL">&raquo;</a>
   </th>
  </tr>
- <tal:loop tal:repeat="item_info view/eventsForDay">
+ <tal:loop tal:repeat="item_info view/listItemInfos">
  <tr>
   <td class="heading" colspan="5" nowrap="nowrap">
-   <a href="#" tal:attributes="href item_info/getURL"
-      tal:content="item_info/Title">event title</a>
+   <a href="#" tal:attributes="href item_info/url"
+      tal:content="item_info/title">event title</a>
   </td>
  </tr>
  <tr>
   <td class="startDate" colspan="2" nowrap="nowrap"
-      tal:content="python: view.getStartAsString(item_info)"
-      >Event Start</td>
+     tal:content="item_info/start">Event Start</td>
   <td nowrap="nowrap"> -- </td>
   <td class="endDate" colspan="2" nowrap="nowrap"
-      tal:content="python: view.getEndAsString(item_info)"
-      >Event End</td>
+     tal:content="item_info/stop">Event End</td>
  </tr>
  </tal:loop>
 </table>
 </div>
-
 </metal:slot>
 
 </body>

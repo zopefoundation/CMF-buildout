@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<metal:slot metal:fill-slot="body">
+<metal:slot metal:fill-slot="body" i18n:domain="cmf_calendar">
 
 <table class="Event" border="0" cellpadding="5" width="100%" cellspacing="3">
  <tr>

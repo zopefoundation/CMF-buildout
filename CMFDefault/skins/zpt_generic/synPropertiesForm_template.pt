@@ -3,8 +3,6 @@
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
    tal:define="s_tool options/s_tool">
-<div class="Desktop">
-
 <h2 i18n:translate="">Default Syndication Properties</h2>
 
 <tal:case tal:condition="options/s_allowed"
@@ -133,8 +131,6 @@
 <tal:case tal:condition="not: options/s_allowed"
 ><h4 i18n:translate="">Syndication is Disabled</h4>
 </tal:case>
-
-</div>
 </metal:slot>
 
 </body>

@@ -7,8 +7,6 @@
                review_state python: wtool.getInfoFor(context, 'review_state');
                review_history python: wtool.getInfoFor(context,
                                                        'review_history')">
-<div class="Desktop">
-
 <div metal:define-slot="main" i18n:domain="cmf_default">
 <h1 i18n:translate="">Transition of <span tal:replace="context/getId"
                              i18n:name="objectid">Item</span>.</h1>
@@ -66,8 +64,6 @@
          tal:replace="rhComments">Comments</span>
  </tal:loop>
 </tal:case>
-
-</div>
 </metal:slot>
 
 </body>

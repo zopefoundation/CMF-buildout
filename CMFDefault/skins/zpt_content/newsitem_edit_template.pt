@@ -8,8 +8,6 @@
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
    tal:define="form options/form">
-<div class="Desktop">
-
 <form action="newsitem_edit_form" method="post"
    tal:attributes="action form/action">
 <table class="FormLayout">
@@ -53,8 +51,6 @@
  </tr>
 </table>
 </form>
-
-</div>
 </metal:slot>
 
 </body>

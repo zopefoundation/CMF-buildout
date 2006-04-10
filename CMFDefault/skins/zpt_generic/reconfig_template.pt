@@ -7,8 +7,6 @@
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
    tal:define="form options/form">
-<div class="Desktop">
-
 <p i18n:translate="">This form is used to set the portal configuration
   options.</p>
 
@@ -103,8 +101,6 @@
  </tr>
 </table>
 </form>
-
-</div>
 </metal:slot>
 
 </body>

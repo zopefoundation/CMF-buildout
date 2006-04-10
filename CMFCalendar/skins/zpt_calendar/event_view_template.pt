@@ -1,14 +1,14 @@
 <html metal:use-macro="context/main_template/macros/master">
 <head>
- <metal:slot fill-slot="base"
- ><tal:span tal:replace="structure context/getBaseTag"
-/></metal:slot>
+
+<metal:slot fill-slot="base">
+<tal:span tal:replace="structure context/getBaseTag" />
+</metal:slot>
+
 </head>
 <body>
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_calendar">
-<div class="Desktop">
-
 <table class="Event" border="0" cellpadding="5" width="100%" cellspacing="3">
  <tr>
   <th width="10%" i18n:translate="">Event Name</th>
@@ -66,8 +66,6 @@
   <td colspan="4">&nbsp;</td>
  </tr>
 </table>
-
-</div>
 </metal:slot>
 
 </body>

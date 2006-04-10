@@ -103,9 +103,7 @@ class FSSTXMethod( FSObject ):
 
     _default_template = Globals.HTML( """\
 <dtml-var standard_html_header>
-<div class="Desktop">
 <dtml-var cooked>
-</div>
 <dtml-var standard_html_footer>""" )
 
     def __call__( self, REQUEST={}, RESPONSE=None, **kw ):

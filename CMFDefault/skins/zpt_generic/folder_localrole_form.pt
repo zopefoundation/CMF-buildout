@@ -1,21 +1,17 @@
-<html metal:use-macro="here/main_template/macros/master">
+<html metal:use-macro="context/main_template/macros/master">
 <body>
 
-<div class="Desktop"
-     metal:fill-slot="main"
-     tal:define="searching python: request.get('role_submit', None );
-                 mtool here/portal_membership;
-                "
-     i18n:domain="cmf_default"
->
+<metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
+   tal:define="searching python: request.get('role_submit', None);
+               mtool context/portal_membership">
 
-<div tal:condition="python: not searching">
+<tal:case tal:condition="python: not searching">
 <!-- Search -->
 
 <h2 i18n:translate="">Assign local roles: Search Members</h2>
 
 <form method="post" action="folder_localrole_form"
-      tal:attributes="action string:${here/absolute_url}/folder_localrole_form"
+      tal:attributes="action string:${context/absolute_url}/folder_localrole_form"
 >
 
 <table class="FormLayout">
@@ -45,9 +41,9 @@
 
 
 <!-- End search -->
-</div>
+</tal:case>
 
-<div tal:condition="searching"
+<tal:case tal:condition="searching"
      tal:define="search_param python: request.get( 'search_param', '' );
                  search_term  python: request.get( 'search_term', '' );
                  found python:mtool.searchMembers( search_param=search_param
@@ -59,12 +55,12 @@
 
 <h2 i18n:translate="">Assign local roles: Search Results</h2>
 
-<div tal:condition="found">
+<tal:case tal:condition="found">
 
  <p i18n:translate="">Select Member(s) and a role to assign:</p>
 
  <form method="post" action="folder_localrole_edit"
-       tal:attributes="action string:${here/absolute_url}/folder_localrole_edit"
+       tal:attributes="action string:${context/absolute_url}/folder_localrole_edit"
  >
   <input type="hidden" name="change_type" value="add" />
 
@@ -102,7 +98,7 @@
     <th colspan="2" i18n:translate="">Role to assign:</th>
     <td>
      <select name="member_role"
-             tal:define="roles python: mtool.getCandidateLocalRoles( here )">
+             tal:define="roles python: mtool.getCandidateLocalRoles(context)">
       <option tal:repeat="role roles"
               tal:content="role"> Role1 </option>
       <option tal:condition="nothing"> Role2 </option>
@@ -124,15 +120,14 @@
 
   </table>
  </form>
+</tal:case>
 
-</div>
-
-<div tal:condition="python: not found">
+<tal:case tal:condition="python: not found">
  <p i18n:translate="">Sorry, no members matched your search.</p>
-</div>
+</tal:case>
 
 <!-- End assignment -->
-</div>
+</tal:case>
 
 <hr />
 
@@ -142,12 +137,12 @@
   folder:</p>
 
 <form method="post" action="folder_localrole_edit"
-      tal:attributes="action string:${here/absolute_url}/folder_localrole_edit"
+      tal:attributes="action string:${context/absolute_url}/folder_localrole_edit"
 >
  <input type="hidden" name="change_type" value="delete" />
  <input type="hidden" name="member_role" value="" />
 
- <table class="FormLayout" tal:define="lroles here/get_local_roles">
+ <table class="FormLayout" tal:define="lroles context/get_local_roles">
  <tr>
    <td width="16"><br /></td>
    <th style="text-align:left;" i18n:translate="">User</th>
@@ -204,8 +199,7 @@
 
 </table>
 </form>
-
-</div>
+</metal:slot>
 
 </body>
 </html>

@@ -10,8 +10,6 @@
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
    tal:define="batch options/batch">
-<div class="Desktop">
-
 <tal:case tal:condition="options/listSubtopicInfos"
 ><h4 i18n:translate="">Subtopics:</h4>
  <div tal:repeat="item_info options/listSubtopicInfos">
@@ -35,8 +33,6 @@
 <ul tal:condition="options/listQueries">
  <li tal:repeat="item options/listQueries" tal:content="item">item</li>
 </ul>
-
-</div>
 </metal:slot>
 
 </body>

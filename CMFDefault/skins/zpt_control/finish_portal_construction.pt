@@ -6,8 +6,6 @@
 </metal:slot>
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default">
-<div class="Desktop">
-
 <p i18n:translate="">The first thing you should do is visit the
  <i18n:span i18n:name="reconfig_link"><a href="http://cmf.zope.org"
     tal:attributes="href string:${context/portal_url}/reconfig_form"
@@ -19,8 +17,6 @@
  <i18n:span i18n:name="home_link"><a href="/"
     tal:attributes="href string:${context/portal_url}"
     i18n:translate="">home page</a></i18n:span>.</p>
-
-</div>
 </metal:slot>
 
 </body>

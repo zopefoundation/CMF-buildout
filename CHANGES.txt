@@ -24,6 +24,9 @@ CMF 2.0.0 (unreleased)
     - CalendarTool: Slightly modified the behavior of getUseSession.
       This method now explicitly returns a boolean value.
 
+    - Skins, views and FSSTXMethod: Removed 'Desktop' class div tags.
+      There is still the 'Desktop' ID div tag in main_template.
+
 
 CMF 2.0.0-beta2 (2006/03/26)
 

@@ -5,8 +5,6 @@
 <h1 i18n:translate="">Edit: <tal:span
     tal:content="view/title" i18n:name="obj_title">Title</tal:span></h1>
 
-<div class="Desktop">
-
 <form action="folder_edit_form" method="post"
    tal:attributes="action view/form_action">
 <table class="FormLayout">
@@ -32,8 +30,6 @@
  </tr>
 </table>
 </form>
-
-</div>
 </metal:slot>
 
 </body>

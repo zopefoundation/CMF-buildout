@@ -7,8 +7,6 @@
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
    tal:define="form options/form">
-<div class="Desktop">
-
 <form action="members_delete" method="post"
    tal:attributes="action form/action"
 ><metal:macro metal:use-macro="context/form_widgets/macros/hidden_vars" />
@@ -17,8 +15,6 @@
  <p><strong tal:content="form/members">MEMBERS</strong></p>
  <metal:macro metal:use-macro="context/form_widgets/macros/buttons" />
 </form>
-
-</div>
 </metal:slot>
 
 </body>

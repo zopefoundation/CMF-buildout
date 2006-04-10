@@ -8,8 +8,6 @@
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
    tal:define="batch options/batch;
                form options/form">
-<div class="Desktop">
-
 <form action="folder_factories" method="post"
    tal:attributes="action form/action">
  <table class="FormLayout"
@@ -36,8 +34,6 @@
   <input type="submit" name="add" value="Add"
      i18n:attributes="value" /></div>
 </form>
-
-</div>
 </metal:slot>
 
 </body>

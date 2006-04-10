@@ -7,8 +7,6 @@
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
    tal:define="form options/form">
-<div class="Desktop">
-
 <tal:case tal:condition="options/isOrdinaryMember">
   <p i18n:translate=""> You are already a member. You may use the
       <a href="personalize_form">personalization form</a>
@@ -99,8 +97,6 @@
    </table>
   </form>
 </tal:case>
-
-</div>
 </metal:slot>
 
 </body>

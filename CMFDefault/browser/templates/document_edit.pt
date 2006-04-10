@@ -5,8 +5,6 @@
 <h1 i18n:translate="">Edit: <tal:span
     tal:content="view/title" i18n:name="obj_title">Title</tal:span></h1>
 
-<div class="Desktop">
-
 <form action="document_edit_form" method="post" enctype="multipart/form-data"
    tal:attributes="action view/form_action"
 ><metal:macro metal:use-macro="context/@@form_widget/hidden_vars" />
@@ -54,8 +52,6 @@
  </tr>
 </table>
 </form>
-
-</div>
 </metal:slot>
 
 </body>

@@ -1,14 +1,11 @@
-<html xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      metal:use-macro="here/main_template/macros/master">
+<html metal:use-macro="context/main_template/macros/master">
 <body>
-<div metal:fill-slot="main" i18n:domain="cmf_default">
-<div class="Desktop">
 
+<metal:slot metal:fill-slot="main" i18n:domain="cmf_default">
 <h1 i18n:translate="">Undo Transactions</h1>
-<div tal:define="utool here/portal_undo;
-                 url here/portal_url;
-                 transactions python:utool.listUndoableTransactionsFor(here)">
+<div tal:define="utool context/portal_undo;
+                 url context/portal_url;
+                 transactions python:utool.listUndoableTransactionsFor(context)">
 
  <div
    tal:condition="transactions"
@@ -27,7 +24,7 @@
               ">
 
   <form action="undo" method="post"
-        tal:attributes="action string:${here/absolute_url}/undo"
+        tal:attributes="action string:${context/absolute_url}/undo"
   >
 
    <p i18n:translate="">This application's transactional feature allows you to
@@ -112,8 +109,7 @@
  </div>
 
 </div>
+</metal:slot>
 
-</div><!-- class="Desktop" -->
-</div><!-- metal:fill-slot="main" -->
 </body>
 </html>

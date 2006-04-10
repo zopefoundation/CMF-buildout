@@ -6,8 +6,6 @@
 </metal:slot>
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default">
-<div class="Desktop">
-
 <form action="" method="post"
    tal:attributes="action python: atool.getActionInfo(
                                                     'user/logged_in')['url']">
@@ -64,8 +62,6 @@
 <p i18n:translate="">Setting the 'Remember my ID' option will set a cookie
  with your member ID, so that when you next log in, your member ID will
  already be filled in for you.</p>
-
-</div>
 </metal:slot>
 
 </body>

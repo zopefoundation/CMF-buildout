@@ -6,8 +6,6 @@
                review_state python: wtool.getInfoFor(context, 'review_state');
                review_history python: wtool.getInfoFor(context,
                                                        'review_history')">
-<div class="Desktop">
-
 <h1 i18n:translate="">Content Item status history</h1>
 
 <p i18n:translate="">An item's status (also called its review state)
@@ -44,8 +42,6 @@
 </div>
 <div tal:condition="python: not(review_history)"
      i18n:translate="">This item has not had any status changes.</div>
-
-</div>
 </metal:slot>
 
 </body>

@@ -1,28 +1,19 @@
-<html xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      metal:use-macro="here/main_template/macros/master">
+<html metal:use-macro="context/main_template/macros/master">
 <body>
 
-<div metal:fill-slot="main" i18n:domain="cmf_default">
-
- <div tal:define="purl here/portal_url;
-                  mtool here/portal_membership;
-                  member mtool/getAuthenticatedMember;
-                 ">
-
-  <div tal:condition="python: not( mtool.checkPermission( 'Set own properties'
-                                                        , here ) )">
+<metal:slot metal:fill-slot="main" i18n:domain="cmf_default"
+   tal:define="purl context/portal_url;
+               mtool context/portal_membership;
+               member mtool/getAuthenticatedMember">
+<tal:case tal:condition="python: not(mtool.checkPermission('Set own properties', context))">
     <span id="dummy_for_redirect"
-          tal:define="aurl here/absolute_url;
+          tal:define="aurl context/absolute_url;
                       rurl string:${purl}/login_form?came_from=${aurl};
                       response request/RESPONSE;
                       redirect python:response.redirect( rurl )" />
+</tal:case>
 
-  </div><!-- not Set own properties -->
-
-  <div class="Desktop">
-
-   <h1 i18n:translate="">Member Preferences</h1>
+<h1 i18n:translate="">Member Preferences</h1>
 
    <span tal:replace="request/msg"
          tal:condition="request/msg|nothing" />
@@ -70,9 +61,9 @@
       </td>
      </tr>
 
-     <tr tal:condition="here/portal_skins|nothing">
+     <tr tal:condition="context/portal_skins|nothing">
       <th i18n:translate="">Skin</th>
-      <td tal:define="s_tool here/portal_skins;
+      <td tal:define="s_tool context/portal_skins;
                       current request/portal_skin|nothing;
                      ">
        <select name="portal_skin">
@@ -94,13 +85,7 @@
      </tr>
     </table>
    </form>
-
-  </div><!-- class="Desktop" -->
-
- </div><!-- tal:define="mtool" -->
-
-</div><!-- metal:fill-slot="main" -->
+</metal:slot>
 
 </body>
 </html>
-

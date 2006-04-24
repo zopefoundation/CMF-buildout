@@ -75,8 +75,7 @@
     </td>
 </tr>
 </table>
-<span tal:condition="hidefilter">
+ <div tal:condition="hidefilter" class="FormButtons">
   <input type="submit" name="open_filter_form" value="Set View Filter"
-         i18n:attributes="value" />
-</span>
+     i18n:attributes="value" /></div>
 </form>

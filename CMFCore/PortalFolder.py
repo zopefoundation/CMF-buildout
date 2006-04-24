@@ -148,7 +148,7 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
             # We'll modify it, work on a copy.
             filt = filt.copy()
         pt = filt.get('portal_type', [])
-        if type(pt) is type(''):
+        if isinstance(pt, basestring):
             pt = [pt]
         types_tool = getToolByName(self, 'portal_types')
         allowed_types = types_tool.listContentTypes()
@@ -553,14 +553,14 @@ class ContentFilter:
                 self.description.append( 'Modified before: %s' % modified )
 
         if Type:
-            if type( Type ) == type( '' ):
-                Type = [ Type ]
+            if isinstance(Type, basestring):
+                Type = [Type]
             self.predicates.append( lambda x, Type=Type:
                                       x.Type() in Type )
             self.description.append( 'Type: %s' % ', '.join(Type) )
 
         if portal_type and portal_type is not self.MARKER:
-            if type(portal_type) is type(''):
+            if isinstance(portal_type, basestring):
                 portal_type = [portal_type]
             self.predicates.append( lambda x, pt=portal_type:
                                     hasattr(aq_base(x), 'getPortalTypeName')

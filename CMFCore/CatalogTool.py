@@ -15,6 +15,8 @@
 $Id$
 """
 
+from warnings import warn
+
 from AccessControl import ClassSecurityInfo
 from AccessControl.PermissionRole import rolesForPermissionOn
 from DateTime import DateTime
@@ -121,6 +123,9 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
 
     def __init__(self):
         ZCatalog.__init__(self, self.getId())
+        warn('CatalogTool._initIndexes is deprecated and will be removed in '
+             'CMF 2.0.',
+             DeprecationWarning)
         self._initIndexes()
 
     #

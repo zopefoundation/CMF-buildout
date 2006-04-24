@@ -152,12 +152,6 @@ _EMPTY_TOOL_EXPORT = """\
 </object>
 """
 
-_EMPTY_TOOL_EXPORT_V1 = """\
-<?xml version="1.0"?>
-<types-tool>
-</types-tool>
-"""
-
 _NORMAL_TOOL_EXPORT = """\
 <?xml version="1.0"?>
 <object name="portal_types" meta_type="CMF Types Tool">
@@ -165,14 +159,6 @@ _NORMAL_TOOL_EXPORT = """\
  <object name="bar" meta_type="Scriptable Type Information"/>
  <object name="foo" meta_type="Factory-based Type Information"/>
 </object>
-"""
-
-_NORMAL_TOOL_EXPORT_V1 = """\
-<?xml version="1.0"?>
-<types-tool>
- <type id="bar" />
- <type id="foo" />
-</types-tool>
 """
 
 _FILENAME_EXPORT = """\
@@ -184,68 +170,11 @@ _FILENAME_EXPORT = """\
 </object>
 """
 
-_FILENAME_EXPORT_V1 = """\
-<?xml version="1.0"?>
-<types-tool>
- <type id="bar object" filename="types/bar_object.xml" />
- <type id="foo object" filename="types/foo_object.xml" />
-</types-tool>
-"""
-
 _UPDATE_TOOL_IMPORT = """\
 <?xml version="1.0"?>
 <types-tool>
  <type id="foo"/>
 </types-tool>
-"""
-
-_FOO_OLD_EXPORT = """\
-<?xml version="1.0"?>
-<type-info
-   id="%s"
-   kind="Factory-based Type Information"
-   title="Foo"
-   meta_type="Foo Thing"
-   icon="foo.png"
-   product="CMFSetup"
-   factory="addFoo"
-   immediate_view="foo_view"
-   filter_content_types="False"
-   allow_discussion="False"
-   global_allow="False" >
-  <description>Foo things</description>
-  <aliases>
-   <alias from="(Default)" to="foo_view" />
-   <alias from="view" to="foo_view" />
-  </aliases>
-  <action
-     action_id="view"
-     title="View"
-     url_expr="string:${object_url}/foo_view"
-     condition_expr=""
-     category="object"
-     visible="True">
-   <permission>View</permission>
-  </action>
-  <action
-     action_id="edit"
-     title="Edit"
-     url_expr="string:${object_url}/foo_edit_form"
-     condition_expr=""
-     category="object"
-     visible="True">
-   <permission>Modify portal content</permission>
-  </action>
-  <action
-     action_id="metadata"
-     title="Metadata"
-     url_expr="string:${object_url}/metadata_edit_form"
-     condition_expr=""
-     category="object"
-     visible="True">
-   <permission>Modify portal content</permission>
-  </action>
-</type-info>
 """
 
 _FOO_EXPORT = """\
@@ -279,65 +208,6 @@ _FOO_EXPORT = """\
   <permission value="Modify portal content"/>
  </action>
 </object>
-"""
-
-_BAR_OLD_EXPORT = """\
-<?xml version="1.0"?>
-<type-info
-   id="%s"
-   kind="Scriptable Type Information"
-   title="Bar"
-   meta_type="Bar Thing"
-   icon="bar.png"
-   constructor_path="make_bar"
-   permission="Add portal content"
-   immediate_view="bar_view"
-   filter_content_types="True"
-   allow_discussion="True"
-   global_allow="True" >
-  <description>Bar things</description>
-  <allowed_content_type>foo</allowed_content_type>
-  <aliases>
-   <alias from="(Default)" to="bar_view" />
-   <alias from="view" to="bar_view" />
-  </aliases>
-  <action
-     action_id="view"
-     title="View"
-     url_expr="string:${object_url}/bar_view"
-     condition_expr=""
-     category="object"
-     visible="True">
-   <permission>View</permission>
-  </action>
-  <action
-     action_id="edit"
-     title="Edit"
-     url_expr="string:${object_url}/bar_edit_form"
-     condition_expr=""
-     category="object"
-     visible="True">
-   <permission>Modify portal content</permission>
-  </action>
-  <action
-     action_id="contents"
-     title="Contents"
-     url_expr="string:${object_url}/folder_contents"
-     condition_expr=""
-     category="object"
-     visible="True">
-   <permission>Access contents information</permission>
-  </action>
-  <action
-     action_id="metadata"
-     title="Metadata"
-     url_expr="string:${object_url}/metadata_edit_form"
-     condition_expr=""
-     category="object"
-     visible="True">
-   <permission>Modify portal content</permission>
-  </action>
-</type-info>
 """
 
 _BAR_EXPORT = """\
@@ -609,33 +479,6 @@ class importTypesToolTests(_TypeInfoSetup):
         self.failUnless('foo' in tool.objectIds())
         self.failUnless('bar' in tool.objectIds())
 
-    def test_old_xml(self):
-        from Products.CMFCore.exportimport.typeinfo import exportTypesTool
-        from Products.CMFCore.exportimport.typeinfo import importTypesTool
-
-        site = self._initSite()
-        tool = site.portal_types
-
-        self.assertEqual(len(tool.objectIds()), 0)
-
-        context = DummyImportContext(site)
-        context._files['types.xml'] = self._NORMAL_TOOL_EXPORT
-        context._files['types/foo.xml'] = _FOO_OLD_EXPORT % 'foo'
-        context._files['types/bar.xml'] = _BAR_OLD_EXPORT % 'bar'
-        importTypesTool(context)
-
-        self.assertEqual(len(tool.objectIds()), 2)
-        self.failUnless('foo' in tool.objectIds())
-        self.failUnless('bar' in tool.objectIds())
-
-        context = DummyExportContext(site)
-        exportTypesTool(context)
-
-        filename, text, content_type = context._wrote[1]
-        self.assertEqual(filename, 'types/bar.xml')
-        self._compareDOM(text, _BAR_EXPORT % 'bar')
-        self.assertEqual(content_type, 'text/xml')
-
     def test_with_filenames(self):
         from Products.CMFCore.exportimport.typeinfo import importTypesTool
 
@@ -685,12 +528,6 @@ class importTypesToolTests(_TypeInfoSetup):
         self.assertEqual(tool.foo._aliases,
                {'(Default)': 'foo_view', 'view': 'foo_view', 'spam': 'eggs'})
 
-class importTypesToolV1Tests(importTypesToolTests):
-
-    _EMPTY_TOOL_EXPORT = _EMPTY_TOOL_EXPORT_V1
-    _FILENAME_EXPORT = _FILENAME_EXPORT_V1
-    _NORMAL_TOOL_EXPORT = _NORMAL_TOOL_EXPORT_V1
-
 
 def test_suite():
     return unittest.TestSuite((
@@ -698,7 +535,6 @@ def test_suite():
         unittest.makeSuite(TypesToolXMLAdapterTests),
         unittest.makeSuite(exportTypesToolTests),
         unittest.makeSuite(importTypesToolTests),
-        unittest.makeSuite(importTypesToolV1Tests),
         ))
 
 if __name__ == '__main__':

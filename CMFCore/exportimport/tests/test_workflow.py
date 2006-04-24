@@ -109,34 +109,6 @@ _NORMAL_TOOL_EXPORT = """\
 </object>
 """
 
-_EMPTY_TOOL_EXPORT_V1 = """\
-<?xml version="1.0"?>
-<workflow-tool>
- <bindings>
-  <default>
-  </default>
- </bindings>
-</workflow-tool>
-"""
-
-_BINDINGS_TOOL_EXPORT_V1 = """\
-<?xml version="1.0"?>
-<workflow-tool>
- <bindings>
-  <default>
-   <bound-workflow workflow_id="non_dcworkflow_0" />
-   <bound-workflow workflow_id="non_dcworkflow_1" />
-  </default>
-  <type type_id="sometype">
-   <bound-workflow workflow_id="non_dcworkflow_2" />
-  </type>
-  <type type_id="anothertype">
-   <bound-workflow workflow_id="non_dcworkflow_3" />
-  </type>
- </bindings>
-</workflow-tool>
-"""
-
 
 class DummyWorkflowTool(Folder):
 
@@ -388,18 +360,11 @@ class importWorkflowToolTests(_WorkflowSetup):
                          (WF_ID_NON % 3,))
 
 
-class importWorkflowToolV1Tests(importWorkflowToolTests):
-
-    _BINDINGS_TOOL_EXPORT = _BINDINGS_TOOL_EXPORT_V1
-    _EMPTY_TOOL_EXPORT = _EMPTY_TOOL_EXPORT_V1
-
-
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(WorkflowToolXMLAdapterTests),
         unittest.makeSuite(exportWorkflowToolTests),
         unittest.makeSuite(importWorkflowToolTests),
-        unittest.makeSuite(importWorkflowToolV1Tests),
         ))
 
 if __name__ == '__main__':

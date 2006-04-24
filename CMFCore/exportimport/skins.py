@@ -104,21 +104,9 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
             persistence = node.getAttribute('cookie_persistence')
             obj.cookie_persistence = int(self._convertToBoolean(persistence))
         self._initObjects(node)
-        self._initBBBObjects(node)
         self._initSkinPaths(node)
 
         self._logger.info('Skins tool imported.')
-
-    def _initBBBObjects(self, node):
-        for child in node.childNodes:
-            if child.nodeName != 'skin-directory':
-                continue
-            parent = self.context
-
-            obj_id = str(child.getAttribute('id'))
-            obj_dir = str(child.getAttribute('directory'))
-            if obj_id not in parent.objectIds():
-                createDirectoryView(self.context, obj_dir, obj_id)
 
     def _extractSkinPaths(self):
         fragment = self._doc.createDocumentFragment()
@@ -140,9 +128,6 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
             if child.nodeName != 'skin-path':
                 continue
             path_id = str(child.getAttribute('name'))
-            if not path_id:
-                #BBB
-                path_id = str(child.getAttribute('id'))
             if path_id == '*':
                 for path_id, path in self.context._getSelections().items():
                     path = self._updatePath(path, child)

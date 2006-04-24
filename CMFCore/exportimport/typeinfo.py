@@ -62,15 +62,11 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
             self._purgeAliases()
             self._purgeActions()
 
-        self._initOldstyleProperties(node)
         self._initProperties(node)
         self._initAliases(node)
         self._initActions(node)
 
         obj_id = str(node.getAttribute('name'))
-        if not obj_id:
-            # BBB: for CMF 1.5 profiles
-            obj_id = str(node.getAttribute('id'))
         self._logger.info('%r type info imported.' % obj_id)
 
     def _extractAliases(self):
@@ -90,16 +86,6 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
     def _initAliases(self, node):
         aliases = self.context.getMethodAliases()
         for child in node.childNodes:
-            # BBB: for CMF 1.5 profiles
-            #      'alias' nodes moved one level up.
-            if child.nodeName == 'aliases':
-                for sub in child.childNodes:
-                    if sub.nodeName != 'alias':
-                        continue
-                    k = str(sub.getAttribute('from'))
-                    v = str(sub.getAttribute('to'))
-                    aliases[k] = v
-
             if child.nodeName != 'alias':
                 continue
             k = str(child.getAttribute('from'))
@@ -144,10 +130,6 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
                 if sub.nodeName != 'permission':
                     continue
                 permission = sub.getAttribute('value')
-                # BBB: for CMF 1.5 profiles
-                #      Permission name moved from node text to 'value'.
-                if not permission:
-                    permission = self._getNodeText(sub)
                 permissions.append(permission)
             action_obj = self.context.getActionObject(category+'/'+id)
             if action_obj is None:
@@ -158,50 +140,6 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
                                 condition=condition,
                                 permissions=tuple(permissions),
                                 visible=visible)
-
-    def _initOldstyleProperties(self, node):
-        if not node.hasAttribute('title'):
-            return
-        # BBB: for CMF 1.5 profiles
-        obj = self.context
-
-        title = node.getAttribute('title')
-        description = ''
-        content_meta_type = node.getAttribute('meta_type')
-        content_icon = node.getAttribute('icon')
-        immediate_view = node.getAttribute('immediate_view')
-        global_allow = self._convertToBoolean(node.getAttribute(
-                                                              'global_allow'))
-        filter_content_types = self._convertToBoolean(node.getAttribute(
-                                                      'filter_content_types'))
-        allowed_content_types = []
-        allow_discussion = self._convertToBoolean(node.getAttribute(
-                                                          'allow_discussion'))
-        for child in node.childNodes:
-            if child.nodeName == 'description':
-                description += self._getNodeText(child)
-            elif child.nodeName == 'allowed_content_type':
-                allowed_content_types.append(self._getNodeText(child))
-        obj._updateProperty('title', title)
-        obj._updateProperty('description', description)
-        obj._updateProperty('content_meta_type', content_meta_type)
-        obj._updateProperty('content_icon', content_icon)
-        obj._updateProperty('immediate_view', immediate_view)
-        obj._updateProperty('global_allow', global_allow)
-        obj._updateProperty('filter_content_types', filter_content_types)
-        obj._updateProperty('allowed_content_types', allowed_content_types)
-        obj._updateProperty('allow_discussion', allow_discussion)
-
-        if node.getAttribute('kind') == 'Factory-based Type Information':
-            product = node.getAttribute('product')
-            factory = node.getAttribute('factory')
-            obj._updateProperty('product', product)
-            obj._updateProperty('factory', factory)
-        else:
-            constructor_path = node.getAttribute('constructor_path')
-            permission = node.getAttribute('permission')
-            obj._updateProperty('constructor_path', constructor_path)
-            obj._updateProperty('permission', permission)
 
 
 class TypesToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
@@ -235,36 +173,8 @@ class TypesToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
 
         self._initProperties(node)
         self._initObjects(node)
-        self._initBBBObjects(node)
 
         self._logger.info('Types tool imported.')
-
-    def _initBBBObjects(self, node):
-        for child in node.childNodes:
-            if child.nodeName != 'type':
-                continue
-            parent = self.context
-
-            obj_id = str(child.getAttribute('id'))
-            if obj_id not in parent.objectIds():
-                filename = str(child.getAttribute('filename'))
-                if not filename:
-                    filename = 'types/%s.xml' % obj_id.replace(' ', '_')
-                # cheating here for BBB: readDataFile is no interface method
-                body = self.environ.readDataFile(filename)
-                if body is None:
-                    break
-                root = parseString(body).documentElement
-                if root.getAttribute('name') != obj_id:
-                    if root.getAttribute('id') != obj_id:
-                        break
-                meta_type = str(root.getAttribute('kind'))
-                if not meta_type:
-                    meta_type = str(root.getAttribute('meta_type'))
-                for mt_info in Products.meta_types:
-                    if mt_info['name'] == meta_type:
-                        parent._setObject(obj_id, mt_info['instance'](obj_id))
-                        break
 
 
 def importTypesTool(context):

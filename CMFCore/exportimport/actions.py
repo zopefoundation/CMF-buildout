@@ -136,14 +136,14 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
         for provider_id in self.context.listActionProviders():
             child = self._doc.createElement('action-provider')
             child.setAttribute('name', provider_id)
-            # BBB: for CMF 1.5 profiles
+            # BBB: for CMF 1.6 profiles
             sub = self._extractOldstyleActions(provider_id)
             child.appendChild(sub)
             fragment.appendChild(child)
         return fragment
 
     def _extractOldstyleActions(self, provider_id):
-        # BBB: for CMF 1.5 profiles
+        # BBB: for CMF 1.6 profiles
         fragment = self._doc.createDocumentFragment()
 
         provider = getToolByName(self.context, provider_id)
@@ -185,9 +185,6 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
                 continue
 
             provider_id = str(child.getAttribute('name'))
-            if not provider_id:
-                # BBB: for CMF 1.5 profiles
-                provider_id = str(child.getAttribute('id'))
             if child.hasAttribute('remove'):
                 if provider_id in self.context.listActionProviders():
                     self.context.deleteActionProvider(provider_id)
@@ -197,11 +194,11 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
                     provider_id not in self.context.listActionProviders():
                 self.context.addActionProvider(provider_id)
 
-            # BBB: for CMF 1.5 profiles
+            # BBB: for CMF 1.6 profiles
             self._initOldstyleActions(child)
 
     def _initOldstyleActions(self, node):
-        # BBB: for CMF 1.5 profiles
+        # BBB: for CMF 1.6 profiles
         doc = node.ownerDocument
         fragment = doc.createDocumentFragment()
         for child in node.childNodes:

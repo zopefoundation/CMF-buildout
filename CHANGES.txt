@@ -10,7 +10,7 @@ Trunk only (unreleased)
 
   Others
 
-    -
+    - setup handlers: Removed support for CMF 1.5 CMFSetup profiles.
 
 CMF 2.0.x
 

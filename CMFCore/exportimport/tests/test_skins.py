@@ -129,76 +129,6 @@ _FRAGMENT4_IMPORT = """\
 </object>
 """
 
-_EMPTY_EXPORT_V1 = """\
-<?xml version="1.0"?>
-<skins-tool default_skin="default_skin"
-            request_varname="request_varname"
-            allow_any="False"
-            cookie_persistence="False">
-</skins-tool>
-"""
-
-_NORMAL_EXPORT_V1 = """\
-<?xml version="1.0"?>
-<skins-tool default_skin="basic"
-            request_varname="skin_var"
-            allow_any="True"
-            cookie_persistence="True">
- <skin-directory id="one" directory="CMFCore/exportimport/tests/one" />
- <skin-directory id="three" directory="CMFCore/exportimport/tests/three" />
- <skin-directory id="two" directory="CMFCore/exportimport/tests/two" />
- <skin-path id="basic">
-  <layer name="one" />
- </skin-path>
- <skin-path id="fancy">
-  <layer name="three" />
-  <layer name="two" />
-  <layer name="one" />
- </skin-path>
-</skins-tool>
-"""
-
-_FRAGMENT1_IMPORT_V1 = """\
-<?xml version="1.0"?>
-<skins-tool>
- <skin-directory id="three" directory="CMFCore/exportimport/tests/three" />
- <skin-path id="*">
-  <layer name="three" insert-before="two"/>
- </skin-path>
-</skins-tool>
-"""
-
-_FRAGMENT2_IMPORT_V1 = """\
-<?xml version="1.0"?>
-<skins-tool>
- <skin-directory id="four" directory="CMFCore/exportimport/tests/four" />
- <skin-path id="*">
-  <layer name="four" insert-after="three"/>
- </skin-path>
-</skins-tool>
-"""
-
-_FRAGMENT3_IMPORT_V1 = """\
-<?xml version="1.0"?>
-<skins-tool>
- <skin-directory id="three" directory="CMFCore/exportimport/tests/three" />
- <skin-directory id="four" directory="CMFCore/exportimport/tests/four" />
- <skin-path id="*">
-  <layer name="three" insert-before="*"/>
-  <layer name="four" insert-after="*"/>
- </skin-path>
-</skins-tool>
-"""
-
-_FRAGMENT4_IMPORT_V1 = """\
-<?xml version="1.0"?>
-<skins-tool>
- <skin-path id="*">
-  <layer name="three" remove="1"/>
- </skin-path>
-</skins-tool>
-"""
-
 
 class DummySite(Folder):
 
@@ -607,23 +537,12 @@ class importSkinsToolTests(_SkinsSetup):
         self.assertEqual(len(skins_tool.objectItems()), 4)
 
 
-class importSkinsToolV1Tests(importSkinsToolTests):
-
-    _EMPTY_EXPORT = _EMPTY_EXPORT
-    _FRAGMENT1_IMPORT = _FRAGMENT1_IMPORT_V1
-    _FRAGMENT2_IMPORT = _FRAGMENT2_IMPORT_V1
-    _FRAGMENT3_IMPORT = _FRAGMENT3_IMPORT_V1
-    _FRAGMENT4_IMPORT = _FRAGMENT4_IMPORT_V1
-    _NORMAL_EXPORT = _NORMAL_EXPORT
-
-
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(DirectoryViewAdapterTests),
         unittest.makeSuite(SkinsToolXMLAdapterTests),
         unittest.makeSuite(exportSkinsToolTests),
         unittest.makeSuite(importSkinsToolTests),
-        unittest.makeSuite(importSkinsToolV1Tests),
         ))
 
 if __name__ == '__main__':

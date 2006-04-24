@@ -62,24 +62,9 @@ class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
 
         self._initProperties(node)
         self._initObjects(node)
-        self._initBBBObjects(node)
         self._initChains(node)
 
         self._logger.info('Workflow tool imported.')
-
-    def _initBBBObjects(self, node):
-        for child in node.childNodes:
-            if child.nodeName != 'workflow':
-                continue
-            parent = self.context
-
-            obj_id = str(child.getAttribute('workflow_id'))
-            if obj_id not in parent.objectIds():
-                meta_type = str(child.getAttribute('meta_type'))
-                for mt_info in Products.meta_types:
-                    if mt_info['name'] == meta_type:
-                        parent._setObject(obj_id, mt_info['instance'](obj_id))
-                        break
 
     def _extractChains(self):
         fragment = self._doc.createDocumentFragment()

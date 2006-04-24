@@ -48,17 +48,13 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
                     body = context.readDataFile(filename)
                     if body is None:
                         continue
+
                     root = parseString(body).documentElement
-                    obj_id = str(root.getAttribute('name'))
-                    if not obj_id:
-                        # BBB: for CMF 1.5 profiles
-                        obj_id = str(root.getAttribute('id'))
-                    # BBB: for CMF 1.5 profiles
-                    meta_type = str(root.getAttribute('kind'))
-                    if not meta_type:
-                        meta_type = str(root.getAttribute('meta_type'))
+                    meta_type = str(root.getAttribute('meta_type'))
                     if meta_type != self.klass.meta_type:
                         continue
+
+                    obj_id = str(root.getAttribute('name'))
                     obj_ids.append(obj_id)
                 if not obj_ids:
                     continue
@@ -83,16 +79,10 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
 
             root = parseString(body).documentElement
             new_id = str(root.getAttribute('name'))
-            if not new_id:
-                # BBB: for CMF 1.5 profiles
-                new_id = str(root.getAttribute('id'))
             if new_id != obj_path[0]:
                 continue
 
-            # BBB: for CMF 1.5 profiles
-            meta_type = str(root.getAttribute('kind'))
-            if not meta_type:
-                meta_type = str(root.getAttribute('meta_type'))
+            meta_type = str(root.getAttribute('meta_type'))
             if meta_type != self.klass.meta_type:
                 continue
 

@@ -80,9 +80,6 @@ class ContentTypeRegistryXMLAdapter(XMLAdapterBase):
             parent = self.context
 
             predicate_id = str(child.getAttribute('name'))
-            if not predicate_id:
-                # BBB: for CMF 1.5 profiles
-                predicate_id = str(child.getAttribute('predicate_id'))
             predicate_type = str(child.getAttribute('predicate_type'))
             content_type_name = str(child.getAttribute('content_type_name'))
             if predicate_id not in parent.predicate_ids:

@@ -87,16 +87,16 @@ _ACTIONSTOOL_BODY = """\
 
 _EMPTY_EXPORT = """\
 <?xml version="1.0"?>
-<object meta_type="CMF Actions Tool" name="portal_actions" \
-xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+<object name="portal_actions" meta_type="CMF Actions Tool"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <action-provider name="portal_actions"/>
 </object>
 """
 
 _NORMAL_EXPORT = """\
 <?xml version="1.0"?>
-<object meta_type="CMF Actions Tool" name="portal_actions" \
-xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+<object name="portal_actions" meta_type="CMF Actions Tool"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <action-provider name="portal_actions"/>
  <action-provider name="portal_foo">
   <action action_id="foo"
@@ -121,8 +121,8 @@ xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
 _NEWSYTLE_EXPORT = """\
 <?xml version="1.0"?>
-<object meta_type="CMF Actions Tool" name="portal_actions" \
-xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+<object name="portal_actions" meta_type="CMF Actions Tool"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <action-provider name="portal_actions"/>
  <object name="dummy" meta_type="CMF Action Category">
   <property name="title"></property>
@@ -152,8 +152,8 @@ xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
 _I18N_IMPORT = """\
 <?xml version="1.0"?>
-<object meta_type="CMF Actions Tool" name="portal_actions" \
-xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+<object name="portal_actions" meta_type="CMF Actions Tool"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <action-provider name="portal_actions"/>
  <object name="dummy" meta_type="CMF Action Category">
   <property name="title"></property>
@@ -172,7 +172,7 @@ xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
 _INSERT_IMPORT = """\
 <?xml version="1.0"?>
-<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+<object name="portal_actions">
  <object name="dummy">
  <object name="spam" meta_type="CMF Action" insert-before="*">
   <property name="title">Spam</property>
@@ -188,19 +188,16 @@ _INSERT_IMPORT = """\
   <property name="icon_expr">string:foo_icon.png</property>
  </object>
  </object>
-</actions-tool>
+</object>
 """
 
 _REMOVE_IMPORT = """\
 <?xml version="1.0"?>
-<actions-tool xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <action-provider id="portal_actions" remove="">
- </action-provider>
- <action-provider id="not_existing" remove="">
- </action-provider>
- <action-provider id="portal_bar" remove="">
- </action-provider>
-</actions-tool>
+<object name="portal_actions">
+ <action-provider name="portal_actions" remove=""/>
+ <action-provider name="not_existing" remove=""/>
+ <action-provider name="portal_bar" remove=""/>
+</object>
 """
 
 

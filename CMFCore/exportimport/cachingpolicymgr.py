@@ -75,9 +75,6 @@ class CachingPolicyNodeAdapter(NodeAdapterBase):
         """
         info = {}
         policy_id = node.getAttribute('name')
-        if not policy_id:
-            # BBB: for CMF 1.5 profiles
-            policy_id = node.getAttribute('policy_id')
         info['policy_id'] = str(policy_id)
         info['predicate'] = str(node.getAttribute('predicate'))
         info['mtime_func'] = str(node.getAttribute('mtime_func'))

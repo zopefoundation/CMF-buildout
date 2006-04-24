@@ -75,11 +75,18 @@ class DummyType(DummyObject):
     def Title(self):
         return self.title
 
-    def queryMethodID(self, alias, default=None, context=None):
-        return self._actions.get(alias, default)
+    def allowType(self, contentType):
+        return True
 
     def allowDiscussion(self):
         return False
+
+    def queryMethodID(self, alias, default=None, context=None):
+        return self._actions.get(alias, default)
+
+    def isConstructionAllowed(self, container):
+        return True
+
 
 class DummyContent( PortalContent, Item ):
     """
@@ -309,29 +316,13 @@ class DummyTool(Implicit,ActionProviderBase):
     Action Provider
     """
 
-    root = 'DummyTool'
-
-    view_actions = ( ('', 'dummy_view')
-                   , ('view', 'dummy_view')
-                   , ('(Default)', 'dummy_view')
-                   )
-
-
     def __init__(self, anon=1):
         self.anon = anon
-
-    def __call__( self ):
-        return self.root
-
-    getPortalPath = __call__
-
-    def getPortalObject( self ):
-        return aq_parent( aq_inner( self ) )
 
     def getIcon( self, relative=0 ):
         return 'Tool: %s' % relative
 
-    # MembershipTool
+    # IMembershipTool
     def getAuthenticatedMember(self):
         return DummyUser()
 
@@ -341,20 +332,40 @@ class DummyTool(Implicit,ActionProviderBase):
     def checkPermission(self, permissionName, object, subobjectName=None):
         return True
 
-    # TypesTool
-    def listTypeInfo(self, container=None):
-        typ = 'Dummy Content'
-        return ( DummyType(typ, title=typ, actions=self.view_actions), )
+    # ITypesTool
+    _type_id = 'Dummy Content'
+    _type_actions = (('', 'dummy_view'),
+                     ('view', 'dummy_view'),
+                     ('(Default)', 'dummy_view'))
 
     def getTypeInfo(self, contentType):
-        typ = 'Dummy Content'
-        return DummyType(typ, title=typ, actions=self.view_actions)
+        return DummyType(self._type_id, title=self._type_id,
+                         actions=self._type_actions)
 
-    # WorkflowTool
+    def listTypeInfo(self, container=None):
+        return (DummyType(self._type_id, title=self._type_id,
+                          actions=self._type_actions),)
+
+    def listContentTypes(self, container=None, by_metatype=0):
+        return (self._type_id,)
+
+    # IURLTool
+    root = 'DummyTool'
+
+    def __call__(self):
+        return self.root
+
+    def getPortalObject(self):
+        return aq_parent(aq_inner(self))
+
+    getPortalPath = __call__
+
+    # IWorkflowTool
     test_notified = None
 
     def notifyCreated(self, ob):
         self.test_notified = ob
+
 
 class DummyCachingManager:
 
@@ -392,4 +403,3 @@ class DummyCachingManagerWithPolicy(DummyCachingManager):
             modified_date = content.modified()
          set_last_modified = (modified_date is not None)
          return (modified_date, FAKE_ETAG, set_last_modified)
-

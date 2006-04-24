@@ -19,6 +19,7 @@ from DocumentTemplate import sequence
 from ZTUtils import LazyFilter
 from ZTUtils import make_query
 
+from Products.CMFCore.interfaces import IDynamicType
 from Products.CMFDefault.exceptions import CopyError
 from Products.CMFDefault.exceptions import zExceptions_Unauthorized
 from Products.CMFDefault.permissions import AddPortalContent
@@ -125,7 +126,13 @@ class FolderContentsView(BatchViewBase, FormViewBase):
                  'permissions': (ManageProperties,),
                  'transform': ('validateItemIds', 'bottom_control'),
                  'redirect': ('portal_types', 'object/folderContents',
-                              'b_start, key, reverse')})
+                              'b_start, key, reverse')},
+                {'id': 'set_view_filter',
+                 'transform': ('set_filter_control',),
+                 'redirect': ('portal_types', 'object/folderContents')},
+                {'id': 'clear_view_filter',
+                 'transform': ('clear_filter_control',),
+                 'redirect': ('portal_types', 'object/folderContents')})
 
     # helpers
 
@@ -151,7 +158,6 @@ class FolderContentsView(BatchViewBase, FormViewBase):
     @memoize
     def _getItems(self):
         (key, reverse) = self._getSorting()
-        self.context.filterCookie()
         folderfilter = self.request.get('folderfilter', '')
         filter = self.context.decodeFolderFilter(folderfilter)
         items = self.context.listFolderContents(contentFilter=filter)
@@ -168,7 +174,7 @@ class FolderContentsView(BatchViewBase, FormViewBase):
                                         'aq_parent')
         if allowed:
             up_obj = self.context.aq_inner.aq_parent
-            if hasattr(up_obj, 'portal_url'):
+            if IDynamicType.providedBy(up_obj):
                 up_url = up_obj.getActionInfo('object/folderContents')['url']
                 return {'icon': '%s/UpFolder_icon.gif' % self._getPortalURL(),
                         'id': up_obj.getId(),
@@ -398,3 +404,14 @@ class FolderContentsView(BatchViewBase, FormViewBase):
                 return False, _(u'Nothing to change.')
         except ValueError:
             return False, _(u'ValueError: Move failed.')
+
+    def set_filter_control(self, **kw):
+        filter = self.context.encodeFolderFilter(self.request)
+        self.request.RESPONSE.setCookie('folderfilter', filter, path='/',
+                                      expires='Wed, 19 Feb 2020 14:28:00 GMT')
+        return True, _(u'Filter applied.')
+
+    def clear_filter_control(self, **kw):
+        self.request.RESPONSE.expireCookie('folderfilter', path='/')
+        self.request.RESPONSE.expireCookie('show_filter_form', path='/')
+        return True, _(u'Filter cleared.')

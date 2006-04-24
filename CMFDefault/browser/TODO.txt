@@ -31,6 +31,9 @@ Converting skins to views:
       folder_down_control.py -> FolderContentsView.down_control
       folder_top_control.py -> FolderContentsView.top_control
       folder_bottom_control.py -> FolderContentsView.bottom_control
+      filterCookie.py -> FolderContentsView.set_filter_control
+                         FolderContentsView.clear_filter_control
+      clearCookie.py -> FolderContentsView.clear_filter_control
 
   [x] IMutableMinimalDublinCore @@properties.html:
 

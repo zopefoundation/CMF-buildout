@@ -74,10 +74,10 @@ msgid "Document changed."
 msgstr ""
 
 #: CMFDefault/browser/document.py:111
-#: CMFDefault/browser/folder.py:353
-#: CMFDefault/browser/folder.py:368
-#: CMFDefault/browser/folder.py:383
-#: CMFDefault/browser/folder.py:398
+#: CMFDefault/browser/folder.py:359
+#: CMFDefault/browser/folder.py:374
+#: CMFDefault/browser/folder.py:389
+#: CMFDefault/browser/folder.py:404
 #: CMFDefault/browser/link.py:74
 #: CMFDefault/browser/metadata.py:63
 #: CMFDefault/browser/newsitem.py:53
@@ -127,7 +127,7 @@ msgstr ""
 msgid "Change and View"
 msgstr ""
 
-#: CMFDefault/browser/folder.py:187
+#: CMFDefault/browser/folder.py:193
 #: CMFDefault/skins/zpt_generic/folder_contents.py:113
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:110
 #: CMFDefault/skins/zpt_generic/review.pt:25
@@ -135,110 +135,110 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: CMFDefault/browser/folder.py:191
+#: CMFDefault/browser/folder.py:197
 #: CMFDefault/skins/zpt_generic/folder_contents.py:117
 msgid "Name"
 msgstr ""
 
-#: CMFDefault/browser/folder.py:195
+#: CMFDefault/browser/folder.py:201
 #: CMFDefault/skins/zpt_generic/folder_contents.py:121
 msgid "Last Modified"
 msgstr ""
 
-#: CMFDefault/browser/folder.py:199
+#: CMFDefault/browser/folder.py:205
 #: CMFDefault/skins/zpt_generic/folder_contents.py:125
 msgid "Position"
 msgstr ""
 
-#: CMFDefault/browser/folder.py:276
+#: CMFDefault/browser/folder.py:282
 #: CMFDefault/skins/zpt_control/validateItemIds.py:8
 msgid "Please select one or more items first."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:282
+#: CMFDefault/browser/folder.py:288
 #: CMFDefault/skins/zpt_control/validateClipboardData.py:8
 msgid "Please copy or cut one or more items to paste first."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:293
+#: CMFDefault/browser/folder.py:299
 #: CMFDefault/skins/zpt_control/folder_cut_control.py:11
 msgid "Item cut."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:295
+#: CMFDefault/browser/folder.py:301
 #: CMFDefault/skins/zpt_control/folder_cut_control.py:13
 msgid "Items cut."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:297
+#: CMFDefault/browser/folder.py:303
 #: CMFDefault/skins/zpt_control/folder_cut_control.py:15
 msgid "CopyError: Cut failed."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:299
+#: CMFDefault/browser/folder.py:305
 #: CMFDefault/skins/zpt_control/folder_cut_control.py:17
 msgid "Unauthorized: Cut failed."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:307
+#: CMFDefault/browser/folder.py:313
 #: CMFDefault/skins/zpt_control/folder_copy_control.py:10
 msgid "Item copied."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:309
+#: CMFDefault/browser/folder.py:315
 #: CMFDefault/skins/zpt_control/folder_copy_control.py:12
 msgid "Items copied."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:311
+#: CMFDefault/browser/folder.py:317
 #: CMFDefault/skins/zpt_control/folder_copy_control.py:14
 msgid "CopyError: Copy failed."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:319
+#: CMFDefault/browser/folder.py:325
 #: CMFDefault/skins/zpt_control/folder_paste_control.py:11
 msgid "Item pasted."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:321
+#: CMFDefault/browser/folder.py:327
 #: CMFDefault/skins/zpt_control/folder_paste_control.py:13
 msgid "Items pasted."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:323
+#: CMFDefault/browser/folder.py:329
 #: CMFDefault/skins/zpt_control/folder_paste_control.py:15
 msgid "CopyError: Paste failed."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:325
+#: CMFDefault/browser/folder.py:331
 #: CMFDefault/skins/zpt_control/folder_paste_control.py:17
 msgid "Unauthorized: Paste failed."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:332
+#: CMFDefault/browser/folder.py:338
 #: CMFDefault/skins/zpt_control/folder_delete_control.py:9
 msgid "Item deleted."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:334
+#: CMFDefault/browser/folder.py:340
 #: CMFDefault/skins/zpt_control/folder_delete_control.py:11
 msgid "Items deleted."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:349
+#: CMFDefault/browser/folder.py:355
 #: CMFDefault/skins/zpt_control/folder_up_control.py:9
 msgid "Item moved up."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:351
+#: CMFDefault/browser/folder.py:357
 #: CMFDefault/skins/zpt_control/folder_up_control.py:11
 msgid "Items moved up."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:355
-#: CMFDefault/browser/folder.py:370
-#: CMFDefault/browser/folder.py:385
-#: CMFDefault/browser/folder.py:400
+#: CMFDefault/browser/folder.py:361
+#: CMFDefault/browser/folder.py:376
+#: CMFDefault/browser/folder.py:391
+#: CMFDefault/browser/folder.py:406
 #: CMFDefault/skins/zpt_control/folder_bottom_control.py:15
 #: CMFDefault/skins/zpt_control/folder_down_control.py:15
 #: CMFDefault/skins/zpt_control/folder_top_control.py:15
@@ -246,63 +246,71 @@ msgstr ""
 msgid "ValueError: Move failed."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:364
+#: CMFDefault/browser/folder.py:370
 #: CMFDefault/skins/zpt_control/folder_down_control.py:9
 msgid "Item moved down."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:366
+#: CMFDefault/browser/folder.py:372
 #: CMFDefault/skins/zpt_control/folder_down_control.py:11
 msgid "Items moved down."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:379
+#: CMFDefault/browser/folder.py:385
 #: CMFDefault/skins/zpt_control/folder_top_control.py:9
 msgid "Item moved to top."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:381
+#: CMFDefault/browser/folder.py:387
 #: CMFDefault/skins/zpt_control/folder_top_control.py:11
 msgid "Items moved to top."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:394
+#: CMFDefault/browser/folder.py:400
 #: CMFDefault/skins/zpt_control/folder_bottom_control.py:9
 msgid "Item moved to bottom."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:396
+#: CMFDefault/browser/folder.py:402
 #: CMFDefault/skins/zpt_control/folder_bottom_control.py:11
 msgid "Items moved to bottom."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:65
+#: CMFDefault/browser/folder.py:412
+msgid "Filter applied."
+msgstr ""
+
+#: CMFDefault/browser/folder.py:417
+msgid "Filter cleared."
+msgstr ""
+
+#: CMFDefault/browser/folder.py:66
 #: CMFDefault/skins/zpt_generic/folder_contents.py:172
 #: CMFDefault/skins/zpt_generic/members_manage_form.py:50
 msgid "New..."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:70
+#: CMFDefault/browser/folder.py:71
 #: CMFDefault/skins/zpt_generic/folder_contents.py:175
 msgid "Rename..."
 msgstr ""
 
-#: CMFDefault/browser/folder.py:77
+#: CMFDefault/browser/folder.py:78
 #: CMFDefault/skins/zpt_generic/folder_contents.py:177
 msgid "Cut"
 msgstr ""
 
-#: CMFDefault/browser/folder.py:84
+#: CMFDefault/browser/folder.py:85
 #: CMFDefault/skins/zpt_generic/folder_contents.py:178
 msgid "Copy"
 msgstr ""
 
-#: CMFDefault/browser/folder.py:91
+#: CMFDefault/browser/folder.py:92
 #: CMFDefault/skins/zpt_generic/folder_contents.py:180
 msgid "Paste"
 msgstr ""
 
-#: CMFDefault/browser/folder.py:98
+#: CMFDefault/browser/folder.py:99
 #: CMFDefault/skins/zpt_generic/folder_contents.py:182
 #: CMFDefault/skins/zpt_generic/members_delete_form.py:28
 #: CMFDefault/skins/zpt_generic/folder_localrole_form.pt:196

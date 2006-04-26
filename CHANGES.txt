@@ -1,3 +1,10 @@
+After CMF 2.0.0 (unreleased)
+
+  Bug Fixes
+
+    - CMFCore.exportimport.typeinfo:  Added BBB support for really old
+      typeinfo instances which still return mappings instead of ActionInfos.
+
 CMF 2.0.0 (2006/04/16)
 
   New Features

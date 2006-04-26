@@ -110,8 +110,9 @@ class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
     def _extractActions(self):
         fragment = self._doc.createDocumentFragment()
         actions = self.context.listActions()
-        for ai in actions:
-            ai_info = ai.getMapping()
+        for ai_info in actions:
+            if not isinstance(ai_info, dict):
+                ai_info = ai_info.getMapping()
             child = self._doc.createElement('action')
             child.setAttribute('title', ai_info['title'])
             child.setAttribute('action_id', ai_info['id'])

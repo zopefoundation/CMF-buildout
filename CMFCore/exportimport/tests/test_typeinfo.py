@@ -511,14 +511,14 @@ class exportTypesToolTests(_TypeInfoSetup):
         self._compareDOM(text, _NORMAL_TOOL_EXPORT)
         self.assertEqual(content_type, 'text/xml')
 
-        filename, text, content_type = context._wrote[2]
-        self.assertEqual(filename, 'types/bar.xml')
-        self._compareDOM(text, _BAR_EXPORT % 'bar')
-        self.assertEqual(content_type, 'text/xml')
-
         filename, text, content_type = context._wrote[1]
         self.assertEqual(filename, 'types/foo.xml')
         self._compareDOM(text, _FOO_EXPORT % 'foo')
+        self.assertEqual(content_type, 'text/xml')
+
+        filename, text, content_type = context._wrote[2]
+        self.assertEqual(filename, 'types/bar.xml')
+        self._compareDOM(text, _BAR_EXPORT % 'bar')
         self.assertEqual(content_type, 'text/xml')
 
     def test_with_filenames(self):
@@ -533,13 +533,44 @@ class exportTypesToolTests(_TypeInfoSetup):
         self.assertEqual(filename, 'types.xml')
         self._compareDOM(text, _FILENAME_EXPORT)
         self.assertEqual(content_type, 'text/xml')
+
+        filename, text, content_type = context._wrote[1]
+        self.assertEqual(filename, 'types/foo_object.xml')
+        self._compareDOM(text, _FOO_EXPORT % 'foo object')
+        self.assertEqual(content_type, 'text/xml')
+
         filename, text, content_type = context._wrote[2]
         self.assertEqual(filename, 'types/bar_object.xml')
         self._compareDOM(text, _BAR_EXPORT % 'bar object')
         self.assertEqual(content_type, 'text/xml')
+
+    def test_old_instance(self):
+        # Test for really *old* instances which still return dicts instead
+        # of action info objects
+        from Products.CMFCore.exportimport.typeinfo import exportTypesTool
+
+        site = self._initSite(1)
+        context = DummyExportContext(site)
+        foo_actions = site.portal_types.foo.listActions()
+        def _actions_as_mapping():
+            return [x.getMapping() for x in foo_actions]
+        site.portal_types.foo.listActions = _actions_as_mapping
+        exportTypesTool(context)
+
+        self.assertEqual(len(context._wrote), 3)
+        filename, text, content_type = context._wrote[0]
+        self.assertEqual(filename, 'types.xml')
+        self._compareDOM(text, _NORMAL_TOOL_EXPORT)
+        self.assertEqual(content_type, 'text/xml')
+
         filename, text, content_type = context._wrote[1]
-        self.assertEqual(filename, 'types/foo_object.xml')
-        self._compareDOM(text, _FOO_EXPORT % 'foo object')
+        self.assertEqual(filename, 'types/foo.xml')
+        self._compareDOM(text, _FOO_EXPORT % 'foo')
+        self.assertEqual(content_type, 'text/xml')
+
+        filename, text, content_type = context._wrote[2]
+        self.assertEqual(filename, 'types/bar.xml')
+        self._compareDOM(text, _BAR_EXPORT % 'bar')
         self.assertEqual(content_type, 'text/xml')
 
 

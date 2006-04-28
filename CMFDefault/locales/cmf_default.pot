@@ -1999,6 +1999,21 @@ msgstr ""
 msgid "Comments:"
 msgstr ""
 
+#: CMFDefault/utils.py:325
+# Default: ""
+msgid "JavaScript event '${attribute}' not allowed."
+msgstr ""
+
+#: CMFDefault/utils.py:330
+# Default: ""
+msgid "JavaScript URI '${value}' not allowed."
+msgstr ""
+
+#: CMFDefault/utils.py:343
+# Default: ""
+msgid "Dynamic tag '${tag}' not allowed."
+msgstr ""
+
 #: CMFTopic/profiles/default/types/Topic.xml:4
 msgid "Topic"
 msgstr ""
@@ -2025,6 +2040,12 @@ msgstr ""
 
 #: CMFTopic/skins/zpt_topic/topic_view_template.pt:31
 msgid "Query Parameters:"
+msgstr ""
+
+msgid "Found ${count} ${type} matching '${text}'."
+msgstr ""
+
+msgid "Found ${count} ${type}."
 msgstr ""
 
 msgid "Next ${count} members"

@@ -1,3 +1,9 @@
+msgid "Found ${count} ${type} matching '${text}'."
+msgstr ""
+
+msgid "Found ${count} ${type}."
+msgstr ""
+
 msgid "Next ${count} members"
 msgstr ""
 

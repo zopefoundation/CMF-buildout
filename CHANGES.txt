@@ -1,9 +1,13 @@
-After CMF 2.0.0 (unreleased)
+CMF 2.0.1-beta (unreleased)
 
   Bug Fixes
 
+    - CMFCore Expression: Fixed 'request' provided by expression contexts.
+      'request' was not set correctly if 'object' is not specified.
+
     - CMFCore.exportimport.typeinfo:  Added BBB support for really old
       typeinfo instances which still return mappings instead of ActionInfos.
+
 
 CMF 2.0.0 (2006/04/16)
 

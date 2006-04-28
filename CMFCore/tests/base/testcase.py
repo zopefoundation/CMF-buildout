@@ -239,6 +239,11 @@ class FSDVTest( TestCase, WarningInterceptor ):
         self.skin_path_name = join(self.tempname,self._skinname,self._layername)
 
     def tearDown(self):
-        # kill the copy
         self._free_warning_output()
-        rmtree(self.tempname)
+        # kill the copy
+        try:
+            rmtree(self.tempname)
+        except OSError:
+            # try again (some files might be locked temporarily)
+            time.sleep(0.1)
+            rmtree(self.tempname)

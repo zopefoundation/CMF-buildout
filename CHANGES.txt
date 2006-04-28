@@ -2,6 +2,9 @@ CMF 1.6.1-beta (unreleased)
 
   Bug Fixes
 
+    - CMFCore Expression: Fixed 'request' provided by expression contexts.
+      'request' was not set correctly if 'object' is not specified.
+
     - CMFCore.interfaces._tools: Corrected the API given for 
       WorkflowDefinition.isActionSupported.
       (http://www.zope.org/Collectors/CMF/407)

@@ -280,6 +280,7 @@ NASTY_TAGS = { 'script'     : 1
              , 'applet'     : 1
              }
 
+
 class StrippingParser( SGMLParser ):
 
     """ Pass only allowed tags;  raise exception for known-bad.
@@ -312,7 +313,6 @@ class StrippingParser( SGMLParser ):
         self.result = "%s&%s%s" % (self.result, name, x)
 
     def unknown_starttag(self, tag, attrs):
-
         """ Delete all tags except for legal ones.
         """
         if VALID_TAGS.has_key(tag):
@@ -321,11 +321,15 @@ class StrippingParser( SGMLParser ):
 
             for k, v in attrs:
 
-                if k.lower().startswith( 'on' ):
-                    raise IllegalHTML, 'Javascipt event "%s" not allowed.' % k
+                if k.lower().startswith('on'):
+                    msg = _(u"JavaScript event '${attribute}' not allowed.",
+                            mapping={'attribute': k})
+                    raise IllegalHTML(msg)
 
-                if v.lower().startswith( 'javascript:' ):
-                    raise IllegalHTML, 'Javascipt URI "%s" not allowed.' % v
+                if v.lower().startswith('javascript:'):
+                    msg = _(u"JavaScript URI '${value}' not allowed.",
+                            mapping={'value': v})
+                    raise IllegalHTML(msg)
 
                 self.result = '%s %s="%s"' % (self.result, k, v)
 
@@ -335,18 +339,21 @@ class StrippingParser( SGMLParser ):
             else:
                 self.result = self.result + ' />'
 
-        elif NASTY_TAGS.get( tag ):
-            raise IllegalHTML, 'Dynamic tag "%s" not allowed.' % tag
+        elif NASTY_TAGS.get(tag):
+            msg = _(u"Dynamic tag '${tag}' not allowed.",
+                    mapping={'tag': tag})
+            raise IllegalHTML(msg)
 
         else:
             pass    # omit tag
 
     def unknown_endtag(self, tag):
 
-        if VALID_TAGS.get( tag ):
+        if VALID_TAGS.get(tag):
 
             self.result = "%s</%s>" % (self.result, tag)
             remTag = '</%s>' % tag
+
 
 security.declarePublic('scrubHTML')
 def scrubHTML( html ):
@@ -447,4 +454,4 @@ def translate(message, context):
     return GTS.translate('cmf_default', message, context=context)
 
 security.declarePublic('Message')
-Message = MessageFactory('cmf_default')
+Message = _ = MessageFactory('cmf_default')

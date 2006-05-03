@@ -208,9 +208,13 @@ class BatchViewBase(ViewBase):
         return {}
 
     @memoize
+    def _getNavigationVars(self):
+        return self._getHiddenVars()
+
+    @memoize
     def _getNavigationURL(self, b_start):
         target = self._getViewURL()
-        kw = self._getHiddenVars()
+        kw = self._getNavigationVars().copy()
 
         kw['b_start'] = b_start
         for k, v in kw.items():

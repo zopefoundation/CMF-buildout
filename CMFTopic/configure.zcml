@@ -5,21 +5,20 @@
   <adapter
       factory=".exportimport.TopicExportImport"
       provides="Products.GenericSetup.interfaces.IFilesystemExporter"
-      for="Products.CMFTopic.Topic.ITopic"
+      for="Products.CMFTopic.interfaces.ITopic"
       />
 
   <adapter
       factory=".exportimport.TopicExportImport"
       provides="Products.GenericSetup.interfaces.IFilesystemImporter"
-      for="Products.CMFTopic.Topic.ITopic"
+      for="Products.CMFTopic.interfaces.ITopic"
       />
 
   <adapter
       factory=".exportimport.SubtopicFactory"
       provides="Products.GenericSetup.interfaces.IContentFactory"
-      for="Products.CMFTopic.Topic.ITopic"
+      for="Products.CMFTopic.interfaces.ITopic"
       name="Topic"
       />
 
 </configure>
-

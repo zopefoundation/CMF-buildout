@@ -15,10 +15,8 @@
 $Id$
 """
 
-from unittest import TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Acquisition import Implicit
 
@@ -121,6 +119,7 @@ class DummySyndicationTool( Implicit ):
 
 
 class TestTopic(SecurityTest):
+
     """ Test all the general Topic cases.
     """
 
@@ -128,18 +127,20 @@ class TestTopic(SecurityTest):
         SecurityTest.setUp(self)
         self.site = DummySite('site').__of__(self.root)
 
-    def _makeOne(self, id, *args, **kw):
+    def _getTargetClass(self):
         from Products.CMFTopic.Topic import Topic
 
-        return self.site._setObject( id, Topic(id, *args, **kw) )
+        return Topic
 
-    def _initSite( self, max_items=15, index_ids=() ):
+    def _makeOne(self, id, *args, **kw):
+        return self.site._setObject(id,
+                                    self._getTargetClass()(id, *args, **kw))
 
+    def _initSite(self, max_items=15, index_ids=()):
         self.site.portal_catalog = DummyCatalog( index_ids )
         self.site.portal_syndication = DummySyndicationTool( max_items )
 
-    def _initDocuments( self, **kw ):
-
+    def _initDocuments(self, **kw):
         for k, v in kw.items():
 
             document = DummyDocument( k )
@@ -156,21 +157,25 @@ class TestTopic(SecurityTest):
                 import DynamicType as IDynamicType
         from Products.CMFCore.interfaces.Folderish \
                 import Folderish as IFolderish
-        from Products.CMFTopic.Topic import Topic
 
-        verifyClass(IDynamicType, Topic)
-        verifyClass(IFolderish, Topic)
-        verifyClass(IOrderedContainer, Topic)
-        verifyClass(WriteLockInterface, Topic)
+        verifyClass(IDynamicType, self._getTargetClass())
+        verifyClass(IFolderish, self._getTargetClass())
+        verifyClass(IOrderedContainer, self._getTargetClass())
+        verifyClass(WriteLockInterface, self._getTargetClass())
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
         from Products.CMFCore.interfaces import IDynamicType
         from Products.CMFCore.interfaces import IFolderish
-        from Products.CMFTopic.Topic import Topic
+        from Products.CMFCore.interfaces import IMutableMinimalDublinCore
+        from Products.CMFTopic.interfaces import IMutableTopic
+        from Products.CMFTopic.interfaces import ITopic
 
-        verifyClass(IDynamicType, Topic)
-        verifyClass(IFolderish, Topic)
+        verifyClass(IDynamicType, self._getTargetClass())
+        verifyClass(IFolderish, self._getTargetClass())
+        verifyClass(IMutableMinimalDublinCore, self._getTargetClass())
+        verifyClass(IMutableTopic, self._getTargetClass())
+        verifyClass(ITopic, self._getTargetClass())
 
     def test_Empty( self ):
         topic = self._makeOne('top')
@@ -337,9 +342,9 @@ _DOCUMENTS = \
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(TestTopic),
+    return unittest.TestSuite((
+        unittest.makeSuite(TestTopic),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

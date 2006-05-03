@@ -8,7 +8,7 @@
                                        'match': 'foo'};
                       global batch python: {'summary': summary}" />
 
- <metal:macro metal:define-macro="summary"
+ <metal:macro metal:define-macro="summary" i18n:domain="cmf_default"
  ><p class="BatchSummary" tal:condition="batch/summary/length"
      i18n:translate="">Found <span tal:replace="batch/summary/length"
       i18n:name="count">N</span> <span i18n:name="type"><span tal:omit-tag=""
@@ -28,7 +28,7 @@
                                        'type': 'File', 'url': '?'}, );
                       global batch python: {'listItemInfos': items}" />
 
- <metal:macro metal:define-macro="listing">
+ <metal:macro metal:define-macro="listing" i18n:domain="cmf_default">
  <p class="BatchListing" tal:repeat="item_info batch/listItemInfos"
  ><a href="" tal:attributes="href item_info/url"
   ><img src="" alt="" title="" border="0" width="16" height="16"

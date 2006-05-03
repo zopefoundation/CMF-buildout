@@ -339,6 +339,60 @@ msgstr ""
 msgid "News Item changed."
 msgstr ""
 
+#: CMFDefault/browser/templates/batch_widgets.pt:10
+#: CMFDefault/skins/zpt_generic/batch_widgets.pt:17
+msgid "Found ${count} ${type} matching '${text}'."
+msgstr ""
+
+#: CMFDefault/browser/templates/batch_widgets.pt:12
+#: CMFDefault/skins/zpt_generic/batch_widgets.pt:19
+#: CMFDefault/skins/zpt_generic/review.pt:100
+msgid "There are no items matching your specified criteria."
+msgstr ""
+
+#: CMFDefault/browser/templates/batch_widgets.pt:7
+#: CMFDefault/browser/templates/batch_widgets.pt:19
+#: CMFDefault/browser/templates/batch_widgets.pt:19
+#: CMFDefault/browser/templates/batch_widgets.pt:30
+#: CMFDefault/browser/templates/folder_contents.pt:42
+#: CMFDefault/browser/templates/form_widgets.pt:13
+#: CMFDefault/skins/zpt_content/content_status_history.pt:25
+#: CMFDefault/skins/zpt_content/content_status_history.pt:32
+#: CMFDefault/skins/zpt_content/transition_form.pt:26
+#: CMFDefault/skins/zpt_content/transition_form.pt:56
+#: CMFDefault/skins/zpt_generic/batch_widgets.pt:14
+#: CMFDefault/skins/zpt_generic/batch_widgets.pt:34
+#: CMFDefault/skins/zpt_generic/batch_widgets.pt:34
+#: CMFDefault/skins/zpt_generic/batch_widgets.pt:45
+#: CMFDefault/skins/zpt_generic/folder_contents_template.pt:46
+#: CMFDefault/skins/zpt_generic/folder_factories_template.pt:21
+#: CMFDefault/skins/zpt_generic/folder_factories_template.pt:26
+#: CMFDefault/skins/zpt_generic/folder_filter_form.pt:51
+#: CMFDefault/skins/zpt_generic/folder_rename_template.pt:17
+#: CMFDefault/skins/zpt_generic/form_widgets.pt:22
+#: CMFDefault/skins/zpt_generic/index_html_utils.html:32
+#: CMFDefault/skins/zpt_generic/index_html_utils.html:32
+#: CMFDefault/skins/zpt_generic/index_html_utils.html:70
+#: CMFDefault/skins/zpt_generic/index_html_utils.html:70
+#: CMFDefault/skins/zpt_generic/index_html_utils.html:106
+#: CMFDefault/skins/zpt_generic/index_html_utils.html:106
+#: CMFDefault/skins/zpt_generic/join_template.pt:5
+#: CMFDefault/skins/zpt_generic/main_template.pt:71
+#: CMFDefault/skins/zpt_generic/main_template.pt:118
+#: CMFDefault/skins/zpt_generic/main_template.pt:157
+#: CMFDefault/skins/zpt_generic/main_template.pt:175
+#: CMFDefault/skins/zpt_generic/main_template.pt:201
+#: CMFDefault/skins/zpt_generic/main_template.pt:207
+#: CMFDefault/skins/zpt_generic/main_template.pt:221
+#: CMFDefault/skins/zpt_generic/main_template.pt:235
+#: CMFDefault/skins/zpt_generic/main_template.pt:269
+#: CMFDefault/skins/zpt_generic/review.pt:55
+#: CMFDefault/skins/zpt_generic/roster.pt:43
+#: CMFDefault/skins/zpt_generic/search_results_template.pt:35
+#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:66
+msgid "${DYNAMIC_CONTENT}"
+msgstr ""
+
 #: CMFDefault/browser/templates/document_edit.pt:13
 #: CMFDefault/browser/templates/link_edit.pt:12
 #: CMFDefault/browser/templates/metadata_edit.pt:34
@@ -436,39 +490,6 @@ msgstr ""
 #: CMFDefault/browser/templates/folder_contents.pt:17
 #: CMFDefault/skins/zpt_generic/folder_contents_template.pt:21
 msgid "Root"
-msgstr ""
-
-#: CMFDefault/browser/templates/folder_contents.pt:42
-#: CMFDefault/skins/zpt_content/content_status_history.pt:25
-#: CMFDefault/skins/zpt_content/content_status_history.pt:32
-#: CMFDefault/skins/zpt_content/transition_form.pt:26
-#: CMFDefault/skins/zpt_content/transition_form.pt:56
-#: CMFDefault/skins/zpt_generic/folder_contents_template.pt:46
-#: CMFDefault/skins/zpt_generic/folder_factories_template.pt:21
-#: CMFDefault/skins/zpt_generic/folder_factories_template.pt:26
-#: CMFDefault/skins/zpt_generic/folder_filter_form.pt:51
-#: CMFDefault/skins/zpt_generic/folder_rename_template.pt:17
-#: CMFDefault/skins/zpt_generic/index_html_utils.html:32
-#: CMFDefault/skins/zpt_generic/index_html_utils.html:32
-#: CMFDefault/skins/zpt_generic/index_html_utils.html:70
-#: CMFDefault/skins/zpt_generic/index_html_utils.html:70
-#: CMFDefault/skins/zpt_generic/index_html_utils.html:106
-#: CMFDefault/skins/zpt_generic/index_html_utils.html:106
-#: CMFDefault/skins/zpt_generic/join_template.pt:5
-#: CMFDefault/skins/zpt_generic/main_template.pt:71
-#: CMFDefault/skins/zpt_generic/main_template.pt:118
-#: CMFDefault/skins/zpt_generic/main_template.pt:157
-#: CMFDefault/skins/zpt_generic/main_template.pt:175
-#: CMFDefault/skins/zpt_generic/main_template.pt:201
-#: CMFDefault/skins/zpt_generic/main_template.pt:207
-#: CMFDefault/skins/zpt_generic/main_template.pt:221
-#: CMFDefault/skins/zpt_generic/main_template.pt:235
-#: CMFDefault/skins/zpt_generic/main_template.pt:269
-#: CMFDefault/skins/zpt_generic/review.pt:55
-#: CMFDefault/skins/zpt_generic/roster.pt:43
-#: CMFDefault/skins/zpt_generic/search_results_template.pt:35
-#: CMFDefault/skins/zpt_generic/synPropertiesForm_template.pt:66
-msgid "${DYNAMIC_CONTENT}"
 msgstr ""
 
 #: CMFDefault/browser/templates/folder_contents.pt:5
@@ -596,30 +617,30 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:265
+#: CMFDefault/browser/utils.py:269
 msgid "Previous item"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:267
+#: CMFDefault/browser/utils.py:271
 # Default: ""
 msgid "Previous ${count} items"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:279
+#: CMFDefault/browser/utils.py:283
 msgid "Next item"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:281
+#: CMFDefault/browser/utils.py:285
 # Default: ""
 msgid "Next ${count} items"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:292
+#: CMFDefault/browser/utils.py:296
 #: CMFDefault/skins/zpt_generic/search.py:47
 msgid "item"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:292
+#: CMFDefault/browser/utils.py:296
 #: CMFDefault/skins/zpt_generic/search.py:47
 msgid "items"
 msgstr ""
@@ -1720,10 +1741,6 @@ msgstr ""
 msgid "Be aware that this URL might wrap over two lines. If your browser shows an error message when you try to access the URL please make sure that you put in the complete string."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/review.pt:100
-msgid "There are no items matching your specified criteria."
-msgstr ""
-
 #: CMFDefault/skins/zpt_generic/review.pt:14
 msgid "Items pending review"
 msgstr ""
@@ -2040,9 +2057,6 @@ msgstr ""
 
 #: CMFTopic/skins/zpt_topic/topic_view_template.pt:31
 msgid "Query Parameters:"
-msgstr ""
-
-msgid "Found ${count} ${type} matching '${text}'."
 msgstr ""
 
 msgid "Found ${count} ${type}."

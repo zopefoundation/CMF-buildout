@@ -6,7 +6,7 @@
                       global form python: {'listHiddenVarInfos': hidden_vars}
                       " />
 
-<metal:macro metal:define-macro="hidden_vars">
+<metal:macro metal:define-macro="hidden_vars" i18n:domain="cmf_default">
  <tal:loop tal:repeat="hidden_var form/listHiddenVarInfos"
  ><input type="hidden" name="HiddenVarName" value=""
      tal:attributes="name hidden_var/name; value hidden_var/value" /></tal:loop
@@ -16,7 +16,7 @@
                                          'value': 'Delete'}, );
                       global form python: {'listButtonInfos': buttons}" />
 
- <metal:macro metal:define-macro="buttons"
+ <metal:macro metal:define-macro="buttons" i18n:domain="cmf_default"
 ><div class="FormButtons">
   <tal:loop tal:repeat="button form/listButtonInfos"
   ><input type="submit" name="ButtonName" value="ButtonValue"

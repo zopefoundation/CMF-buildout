@@ -18,23 +18,19 @@ $Id$
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
 from Globals import InitializeClass
+from zope.interface import implements
 
 from Products.CMFDefault.SkinnedFolder import SkinnedFolder
 from Products.CMFCore.utils import getToolByName
-from zope.interface import Interface
-from zope.interface import implements
-from zope.interface import implementedBy
 
+from interfaces import IMutableTopic
+from interfaces import ITopic
 from permissions import View
 from permissions import AddTopics
 from permissions import ChangeTopics
 
 
-class ITopic(Interface):
-    """ Marker interface.
-    """
-
-def addTopic( self, id, title='', REQUEST=None ):
+def addTopic(self, id, title='', REQUEST=None):
     """ Create an empty topic.
     """
     topic = Topic( id )
@@ -48,12 +44,14 @@ def addTopic( self, id, title='', REQUEST=None ):
 
 class Topic(SkinnedFolder):
 
-    """ Topics are 'canned queries'
-    
+    """ Topics are 'canned queries'.
+
     o Each topic holds a set of zero or more Criteria objects specifying
       the query.
     """
-    implements(ITopic, implementedBy(SkinnedFolder))
+
+    implements(IMutableTopic, ITopic)
+
     meta_type='Portal Topic'
 
     security = ClassSecurityInfo()
@@ -63,16 +61,13 @@ class Topic(SkinnedFolder):
     _criteriaTypes = []
 
     security.declareProtected(ChangeTopics, 'listCriteria')
-    def listCriteria( self ):
-
+    def listCriteria(self):
         """ Return a list of our criteria objects.
         """
         return self.objectValues( self._criteria_metatype_ids() )
 
-
     security.declareProtected(ChangeTopics, 'listCriteriaTypes')
-    def listCriteriaTypes( self ):
-
+    def listCriteriaTypes(self):
         """ List the available criteria types.
         """
         out = []
@@ -83,8 +78,7 @@ class Topic(SkinnedFolder):
         return out
 
     security.declareProtected(ChangeTopics, 'listAvailableFields')
-    def listAvailableFields( self ):
-
+    def listAvailableFields(self):
         """ Return a list of available fields for new criteria.
         """
         portal_catalog = getToolByName( self, 'portal_catalog' )
@@ -96,19 +90,17 @@ class Topic(SkinnedFolder):
         return availfields
 
     security.declareProtected(ChangeTopics, 'listSubtopics')
-    def listSubtopics( self ):
-
+    def listSubtopics(self):
         """ Return a list of our subtopics.
         """
         return self.objectValues( self.meta_type )
 
     security.declareProtected(ChangeTopics, 'edit')
-    def edit( self, acquireCriteria, title=None, description=None ):
-
+    def edit(self, acquireCriteria, title=None, description=None):
         """ Set the flag which indicates whether to acquire criteria.
 
         o If set, reuse creiteria from parent topics;
-        
+
         o Also update metadata about the Topic.
         """
         self.acquireCriteria = bool(acquireCriteria)
@@ -119,8 +111,7 @@ class Topic(SkinnedFolder):
         self.reindexObject()
 
     security.declareProtected(View, 'buildQuery')
-    def buildQuery( self ):
-
+    def buildQuery(self):
         """ Construct a catalog query using our criterion objects.
         """
         result = {}
@@ -144,10 +135,9 @@ class Topic(SkinnedFolder):
         return result
 
     security.declareProtected(View, 'queryCatalog')
-    def queryCatalog( self, REQUEST=None, **kw ):
-
+    def queryCatalog(self, REQUEST=None, **kw):
         """ Invoke the catalog using our criteria.
-        
+
         o Built-in criteria update any criteria passed in 'kw'.
         """
         kw.update( self.buildQuery() )
@@ -155,22 +145,20 @@ class Topic(SkinnedFolder):
         return portal_catalog.searchResults(REQUEST, **kw)
 
     security.declareProtected(View, 'synContentValues')
-    def synContentValues( self ):
-
+    def synContentValues(self):
         """ Return a limited subset of the brains for our query.
-        
+
         o Return no more brain objects than the limit set by the
           syndication tool.
         """
         syn_tool = getToolByName( self, 'portal_syndication' )
         limit = syn_tool.getMaxItems( self )
         brains = self.queryCatalog( sort_limit=limit )[ :limit ]
-        return [ brain.getObject() for brain in brains ] 
+        return [ brain.getObject() for brain in brains ]
 
     ### Criteria adding/editing/deleting
     security.declareProtected(ChangeTopics, 'addCriterion')
-    def addCriterion( self, field, criterion_type ):
-
+    def addCriterion(self, field, criterion_type):
         """ Add a new search criterion.
         """
         crit = None
@@ -188,8 +176,7 @@ class Topic(SkinnedFolder):
         self._setObject( newid, crit )
 
     security.declareProtected(ChangeTopics, 'deleteCriterion')
-    def deleteCriterion( self, criterion_id ):
-
+    def deleteCriterion(self, criterion_id):
         """ Delete selected criterion.
         """
         if type( criterion_id ) is type( '' ):
@@ -199,8 +186,7 @@ class Topic(SkinnedFolder):
                 self._delObject( cid )
 
     security.declareProtected(View, 'getCriterion')
-    def getCriterion( self, criterion_id ):
-
+    def getCriterion(self, criterion_id):
         """ Get the criterion object.
         """
         try:
@@ -209,8 +195,7 @@ class Topic(SkinnedFolder):
             return self._getOb( criterion_id )
 
     security.declareProtected(AddTopics, 'addSubtopic')
-    def addSubtopic( self, id ):
-
+    def addSubtopic(self, id):
         """ Add a new subtopic.
         """
         ti = self.getTypeInfo()
@@ -220,8 +205,8 @@ class Topic(SkinnedFolder):
     #
     #   Helper methods
     #
-    security.declarePrivate( '_criteria_metatype_ids' )
-    def _criteria_metatype_ids( self ):
+    security.declarePrivate('_criteria_metatype_ids')
+    def _criteria_metatype_ids(self):
 
         result = []
 
@@ -239,6 +224,6 @@ class Topic(SkinnedFolder):
         SeachableText is used for full text seraches of a portal.  It
         should return a concatenation of all useful text.
         """
-        return "%s %s" % (self.title, self.description) 
+        return "%s %s" % (self.title, self.description)
 
 InitializeClass(Topic)

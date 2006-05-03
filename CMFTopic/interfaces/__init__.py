@@ -18,6 +18,27 @@ $Id$
 from zope.interface import Interface
 
 
+class ITopic(Interface):
+
+    """ Topics are 'canned queries'.
+
+    o Each topic holds a set of zero or more Criteria objects specifying
+      the query.
+    """
+
+    def queryCatalog(REQUEST=None, **kw):
+        """ Invoke the catalog using our criteria.
+
+        o Built-in criteria update any criteria passed in 'kw'.
+        """
+
+
+class IMutableTopic(ITopic):
+
+    """ Updatable form of ITopic.
+    """
+
+
 class ICriterion(Interface):
     """\
     A Topic is composed of Criterion objects which specify the query

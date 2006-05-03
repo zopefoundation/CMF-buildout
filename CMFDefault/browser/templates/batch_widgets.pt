@@ -1,7 +1,7 @@
 <html>
 <body>
 
- <metal:macro metal:define-macro="summary"
+ <metal:macro metal:define-macro="summary" i18n:domain="cmf_default"
  ><p class="BatchSummary" tal:condition="view/summary_length"
      i18n:translate="">Found <span tal:replace="view/summary_length"
       i18n:name="count">N</span> <span i18n:name="type"><span tal:omit-tag=""
@@ -13,7 +13,7 @@
      i18n:translate="">There are no items matching your specified criteria.</p
 ></metal:macro>
 
- <metal:macro metal:define-macro="listing">
+ <metal:macro metal:define-macro="listing" i18n:domain="cmf_default">
  <p class="BatchListing" tal:repeat="item_info view/listItemInfos"
  ><a href="" tal:attributes="href item_info/url"
   ><img src="" alt="" title="" border="0" width="16" height="16"

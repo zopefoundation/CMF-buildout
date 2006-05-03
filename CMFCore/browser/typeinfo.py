@@ -44,6 +44,9 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
                 context = stool._getImportContext(info['id'])
                 file_ids = context.listDirectory('types')
                 for file_id in file_ids or ():
+                    if not file_id.endswith('.xml'):
+                        continue
+
                     filename = 'types/%s' % file_id
                     body = context.readDataFile(filename)
                     if body is None:

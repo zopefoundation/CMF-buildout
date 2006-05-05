@@ -1,7 +1,12 @@
-## Script (Python) "undo"
-##title=Undo transactions
 ##parameters=transaction_info
-context.portal_undo.undo(context, transaction_info)
+##title=Undo transactions
+##
+from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import Message as _
 
-return context.REQUEST.RESPONSE.redirect(
-    'folder_contents?portal_status_message=Transaction(s)+undone' )
+utool = getToolByName(script, 'portal_undo')
+
+utool.undo(context, transaction_info)
+
+context.setStatus(True, _(u'Transaction(s) undone.'))
+context.setRedirect(context, 'object/folderContents')

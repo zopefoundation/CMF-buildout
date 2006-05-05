@@ -13,17 +13,26 @@ msgstr ""
 msgid "Previous member"
 msgstr ""
 
-msgid "View"
+msgid "Criteria"
+msgstr ""
+
+msgid "Download"
 msgstr ""
 
 msgid "Local Roles"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Subtopics"
+msgstr ""
+
+msgid "View"
 msgstr ""
 
 msgid "Retract"
 msgstr ""
 
 msgid "Submit"
-msgstr ""
-
-msgid "Transaction(s) undone"
 msgstr ""

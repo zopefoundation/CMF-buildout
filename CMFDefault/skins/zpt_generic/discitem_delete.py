@@ -1,10 +1,14 @@
-#
-# discitem_delete
-#
+##parameters=
+##title=Delete reply
+##
+from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import Message as _
+
+dtool = getToolByName(script, 'portal_discussion')
+
 parent = context.inReplyTo()
-talkback = context.portal_discussion.getDiscussionFor(parent)
+talkback = dtool.getDiscussionFor(parent)
 talkback.deleteReply( context.getId() )
- 
-context.REQUEST['RESPONSE'].redirect( '%s?portal_status_message=Reply+deleted'
-                                    % parent.absolute_url()
-                                    )
+
+context.setStatus(True, _(u'Reply deleted.'))
+context.setRedirect(parent, 'object/view')

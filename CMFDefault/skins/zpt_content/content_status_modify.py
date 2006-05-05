@@ -1,18 +1,12 @@
-## Script (Python) "content_status_modify"
 ##parameters=workflow_action, comment=''
 ##title=Modify the status of a content object
- 
-context.portal_workflow.doActionFor(
-    context,
-    workflow_action,
-    comment=comment)
+##
+from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import Message as _
 
-if workflow_action == 'reject':
-    redirect_url = context.portal_url() + '/search?review_state=pending'
-else:
-    redirect_url = '%s/view?%s' % ( context.absolute_url()
-                                  , 'portal_status_message=Status+changed.'
-                                  )
+wtool = getToolByName(script, 'portal_workflow')
 
-context.REQUEST[ 'RESPONSE' ].redirect( redirect_url )
+wtool.doActionFor(context, workflow_action, comment=comment)
 
+context.setStatus(True, _(u'Status changed.'))
+context.setRedirect(context, 'object/view')

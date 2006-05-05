@@ -934,6 +934,10 @@ msgstr ""
 msgid "Content Item status history"
 msgstr ""
 
+#: CMFDefault/skins/zpt_content/content_status_modify.py:11
+msgid "Status changed."
+msgstr ""
+
 #: CMFDefault/skins/zpt_content/content_submit_form.pt:10
 msgid "To make an item published, it has to be reviewed by one of the site's reviewers. A <b>published</b> item is available to the general member base and anonymous visitors."
 msgstr ""
@@ -1039,6 +1043,10 @@ msgstr ""
 msgid "Welcome to the CMF!"
 msgstr ""
 
+#: CMFDefault/skins/zpt_control/folder_localrole_edit.py:17
+msgid "Local Roles changed."
+msgstr ""
+
 #: CMFDefault/skins/zpt_control/folder_rename_control.py:11
 msgid "Item renamed."
 msgstr ""
@@ -1069,6 +1077,10 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_control/portal_config_control.py:12
 msgid "CMF Settings changed."
+msgstr ""
+
+#: CMFDefault/skins/zpt_control/undo.py:11
+msgid "Transaction(s) undone."
 msgstr ""
 
 #: CMFDefault/skins/zpt_control/validateId.py:11
@@ -1107,6 +1119,14 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_generic/content_byline.pt:8
 msgid "Created by"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/discitem_delete.py:13
+msgid "Reply deleted."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/discussion_reply.py:13
+msgid "Reply added."
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/discussion_reply_form.py:39
@@ -2074,17 +2094,26 @@ msgstr ""
 msgid "Previous member"
 msgstr ""
 
-msgid "View"
+msgid "Criteria"
+msgstr ""
+
+msgid "Download"
 msgstr ""
 
 msgid "Local Roles"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Subtopics"
+msgstr ""
+
+msgid "View"
 msgstr ""
 
 msgid "Retract"
 msgstr ""
 
 msgid "Submit"
-msgstr ""
-
-msgid "Transaction(s) undone"
 msgstr ""

@@ -31,7 +31,7 @@ from interfaces import IDCWorkflowDefinition
 from permissions import ManagePortal
 
 
-TRIGGER_TYPES = ( 'AUTOMATIC', 'USER' )
+TRIGGER_TYPES = ( 'AUTOMATIC', 'USER', 'WORKFLOWMETHOD' )
 _FILENAME = 'workflows.xml'
 
 
@@ -444,7 +444,6 @@ class WorkflowDefinitionConfigurator( Implicit ):
         items.sort()
 
         for k, v in items:
-
             guard = v.getGuard()
 
             v_info = []
@@ -470,7 +469,6 @@ class WorkflowDefinitionConfigurator( Implicit ):
                    }
 
             result.append( info )
-
         return result
 
     security.declarePrivate( '_extractWorklists' )

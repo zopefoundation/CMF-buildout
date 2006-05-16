@@ -453,7 +453,7 @@ def translate(message, context):
     if isinstance(message, Exception):
         try:
             message = message[0]
-        except TypeError, IndexError:
+        except (TypeError, IndexError):
             pass
     return GTS.translate('cmf_default', message, context=context)
 

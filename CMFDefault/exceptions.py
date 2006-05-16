@@ -30,6 +30,9 @@ from Products.CMFCore.exceptions import CopyError
 security.declarePublic('ResourceLockedError')
 from Products.CMFCore.exceptions import ResourceLockedError
 
+security.declarePublic('WorkflowException')
+from Products.CMFCore.WorkflowCore import WorkflowException
+
 security.declarePublic('zExceptions_Unauthorized')
 from Products.CMFCore.exceptions import zExceptions_Unauthorized
 

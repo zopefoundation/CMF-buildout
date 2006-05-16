@@ -24,6 +24,31 @@ msgstr ""
 msgid "The login name you selected is already in use or is not valid. Please choose another."
 msgstr ""
 
+#: CMFCore/WorkflowTool.py:234
+#: CMFCore/WorkflowTool.py:267
+msgid "No workflows found."
+msgstr ""
+
+#: CMFCore/WorkflowTool.py:241
+# Default: ""
+msgid "No workflow provides the '${action_id}' action."
+msgstr ""
+
+#: CMFCore/WorkflowTool.py:248
+#: CMFCore/WorkflowTool.py:287
+msgid "Requested workflow definition not found."
+msgstr ""
+
+#: CMFCore/WorkflowTool.py:277
+# Default: ""
+msgid "No workflow provides '${name}' information."
+msgstr ""
+
+#: CMFCore/WorkflowTool.py:292
+# Default: ""
+msgid "Could not get info: ${name}"
+msgstr ""
+
 #: CMFDefault/Document.py:108
 msgid "Intervening changes from elsewhere detected. Please refetch the document and reapply your changes. (You may be able to recover your version using the browser 'back' button, but will have to apply them to a freshly fetched copy.)"
 msgstr ""
@@ -934,7 +959,7 @@ msgstr ""
 msgid "Content Item status history"
 msgstr ""
 
-#: CMFDefault/skins/zpt_content/content_status_modify.py:11
+#: CMFDefault/skins/zpt_content/content_status_modify.py:12
 msgid "Status changed."
 msgstr ""
 
@@ -2036,17 +2061,17 @@ msgstr ""
 msgid "Comments:"
 msgstr ""
 
-#: CMFDefault/utils.py:325
+#: CMFDefault/utils.py:324
 # Default: ""
 msgid "JavaScript event '${attribute}' not allowed."
 msgstr ""
 
-#: CMFDefault/utils.py:330
+#: CMFDefault/utils.py:329
 # Default: ""
 msgid "JavaScript URI '${value}' not allowed."
 msgstr ""
 
-#: CMFDefault/utils.py:343
+#: CMFDefault/utils.py:342
 # Default: ""
 msgid "Dynamic tag '${tag}' not allowed."
 msgstr ""
@@ -2077,6 +2102,20 @@ msgstr ""
 
 #: CMFTopic/skins/zpt_topic/topic_view_template.pt:31
 msgid "Query Parameters:"
+msgstr ""
+
+#: DCWorkflow/DCWorkflow.py:279
+msgid "Object is in an undefined state."
+msgstr ""
+
+#: DCWorkflow/DCWorkflow.py:284
+# Default: ""
+msgid "Transition '${action_id}' is not triggered by a user action."
+msgstr ""
+
+#: DCWorkflow/DCWorkflow.py:467
+# Default: ""
+msgid "Destination state undefined: ${state_id}"
 msgstr ""
 
 msgid "Found ${count} ${type}."

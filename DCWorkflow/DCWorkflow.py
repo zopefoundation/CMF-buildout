@@ -39,6 +39,7 @@ from Products.CMFCore.WorkflowCore import WorkflowException
 # DCWorkflow
 from interfaces import IDCWorkflowDefinition
 from permissions import ManagePortal
+from utils import Message as _
 from utils import modifyRolesForPermission
 from utils import modifyRolesForGroup
 from WorkflowUIMixin import WorkflowUIMixin
@@ -275,13 +276,14 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
         kw['comment'] = comment
         sdef = self._getWorkflowStateOf(ob)
         if sdef is None:
-            raise WorkflowException, 'Object is in an undefined state'
+            raise WorkflowException(_(u'Object is in an undefined state.'))
         if action not in sdef.transitions:
             raise Unauthorized(action)
         tdef = self.transitions.get(action, None)
         if tdef is None or tdef.trigger_type != TRIGGER_USER_ACTION:
-            raise WorkflowException, (
-                'Transition %s is not triggered by a user action' % action)
+            msg = _(u"Transition '${action_id}' is not triggered by a user "
+                    u"action.", mapping={'action_id': action})
+            raise WorkflowException(msg)
         if not self._checkTransitionGuard(tdef, ob, **kw):
             raise Unauthorized(action)
         self._changeStateOf(ob, tdef, kw)
@@ -462,8 +464,9 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
             former_status = self._getStatusOf(ob)
         new_sdef = self.states.get(new_state, None)
         if new_sdef is None:
-            raise WorkflowException, (
-                'Destination state undefined: ' + new_state)
+            msg = _(u'Destination state undefined: ${state_id}',
+                    mapping={'state_id': new_state})
+            raise WorkflowException(msg)
 
         # Execute the "before" script.
         if tdef is not None and tdef.script_name:

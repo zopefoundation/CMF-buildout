@@ -17,9 +17,13 @@ $Id$
 
 import os
 
+from AccessControl import ModuleSecurityInfo
 from AccessControl.Permission import Permission
 from AccessControl.Role import gather_permissions
 from App.Common import package_home
+from zope.i18nmessageid import MessageFactory
+
+security = ModuleSecurityInfo('Products.DCWorkflow.utils')
 
 _dtmldir = os.path.join( package_home( globals() ), 'dtml' )
 _xmldir = os.path.join( package_home( globals() ), 'xml' )
@@ -96,3 +100,6 @@ def modifyRolesForGroup(ob, group, grant_roles, managed_roles):
             local_roles[group] = roles
         ob.__ac_local_roles__ = local_roles
     return changed
+
+security.declarePublic('Message')
+Message = _ = MessageFactory('cmf_default')

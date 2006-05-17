@@ -19,7 +19,6 @@ import os
 import re
 import StringIO
 import rfc822
-from cgi import escape
 from sgmllib import SGMLParser
 
 from AccessControl import ModuleSecurityInfo
@@ -451,6 +450,11 @@ def translate(message, context):
     """ Translate i18n message.
     """
     GTS = getGlobalTranslationService()
+    if isinstance(message, Exception):
+        try:
+            message = message[0]
+        except (TypeError, IndexError):
+            pass
     return GTS.translate('cmf_default', message, context=context)
 
 security.declarePublic('Message')

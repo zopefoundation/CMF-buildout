@@ -33,6 +33,7 @@ from interfaces.portal_workflow import portal_workflow as z2IWorkflowTool
 from permissions import ManagePortal
 from utils import _dtmldir
 from utils import getToolByName
+from utils import Message as _
 from utils import UniqueObject
 from WorkflowCore import ObjectDeleted
 from WorkflowCore import ObjectMoved
@@ -230,20 +231,21 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
             wfs = ()
         if wf_id is None:
             if not wfs:
-                raise WorkflowException('No workflows found.')
+                raise WorkflowException(_(u'No workflows found.'))
             found = 0
             for wf in wfs:
                 if wf.isActionSupported(ob, action, **kw):
                     found = 1
                     break
             if not found:
-                raise WorkflowException(
-                    'No workflow provides the "%s" action.' % action)
+                msg = _(u"No workflow provides the '${action_id}' action.",
+                        mapping={'action_id': action})
+                raise WorkflowException(msg)
         else:
             wf = self.getWorkflowById(wf_id)
             if wf is None:
                 raise WorkflowException(
-                    'Requested workflow definition not found.')
+                    _(u'Requested workflow definition not found.'))
         return self._invokeWithNotification(
             wfs, ob, action, wf.doActionFor, (ob, action) + args, kw)
 
@@ -262,7 +264,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
             wfs = self.getWorkflowsFor(ob)
             if wfs is None:
                 if default is _marker:
-                    raise WorkflowException('No workflows found.')
+                    raise WorkflowException(_(u'No workflows found.'))
                 else:
                     return default
             found = 0
@@ -272,8 +274,9 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
                     break
             if not found:
                 if default is _marker:
-                    raise WorkflowException(
-                        'No workflow provides "%s" information.' % name)
+                    msg = _(u"No workflow provides '${name}' information.",
+                            mapping={'name': name})
+                    raise WorkflowException(msg)
                 else:
                     return default
         else:
@@ -281,12 +284,13 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
             if wf is None:
                 if default is _marker:
                     raise WorkflowException(
-                        'Requested workflow definition not found.')
+                        _(u'Requested workflow definition not found.'))
                 else:
                     return default
         res = wf.getInfoFor(ob, name, default, *args, **kw)
         if res is _marker:
-            raise WorkflowException('Could not get info: %s' % name)
+            msg = _(u'Could not get info: ${name}', mapping={'name': name})
+            raise WorkflowException(msg)
         return res
 
     security.declarePrivate('notifyCreated')

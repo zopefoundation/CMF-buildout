@@ -2,6 +2,9 @@ CMF 2.0.1-beta (unreleased)
 
   Bug Fixes
 
+    - Forward-ported fix for DCWorkflow global actions missing IDs
+      (http://www.zope.org/Collectors/CMF/308).
+
     - CMFCore Expression: Fixed 'request' provided by expression contexts.
       'request' was not set correctly if 'object' is not specified.
 

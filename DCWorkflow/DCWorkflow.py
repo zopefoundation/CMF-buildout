@@ -241,7 +241,8 @@ class DCWorkflowDefinition (WorkflowUIMixin, Folder):
                         fmt_data = TemplateDict()
                         fmt_data._push(info)
                     fmt_data._push({'count': len(searchres)})
-                    res.append((id, {'name': qdef.actbox_name % fmt_data,
+                    res.append((id, {'id': id,
+                                     'name': qdef.actbox_name % fmt_data,
                                      'url': qdef.actbox_url % fmt_data,
                                      'permissions': (),  # Predetermined.
                                      'category': qdef.actbox_category}))

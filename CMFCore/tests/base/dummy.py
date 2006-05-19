@@ -16,14 +16,23 @@ $Id$
 """
 
 from Acquisition import Implicit, aq_base, aq_inner, aq_parent
+from OFS.event import ObjectWillBeAddedEvent
+from OFS.event import ObjectWillBeRemovedEvent
+from OFS.interfaces import IObjectManager
 from OFS.SimpleItem import Item
+from webdav.common import rfc1123_date
+from zope.app.container.contained import notifyContainerModified
+from zope.app.container.contained import ObjectAddedEvent
+from zope.app.container.contained import ObjectRemovedEvent
+from zope.event import notify
+from zope.interface import implements
 
+from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.PortalContent import PortalContent
+
 from security import OmnipotentUser
 
-from DateTime import DateTime
-from webdav.common import rfc1123_date
 
 class DummyObject(Implicit):
     """
@@ -92,6 +101,8 @@ class DummyContent( PortalContent, Item ):
     """
     A Dummy piece of PortalContent
     """
+    implements(IContentish)
+
     meta_type = 'Dummy'
     portal_type = 'Dummy Content'
     url = 'foo_url'
@@ -107,15 +118,11 @@ class DummyContent( PortalContent, Item ):
         self.catalog = kw.get('catalog',0)
         self.url = kw.get('url',None)
 
-    def manage_afterAdd( self, item, container ):
+    def manage_afterAdd(self, item, container):
         self.after_add_called = 1
-        if self.catalog:
-            PortalContent.manage_afterAdd( self, item, container )
 
-    def manage_beforeDelete( self, item, container ):
+    def manage_beforeDelete(self, item, container):
         self.before_delete_called = 1
-        if self.catalog:
-            PortalContent.manage_beforeDelete( self, item, container )
 
     def absolute_url(self):
        return self.url
@@ -178,9 +185,11 @@ class DummyFactory:
 
 
 class DummyFolder(DummyObject):
+
+    """Dummy Container for testing.
     """
-        Dummy Container for testing
-    """
+    implements(IObjectManager)
+
     def __init__( self, id='dummy', fake_product=0, prefix='' ):
         self._prefix = prefix
         self._id = id
@@ -198,17 +207,23 @@ class DummyFolder(DummyObject):
         return getattr(self, id)
 
     def _setObject(self, id, object):
+        notify(ObjectWillBeAddedEvent(object, self, id))
         self._setOb(id, object)
         object = self._getOb(id)
         if hasattr(aq_base(object), 'manage_afterAdd'):
             object.manage_afterAdd(object, self)
+        notify(ObjectAddedEvent(object, self, id))
+        notifyContainerModified(self)
         return object
 
     def _delObject(self, id):
         object = self._getOb(id)
+        notify(ObjectWillBeRemovedEvent(object, self, id))
         if hasattr(aq_base(object), 'manage_beforeDelete'):
             object.manage_beforeDelete(object, self)
         self._delOb(id)
+        notify(ObjectRemovedEvent(object, self, id))
+        notifyContainerModified(self)
 
     def getPhysicalPath(self):
         p = aq_parent(aq_inner(self))

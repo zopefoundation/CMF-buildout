@@ -25,14 +25,15 @@ import Products
 import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
-from AccessControl.User import UnrestrictedUser
 from Products.Five import zcml
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
+from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
-from Products.CMFCore.tests.base.testcase import RequestTest
+from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
+from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFDefault import tests
 
 from common import ConformsToContent
@@ -102,13 +103,14 @@ class TestImageElement(ConformsToContent, unittest.TestCase):
         self.assertEqual(image.content_type, 'image/jpeg')
 
 
-class TestImageCopyPaste(RequestTest):
+class TestImageCopyPaste(SecurityRequestTest, ContentEventAwareTests):
 
     # Tests related to http://www.zope.org/Collectors/CMF/176
     # Copy/pasting an image (or file) should reset the object's workflow state.
 
     def setUp(self):
-        RequestTest.setUp(self)
+        SecurityRequestTest.setUp(self)
+        ContentEventAwareTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.GenericSetup)
@@ -116,10 +118,10 @@ class TestImageCopyPaste(RequestTest):
         zcml.load_config('configure.zcml', Products.DCWorkflow)
         zcml.load_string(_TRAVERSE_ZCML)
         try:
-            newSecurityManager(None, UnrestrictedUser('manager', '', ['Manager'], []))
             factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
             factory('cmf', 'CMFDefault:default', snapshot=False)
             self.site = self.root.cmf
+            newSecurityManager(None, OmnipotentUser().__of__(self.site))
             self.site.invokeFactory('File', id='file')
             self.site.portal_workflow.doActionFor(self.site.file, 'publish')
             self.site.invokeFactory('Image', id='image')
@@ -134,7 +136,8 @@ class TestImageCopyPaste(RequestTest):
 
     def tearDown(self):
         noSecurityManager()
-        RequestTest.tearDown(self)
+        ContentEventAwareTests.tearDown(self)
+        SecurityRequestTest.tearDown(self)
         cleanUp()
 
     def test_File_CopyPasteResetsWorkflowState(self):

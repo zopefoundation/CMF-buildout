@@ -21,6 +21,7 @@ from zope.interface import implements
 
 from Products.CMFCore.interfaces import ICallableOpaqueItem
 from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
+from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.interfaces.IOpaqueItems \
         import ICallableOpaqueItem as z2ICallableOpaqueItem
 from Products.CMFCore.interfaces.IOpaqueItems \
@@ -28,6 +29,7 @@ from Products.CMFCore.interfaces.IOpaqueItems \
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.tests.base.dummy \
     import DummyContent as OriginalDummyContent
+from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.TypesTool import TypesTool
 
@@ -46,8 +48,10 @@ def addDummyContent(container, id, opaqueItem):
 
 
 class DummyContent(OriginalDummyContent):
+
     """ A Dummy piece of PortalContent with additional attributes
     """
+    implements(IContentish)
 
     def __init__(self, id='dummy', opaqueItem=None, *args, **kw):
         OriginalDummyContent.__init__(self, id, *args, **kw)
@@ -92,6 +96,7 @@ class OpaqueBase:
     def getId(self):
         return self.id
 
+
 class Marker(OpaqueBase):
     """ Opaque item without manage_after/before hookes but marked as callable
     """
@@ -99,6 +104,7 @@ class Marker(OpaqueBase):
     __implements__ = (
         z2ICallableOpaqueItem,
     )
+
 
 class Hooks(OpaqueBase):
     """ Opaque item with manage_after/before hooks but not marked as callable
@@ -131,10 +137,11 @@ class MarkerAndHooks(Marker, Hooks):
 # Unit Tests
 # -------------------------------------------
 
-class ManageBeforeAfterTests(SecurityTest):
+class ManageBeforeAfterTests(SecurityTest, ContentEventAwareTests):
 
     def setUp(self):
         SecurityTest.setUp(self)
+        ContentEventAwareTests.setUp(self)
 
         root = self.root
 
@@ -142,8 +149,10 @@ class ManageBeforeAfterTests(SecurityTest):
         root._setObject( 'portal_types', TypesTool() )
 
         # setup portal
-        try: root._delObject('test')
-        except AttributeError: pass
+        try:
+            root._delObject('test')
+        except AttributeError:
+            pass
         root._setObject('test', PortalFolder('test', ''))
         self.test = test = self.root.test
 
@@ -158,10 +167,18 @@ class ManageBeforeAfterTests(SecurityTest):
         sub.all_meta_types = extra_meta_types()
 
         # delete items if necessary
-        try: folder._delObject('dummy')
-        except AttributeError: pass
-        try: sub._delObject('dummy')
-        except AttributeError: pass
+        try:
+            folder._delObject('dummy')
+        except AttributeError:
+            pass
+        try:
+            sub._delObject('dummy')
+        except AttributeError:
+            pass
+
+    def tearDown(self):
+        ContentEventAwareTests.tearDown(self)
+        SecurityTest.tearDown(self)
 
     def test_nonCallableItem(self):
         # no exception should be raised

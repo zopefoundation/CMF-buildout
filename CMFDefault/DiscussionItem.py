@@ -210,7 +210,7 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
         """
         if aq_base(container) is not aq_base(self):
             for obj in self.objectValues():
-                obj.__of__(self).manage_afterAdd(item, container)
+                obj.__of__(self).indexObject()
 
     security.declarePrivate('manage_afterClone')
     def manage_afterClone(self, item):
@@ -219,7 +219,7 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
             Notify the workflow about the contained items.
         """
         for obj in self.objectValues():
-            obj.__of__(self).manage_afterClone(item)
+            obj.__of__(self).notifyWorkflowCreated()
 
     security.declarePrivate( 'manage_beforeDelete' )
     def manage_beforeDelete(self, item, container):
@@ -228,7 +228,7 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
         """
         if aq_base(container) is not aq_base(self):
             for obj in self.objectValues():
-                obj.__of__( self ).manage_beforeDelete( item, container )
+                obj.__of__(self).unindexObject()
 
     #
     #   OFS.ObjectManager query interface.

@@ -18,13 +18,19 @@ $Id$
 import unittest
 import Testing
 
+import transaction
 from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
+from zope.interface import implements
 
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.CMFCore.exceptions import NotFound
+from Products.CMFCore.interfaces import IContentish
+from Products.CMFCore.tests.test_PortalFolder import _AllowedUser
+from Products.CMFCore.tests.test_PortalFolder import _SensitiveSecurityPolicy
 from Products.CMFCore.tests.base.testcase import LogInterceptor
-from Products.CMFCore.WorkflowTool import WorkflowTool
+from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
+from Products.CMFCore.tests.base.testcase import SecurityTest
 
 CMF_SECURITY_INDEXES = CMFCatalogAware._cmf_security_indexes
 
@@ -84,10 +90,24 @@ class DummyCatalog(SimpleItem):
             res.append(self.brain_class(ob, obpath))
         return res
 
+
+class DummyWorkflowTool(SimpleItem):
+
+    def __init__(self):
+        self.log = []
+
+    def notifyCreated(self, obj):
+        self.log.append('created %s' % physicalpath(obj))
+
+
 class TheClass(CMFCatalogAware, Folder):
+
+    implements(IContentish)
+
     def __init__(self, id):
         self._setId(id)
         self.notified = False
+
     def notifyModified(self):
         self.notified = True
 
@@ -99,7 +119,7 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
         self.root.site = SimpleFolder('site')
         self.site = self.root.site
         self.site._setObject('portal_catalog', DummyCatalog())
-        self.site._setObject('portal_workflow', WorkflowTool())
+        self.site._setObject('portal_workflow', DummyWorkflowTool())
         self.site.foo = TheClass('foo')
 
     def tearDown(self):
@@ -193,9 +213,153 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
 
     # FIXME: more tests needed
 
+
+class CMFCatalogAware_CopySupport_Tests(SecurityTest, ContentEventAwareTests):
+
+    def setUp(self):
+        SecurityTest.setUp(self)
+        ContentEventAwareTests.setUp(self)
+
+    def tearDown(self):
+        ContentEventAwareTests.tearDown(self)
+        SecurityTest.tearDown(self)
+
+    def _makeSite(self):
+        import cStringIO
+        from OFS.Application import Application
+        from OFS.tests.testCopySupport import makeConnection
+        from Testing.makerequest import makerequest
+
+        self.connection = makeConnection()
+        try:
+            r = self.connection.root()
+            a = Application()
+            r['Application'] = a
+            self.root = a
+            responseOut = self.responseOut = cStringIO.StringIO()
+            self.app = makerequest(self.root, stdout=responseOut)
+            site = SimpleFolder('site')
+            self.app._setObject('site', site)
+            site = self.app._getOb('site')
+            site._setObject('portal_catalog', DummyCatalog())
+            site._setObject('portal_workflow', DummyWorkflowTool())
+            # Hack, we need a _p_mtime for the file, so we make sure that it
+            # has one. We use a subtransaction, which means we can rollback
+            # later and pretend we didn't touch the ZODB.
+            transaction.savepoint(optimistic=True)
+        except:
+            self.connection.close()
+            raise
+        else:
+            return site
+
+    def _initPolicyAndUser( self
+                          , a_lambda=None
+                          , v_lambda=None
+                          , c_lambda=None
+                          ):
+        from AccessControl import SecurityManager
+        from Products.CMFCore.tests.base.testcase import newSecurityManager
+
+        def _promiscuous( *args, **kw ):
+            return 1
+
+        if a_lambda is None:
+            a_lambda = _promiscuous
+
+        if v_lambda is None:
+            v_lambda = _promiscuous
+
+        if c_lambda is None:
+            c_lambda = _promiscuous
+
+        scp = _SensitiveSecurityPolicy( v_lambda, c_lambda )
+        SecurityManager.setSecurityPolicy( scp )
+        newSecurityManager( None
+                          , _AllowedUser( a_lambda ).__of__( self.root ) )
+
+    def test_object_indexed_after_adding(self):
+
+        site = self._makeSite()
+        bar = TheClass('bar')
+        site._setObject('bar', bar)
+        cat = site.portal_catalog
+        self.assertEquals(cat.log, ["index /site/bar"])
+
+    def test_object_unindexed_after_removing(self):
+
+        site = self._makeSite()
+        bar = TheClass('bar')
+        site._setObject('bar', bar)
+        cat = site.portal_catalog
+        cat.log = []
+        site._delObject('bar')
+        self.assertEquals(cat.log, ["unindex /site/bar"])
+
+    def test_object_indexed_after_copy_and_pasting(self):
+
+        self._initPolicyAndUser() # allow copy/paste operations
+        site = self._makeSite()
+        site.folder1 = SimpleFolder('folder1')
+        folder1 = site.folder1
+        site.folder2 = SimpleFolder('folder2')
+        folder2 = site.folder2
+
+        bar = TheClass('bar')
+        folder1._setObject('bar', bar)
+        cat = site.portal_catalog
+        cat.log = []
+
+        transaction.savepoint(optimistic=True)
+
+        cookie = folder1.manage_copyObjects(ids=['bar'])
+        folder2.manage_pasteObjects(cookie)
+
+        self.assertEquals(cat.log, ["index /site/folder2/bar"])
+
+    def test_object_reindexed_after_cut_and_paste(self):
+
+        self._initPolicyAndUser() # allow copy/paste operations
+        site = self._makeSite()
+        site.folder1 = SimpleFolder('folder1')
+        folder1 = site.folder1
+        site.folder2 = SimpleFolder('folder2')
+        folder2 = site.folder2
+
+        bar = TheClass('bar')
+        folder1._setObject('bar', bar)
+        cat = site.portal_catalog
+        cat.log = []
+
+        transaction.savepoint(optimistic=True)
+
+        cookie = folder1.manage_cutObjects(ids=['bar'])
+        folder2.manage_pasteObjects(cookie)
+
+        self.assertEquals(cat.log, ["unindex /site/folder1/bar",
+                                    "reindex /site/folder2/bar []"])
+
+    def test_object_reindexed_after_moving(self):
+
+        self._initPolicyAndUser() # allow copy/paste operations
+        site = self._makeSite()
+
+        bar = TheClass('bar')
+        site._setObject('bar', bar)
+        cat = site.portal_catalog
+        cat.log = []
+
+        transaction.savepoint(optimistic=True)
+
+        site.manage_renameObject(id='bar', new_id='baz')
+        self.assertEquals(cat.log, ["unindex /site/bar",
+                                    "reindex /site/baz []"])
+
+
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(CMFCatalogAwareTests),
+        unittest.makeSuite(CMFCatalogAware_CopySupport_Tests),
         ))
 
 if __name__ == '__main__':

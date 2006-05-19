@@ -22,6 +22,10 @@ from Acquisition import aq_base
 from ExtensionClass import Base
 from Globals import DTMLFile
 from Globals import InitializeClass
+from OFS.interfaces import IObjectClonedEvent
+from OFS.interfaces import IObjectWillBeMovedEvent
+from zope.app.container.interfaces import IObjectAddedEvent
+from zope.app.container.interfaces import IObjectMovedEvent
 
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
@@ -34,7 +38,9 @@ from interfaces import ICallableOpaqueItem
 from interfaces.IOpaqueItems \
         import ICallableOpaqueItem as z2ICallableOpaqueItem
 
+
 class CMFCatalogAware(Base):
+
     """Mix-in for notifying portal_catalog and portal_workflow
     """
 
@@ -164,7 +170,7 @@ class CMFCatalogAware(Base):
         # implementing 'ICallableOpaqueItem'.
         self_base = aq_base(self)
         for name in self_base.__dict__.keys():
-            obj = getattr(self_base, name)
+            obj = getattr(self, name)
             if ICallableOpaqueItem.providedBy(obj) \
                     or z2ICallableOpaqueItem.isImplementedBy(obj):
                 items.append((obj.getId(), obj))
@@ -190,22 +196,7 @@ class CMFCatalogAware(Base):
     # Hooks
     # -----
 
-    def manage_afterAdd(self, item, container):
-        """
-            Add self to the catalog.
-            (Called when the object is created or moved.)
-        """
-        self.indexObject()
-        self.__recurse('manage_afterAdd', item, container)
-
-    def manage_afterClone(self, item):
-        """
-            Add self to the workflow.
-            (Called when the object is cloned.)
-        """
-        self.notifyWorkflowCreated()
-        self.__recurse('manage_afterClone', item)
-
+    def _clearLocalRolesAfterClone(self):
         # Make sure owner local role is set after pasting
         # The standard Zope mechanisms take care of executable ownership
         current_user = _getAuthenticatedUser(self)
@@ -214,26 +205,20 @@ class CMFCatalogAware(Base):
             self.manage_delLocalRoles(local_role_holders)
             self.manage_setLocalRoles(current_user.getId(), ['Owner'])
 
-    def manage_beforeDelete(self, item, container):
+    def _recurseOpaques(self, name, container=None):
         """
-            Remove self from the catalog.
-            (Called when the object is deleted or moved.)
+            Recurse in both opaque subobjects.
         """
-        self.__recurse('manage_beforeDelete', item, container)
-        self.unindexObject()
-
-    def __recurse(self, name, *args):
-        """
-            Recurse in both normal and opaque subobjects.
-        """
-        values = self.objectValues()
-        opaque_values = self.opaqueValues()
-        for subobjects in values, opaque_values:
-            for ob in subobjects:
-                s = getattr(ob, '_p_changed', 0)
-                if hasattr(aq_base(ob), name):
-                    getattr(ob, name)(*args)
-                if s is None: ob._p_deactivate()
+        for opaque in self.opaqueValues():
+            s = getattr(opaque, '_p_changed', 0)
+            if hasattr(aq_base(opaque), name):
+                if container is None:
+                    getattr(opaque, name)(opaque)
+                else:
+                    getattr(opaque, name)(opaque, container)
+            else:
+                if s is None:
+                    opaque._p_deactivate()
 
     # ZMI
     # ---
@@ -279,3 +264,30 @@ class CMFCatalogAware(Base):
             manage_tabs_message=manage_tabs_message)
 
 InitializeClass(CMFCatalogAware)
+
+
+def handleObjectEvent(ob, event):
+    """ Event subscriber for (IContentish, IObjectEvent) events.
+
+    o XXX:  the nasty '_recurseOpaques' propagates notification to opaque
+            items, which are ignored by the stock ObjectManager propagation.
+    """
+    if IObjectAddedEvent.providedBy(event):
+        if event.newParent is not None:
+            ob.indexObject()
+            ob._recurseOpaques('manage_afterAdd', ob)
+
+    elif IObjectClonedEvent.providedBy(event):
+        ob.notifyWorkflowCreated()
+        ob._clearLocalRolesAfterClone()
+        ob._recurseOpaques('manage_afterClone')
+
+    elif IObjectMovedEvent.providedBy(event):
+        if event.newParent is not None:
+            ob.reindexObject()
+            ob._recurseOpaques('manage_afterAdd', ob)
+
+    elif IObjectWillBeMovedEvent.providedBy(event):
+        if event.oldParent is not None:
+            ob.unindexObject()
+            ob._recurseOpaques('manage_beforeDelete', ob)

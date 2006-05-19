@@ -131,24 +131,6 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
         """
         return "%s %s" % (self.title, self.description)
 
-    security.declarePrivate('manage_afterAdd')
-    def manage_afterAdd(self, item, container):
-        """Both of my parents have an afterAdd method"""
-        OFS.Image.File.manage_afterAdd(self, item, container)
-        PortalContent.manage_afterAdd(self, item, container)
-
-    security.declarePrivate('manage_afterClone')
-    def manage_afterClone(self, item):
-        """Both of my parents have an afterClone method"""
-        OFS.Image.File.manage_afterClone(self, item)
-        PortalContent.manage_afterClone(self, item)
-
-    security.declarePrivate('manage_beforeDelete')
-    def manage_beforeDelete(self, item, container):
-        """Both of my parents have a beforeDelete method"""
-        PortalContent.manage_beforeDelete(self, item, container)
-        OFS.Image.File.manage_beforeDelete(self, item, container)
-
     security.declarePrivate('_isNotEmpty')
     def _isNotEmpty(self, file):
         """ Do various checks on 'file' to try to determine non emptiness. """

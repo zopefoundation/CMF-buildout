@@ -11,11 +11,14 @@ from shutil import copytree, rmtree
 from stat import S_IREAD, S_IWRITE
 from tempfile import mktemp
 
+import Products
 import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
+from Products.Five import zcml
 from Testing.makerequest import makerequest
+from zope.app.testing.placelesssetup import PlacelessSetup
 
 from dummy import DummyFolder
 from security import AnonymousUser
@@ -77,6 +80,7 @@ class LogInterceptor:
         root_logger.removeFilter(self)
         self.installed = False
 
+
 class WarningInterceptor:
 
     _old_stderr = None
@@ -126,6 +130,7 @@ class RequestTest( TransactionalTest ):
         self.REQUEST.close()
         TransactionalTest.tearDown(self)
 
+
 class SecurityTest( TestCase ):
 
     def setUp(self):
@@ -163,6 +168,22 @@ else:
     _prefix = abspath(dirname(__file__))
 
 _prefix = abspath(join(_prefix,'..'))
+
+
+class ContentEventAwareTests(PlacelessSetup):
+
+    """ Mix-in for test case classes which need to get object events handled.
+    """
+    # BBB: replace PlacelessSetup by zope.component.eventtesting.setUp
+    #      and zope.testing.cleanup.cleanUp if we no longer support Zope 2.9
+
+    def setUp(self):
+        PlacelessSetup.setUp(self)
+        #   First, set up "stock" OFS event propagation
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('event.zcml', Products.Five)
+        #   Now, register the CMF-specific handler
+        zcml.load_config('event.zcml', Products.CMFCore)
 
 
 class FSDVTest( TestCase, WarningInterceptor ):
@@ -205,7 +226,6 @@ class FSDVTest( TestCase, WarningInterceptor ):
             mtime2 = stat(thePath)[8]
         self._addedOrRemoved(dir_mtime)
 
-
     def _deleteFile(self,filename):
         try:
             dir_mtime = stat(self.skin_path_name)[8]
@@ -213,7 +233,6 @@ class FSDVTest( TestCase, WarningInterceptor ):
             dir_mtime = 0
         remove(join(self.skin_path_name, filename))
         self._addedOrRemoved(dir_mtime)
-
 
     def _addedOrRemoved(self, old_mtime):
         # Called after adding/removing a file from self.skin_path_name.

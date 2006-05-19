@@ -10,6 +10,10 @@ Trunk only (unreleased)
 
   Others
 
+    - CMFCatalogAware: Added 'handleObjectEvent' subscriber.
+      This replaces the deprecated 'manage_afterAdd', 'manage_afterClone' and
+      'manage_beforeDelete' hooks.
+
     - setup handlers: Removed support for CMF 1.5 CMFSetup profiles.
 
 CMF 2.0.x

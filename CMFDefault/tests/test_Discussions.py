@@ -15,15 +15,14 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Products.CMFCore.CatalogTool import CatalogTool
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
+from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.tidata import FTIDATA_DUMMY
 from Products.CMFCore.tests.base.utils import has_path
@@ -34,7 +33,7 @@ from Products.CMFDefault.DiscussionTool import DiscussionTool
 from Products.CMFDefault.exceptions import DiscussionNotAllowed
 
 
-class DiscussionItemTests(TestCase):
+class DiscussionItemTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -77,7 +76,7 @@ class DiscussionItemTests(TestCase):
         verifyClass(IMutableDublinCore, DiscussionItem)
 
 
-class DiscussionItemContainerTests(TestCase):
+class DiscussionItemContainerTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -95,14 +94,19 @@ class DiscussionItemContainerTests(TestCase):
         verifyClass(IDiscussable, DiscussionItemContainer)
 
 
-class DiscussionTests( SecurityTest ):
+class DiscussionTests(SecurityTest, ContentEventAwareTests):
 
-    def setUp( self ):
+    def setUp(self):
         SecurityTest.setUp(self)
+        ContentEventAwareTests.setUp(self)
         self.site = DummySite('site').__of__(self.root)
         self.site._setObject( 'portal_discussion', DiscussionTool() )
         self.site._setObject( 'portal_membership', DummyTool() )
         self.site._setObject( 'portal_types', TypesTool() )
+
+    def tearDown(self):
+        ContentEventAwareTests.tearDown(self)
+        SecurityTest.tearDown(self)
 
     def _makeDummyContent(self, id, *args, **kw):
         return self.site._setObject( id, DummyContent(id, *args, **kw) )
@@ -299,18 +303,18 @@ class DiscussionTests( SecurityTest ):
         self.assertEqual(len(talkback4.getReplies()), 1)
         self.assertEqual(len(talkback5.getReplies()), 1)
         self.assertEqual(len(talkback6.getReplies()), 0)
-        self.assertEqual(len(ctool), 6)
+        self.assertEqual(len(ctool), 7)
 
         talkback3.deleteReply(id4)
         self.assertEqual(len(talkback.getReplies()), 1)
         self.assertEqual(len(talkback1.getReplies()), 1)
         self.assertEqual(len(talkback2.getReplies()), 1)
         self.assertEqual(len(talkback3.getReplies()), 0)
-        self.assertEqual(len(ctool), 3)
+        self.assertEqual(len(ctool), 4)
 
         talkback.deleteReply(id1)
         self.assertEqual(len(talkback.getReplies()), 0)
-        self.assertEqual(len(ctool), 0)
+        self.assertEqual(len(ctool), 1)
 
     def test_newTalkbackIsWrapped(self):
         test = self._makeDummyContent('test')
@@ -333,11 +337,11 @@ class DiscussionTests( SecurityTest ):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( DiscussionItemTests ),
-        makeSuite( DiscussionItemContainerTests ),
-        makeSuite( DiscussionTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite(DiscussionItemTests),
+        unittest.makeSuite(DiscussionItemContainerTests),
+        unittest.makeSuite(DiscussionTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

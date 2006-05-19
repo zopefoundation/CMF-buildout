@@ -17,8 +17,10 @@ $Id$
 
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
+from zope.interface import implements
 
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
+from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.PortalFolder import PortalFolder
 
 from DublinCore import DefaultDublinCoreImpl
@@ -30,6 +32,8 @@ class SkinnedFolder(CMFCatalogAware, PortalFolder):
 
     """ Skinned Folder class. 
     """
+
+    implements(IContentish)
 
     meta_type = 'Skinned Folder'
 

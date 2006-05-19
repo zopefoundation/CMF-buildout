@@ -18,15 +18,20 @@ $Id$
 import unittest
 import Testing
 
+from OFS.event import ObjectClonedEvent
+from zope.app.container.contained import ObjectAddedEvent
+from zope.event import notify
+
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.tests.base.dummy import DummyContent
+from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
 
 UID_ATTRNAME = 'cmf_uid'
 
 
-class UniqueIdAnnotationToolTests(SecurityTest):
+class UniqueIdAnnotationToolTests(ContentEventAwareTests, SecurityTest):
 
     def _getTargetClass(self):
         from Products.CMFUid.UniqueIdAnnotationTool \
@@ -36,8 +41,13 @@ class UniqueIdAnnotationToolTests(SecurityTest):
 
     def setUp(self):
         SecurityTest.setUp(self)
+        ContentEventAwareTests.setUp(self)
         self.root._setObject('portal_uidannotation', self._getTargetClass()())
         self.root._setObject('dummy', DummyContent(id='dummy'))
+
+    def tearDown(self):
+        ContentEventAwareTests.tearDown(self)
+        SecurityTest.tearDown(self)
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
@@ -129,8 +139,8 @@ class UniqueIdAnnotationToolTests(SecurityTest):
         annotation = self.root.portal_uidannotation(baz, UID_ATTRNAME)
         self.assertEqual( getattr(baz, UID_ATTRNAME), annotation )
 
-        foo.manage_afterAdd(foo, None)
-        foo.manage_afterClone(foo)
+        notify(ObjectAddedEvent(foo, foo))
+        notify(ObjectClonedEvent(foo))
         self.assertRaises(AttributeError, getattr, baz, UID_ATTRNAME)
 
 

@@ -21,6 +21,7 @@ import Testing
 from Acquisition import Implicit
 
 from Products.CMFCore.tests.base.dummy import DummySite
+from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 from Products.CMFCore.TypesTool import TypesTool
@@ -118,14 +119,19 @@ class DummySyndicationTool( Implicit ):
         return self._max_items
 
 
-class TestTopic(SecurityTest):
+class TestTopic(SecurityTest, ContentEventAwareTests):
 
     """ Test all the general Topic cases.
     """
 
     def setUp(self):
         SecurityTest.setUp(self)
+        ContentEventAwareTests.setUp(self)
         self.site = DummySite('site').__of__(self.root)
+
+    def tearDown(self):
+        ContentEventAwareTests.tearDown(self)
+        SecurityTest.tearDown(self) 
 
     def _getTargetClass(self):
         from Products.CMFTopic.Topic import Topic

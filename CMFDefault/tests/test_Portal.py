@@ -23,12 +23,12 @@ from Acquisition import aq_base
 from Products.Five import zcml
 from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
+from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.tests.base.testcase import setUpTraversing
 
 
-class CMFSiteTests(SecurityRequestTest, ContentEventAwareTests):
+class CMFSiteTests(SecurityRequestTest):
 
     def _makeSite( self, id='testsite' ):
 
@@ -49,7 +49,7 @@ class CMFSiteTests(SecurityRequestTest, ContentEventAwareTests):
 
     def setUp(self):
         SecurityRequestTest.setUp(self)
-        ContentEventAwareTests.setUp(self)
+        setUpEvents()
         setUpTraversing()
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.GenericSetup)
@@ -57,7 +57,6 @@ class CMFSiteTests(SecurityRequestTest, ContentEventAwareTests):
         zcml.load_config('configure.zcml', Products.DCWorkflow)
 
     def tearDown(self):
-        ContentEventAwareTests.tearDown(self)
         SecurityRequestTest.tearDown(self)
         cleanUp()
 

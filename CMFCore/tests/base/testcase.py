@@ -11,14 +11,12 @@ from shutil import copytree, rmtree
 from stat import S_IREAD, S_IWRITE
 from tempfile import mktemp
 
-import Products
 import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
 from Products.Five import zcml
 from Testing.makerequest import makerequest
-from zope.app.testing.placelesssetup import PlacelessSetup
 
 from dummy import DummyFolder
 from security import AnonymousUser
@@ -47,7 +45,8 @@ _TRAVERSE_ZCML = """
 """
 
 def setUpTraversing():
-    import Products.Five
+    import Products
+
     zcml.load_config('meta.zcml', Products.Five)
     try:
         # BBB: for Zope 2.9
@@ -55,6 +54,17 @@ def setUpTraversing():
         zcml.load_string(_TRAVERSE_ZCML)
     except ImportError:
         zcml.load_config('traversing.zcml', Products.Five)
+
+def setUpEvents():
+    import Products
+    import zope.app
+
+    #   First, set up "stock" OFS event propagation
+    zcml.load_config('meta.zcml', Products.Five)
+    zcml.load_config('configure.zcml', zope.app.event)
+    zcml.load_config('event.zcml', Products.Five)
+    #   Now, register the CMF-specific handler
+    zcml.load_config('event.zcml', Products.CMFCore)
 
 
 class LogInterceptor:
@@ -178,22 +188,6 @@ else:
     _prefix = abspath(dirname(__file__))
 
 _prefix = abspath(join(_prefix,'..'))
-
-
-class ContentEventAwareTests(PlacelessSetup):
-
-    """ Mix-in for test case classes which need to get object events handled.
-    """
-    # BBB: replace PlacelessSetup by zope.component.eventtesting.setUp
-    #      and zope.testing.cleanup.cleanUp if we no longer support Zope 2.9
-
-    def setUp(self):
-        PlacelessSetup.setUp(self)
-        #   First, set up "stock" OFS event propagation
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('event.zcml', Products.Five)
-        #   Now, register the CMF-specific handler
-        zcml.load_config('event.zcml', Products.CMFCore)
 
 
 class FSDVTest( TestCase, WarningInterceptor ):

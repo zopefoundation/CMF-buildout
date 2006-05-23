@@ -19,10 +19,11 @@ import unittest
 import Testing
 
 from Acquisition import Implicit
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.dummy import DummySite
-from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 from Products.CMFCore.TypesTool import TypesTool
 
@@ -119,19 +120,19 @@ class DummySyndicationTool( Implicit ):
         return self._max_items
 
 
-class TestTopic(SecurityTest, ContentEventAwareTests):
+class TestTopic(SecurityTest):
 
     """ Test all the general Topic cases.
     """
 
     def setUp(self):
         SecurityTest.setUp(self)
-        ContentEventAwareTests.setUp(self)
+        setUpEvents()
         self.site = DummySite('site').__of__(self.root)
 
     def tearDown(self):
-        ContentEventAwareTests.tearDown(self)
-        SecurityTest.tearDown(self) 
+        SecurityTest.tearDown(self)
+        cleanUp()
 
     def _getTargetClass(self):
         from Products.CMFTopic.Topic import Topic

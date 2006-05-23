@@ -31,8 +31,8 @@ from zope.testing.cleanup import cleanUp
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.security import OmnipotentUser
-from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
+from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.tests.base.testcase import setUpTraversing
 from Products.CMFDefault import tests
 
@@ -103,14 +103,14 @@ class TestImageElement(ConformsToContent, unittest.TestCase):
         self.assertEqual(image.content_type, 'image/jpeg')
 
 
-class TestImageCopyPaste(SecurityRequestTest, ContentEventAwareTests):
+class TestImageCopyPaste(SecurityRequestTest):
 
     # Tests related to http://www.zope.org/Collectors/CMF/176
     # Copy/pasting an image (or file) should reset the object's workflow state.
 
     def setUp(self):
         SecurityRequestTest.setUp(self)
-        ContentEventAwareTests.setUp(self)
+        setUpEvents()
         setUpTraversing()
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.GenericSetup)
@@ -135,7 +135,6 @@ class TestImageCopyPaste(SecurityRequestTest, ContentEventAwareTests):
 
     def tearDown(self):
         noSecurityManager()
-        ContentEventAwareTests.tearDown(self)
         SecurityRequestTest.tearDown(self)
         cleanUp()
 

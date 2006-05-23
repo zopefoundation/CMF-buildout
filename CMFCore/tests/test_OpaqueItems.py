@@ -18,6 +18,7 @@ import unittest
 import Testing
 
 from zope.interface import implements
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import ICallableOpaqueItem
 from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
@@ -29,8 +30,8 @@ from Products.CMFCore.interfaces.IOpaqueItems \
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.tests.base.dummy \
     import DummyContent as OriginalDummyContent
-from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.TypesTool import TypesTool
 
 
@@ -137,11 +138,11 @@ class MarkerAndHooks(Marker, Hooks):
 # Unit Tests
 # -------------------------------------------
 
-class ManageBeforeAfterTests(SecurityTest, ContentEventAwareTests):
+class ManageBeforeAfterTests(SecurityTest):
 
     def setUp(self):
         SecurityTest.setUp(self)
-        ContentEventAwareTests.setUp(self)
+        setUpEvents()
 
         root = self.root
 
@@ -177,8 +178,8 @@ class ManageBeforeAfterTests(SecurityTest, ContentEventAwareTests):
             pass
 
     def tearDown(self):
-        ContentEventAwareTests.tearDown(self)
         SecurityTest.tearDown(self)
+        cleanUp()
 
     def test_nonCallableItem(self):
         # no exception should be raised

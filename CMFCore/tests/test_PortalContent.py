@@ -20,11 +20,12 @@ import Testing
 
 from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import aq_base
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
-from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
+from Products.CMFCore.tests.base.testcase import setUpEvents
 
 
 class PortalContentTests(unittest.TestCase):
@@ -50,22 +51,22 @@ class PortalContentTests(unittest.TestCase):
         verifyClass(IDynamicType, PortalContent)
 
 
-class TestContentCopyPaste(SecurityRequestTest, ContentEventAwareTests):
+class TestContentCopyPaste(SecurityRequestTest):
 
     # Tests related to http://www.zope.org/Collectors/CMF/205
     # Copy/pasting a content item must set ownership to pasting user
 
     def setUp(self):
         SecurityRequestTest.setUp(self)
-        ContentEventAwareTests.setUp(self)
+        setUpEvents()
 
         self.root._setObject('site', DummySite('site'))
         self.site = self.root.site
         self.acl_users = self.site._setObject('acl_users', DummyUserFolder())
 
     def tearDown(self):
-        ContentEventAwareTests.tearDown(self)
         SecurityRequestTest.tearDown(self)
+        cleanUp()
 
     def _initContent(self, folder, id):
         from Products.CMFCore.PortalContent import PortalContent

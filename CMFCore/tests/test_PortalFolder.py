@@ -30,6 +30,7 @@ from OFS.Application import Application
 from OFS.Image import manage_addFile
 from OFS.tests.testCopySupport import makeConnection
 from Testing.makerequest import makerequest
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.CatalogTool import CatalogTool
 from Products.CMFCore.exceptions import BadRequest
@@ -37,10 +38,10 @@ from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFactory
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
-from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import newSecurityManager
 from Products.CMFCore.tests.base.testcase import noSecurityManager
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
 from Products.CMFCore.tests.base.tidata import FTIDATA_DUMMY
 from Products.CMFCore.tests.base.utils import has_path
@@ -54,12 +55,13 @@ def extra_meta_types():
              'permission': 'View'}]
 
 
-class PortalFolderFactoryTests(SecurityTest, ContentEventAwareTests):
+class PortalFolderFactoryTests(SecurityTest):
 
     def setUp(self):
         from Products.CMFCore.PortalFolder import PortalFolder
+
         SecurityTest.setUp(self)
-        ContentEventAwareTests.setUp(self)
+        setUpEvents()
 
         self.root._setObject( 'portal_types', TypesTool() )
         types_tool = self.root.portal_types
@@ -76,8 +78,8 @@ class PortalFolderFactoryTests(SecurityTest, ContentEventAwareTests):
         types_tool._setObject( 'Dummy Content', FTI(**fti) )
 
     def tearDown(self):
-        ContentEventAwareTests.tearDown(self)
         SecurityTest.tearDown(self)
+        cleanUp()
 
     def _makeOne( self, id ):
         from Products.CMFCore.PortalFolder import PortalFolder
@@ -117,16 +119,16 @@ class PortalFolderFactoryTests(SecurityTest, ContentEventAwareTests):
                          , type_name='Dummy Content', id='foo' )
 
 
-class PortalFolderTests(SecurityTest, ContentEventAwareTests):
+class PortalFolderTests(SecurityTest):
 
     def setUp(self):
         SecurityTest.setUp(self)
-        ContentEventAwareTests.setUp(self)
+        setUpEvents()
         self.site = DummySite('site').__of__(self.root)
 
     def tearDown(self):
-        ContentEventAwareTests.tearDown(self)
         SecurityTest.tearDown(self)
+        cleanUp()
 
     def _getTargetClass(self):
         from Products.CMFCore.PortalFolder import PortalFolder
@@ -442,17 +444,17 @@ class PortalFolderTests(SecurityTest, ContentEventAwareTests):
         self.failIf(test.checkIdAvailable('foo'))
 
 
-class PortalFolderMoveTests(SecurityTest, ContentEventAwareTests):
+class PortalFolderMoveTests(SecurityTest):
 
     def setUp(self):
         SecurityTest.setUp(self)
-        ContentEventAwareTests.setUp(self)
+        setUpEvents()
         self.root._setObject( 'site', DummySite('site') )
         self.site = self.root.site
 
     def tearDown(self):
-        ContentEventAwareTests.tearDown(self)
         SecurityTest.tearDown(self)
+        cleanUp()
 
     def _makeOne(self, id, *args, **kw):
         from Products.CMFCore.PortalFolder import PortalFolder

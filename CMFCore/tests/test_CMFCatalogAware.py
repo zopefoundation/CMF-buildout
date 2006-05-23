@@ -22,6 +22,7 @@ import transaction
 from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.CMFCore.exceptions import NotFound
@@ -29,8 +30,8 @@ from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.tests.test_PortalFolder import _AllowedUser
 from Products.CMFCore.tests.test_PortalFolder import _SensitiveSecurityPolicy
 from Products.CMFCore.tests.base.testcase import LogInterceptor
-from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.testcase import setUpEvents
 
 CMF_SECURITY_INDEXES = CMFCatalogAware._cmf_security_indexes
 
@@ -214,15 +215,15 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
     # FIXME: more tests needed
 
 
-class CMFCatalogAware_CopySupport_Tests(SecurityTest, ContentEventAwareTests):
+class CMFCatalogAware_CopySupport_Tests(SecurityTest):
 
     def setUp(self):
         SecurityTest.setUp(self)
-        ContentEventAwareTests.setUp(self)
+        setUpEvents()
 
     def tearDown(self):
-        ContentEventAwareTests.tearDown(self)
         SecurityTest.tearDown(self)
+        cleanUp()
 
     def _makeSite(self):
         import cStringIO

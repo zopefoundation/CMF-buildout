@@ -33,9 +33,9 @@ from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
-from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
+from Products.CMFCore.tests.base.testcase import setUpTraversing
 
 ACCLARK = DateTime( '2001/01/01' )
 portal_owner = 'portal_owner'
@@ -609,10 +609,9 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
 
         RequestTest.setUp(self)
         FSDVTest.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
+        setUpTraversing()
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.CMFCore)
-        zcml.load_string(_TRAVERSE_ZCML)
 
         now = DateTime()
 

@@ -15,6 +15,7 @@ import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
+from Products.Five import zcml
 from Testing.makerequest import makerequest
 
 from dummy import DummyFolder
@@ -42,6 +43,16 @@ _TRAVERSE_ZCML = """
 
 </configure>
 """
+
+def setUpTraversing():
+    import Products.Five
+    zcml.load_config('meta.zcml', Products.Five)
+    try:
+        # BBB: for Zope 2.9
+        from Products.Five.traversable import FiveTraversable
+        zcml.load_string(_TRAVERSE_ZCML)
+    except ImportError:
+        zcml.load_config('traversing.zcml', Products.Five)
 
 
 class LogInterceptor:

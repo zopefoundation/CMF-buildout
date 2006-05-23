@@ -31,9 +31,9 @@ from zope.testing.cleanup import cleanUp
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.security import OmnipotentUser
-from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
 from Products.CMFCore.tests.base.testcase import ContentEventAwareTests
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
+from Products.CMFCore.tests.base.testcase import setUpTraversing
 from Products.CMFDefault import tests
 
 from common import ConformsToContent
@@ -111,12 +111,11 @@ class TestImageCopyPaste(SecurityRequestTest, ContentEventAwareTests):
     def setUp(self):
         SecurityRequestTest.setUp(self)
         ContentEventAwareTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
+        setUpTraversing()
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.CMFCore)
         zcml.load_config('configure.zcml', Products.DCWorkflow)
-        zcml.load_string(_TRAVERSE_ZCML)
         try:
             factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
             factory('cmf', 'CMFDefault:default', snapshot=False)

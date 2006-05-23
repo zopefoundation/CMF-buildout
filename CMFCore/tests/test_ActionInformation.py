@@ -29,8 +29,8 @@ from Products.CMFCore.Expression import Expression
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool as DummyMembershipTool
-from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.testcase import setUpTraversing
 from Products.CMFCore.tests.base.testcase import TransactionalTest
 
 
@@ -294,10 +294,9 @@ class ActionInformationTests(TransactionalTest):
     def setUp(self):
         import Products.CMFCore
         TransactionalTest.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
+        setUpTraversing()
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.CMFCore)
-        zcml.load_string(_TRAVERSE_ZCML)
 
         root = self.root
         root._setObject('portal', DummyContent('portal', 'url_portal'))

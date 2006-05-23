@@ -39,8 +39,8 @@ from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.security import UserWithRoles
-from Products.CMFCore.tests.base.testcase import _TRAVERSE_ZCML
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.testcase import setUpTraversing
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.tests.base.tidata import FTIDATA_ACTIONS
 from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
@@ -59,11 +59,10 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
         from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 
         SecurityTest.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
+        setUpTraversing()
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.Five.browser)
         zcml.load_config('configure.zcml', Products.CMFCore)
-        zcml.load_string(_TRAVERSE_ZCML)
 
         self.site = DummySite('site').__of__(self.root)
         self.acl_users = self.site._setObject( 'acl_users', DummyUserFolder() )

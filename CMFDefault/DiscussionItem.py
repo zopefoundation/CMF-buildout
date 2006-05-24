@@ -24,6 +24,7 @@ from Globals import PersistentMapping
 from OFS.Traversable import Traversable
 from zope.interface import implements
 
+from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
 from Products.CMFCore.interfaces import IDiscussable
 from Products.CMFCore.interfaces import IDiscussionResponse
 from Products.CMFCore.interfaces.Discussions \
@@ -158,7 +159,7 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
         hold the discussion threads.
     """
 
-    implements(IDiscussable)
+    implements(IDiscussable, ICallableOpaqueItemEvents)
     __implements__ = z2IDiscussable
 
     # for the security machinery to allow traversal

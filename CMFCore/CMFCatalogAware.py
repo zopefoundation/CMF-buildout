@@ -26,6 +26,7 @@ from OFS.interfaces import IObjectClonedEvent
 from OFS.interfaces import IObjectWillBeMovedEvent
 from zope.app.container.interfaces import IObjectAddedEvent
 from zope.app.container.interfaces import IObjectMovedEvent
+from zope.component import subscribers
 
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
@@ -205,21 +206,6 @@ class CMFCatalogAware(Base):
             self.manage_delLocalRoles(local_role_holders)
             self.manage_setLocalRoles(current_user.getId(), ['Owner'])
 
-    def _recurseOpaques(self, name, container=None):
-        """
-            Recurse in both opaque subobjects.
-        """
-        for opaque in self.opaqueValues():
-            s = getattr(opaque, '_p_changed', 0)
-            if hasattr(aq_base(opaque), name):
-                if container is None:
-                    getattr(opaque, name)(opaque)
-                else:
-                    getattr(opaque, name)(opaque, container)
-            else:
-                if s is None:
-                    opaque._p_deactivate()
-
     # ZMI
     # ---
 
@@ -266,28 +252,49 @@ class CMFCatalogAware(Base):
 InitializeClass(CMFCatalogAware)
 
 
-def handleObjectEvent(ob, event):
+def handleContentishEvent(ob, event):
     """ Event subscriber for (IContentish, IObjectEvent) events.
-
-    o XXX:  the nasty '_recurseOpaques' propagates notification to opaque
-            items, which are ignored by the stock ObjectManager propagation.
     """
     if IObjectAddedEvent.providedBy(event):
         if event.newParent is not None:
             ob.indexObject()
-            ob._recurseOpaques('manage_afterAdd', ob)
 
     elif IObjectClonedEvent.providedBy(event):
         ob.notifyWorkflowCreated()
         ob._clearLocalRolesAfterClone()
-        ob._recurseOpaques('manage_afterClone')
 
     elif IObjectMovedEvent.providedBy(event):
         if event.newParent is not None:
             ob.reindexObject()
-            ob._recurseOpaques('manage_afterAdd', ob)
 
     elif IObjectWillBeMovedEvent.providedBy(event):
         if event.oldParent is not None:
             ob.unindexObject()
-            ob._recurseOpaques('manage_beforeDelete', ob)
+
+def dispatchToOpaqueItems(ob, event):
+    """Dispatch an event to opaque sub-items of a given object.
+    """
+    for opaque in ob.opaqueValues():
+        s = getattr(opaque, '_p_changed', 0)
+        for ignored in subscribers((opaque, event), None):
+            pass # They do work in the adapter fetch
+        if s is None:
+            opaque._p_deactivate()
+
+def handleOpaqueItemEvent(ob, event):
+    """ Event subscriber for (ICallableOpaqueItemEvents, IObjectEvent) events.
+    """
+    if IObjectAddedEvent.providedBy(event):
+        if event.newParent is not None:
+            ob.manage_afterAdd(ob, event.newParent)
+
+    elif IObjectClonedEvent.providedBy(event):
+        ob.manage_afterClone(ob)
+
+    elif IObjectMovedEvent.providedBy(event):
+        if event.newParent is not None:
+            ob.manage_afterAdd(ob, event.newParent)
+
+    elif IObjectWillBeMovedEvent.providedBy(event):
+        if event.oldParent is not None:
+            ob.manage_beforeDelete(ob, event.oldParent)

@@ -80,20 +80,25 @@ class DiscussionItemTests(unittest.TestCase):
 
 class DiscussionItemContainerTests(unittest.TestCase):
 
+    def _getTargetClass(self):
+        from Products.CMFDefault.DiscussionItem import DiscussionItemContainer
+
+        return DiscussionItemContainer
+
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
         from Products.CMFCore.interfaces.Discussions \
                 import Discussable as IDiscussable
-        from Products.CMFDefault.DiscussionItem import DiscussionItemContainer
 
-        verifyClass(IDiscussable, DiscussionItemContainer)
+        verifyClass(IDiscussable, self._getTargetClass())
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
+        from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
         from Products.CMFCore.interfaces import IDiscussable
-        from Products.CMFDefault.DiscussionItem import DiscussionItemContainer
 
-        verifyClass(IDiscussable, DiscussionItemContainer)
+        verifyClass(ICallableOpaqueItemEvents, self._getTargetClass())
+        verifyClass(IDiscussable, self._getTargetClass())
 
 
 class DiscussionTests(SecurityTest):

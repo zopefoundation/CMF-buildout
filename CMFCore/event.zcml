@@ -10,7 +10,19 @@
   <subscriber
       for=".interfaces.IContentish
            zope.app.event.interfaces.IObjectEvent"
-      handler=".CMFCatalogAware.handleObjectEvent"
+      handler=".CMFCatalogAware.handleContentishEvent"
+      />
+
+  <subscriber
+      for=".interfaces.IDynamicType
+           zope.app.event.interfaces.IObjectEvent"
+      handler=".CMFCatalogAware.dispatchToOpaqueItems"
+      />
+
+  <subscriber
+      for=".interfaces.ICallableOpaqueItemEvents
+           zope.app.event.interfaces.IObjectEvent"
+      handler=".CMFCatalogAware.handleOpaqueItemEvent"
       />
 
 </configure>

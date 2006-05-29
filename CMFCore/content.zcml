@@ -8,9 +8,9 @@
       permission="cmf.AddPortalFolders"
       />
 
-  <factory
+  <utility
       component=".PortalFolder.PortalFolderFactory"
-      id="cmf.folder"
+      name="cmf.folder"
       />
 
   <five:registerClass
@@ -19,9 +19,9 @@
       permission="cmf.AddPortalFolders"
       />
 
-  <factory
+  <utility
       component=".CMFBTreeFolder.CMFBTreeFolderFactory"
-      id="cmf.folder.btree"
+      name="cmf.folder.btree"
       />
 
 </configure>

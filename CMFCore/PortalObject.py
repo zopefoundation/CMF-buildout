@@ -35,7 +35,6 @@ class PortalObjectBase(PortalFolder, SkinnableObjectManager):
 
     implements(ISiteRoot)
     meta_type = 'Portal Site'
-    portal_type = 'Folder'
     _isPortalRoot = 1
 
     # Ensure certain attributes come from the correct base class.

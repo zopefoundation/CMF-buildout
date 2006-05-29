@@ -298,7 +298,6 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         from Products.CMFCore.PortalFolder import PortalFolder
 
         test = self._makeOne('test')
-        test._setPortalTypeName('Folder')
 
         ttool = self.site._setObject( 'portal_types', TypesTool() )
         ttool._setObject( 'Folder'
@@ -356,10 +355,8 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         ttool._setObject( 'Dummy Content', FTI(**fti) )
         ttool._setObject( 'Folder', FTI(**fti) )
         sub1 = self._makeOne('sub1')
-        sub1._setPortalTypeName('Folder')
         sub1._setObject( 'dummy', DummyContent( 'dummy' ) )
         sub2 = self._makeOne('sub2')
-        sub2._setPortalTypeName('Folder')
         sub2.all_meta_types = extra_meta_types()
 
         # Allow adding of Dummy Content
@@ -900,8 +897,6 @@ class PortalFolderCopySupportTests(unittest.TestCase):
             self.app._setObject( 'folder2', PortalFolder( 'folder2' ) )
             folder1 = getattr( self.app, 'folder1' )
             folder2 = getattr( self.app, 'folder2' )
-            folder1._setPortalTypeName('Folder')
-            folder2._setPortalTypeName('Folder')
 
             manage_addFile( folder1, 'file'
                           , file='', content_type='text/plain')

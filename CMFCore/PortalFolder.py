@@ -467,6 +467,7 @@ class PortalFolder(OrderSupport, PortalFolderBase):
 
     __implements__ = (PortalFolderBase.__implements__,
                       OrderSupport.__implements__)
+    portal_type = 'Folder'
 
     security = ClassSecurityInfo()
 

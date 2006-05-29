@@ -28,7 +28,6 @@ def importVarious(context):
 
     try:
         site.manage_addPortalFolder('Members')
-        site.Members._setPortalTypeName('Folder')
     except BadRequest:
         return 'Various settings: Nothing to import.'
     site.Members.manage_addProduct['OFSP'].manage_addDTMLMethod('index_html',

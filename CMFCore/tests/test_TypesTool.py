@@ -28,11 +28,14 @@ from Products.Five import zcml
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.PythonScripts.standard import html_quote
 from webdav.NullResource import NullResource
+from zope.component import getGlobalSiteManager
+from zope.component.interfaces import IFactory
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.tests.base.dummy import DummyFactory
+from Products.CMFCore.tests.base.dummy import DummyFactoryDispatcher
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummyObject
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -134,7 +137,7 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
         s.write(STI_SCRIPT)
 
         f = site._setObject( 'folder', PortalFolder(id='folder') )
-        f.manage_addProduct = { 'FooProduct' : DummyFactory(f) }
+        f.manage_addProduct = { 'FooProduct' : DummyFactoryDispatcher(f) }
         f._owner = (['acl_users'], 'user_foo')
         self.assertEqual( f.getOwner(), acl_users.user_foo )
 
@@ -363,153 +366,104 @@ class STIDataTests( TypeInfoTests ):
         self.assertEqual( ti.constructor_path, 'foo_add' )
 
 
-class FTIConstructionTests(unittest.TestCase):
+class FTIConstructionTestCase(unittest.TestCase):
 
-    def setUp( self ):
-        noSecurityManager()
-
-    def _makeInstance(self, id, **kw):
+    def _getTargetClass(self):
         from Products.CMFCore.TypesTool import FactoryTypeInformation
 
-        return FactoryTypeInformation(id, **kw)
+        return FactoryTypeInformation
 
-    def _makeFolder( self, fake_product=0 ):
-        return DummyFolder( fake_product )
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
 
-    def test_isConstructionAllowed_wo_Container( self ):
+    def test_isConstructionAllowed_wo_Container(self):
+        self.failIf(self.ti.isConstructionAllowed(None))
 
-        ti = self._makeInstance( 'foo' )
+    def test_isConstructionAllowed_wo_ProductFactory(self):
+        ti = self._makeOne('foo')
+        self.failIf(ti.isConstructionAllowed(self.f))
 
-        self.failIf( ti.isConstructionAllowed( None ) )
-
-        ti = self._makeInstance( 'Foo'
-                               , product='FooProduct'
-                               , factory='addFoo'
-                               )
-
-        self.failIf( ti.isConstructionAllowed( None ) )
-
-    def test_isConstructionAllowed_wo_ProductFactory( self ):
-
-        ti = self._makeInstance( 'foo' )
-
-        folder = self._makeFolder()
-        self.failIf( ti.isConstructionAllowed( folder ) )
-
-        folder = self._makeFolder( fake_product=1 )
-        self.failIf( ti.isConstructionAllowed( folder ) )
-
-    def test_isConstructionAllowed_wo_Security( self ):
-
-        ti = self._makeInstance( 'Foo'
-                               , product='FooProduct'
-                               , factory='addFoo'
-                               )
-        folder = self._makeFolder( fake_product=1 )
-
-        self.failIf( ti.isConstructionAllowed( folder ) )
-
-
-class FTIConstructionTests_w_Roles(unittest.TestCase):
-
-    def tearDown( self ):
+    def test_isConstructionAllowed_wo_Security(self):
         noSecurityManager()
+        self.failIf(self.ti.isConstructionAllowed(self.f))
 
-    def _makeStuff( self, prefix='' ):
-        from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
+    def test_isConstructionAllowed_for_Omnipotent(self):
+        newSecurityManager(None, OmnipotentUser().__of__(self.f))
+        self.failUnless(self.ti.isConstructionAllowed(self.f))
 
-        ti = FTI( 'Foo'
-                  , product='FooProduct'
-                  , factory='addFoo'
-                  )
-        folder = DummyFolder( fake_product=1,prefix=prefix )
+    def test_isConstructionAllowed_w_Role(self):
+        self.failUnless(self.ti.isConstructionAllowed(self.f))
 
-        return ti, folder
+    def test_isConstructionAllowed_wo_Role(self):
+        newSecurityManager(None, UserWithRoles('FooViewer').__of__(self.f))
+        self.failIf(self.ti.isConstructionAllowed(self.f))
 
-    def test_isConstructionAllowed_for_Omnipotent( self ):
+    def test_constructInstance_wo_Roles(self):
+        newSecurityManager(None, UserWithRoles('FooViewer').__of__(self.f))
+        self.assertRaises(Unauthorized,
+                          self.ti.constructInstance, self.f, 'foo')
 
-        ti, folder = self._makeStuff()
-        newSecurityManager( None
-                          , OmnipotentUser().__of__( folder ) )
-        self.failUnless( ti.isConstructionAllowed( folder ) )
-
-    def test_isConstructionAllowed_w_Role( self ):
-
-        ti, folder = self._makeStuff()
-
-        newSecurityManager( None
-                          , UserWithRoles( 'FooAdder' ).__of__( folder ) )
-        self.failUnless( ti.isConstructionAllowed( folder ) )
-
-    def test_isConstructionAllowed_wo_Role( self ):
-
-        ti, folder = self._makeStuff()
-
-        newSecurityManager( None
-                          , UserWithRoles( 'FooViewer' ).__of__( folder ) )
-
-    def test_constructInstance_wo_Roles( self ):
-
-        ti, folder = self._makeStuff()
-
-        newSecurityManager( None
-                          , UserWithRoles( 'FooViewer' ).__of__( folder ) )
-
-        self.assertRaises( Unauthorized
-                         , ti.constructInstance, folder, 'foo' )
-
-    def test_constructInstance( self ):
-
-        ti, folder = self._makeStuff()
-
-        newSecurityManager( None
-                          , UserWithRoles( 'FooAdder' ).__of__( folder ) )
-
-        ti.constructInstance( folder, 'foo' )
-        foo = folder._getOb( 'foo' )
-        self.assertEqual( foo.id, 'foo' )
-
-    def test_constructInstance_private(self):
-        ti, folder = self._makeStuff()
-        newSecurityManager(None,
-                           UserWithRoles('NotAFooAdder').__of__(folder))
-        ti._constructInstance(folder, 'foo')
-        foo = folder._getOb('foo')
+    def test_constructInstance(self):
+        self.ti.constructInstance(self.f, 'foo')
+        foo = self.f._getOb('foo')
         self.assertEqual(foo.id, 'foo')
 
-    def test_constructInstance_w_args_kw( self ):
+    def test_constructInstance_private(self):
+        newSecurityManager(None, UserWithRoles('NotAFooAdder').__of__(self.f))
+        self.ti._constructInstance(self.f, 'foo')
+        foo = self.f._getOb('foo')
+        self.assertEqual(foo.id, 'foo')
 
-        ti, folder = self._makeStuff()
+    def test_constructInstance_w_args_kw(self):
+        self.ti.constructInstance(self.f, 'bar', 0, 1)
+        bar = self.f._getOb('bar')
+        self.assertEqual(bar.id, 'bar')
+        self.assertEqual(bar._args, (0, 1))
 
-        newSecurityManager( None
-                          , UserWithRoles( 'FooAdder' ).__of__( folder ) )
+        self.ti.constructInstance(self.f, 'baz', frickle='natz')
+        baz = self.f._getOb('baz')
+        self.assertEqual(baz.id, 'baz')
+        self.assertEqual(baz._kw['frickle'], 'natz')
 
-        ti.constructInstance( folder, 'bar', 0, 1 )
-        bar = folder._getOb( 'bar' )
-        self.assertEqual( bar.id, 'bar' )
-        self.assertEqual( bar._args, ( 0, 1 ) )
+        self.ti.constructInstance(self.f, 'bam', 0, 1, frickle='natz')
+        bam = self.f._getOb('bam')
+        self.assertEqual(bam.id, 'bam')
+        self.assertEqual(bam._args, (0, 1))
+        self.assertEqual(bam._kw['frickle'], 'natz')
 
-        ti.constructInstance( folder, 'baz', frickle='natz' )
-        baz = folder._getOb( 'baz' )
-        self.assertEqual( baz.id, 'baz' )
-        self.assertEqual( baz._kw[ 'frickle' ], 'natz' )
 
-        ti.constructInstance( folder, 'bam', 0, 1, frickle='natz' )
-        bam = folder._getOb( 'bam' )
-        self.assertEqual( bam.id, 'bam' )
-        self.assertEqual( bam._args, ( 0, 1 ) )
-        self.assertEqual( bam._kw[ 'frickle' ], 'natz' )
+class FTIOldstyleConstructionTests(FTIConstructionTestCase):
+    
+    def setUp(self):
+        self.f = DummyFolder(fake_product=1)
+        self.ti = self._makeOne('Foo', product='FooProduct', factory='addFoo')
+        newSecurityManager(None, UserWithRoles('FooAdder').__of__(self.f))
 
-    def test_constructInstance_w_id_munge( self ):
+    def tearDown(self):
+        noSecurityManager()
 
-        ti, folder = self._makeStuff( 'majyk' )
+    def test_constructInstance_w_id_munge(self):
+        self.f._prefix = 'majyk'
+        self.ti.constructInstance(self.f, 'dust')
+        majyk_dust = self.f._getOb('majyk_dust')
+        self.assertEqual(majyk_dust.id, 'majyk_dust')
 
-        newSecurityManager( None
-                          , UserWithRoles( 'FooAdder' ).__of__( folder ) )
 
-        ti.constructInstance( folder, 'dust' )
-        majyk_dust = folder._getOb( 'majyk_dust' )
-        self.assertEqual( majyk_dust.id, 'majyk_dust' )
+class FTINewstyleConstructionTests(FTIConstructionTestCase, SecurityTest):
+
+    def setUp(self):
+        SecurityTest.setUp(self)
+        gsm = getGlobalSiteManager()
+        gsm.provideUtility(IFactory, DummyFactory, 'test.dummy')
+
+        self.f = DummyFolder()
+        self.ti = self._makeOne('Foo', meta_type='Dummy',
+                                factory='test.dummy')
+        newSecurityManager(None, UserWithRoles('FooAdder').__of__(self.f))
+
+    def tearDown(self):
+        SecurityTest.tearDown(self)
+        cleanUp()
 
 
 def test_suite():
@@ -517,8 +471,8 @@ def test_suite():
         unittest.makeSuite(TypesToolTests),
         unittest.makeSuite(FTIDataTests),
         unittest.makeSuite(STIDataTests),
-        unittest.makeSuite(FTIConstructionTests),
-        unittest.makeSuite(FTIConstructionTests_w_Roles),
+        unittest.makeSuite(FTIOldstyleConstructionTests),
+        unittest.makeSuite(FTINewstyleConstructionTests),
         ))
 
 if __name__ == '__main__':

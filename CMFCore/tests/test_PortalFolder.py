@@ -21,6 +21,8 @@ import Testing
 import cStringIO
 
 import transaction
+from AccessControl.SecurityManagement import newSecurityManager
+from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl import SecurityManager
 from AccessControl import Unauthorized
 from Acquisition import aq_base
@@ -36,11 +38,9 @@ from Products.CMFCore.CatalogTool import CatalogTool
 from Products.CMFCore.exceptions import BadRequest
 from Products.CMFCore.testing import ConformsToFolder
 from Products.CMFCore.tests.base.dummy import DummyContent
-from Products.CMFCore.tests.base.dummy import DummyFactory
+from Products.CMFCore.tests.base.dummy import DummyFactoryDispatcher
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
-from Products.CMFCore.tests.base.testcase import newSecurityManager
-from Products.CMFCore.tests.base.testcase import noSecurityManager
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
@@ -92,7 +92,7 @@ class PortalFolderFactoryTests(SecurityTest):
 
         self.failIf( 'foo' in f.objectIds() )
 
-        f.manage_addProduct = { 'FooProduct' : DummyFactory(f) }
+        f.manage_addProduct = {'FooProduct': DummyFactoryDispatcher(f)}
         f.invokeFactory( type_name='Dummy Content', id='foo' )
 
         self.failUnless( 'foo' in f.objectIds() )
@@ -1004,9 +1004,6 @@ class PortalFolderCopySupportTests(unittest.TestCase):
                                    )
 
     def test_copy_cant_create_target_metatype_not_supported( self ):
-
-        from OFS.CopySupport import CopyError
-
         folder1, folder2 = self._initFolders()
         folder2.all_meta_types = ()
 
@@ -1035,9 +1032,6 @@ class PortalFolderCopySupportTests(unittest.TestCase):
         self.failUnless( 'file' in folder2.objectIds() )
 
     def test_move_cant_read_source( self ):
-
-        from OFS.CopySupport import CopyError
-
         folder1, folder2 = self._initFolders()
         folder2.all_meta_types = FILE_META_TYPES
 
@@ -1055,9 +1049,6 @@ class PortalFolderCopySupportTests(unittest.TestCase):
                                    )
 
     def test_move_cant_create_target_metatype_not_supported( self ):
-
-        from OFS.CopySupport import CopyError
-
         folder1, folder2 = self._initFolders()
         folder2.all_meta_types = ()
 
@@ -1080,8 +1071,6 @@ class PortalFolderCopySupportTests(unittest.TestCase):
         #   If you are running with such a Zope, this test will error out
         #   with an AttributeError (instead of the expected Unauthorized).
         #
-        from OFS.CopySupport import CopyError
-
         folder1, folder2 = self._initFolders()
         folder2.all_meta_types = FILE_META_TYPES
 
@@ -1115,7 +1104,6 @@ class PortalFolderCopySupportTests(unittest.TestCase):
         #   allowed.
         #
         from AccessControl.Permissions import delete_objects as DeleteObjects
-        from OFS.CopySupport import CopyError
         from Products.CMFCore.PortalFolder import PortalFolder
         from Products.CMFCore.permissions import AddPortalFolders
 

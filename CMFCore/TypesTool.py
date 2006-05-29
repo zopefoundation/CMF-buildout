@@ -28,6 +28,9 @@ from Globals import InitializeClass
 from OFS.Folder import Folder
 from OFS.ObjectManager import IFAwareObjectManager
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from zope.component import getUtility
+from zope.component import queryUtility
+from zope.component.interfaces import IFactory
 from zope.i18nmessageid import Message
 from zope.interface import implements
 
@@ -329,7 +332,7 @@ class TypeInformation(SimpleItemWithProperties, ActionProviderBase):
             method_id = method_id[0]
         return method_id
 
-InitializeClass( TypeInformation )
+InitializeClass(TypeInformation)
 
 
 class FactoryTypeInformation(TypeInformation):
@@ -346,7 +349,7 @@ class FactoryTypeInformation(TypeInformation):
         {'id':'product', 'type': 'string', 'mode':'w',
          'label':'Product name'},
         {'id':'factory', 'type': 'string', 'mode':'w',
-         'label':'Product factory method'},
+         'label':'Product factory'},
         ) + TypeInformation._advanced_properties)
 
     product = ''
@@ -402,7 +405,7 @@ class FactoryTypeInformation(TypeInformation):
         return default
 
     security.declarePublic('isConstructionAllowed')
-    def isConstructionAllowed( self, container ):
+    def isConstructionAllowed(self, container):
         """
         a. Does the factory method exist?
 
@@ -411,8 +414,21 @@ class FactoryTypeInformation(TypeInformation):
         c. Does the current user have the permission required in
         order to invoke the factory method?
         """
-        m = self._queryFactoryMethod(container)
-        return (m is not None)
+        if self.product:
+            # oldstyle factory
+            m = self._queryFactoryMethod(container)
+            return (m is not None)
+
+        elif container is not None:
+            # newstyle factory
+            m = queryUtility(IFactory, self.factory, None)
+            if m is not None:
+                for d in container.all_meta_types():
+                    if d['name'] == self.content_meta_type:
+                        sm = getSecurityManager()
+                        return sm.checkPermission(d['permission'], container)
+
+        return False
 
     security.declarePrivate('_constructInstance')
     def _constructInstance(self, container, id, *args, **kw):
@@ -422,24 +438,33 @@ class FactoryTypeInformation(TypeInformation):
 
         Returns the object without calling _finishConstruction().
         """
-        m = self._getFactoryMethod(container, check_security=0)
-
         id = str(id)
 
-        if getattr(aq_base(m), 'isDocTemp', 0):
-            kw['id'] = id
-            newid = m(m.aq_parent, self.REQUEST, *args, **kw)
+        if self.product:
+            # oldstyle factory
+            m = self._getFactoryMethod(container, check_security=0)
+
+            if getattr(aq_base(m), 'isDocTemp', 0):
+                kw['id'] = id
+                newid = m(m.aq_parent, self.REQUEST, *args, **kw)
+            else:
+                newid = m(id, *args, **kw)
+            # allow factory to munge ID
+            newid = newid or id
+
         else:
-            newid = m(id, *args, **kw)
-        # allow factory to munge ID
-        newid = newid or id
+            # newstyle factory
+            factory = getUtility(IFactory, self.factory)
+            obj = factory(id, *args, **kw)
+            rval = container._setObject(id, obj)
+            newid = isinstance(rval, basestring) and rval or id
 
         return container._getOb(newid)
 
-InitializeClass( FactoryTypeInformation )
+InitializeClass(FactoryTypeInformation)
 
 
-class ScriptableTypeInformation( TypeInformation ):
+class ScriptableTypeInformation(TypeInformation):
 
     """ Invokes a script rather than a factory to create the content.
     """
@@ -463,7 +488,7 @@ class ScriptableTypeInformation( TypeInformation ):
     #   Agent methods
     #
     security.declarePublic('isConstructionAllowed')
-    def isConstructionAllowed( self, container ):
+    def isConstructionAllowed(self, container):
         """
         Does the current user have the permission required in
         order to construct an instance?
@@ -492,7 +517,7 @@ class ScriptableTypeInformation( TypeInformation ):
         id = str(id)
         return constructor(container, id, *args, **kw)
 
-InitializeClass( ScriptableTypeInformation )
+InitializeClass(ScriptableTypeInformation)
 
 
 allowedTypes = [
@@ -716,4 +741,4 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
         rval.sort()
         return rval
 
-InitializeClass( TypesTool )
+InitializeClass(TypesTool)

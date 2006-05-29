@@ -24,6 +24,7 @@ from webdav.common import rfc1123_date
 from zope.app.container.contained import notifyContainerModified
 from zope.app.container.contained import ObjectAddedEvent
 from zope.app.container.contained import ObjectRemovedEvent
+from zope.component.factory import Factory
 from zope.event import notify
 from zope.interface import implements
 
@@ -161,16 +162,19 @@ class DummyContent( PortalContent, Item ):
     def Type( self ):
         return 'Dummy Content Title'
 
+DummyFactory = Factory(DummyContent)
 
-class DummyFactory:
+
+class DummyFactoryDispatcher:
+
     """
-    Dummy Product Factory
+    Dummy Product Factory Dispatcher
     """
     def __init__( self, folder ):
         self._folder = folder
 
     def getId(self):
-        return 'DummyFactory'
+        return 'DummyFactoryDispatcher'
 
     def addFoo( self, id, *args, **kw ):
         if getattr(self._folder, '_prefix', None):
@@ -195,7 +199,8 @@ class DummyFolder(DummyObject):
         self._id = id
 
         if fake_product:
-            self.manage_addProduct = { 'FooProduct' : DummyFactory( self ) }
+            self.manage_addProduct = {
+                                   'FooProduct': DummyFactoryDispatcher(self)}
 
     def _setOb(self, id, object):
         setattr(self, id, object)
@@ -240,6 +245,9 @@ class DummyFolder(DummyObject):
 
     def contentIds(self):
         return ('user_bar',)
+
+    def all_meta_types(self):
+        return ({'name': 'Dummy', 'permission': 'addFoo'},)
 
 
 class DummySite(DummyFolder):

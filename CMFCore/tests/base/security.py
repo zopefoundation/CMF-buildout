@@ -43,6 +43,8 @@ class PermissiveSecurityPolicy:
     def checkPermission(self, permission, object, context):
         if permission == 'forbidden permission':
             return 0
+        if permission == 'addFoo':
+            return context.user.allowed(object, ['FooAdder'])
         roles = rolesForPermissionOn(permission, object)
         if isinstance(roles, basestring):
             roles=[roles]

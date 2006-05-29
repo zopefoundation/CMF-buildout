@@ -2,7 +2,9 @@ Trunk only (unreleased)
 
   New Features
 
-    -
+    - FactoryTypeInformation: Added support for Zope3 style factories.
+      If the 'product' property of a type info instance is empty the 'factory'
+      property is interpreted as an IFactory name.
 
   Bug Fixes
 

@@ -115,7 +115,7 @@ class Action(SimpleItemWithProperties):
         if isinstance(value, list):
             value = tuple(value)
         setattr(self, id, value)
-        if id.endswith('_expr'):
+        if value and id.endswith('_expr'):
             setattr( self, '%s_object' % id, Expression(value) )
 
     security.declarePrivate('getInfoData')

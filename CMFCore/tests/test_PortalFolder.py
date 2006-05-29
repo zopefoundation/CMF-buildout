@@ -31,7 +31,10 @@ from DateTime import DateTime
 from OFS.Application import Application
 from OFS.Image import manage_addFile
 from OFS.tests.testCopySupport import makeConnection
+from Products.Five import zcml
 from Testing.makerequest import makerequest
+from zope.component import getGlobalSiteManager
+from zope.component.interfaces import IFactory
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.CatalogTool import CatalogTool
@@ -58,38 +61,42 @@ def extra_meta_types():
 
 class PortalFolderFactoryTests(SecurityTest):
 
+    _PORTAL_TYPE = 'Test Folder'
+
+    def _getTargetObject(self):
+        from Products.CMFCore.PortalFolder import PortalFolderFactory
+
+        return PortalFolderFactory
+
     def setUp(self):
         from Products.CMFCore.PortalFolder import PortalFolder
 
         SecurityTest.setUp(self)
         setUpEvents()
+        gsm = getGlobalSiteManager()
+        gsm.provideUtility(IFactory, self._getTargetObject(), 'cmf.folder')
+        self.site = DummySite('site').__of__(self.root)
+        acl_users = self.site._setObject('acl_users', DummyUserFolder())
+        newSecurityManager(None, acl_users.all_powerful_Oz)
 
-        self.root._setObject( 'portal_types', TypesTool() )
-        types_tool = self.root.portal_types
-        types_tool._setObject( 'Folder'
-                             , FTI( id='Folder'
-                                  , title='Folder or Directory'
-                                  , meta_type=PortalFolder.meta_type
-                                  , product='CMFCore'
-                                  , factory='manage_addPortalFolder'
-                                  , filter_content_types=0
-                                  )
-                             )
-        fti = FTIDATA_DUMMY[0].copy()
-        types_tool._setObject( 'Dummy Content', FTI(**fti) )
+        ttool = self.site._setObject('portal_types', TypesTool())
+        ttool._setObject(self._PORTAL_TYPE,
+                         FTI(id=self._PORTAL_TYPE,
+                             title='Folder or Directory',
+                             meta_type=PortalFolder.meta_type,
+                             factory='cmf.folder',
+                             filter_content_types=0))
+        ttool._setObject('Dummy Content', FTI(**FTIDATA_DUMMY[0].copy()))
+
+        self.f = self.site._setObject('container', PortalFolder('container'))
+        self.f._setPortalTypeName(self._PORTAL_TYPE)
 
     def tearDown(self):
         SecurityTest.tearDown(self)
         cleanUp()
 
-    def _makeOne( self, id ):
-        from Products.CMFCore.PortalFolder import PortalFolder
-        return PortalFolder( id ).__of__( self.root )
-
-    def test_invokeFactory( self ):
-
-        f = self._makeOne( 'container' )
-
+    def test_invokeFactory(self):
+        f = self.f
         self.failIf( 'foo' in f.objectIds() )
 
         f.manage_addProduct = {'FooProduct': DummyFactoryDispatcher(f)}
@@ -101,23 +108,17 @@ class PortalFolderFactoryTests(SecurityTest):
         self.assertEqual( foo.getPortalTypeName(), 'Dummy Content' )
         self.assertEqual( foo.Type(), 'Dummy Content Title' )
 
-    def test_invokeFactory_disallowed_type( self ):
-
-        f = self._makeOne( 'container' )
-
-        ftype = self.root.portal_types.Folder
+    def test_invokeFactory_disallowed_type(self):
+        f = self.f
+        ftype = getattr(self.site.portal_types, self._PORTAL_TYPE)
         ftype.filter_content_types = 1
+        self.assertRaises(ValueError,
+                          f.invokeFactory, self._PORTAL_TYPE, 'sub')
 
-        self.assertRaises( ValueError
-                         , f.invokeFactory, type_name='Folder', id='sub' )
-
-        ftype.allowed_content_types = ( 'Folder', )
-        f.invokeFactory( type_name='Folder', id='sub' )
-        self.failUnless( 'sub' in f.objectIds() )
-
-        self.assertRaises( ValueError
-                         , f.invokeFactory
-                         , type_name='Dummy Content', id='foo' )
+        ftype.allowed_content_types = (self._PORTAL_TYPE,)
+        f.invokeFactory(self._PORTAL_TYPE, id='sub')
+        self.failUnless('sub' in f.objectIds())
+        self.assertRaises(ValueError, f.invokeFactory, 'Dummy Content', 'foo')
 
 
 class PortalFolderTests(ConformsToFolder, SecurityTest):
@@ -132,8 +133,15 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
                                     self._getTargetClass()(id, *args, **kw))
 
     def setUp(self):
+        import Products
+        from Products.CMFCore.PortalFolder import PortalFolderFactory
+
         SecurityTest.setUp(self)
         setUpEvents()
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('content.zcml', Products.CMFCore)
+        gsm = getGlobalSiteManager()
+        gsm.provideUtility(IFactory, PortalFolderFactory, 'cmf.folder')
         self.site = DummySite('site').__of__(self.root)
 
     def tearDown(self):
@@ -290,14 +298,14 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         from Products.CMFCore.PortalFolder import PortalFolder
 
         test = self._makeOne('test')
+        test._setPortalTypeName('Folder')
 
         ttool = self.site._setObject( 'portal_types', TypesTool() )
         ttool._setObject( 'Folder'
                         , FTI( id='Folder'
                              , title='Folder or Directory'
                              , meta_type=PortalFolder.meta_type
-                             , product='CMFCore'
-                             , factory='manage_addPortalFolder'
+                             , factory='cmf.folder'
                              , filter_content_types=0
                              )
                         )
@@ -305,8 +313,7 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
                         , FTI( 'Grabbed'
                              , title='Grabbed Content'
                              , meta_type=PortalFolder.meta_type
-                             , product='CMFCore'
-                             , factory='manage_addPortalFolder'
+                             , factory='cmf.folder'
                              )
                         )
 
@@ -349,8 +356,10 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         ttool._setObject( 'Dummy Content', FTI(**fti) )
         ttool._setObject( 'Folder', FTI(**fti) )
         sub1 = self._makeOne('sub1')
+        sub1._setPortalTypeName('Folder')
         sub1._setObject( 'dummy', DummyContent( 'dummy' ) )
         sub2 = self._makeOne('sub2')
+        sub2._setPortalTypeName('Folder')
         sub2.all_meta_types = extra_meta_types()
 
         # Allow adding of Dummy Content
@@ -864,12 +873,17 @@ class PortalFolderCopySupportTests(unittest.TestCase):
     _old_policy = None
 
     def setUp( self ):
+        import Products
+
         self._scrubSecurity()
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('content.zcml', Products.CMFCore)
 
     def tearDown( self ):
-
         self._scrubSecurity()
         self._cleanApp()
+        cleanUp()
 
     def _initFolders( self ):
         from Products.CMFCore.PortalFolder import PortalFolder
@@ -886,6 +900,8 @@ class PortalFolderCopySupportTests(unittest.TestCase):
             self.app._setObject( 'folder2', PortalFolder( 'folder2' ) )
             folder1 = getattr( self.app, 'folder1' )
             folder2 = getattr( self.app, 'folder2' )
+            folder1._setPortalTypeName('Folder')
+            folder2._setPortalTypeName('Folder')
 
             manage_addFile( folder1, 'file'
                           , file='', content_type='text/plain')
@@ -1105,21 +1121,12 @@ class PortalFolderCopySupportTests(unittest.TestCase):
         #
         from AccessControl.Permissions import delete_objects as DeleteObjects
         from Products.CMFCore.PortalFolder import PortalFolder
-        from Products.CMFCore.permissions import AddPortalFolders
 
         folder1, folder2 = self._initFolders()
         folder1.manage_permission( DeleteObjects, roles=(), acquire=0 )
 
         folder1._setObject( 'sub', PortalFolder( 'sub' ) )
         transaction.savepoint(optimistic=True) # get a _p_jar for 'sub'
-
-        FOLDER_CTOR = 'manage_addProducts/CMFCore/manage_addPortalFolder'
-        folder2.all_meta_types = ( { 'name'        : 'CMF Core Content'
-                                   , 'action'      : FOLDER_CTOR
-                                   , 'permission'  : AddPortalFolders
-                                   }
-                                 ,
-                                 )
 
         self.app.portal_types = DummyTypesTool()
 

@@ -1,0 +1,27 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <five:registerClass
+      class=".PortalFolder.PortalFolder"
+      meta_type="Portal Folder"
+      permission="cmf.AddPortalFolders"
+      />
+
+  <factory
+      component=".PortalFolder.PortalFolderFactory"
+      id="cmf.folder"
+      />
+
+  <five:registerClass
+      class=".CMFBTreeFolder.CMFBTreeFolder"
+      meta_type="CMF BTree Folder"
+      permission="cmf.AddPortalFolders"
+      />
+
+  <factory
+      component=".CMFBTreeFolder.CMFBTreeFolderFactory"
+      id="cmf.folder.btree"
+      />
+
+</configure>

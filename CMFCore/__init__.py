@@ -65,14 +65,9 @@ z_tool_bases = utils.initializeBasesPhase1(tools, this_module)
 
 cmfcore_globals=globals()
 
-_CONTENT_TYPES = ( PortalFolder.PortalFolder
-                 ,  CMFBTreeFolder.CMFBTreeFolder
-                 )
-
-_EXTRA_CONSTRUCTORS = ( PortalFolder.manage_addPortalFolder
-                      ,  CMFBTreeFolder.manage_addCMFBTreeFolder
-                      )
-
+# BBB: oldstyle constructors
+_EXTRA_CONSTRUCTORS = (PortalFolder.manage_addPortalFolder,
+                       CMFBTreeFolder.manage_addCMFBTreeFolder)
 
 # Because persistent objects may be out there which were
 # created when the module was in that product, we need
@@ -145,8 +140,9 @@ def initialize(context):
                   , icon='tool.gif'
                   ).initialize( context )
 
+    # BBB: register oldstyle constructors
     utils.ContentInit( 'CMF Core Content'
-                     , content_types=_CONTENT_TYPES
+                     , content_types=()
                      , permission=AddPortalFolders
                      , extra_constructors=_EXTRA_CONSTRUCTORS
                      ).initialize( context )

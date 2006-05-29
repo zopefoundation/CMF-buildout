@@ -25,6 +25,7 @@ from Acquisition import aq_parent, aq_inner, aq_base
 from Globals import InitializeClass
 from OFS.OrderSupport import OrderSupport
 from OFS.Folder import Folder
+from zope.component.factory import Factory
 from zope.interface import implements
 
 from CMFCatalogAware import CMFCatalogAware
@@ -51,8 +52,6 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
     """Base class for portal folder.
     """
 
-    meta_type = 'Portal Folder Base'
-
     implements(IFolderish, IMutableMinimalDublinCore)
     __implements__ = (z2IFolderish, DynamicType.__implements__,
                       Folder.__implements__)
@@ -64,9 +63,10 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
     manage_options = ( Folder.manage_options +
                        CMFCatalogAware.manage_options )
 
-    def __init__( self, id, title='' ):
+    def __init__(self, id, title='', description=''):
         self.id = id
         self.title = title
+        self.description = description
 
     #
     #   'IMutableMinimalDublinCore' interface methods
@@ -464,8 +464,6 @@ class PortalFolder(OrderSupport, PortalFolderBase):
 
     """Implements portal content management, but not UI details.
     """
-    meta_type = 'Portal Folder'
-    portal_type = 'Folder'
 
     __implements__ = (PortalFolderBase.__implements__,
                       OrderSupport.__implements__)
@@ -486,6 +484,8 @@ class PortalFolder(OrderSupport, PortalFolderBase):
                 self, REQUEST, portal_status_message="Folder added")
 
 InitializeClass(PortalFolder)
+
+PortalFolderFactory = Factory(PortalFolder)
 
 manage_addPortalFolder = PortalFolder.manage_addPortalFolder.im_func
 

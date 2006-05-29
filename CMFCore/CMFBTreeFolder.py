@@ -19,6 +19,7 @@ $Id$
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2Base
+from zope.component.factory import Factory
 
 from PortalFolder import PortalFolderBase
 
@@ -40,7 +41,6 @@ class CMFBTreeFolder(BTreeFolder2Base, PortalFolderBase):
     """BTree folder for CMF sites.
     """
 
-    meta_type = 'CMF BTree Folder'
     security = ClassSecurityInfo()
 
     def __init__(self, id, title=''):
@@ -52,3 +52,5 @@ class CMFBTreeFolder(BTreeFolder2Base, PortalFolderBase):
         BTreeFolder2Base._checkId(self, id, allow_dup)
 
 InitializeClass(CMFBTreeFolder)
+
+CMFBTreeFolderFactory = Factory(CMFBTreeFolder)

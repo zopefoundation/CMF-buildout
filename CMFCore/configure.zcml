@@ -7,6 +7,8 @@
 
   <include package=".exportimport"/>
 
+  <include file="content.zcml"/>
+
   <include file="event.zcml"/>
 
   <five:registerClass

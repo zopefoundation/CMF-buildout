@@ -63,10 +63,6 @@ this_module = modules[ __name__ ]
 z_bases = utils.initializeBasesPhase1(bases, this_module)
 z_tool_bases = utils.initializeBasesPhase1(tools, this_module)
 
-FolderConstructorForm = ( 'manage_addPortalFolderForm'
-                        , PortalFolder.manage_addPortalFolderForm
-                        )
-
 cmfcore_globals=globals()
 
 _CONTENT_TYPES = ( PortalFolder.PortalFolder

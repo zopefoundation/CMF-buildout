@@ -22,7 +22,6 @@ import re
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent, aq_inner, aq_base
-from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.OrderSupport import OrderSupport
 from OFS.Folder import Folder
@@ -49,7 +48,7 @@ from utils import getToolByName
 
 class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
 
-    """Base class for portal folder
+    """Base class for portal folder.
     """
 
     meta_type = 'Portal Folder Base'
@@ -462,8 +461,8 @@ InitializeClass(PortalFolderBase)
 
 
 class PortalFolder(OrderSupport, PortalFolderBase):
-    """
-        Implements portal content management, but not UI details.
+
+    """Implements portal content management, but not UI details.
     """
     meta_type = 'Portal Folder'
     portal_type = 'Folder'
@@ -487,6 +486,8 @@ class PortalFolder(OrderSupport, PortalFolderBase):
                 self, REQUEST, portal_status_message="Folder added")
 
 InitializeClass(PortalFolder)
+
+manage_addPortalFolder = PortalFolder.manage_addPortalFolder.im_func
 
 
 class ContentFilter:
@@ -595,6 +596,3 @@ class ContentFilter:
             Return a stringified description of the filter.
         """
         return '; '.join(self.description)
-
-manage_addPortalFolder = PortalFolder.manage_addPortalFolder.im_func
-manage_addPortalFolderForm = DTMLFile( 'folderAdd', globals() )

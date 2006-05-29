@@ -15,6 +15,33 @@
 $Id$
 """
 
+class ConformsToFolder:
+
+    def test_folder_z2interfaces(self):
+        from Interface.Verify import verifyClass
+        from webdav.WriteLockInterface import WriteLockInterface
+        from Products.CMFCore.interfaces.Dynamic \
+                import DynamicType as IDynamicType
+        from Products.CMFCore.interfaces.Folderish \
+                import Folderish as IFolderish
+
+        verifyClass(IDynamicType, self._getTargetClass())
+        verifyClass(IFolderish, self._getTargetClass())
+        verifyClass(WriteLockInterface, self._getTargetClass())
+
+    def test_folder_z3interfaces(self):
+        from zope.interface.verify import verifyClass
+        from webdav.interfaces import IWriteLock
+        from Products.CMFCore.interfaces import IDynamicType
+        from Products.CMFCore.interfaces import IFolderish
+        from Products.CMFCore.interfaces import IMutableMinimalDublinCore
+
+        verifyClass(IDynamicType, self._getTargetClass())
+        verifyClass(IFolderish, self._getTargetClass())
+        verifyClass(IMutableMinimalDublinCore, self._getTargetClass())
+        verifyClass(IWriteLock, self._getTargetClass())
+
+
 class ConformsToContent:
 
     def test_content_z2interfaces(self):

@@ -215,15 +215,4 @@ class Topic(SkinnedFolder):
 
         return tuple( result )
 
-    #
-    #   Cataloging helper to make finding this item easier
-    #
-    security.declareProtected(View, 'SearchableText')
-    def SearchableText(self):
-        """
-        SeachableText is used for full text seraches of a portal.  It
-        should return a concatenation of all useful text.
-        """
-        return "%s %s" % (self.title, self.description)
-
 InitializeClass(Topic)

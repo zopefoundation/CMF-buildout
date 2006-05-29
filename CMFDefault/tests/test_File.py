@@ -20,9 +20,8 @@ import Testing
 
 from os.path import join as path_join
 
+from Products.CMFCore.testing import ConformsToContent
 from Products.CMFDefault import tests
-
-from common import ConformsToContent
 
 TESTS_HOME = tests.__path__[0]
 TEST_JPG = path_join(TESTS_HOME, 'TestImage.jpg')

@@ -18,10 +18,9 @@ $Id$
 import unittest
 import Testing
 
+from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
-
-from common import ConformsToContent
 
 
 class FavoriteTests(ConformsToContent, unittest.TestCase):

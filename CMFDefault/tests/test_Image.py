@@ -28,6 +28,7 @@ from AccessControl.SecurityManagement import noSecurityManager
 from Products.Five import zcml
 from zope.testing.cleanup import cleanUp
 
+from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.security import OmnipotentUser
@@ -35,8 +36,6 @@ from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.tests.base.testcase import setUpTraversing
 from Products.CMFDefault import tests
-
-from common import ConformsToContent
 
 TESTS_HOME = tests.__path__[0]
 TEST_JPG = path_join(TESTS_HOME, 'TestImage.jpg')

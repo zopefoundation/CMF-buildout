@@ -21,6 +21,7 @@ import Testing
 from Acquisition import Implicit
 from zope.testing.cleanup import cleanUp
 
+from Products.CMFCore.testing import ConformsToFolder
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import setUpEvents
@@ -120,19 +121,10 @@ class DummySyndicationTool( Implicit ):
         return self._max_items
 
 
-class TestTopic(SecurityTest):
+class TestTopic(ConformsToFolder, SecurityTest):
 
     """ Test all the general Topic cases.
     """
-
-    def setUp(self):
-        SecurityTest.setUp(self)
-        setUpEvents()
-        self.site = DummySite('site').__of__(self.root)
-
-    def tearDown(self):
-        SecurityTest.tearDown(self)
-        cleanUp()
 
     def _getTargetClass(self):
         from Products.CMFTopic.Topic import Topic
@@ -156,33 +148,32 @@ class TestTopic(SecurityTest):
             self.site._setObject( k, v )
             self.site.portal_catalog._index( document )
 
+    def setUp(self):
+        SecurityTest.setUp(self)
+        setUpEvents()
+        self.site = DummySite('site').__of__(self.root)
+
+    def tearDown(self):
+        SecurityTest.tearDown(self)
+        cleanUp()
+
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
         from OFS.IOrderSupport import IOrderedContainer
-        from webdav.WriteLockInterface import WriteLockInterface
-        from Products.CMFCore.interfaces.Dynamic \
-                import DynamicType as IDynamicType
-        from Products.CMFCore.interfaces.Folderish \
-                import Folderish as IFolderish
 
-        verifyClass(IDynamicType, self._getTargetClass())
-        verifyClass(IFolderish, self._getTargetClass())
         verifyClass(IOrderedContainer, self._getTargetClass())
-        verifyClass(WriteLockInterface, self._getTargetClass())
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
-        from Products.CMFCore.interfaces import IDynamicType
-        from Products.CMFCore.interfaces import IFolderish
-        from Products.CMFCore.interfaces import IMutableMinimalDublinCore
+        from OFS.interfaces import IOrderedContainer
+        from Products.CMFCore.interfaces import IContentish
         from Products.CMFTopic.interfaces import IMutableTopic
         from Products.CMFTopic.interfaces import ITopic
 
-        verifyClass(IDynamicType, self._getTargetClass())
-        verifyClass(IFolderish, self._getTargetClass())
-        verifyClass(IMutableMinimalDublinCore, self._getTargetClass())
+        verifyClass(IContentish, self._getTargetClass())
         verifyClass(IMutableTopic, self._getTargetClass())
         verifyClass(ITopic, self._getTargetClass())
+        verifyClass(IOrderedContainer, self._getTargetClass())
 
     def test_Empty( self ):
         topic = self._makeOne('top')

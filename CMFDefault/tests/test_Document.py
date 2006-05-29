@@ -27,6 +27,7 @@ from StringIO import StringIO
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from DocumentTemplate.DT_Util import html_quote
 
+from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.content import BASIC_HTML
 from Products.CMFCore.tests.base.content import BASIC_STRUCTUREDTEXT
 from Products.CMFCore.tests.base.content import DOCTYPE
@@ -45,8 +46,6 @@ from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
 from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 from Products.CMFCore.TypesTool import TypesTool
 from Products.CMFDefault import utils
-
-from common import ConformsToContent
 
 
 class RequestTestBase(RequestTest):

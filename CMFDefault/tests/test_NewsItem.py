@@ -18,13 +18,12 @@ $Id$
 import unittest
 import Testing
 
+from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.content import BASIC_HTML
 from Products.CMFCore.tests.base.content import BASIC_STRUCTUREDTEXT
 from Products.CMFCore.tests.base.content import DOCTYPE
 from Products.CMFCore.tests.base.content import ENTITY_IN_TITLE
 from Products.CMFCore.tests.base.testcase import RequestTest
-
-from common import ConformsToContent
 
 
 class NewsItemTests(ConformsToContent, unittest.TestCase):

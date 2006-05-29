@@ -34,6 +34,7 @@ from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.CatalogTool import CatalogTool
 from Products.CMFCore.exceptions import BadRequest
+from Products.CMFCore.testing import ConformsToFolder
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFactory
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -119,16 +120,7 @@ class PortalFolderFactoryTests(SecurityTest):
                          , type_name='Dummy Content', id='foo' )
 
 
-class PortalFolderTests(SecurityTest):
-
-    def setUp(self):
-        SecurityTest.setUp(self)
-        setUpEvents()
-        self.site = DummySite('site').__of__(self.root)
-
-    def tearDown(self):
-        SecurityTest.tearDown(self)
-        cleanUp()
+class PortalFolderTests(ConformsToFolder, SecurityTest):
 
     def _getTargetClass(self):
         from Products.CMFCore.PortalFolder import PortalFolder
@@ -139,29 +131,26 @@ class PortalFolderTests(SecurityTest):
         return self.site._setObject(id,
                                     self._getTargetClass()(id, *args, **kw))
 
+    def setUp(self):
+        SecurityTest.setUp(self)
+        setUpEvents()
+        self.site = DummySite('site').__of__(self.root)
+
+    def tearDown(self):
+        SecurityTest.tearDown(self)
+        cleanUp()
+
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
         from OFS.IOrderSupport import IOrderedContainer
-        from webdav.WriteLockInterface import WriteLockInterface
-        from Products.CMFCore.interfaces.Dynamic \
-                import DynamicType as IDynamicType
-        from Products.CMFCore.interfaces.Folderish \
-                import Folderish as IFolderish
 
-        verifyClass(IDynamicType, self._getTargetClass())
-        verifyClass(IFolderish, self._getTargetClass())
         verifyClass(IOrderedContainer, self._getTargetClass())
-        verifyClass(WriteLockInterface, self._getTargetClass())
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
-        from Products.CMFCore.interfaces import IDynamicType
-        from Products.CMFCore.interfaces import IFolderish
-        from Products.CMFCore.interfaces import IMutableMinimalDublinCore
+        from OFS.interfaces import IOrderedContainer
 
-        verifyClass(IDynamicType, self._getTargetClass())
-        verifyClass(IFolderish, self._getTargetClass())
-        verifyClass(IMutableMinimalDublinCore, self._getTargetClass())
+        verifyClass(IOrderedContainer, self._getTargetClass())
 
     def test_contents_methods(self):
         ttool = self.site._setObject( 'portal_types', TypesTool() )

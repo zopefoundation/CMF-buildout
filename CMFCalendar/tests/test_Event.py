@@ -20,54 +20,27 @@ import Testing
 
 from DateTime import DateTime
 
+from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.testcase import RequestTest
 
 
-class TestEvent(unittest.TestCase):
+class TestEvent(ConformsToContent, unittest.TestCase):
 
-    def _makeOne(self, id, *args, **kw):
+    def _getTargetClass(self):
         from Products.CMFCalendar.Event import Event
 
-        return Event(id, *args, **kw)
+        return Event
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.Contentish \
-                import Contentish as IContentish
-        from Products.CMFCore.interfaces.DublinCore \
-                import CatalogableDublinCore as ICatalogableDublinCore
-        from Products.CMFCore.interfaces.DublinCore \
-                import DublinCore as IDublinCore
-        from Products.CMFCore.interfaces.DublinCore \
-                import MutableDublinCore as IMutableDublinCore
-        from Products.CMFCore.interfaces.Dynamic \
-                import DynamicType as IDynamicType
-        from Products.CMFCalendar.Event import Event
-
-        verifyClass(ICatalogableDublinCore, Event)
-        verifyClass(IContentish, Event)
-        verifyClass(IDublinCore, Event)
-        verifyClass(IDynamicType, Event)
-        verifyClass(IMutableDublinCore, Event)
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
-        from Products.CMFCalendar.Event import Event
-        from Products.CMFCore.interfaces import ICatalogableDublinCore
-        from Products.CMFCore.interfaces import IContentish
-        from Products.CMFCore.interfaces import IDublinCore
-        from Products.CMFCore.interfaces import IDynamicType
-        from Products.CMFCore.interfaces import IMutableDublinCore
         from Products.CMFCalendar.interfaces import IEvent
         from Products.CMFCalendar.interfaces import IMutableEvent
 
-        verifyClass(ICatalogableDublinCore, Event)
-        verifyClass(IContentish, Event)
-        verifyClass(IDublinCore, Event)
-        verifyClass(IDynamicType, Event)
-        verifyClass(IMutableDublinCore, Event)
-        verifyClass(IEvent, Event)
-        verifyClass(IMutableEvent, Event)
+        verifyClass(IEvent, self._getTargetClass())
+        verifyClass(IMutableEvent, self._getTargetClass())
 
     def test_new(self):
         event = self._makeOne('test')

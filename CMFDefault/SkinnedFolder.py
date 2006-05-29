@@ -62,6 +62,18 @@ class SkinnedFolder(CMFCatalogAware, PortalFolder):
 
     # We derive from CMFCatalogAware first, so we are cataloged too.
 
+    #
+    #   IContentish method
+    #
+
+    security.declareProtected(View, 'SearchableText')
+    def SearchableText(self):
+        """
+        SeachableText is used for full text seraches of a portal.  It
+        should return a concatenation of all useful text.
+        """
+        return "%s %s" % (self.title, self.description)
+
 InitializeClass(SkinnedFolder)
 
 

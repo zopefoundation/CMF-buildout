@@ -20,10 +20,9 @@ import Testing
 
 from re import compile
 
+from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.content import BASIC_RFC822
 from Products.CMFCore.tests.base.content import RFC822_W_CONTINUATION
-
-from common import ConformsToContent
 
 
 class LinkTests(ConformsToContent, unittest.TestCase):

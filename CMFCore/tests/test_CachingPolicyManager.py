@@ -57,9 +57,6 @@ class DummyContent2:
 
 class CachingPolicyTests(unittest.TestCase):
 
-    def setUp(self):
-        self._epoch = DateTime(0)
-
     def _makePolicy( self, policy_id, **kw ):
         from Products.CMFCore.CachingPolicyManager import CachingPolicy
 
@@ -69,6 +66,13 @@ class CachingPolicyTests(unittest.TestCase):
         from Products.CMFCore.CachingPolicyManager import createCPContext
         return createCPContext( DummyContent2(self._epoch)
                               , 'foo_view', kw, self._epoch )
+
+    def setUp(self):
+        setUpTraversing()
+        self._epoch = DateTime(0)
+
+    def tearDown(self):
+        cleanUp()
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
@@ -396,8 +400,11 @@ class CachingPolicyManagerTests(unittest.TestCase):
         return CachingPolicyManager(*args, **kw)
 
     def setUp(self):
-
+        setUpTraversing()
         self._epoch = DateTime()
+
+    def tearDown(self):
+        cleanUp()
 
     def assertEqualDelta( self, lhs, rhs, delta ):
         self.failUnless( abs( lhs - rhs ) <= delta )

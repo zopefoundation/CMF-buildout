@@ -24,6 +24,7 @@ from os.path import join as path_join
 from OFS.Folder import Folder
 from Products.PageTemplates.TALES import Undefined
 from Products.StandardCacheManagers import RAMCacheManager
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.FSPageTemplate import FSPageTemplate
 from Products.CMFCore.FSMetadata import FSMetadata
@@ -31,6 +32,7 @@ from Products.CMFCore.tests.base.dummy import DummyCachingManager
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.testcase import setUpTraversing
 
 
 class FSPTMaker(FSDVTest):
@@ -47,10 +49,12 @@ class FSPageTemplateTests( RequestTest, FSPTMaker ):
     def setUp(self):
         FSPTMaker.setUp(self)
         RequestTest.setUp(self)
+        setUpTraversing()
 
     def tearDown(self):
         RequestTest.tearDown(self)
         FSPTMaker.tearDown(self)
+        cleanUp()
 
     def test_Call( self ):
 

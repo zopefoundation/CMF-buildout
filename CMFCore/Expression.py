@@ -25,17 +25,18 @@ from Products.PageTemplates.Expressions import SecureModuleImporter
 from utils import getToolByName
 
 
-class Expression (Persistent):
-    text = ''
-    _v_compiled = None
+class Expression(Persistent):
 
     security = ClassSecurityInfo()
 
     def __init__(self, text):
         self.text = text
-        self._v_compiled = getEngine().compile(text)
+        if text:
+            self._v_compiled = getEngine().compile(text)
 
     def __call__(self, econtext):
+        if not self.text:
+            return ''
         compiled = self._v_compiled
         if compiled is None:
             compiled = self._v_compiled = getEngine().compile(self.text)
@@ -44,7 +45,6 @@ class Expression (Persistent):
         res = compiled(econtext)
         if isinstance(res, Exception):
             raise res
-        #print 'returning %s from %s' % (`res`, self.text)
         return res
 
 InitializeClass(Expression)

@@ -22,14 +22,18 @@ Zope2.startup()
 
 import locale
 
+import Products
+import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.User import UnrestrictedUser
 from DateTime import DateTime
+from Products.Five import zcml
 from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 from Products.Transience.Transience import TransientObjectContainer
 from Testing.makerequest import makerequest
-import transaction
+from zope.testing.cleanup import cleanUp
+
 from Products.CMFCore import Skinnable
 
 
@@ -109,6 +113,13 @@ class CalendarTests(unittest.TestCase):
 class CalendarRequestTests(unittest.TestCase):
 
     def setUp(self):
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.GenericSetup)
+        zcml.load_config('configure.zcml', Products.CMFCalendar)
+        zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.CMFDefault)
+        zcml.load_config('configure.zcml', Products.DCWorkflow)
         self._oldSkindata = Skinnable.SKINDATA.copy()
         transaction.begin()
 
@@ -138,6 +149,7 @@ class CalendarRequestTests(unittest.TestCase):
         transaction.abort()
         self.app._p_jar.close()
         Skinnable.SKINDATA = self._oldSkindata
+        cleanUp()
 
     def _testURL(self,url,params=None):
         Site = self.Site

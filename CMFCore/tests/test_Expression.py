@@ -49,21 +49,34 @@ class ExpressionTests( SecurityTest ):
     def test_anonymous_ec(self):
         self.portal.portal_membership = DummyMembershipTool()
         ec = createExprContext(self.folder, self.portal, self.object)
-        member = ec.global_vars['member']
+        if hasattr(ec, 'contexts'):
+            member = ec.contexts['member']
+        else:
+            # BBB: for Zope 2.9
+            member = ec.global_vars['member']
         self.failIf(member)
 
     def test_authenticatedUser_ec(self):
         self.portal.portal_membership = DummyMembershipTool(anon=0)
         ec = createExprContext(self.folder, self.portal, self.object)
-        member = ec.global_vars['member']
+        if hasattr(ec, 'contexts'):
+            member = ec.contexts['member']
+        else:
+            # BBB: for Zope 2.9
+            member = ec.global_vars['member']
         self.assertEqual(member.getId(), 'dummy')
 
     def test_ec_context(self):
         self.portal.portal_membership = DummyMembershipTool()
         ec = createExprContext(self.folder, self.portal, self.object)
-        object = ec.global_vars['object']
-        portal = ec.global_vars['portal']
-        folder = ec.global_vars['folder']
+        if hasattr(ec, 'contexts'):
+            contexts = ec.contexts
+        else:
+            # BBB: for Zope 2.9
+            contexts = ec.global_vars
+        object = contexts['object']
+        portal = contexts['portal']
+        folder = contexts['folder']
         self.failUnless(object)
         self.assertEqual(object.id, 'bar')
         self.assertEqual(object.absolute_url(), 'url_bar')

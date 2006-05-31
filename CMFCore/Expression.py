@@ -27,6 +27,9 @@ from utils import getToolByName
 
 class Expression(Persistent):
 
+    text = ''
+    _v_compiled = None
+
     security = ClassSecurityInfo()
 
     def __init__(self, text):

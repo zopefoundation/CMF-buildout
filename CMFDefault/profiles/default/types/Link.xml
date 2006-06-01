@@ -6,8 +6,8 @@
     i18n:translate="">Link items are annotated URLs.</property>
  <property name="content_icon">link_icon.gif</property>
  <property name="content_meta_type">Link</property>
- <property name="product">CMFDefault</property>
- <property name="factory">addLink</property>
+ <property name="product"></property>
+ <property name="factory">cmf.link</property>
  <property name="immediate_view">metadata_edit_form</property>
  <property name="global_allow">True</property>
  <property name="filter_content_types">True</property>

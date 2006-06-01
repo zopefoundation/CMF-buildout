@@ -38,10 +38,6 @@ tools = ( CalendarTool.CalendarTool, )
 
 z_bases = utils.initializeBasesPhase1( contentClasses, this_module )
 
-# This is used by a script (external method) that can be run
-# to set up Events in an existing CMF Site instance.
-event_globals=globals()
-
 # Make the skins available as DirectoryViews
 registerDirectory('skins', globals())
 
@@ -50,10 +46,12 @@ def initialize( context ):
                    ).initialize( context )
 
     utils.initializeBasesPhase2( z_bases, context )
-    utils.ContentInit( 'CMF Event'
-                     , content_types = contentClasses
-                     , permission = AddPortalContent
-                     , extra_constructors = contentConstructors
+
+    # BBB: register oldstyle constructors
+    utils.ContentInit( 'CMF Calendar Content'
+                     , content_types=()
+                     , permission=AddPortalContent
+                     , extra_constructors=contentConstructors
                      ).initialize( context )
 
     profile_registry.registerProfile('default',

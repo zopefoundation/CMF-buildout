@@ -41,10 +41,6 @@ this_module = sys.modules[ __name__ ]
 for base in bases:
     createZClassForBase( base, this_module )
 
-# This is used by a script (external method) that can be run
-# to set up Topics in an existing CMF Site instance.
-topic_globals = globals()
-
 # Make the skins available as DirectoryViews
 registerDirectory( 'skins', globals() )
 
@@ -53,11 +49,11 @@ def initialize( context ):
     context.registerHelpTitle( 'CMF Topic Help' )
     context.registerHelp( directory='help' )
 
-    # CMF Initializers
-    ContentInit( 'CMF Topic Objects'
-               , content_types = (Topic.Topic,)
-               , permission = AddTopics
-               , extra_constructors = (Topic.addTopic,)
+    # BBB: register oldstyle constructors
+    ContentInit( 'CMF Topic Content'
+               , content_types=()
+               , permission=AddTopics
+               , extra_constructors=(Topic.addTopic,)
                ).initialize( context )
 
     profile_registry.registerProfile('default',

@@ -19,6 +19,7 @@ $Id$
 import OFS.Image
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
+from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFCore.PortalContent import PortalContent
@@ -77,7 +78,6 @@ class Image(PortalContent, OFS.Image.Image, DefaultDublinCoreImpl):
                      , DefaultDublinCoreImpl.__implements__
                      )
     
-    meta_type='Portal Image'
     effective_date = expiration_date = None
     _isDiscussable = 1
     icon = PortalContent.icon
@@ -187,3 +187,5 @@ class Image(PortalContent, OFS.Image.Image, DefaultDublinCoreImpl):
         self.reindexObject()
 
 InitializeClass(Image)
+
+ImageFactory = Factory(Image)

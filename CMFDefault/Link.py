@@ -21,6 +21,7 @@ import transaction
 from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile
 from Globals import InitializeClass
+from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFCore.PortalContent import PortalContent
@@ -61,7 +62,6 @@ class Link(PortalContent, DefaultDublinCoreImpl):
                      , DefaultDublinCoreImpl.__implements__
                      )
 
-    meta_type = 'Link'
     URL_FORMAT = format = 'text/url'
     effective_date = expiration_date = None
     _isDiscussable = 1
@@ -201,3 +201,5 @@ class Link(PortalContent, DefaultDublinCoreImpl):
         return len(self.manage_FTPget())
 
 InitializeClass(Link)
+
+LinkFactory = Factory(Link)

@@ -15,6 +15,8 @@
 $Id$
 """
 
+import sys
+
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import initializeBasesPhase1
@@ -82,13 +84,10 @@ tools = ( DiscussionTool.DiscussionTool
         , SyndicationTool.SyndicationTool
         )
 
-import sys
 this_module = sys.modules[ __name__ ]
 
 z_bases = initializeBasesPhase1( bases, this_module )
 z_tool_bases = initializeBasesPhase1( tools, this_module )
-
-cmfdefault_globals=globals()
 
 # Make the skins available as DirectoryViews.
 registerDirectory('skins', globals())
@@ -104,8 +103,9 @@ def initialize( context ):
             , icon='tool.gif'
             ).initialize( context )
 
+    # BBB: register oldstyle constructors
     ContentInit( 'CMF Default Content'
-               , content_types=contentClasses
+               , content_types=()
                , permission=AddPortalContent
                , extra_constructors=contentConstructors
                ).initialize( context )

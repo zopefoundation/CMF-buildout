@@ -1,6 +1,27 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    >
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="cmf_default">
+
+  <permission
+      id="cmf.AddPortalTopics"
+      title="Add portal topics"
+      />
+
+  <!-- Topic -->
+
+  <five:registerClass
+      class=".Topic.Topic"
+      meta_type="Portal Topic"
+      permission="cmf.AddPortalTopics"
+      />
+
+  <utility
+      component=".Topic.TopicFactory"
+      name="cmf.topic"
+      />
+
+  <!-- exportimport -->
 
   <adapter
       factory=".exportimport.TopicExportImport"

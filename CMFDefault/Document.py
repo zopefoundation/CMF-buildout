@@ -23,6 +23,7 @@ from DocumentTemplate.DT_Util import html_quote
 from Globals import DTMLFile
 from Globals import InitializeClass
 from StructuredText.StructuredText import HTML
+from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFCore.PortalContent import PortalContent
@@ -65,7 +66,6 @@ class Document(PortalContent, DefaultDublinCoreImpl):
                       PortalContent.__implements__,
                       DefaultDublinCoreImpl.__implements__)
 
-    meta_type = 'Document'
     effective_date = expiration_date = None
     cooked_text = text = text_format = ''
     _size = 0
@@ -428,3 +428,5 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         return self._size
 
 InitializeClass(Document)
+
+DocumentFactory = Factory(Document)

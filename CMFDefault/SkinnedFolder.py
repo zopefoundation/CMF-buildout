@@ -17,6 +17,7 @@ $Id$
 
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
+from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
@@ -34,8 +35,6 @@ class SkinnedFolder(CMFCatalogAware, PortalFolder):
     """
 
     implements(IContentish)
-
-    meta_type = 'Skinned Folder'
 
     security = ClassSecurityInfo()
 
@@ -76,6 +75,7 @@ class SkinnedFolder(CMFCatalogAware, PortalFolder):
 
 InitializeClass(SkinnedFolder)
 
+SkinnedFolderFactory = Factory(SkinnedFolder)
 
 def addSkinnedFolder( self, id, title='', description='', REQUEST=None ):
     """

@@ -5,4 +5,6 @@
 
   <include package=".browser"/>
 
+  <include file="content.zcml"/>
+
 </configure>

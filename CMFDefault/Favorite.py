@@ -20,6 +20,9 @@ import urlparse
 from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
+from zope.app.container.interfaces import IObjectAddedEvent
+from zope.component import adapter
+from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFCore.utils import getToolByName
@@ -34,13 +37,8 @@ from permissions import View
 def addFavorite(self, id, title='', remote_url='', description=''):
     """Add a Favorite.
     """
-    portal_url = getToolByName(self, 'portal_url')
-    portal_obj = portal_url.getPortalObject()
-    content_obj = portal_obj.restrictedTraverse( remote_url )
-    relUrl = portal_url.getRelativeUrl( content_obj )
-    
-    o=Favorite( id, title, relUrl, description )
-    self._setObject(id,o)
+    o = Favorite(id, title, remote_url, description)
+    self._setObject(id, o)
 
 
 class Favorite(Link):
@@ -50,8 +48,6 @@ class Favorite(Link):
 
     implements(IMutableFavorite, IFavorite)
     __implements__ = Link.__implements__ # redundant, but explicit
-
-    meta_type='Favorite'
 
     security = ClassSecurityInfo()
 
@@ -66,19 +62,6 @@ class Favorite(Link):
         self.title=title
         self.remote_url=remote_url
         self.description = description
-        
-    def manage_afterAdd(self, item, container):
-        """Intercept after favorite has beeing added.
-        
-        The tools are not reachable in '__init__' because 'self' is 
-        not yet wrapped at this time. That's why the after add hook
-        has to be intercepted.
-        """
-        # save unique id of favorite
-        self.remote_uid = self._getUidByUrl()
-        
-        # do the usual stuff
-        Link.manage_afterAdd(self, item, container)
         
     def _getUidByUrl(self):
         """Registers and returns the uid of the remote object if
@@ -185,3 +168,13 @@ class Favorite(Link):
         self.remote_uid = self._getUidByUrl()
 
 InitializeClass(Favorite)
+
+FavoriteFactory = Factory(Favorite)
+
+
+@adapter(IFavorite, IObjectAddedEvent)
+def handleFavoriteAddedEvent(obj, event):
+    """Event subscriber.
+    """
+    if obj.remote_url:
+        obj.edit(obj.remote_url)

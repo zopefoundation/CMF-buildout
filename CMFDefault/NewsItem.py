@@ -17,6 +17,7 @@ $Id$
 
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
+from zope.component.factory import Factory
 from zope.interface import implements
 
 from Document import Document
@@ -52,7 +53,6 @@ class NewsItem(Document):
     implements(IMutableNewsItem, INewsItem)
     __implements__ = Document.__implements__  # redundant, but explicit
 
-    meta_type='News Item'
     text_format = 'html'
 
     security = ClassSecurityInfo()
@@ -68,3 +68,5 @@ class NewsItem(Document):
         Document.edit( self, text_format, text )
 
 InitializeClass(NewsItem)
+
+NewsItemFactory = Factory(NewsItem)

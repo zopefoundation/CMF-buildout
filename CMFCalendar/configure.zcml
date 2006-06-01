@@ -1,9 +1,23 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope">
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five">
 
   <!-- Load CMFDefault.skin first, we use the layer named "cmf" it defines -->
   <include package="Products.CMFDefault.skin"/>
 
   <include package=".browser"/>
+
+  <!-- Event -->
+
+  <five:registerClass
+      class=".Event.Event"
+      meta_type="CMF Event"
+      permission="cmf.AddPortalContent"
+      />
+
+  <utility
+      component=".Event.EventFactory"
+      name="cmf.event"
+      />
 
 </configure>

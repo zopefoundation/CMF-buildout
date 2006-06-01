@@ -18,8 +18,9 @@ $Id$
 """
 
 import OFS.Image
-from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
+from Globals import InitializeClass
+from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFCore.PortalContent import PortalContent
@@ -79,7 +80,6 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
                      , DefaultDublinCoreImpl.__implements__
                      )
     
-    meta_type='Portal File'
     effective_date = expiration_date = None
     _isDiscussable = 1
     icon = PortalContent.icon
@@ -199,3 +199,5 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
         self.reindexObject()
 
 InitializeClass(File)
+
+FileFactory = Factory(File)

@@ -18,6 +18,7 @@ $Id$
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
 from Globals import InitializeClass
+from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFDefault.SkinnedFolder import SkinnedFolder
@@ -51,8 +52,6 @@ class Topic(SkinnedFolder):
     """
 
     implements(IMutableTopic, ITopic)
-
-    meta_type='Portal Topic'
 
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)
@@ -216,3 +215,5 @@ class Topic(SkinnedFolder):
         return tuple( result )
 
 InitializeClass(Topic)
+
+TopicFactory = Factory(Topic)

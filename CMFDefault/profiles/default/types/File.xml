@@ -6,8 +6,8 @@
     i18n:translate="">File objects can contain arbitrary downloadable files.</property>
  <property name="content_icon">file_icon.gif</property>
  <property name="content_meta_type">Portal File</property>
- <property name="product">CMFDefault</property>
- <property name="factory">addFile</property>
+ <property name="product"></property>
+ <property name="factory">cmf.file</property>
  <property name="immediate_view">metadata_edit_form</property>
  <property name="global_allow">True</property>
  <property name="filter_content_types">True</property>

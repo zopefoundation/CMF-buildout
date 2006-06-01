@@ -15,23 +15,22 @@
 $Id$
 """
 
+import transaction
 from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
 from Globals import InitializeClass
-import transaction
+from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFCore.PortalContent import PortalContent
 from Products.CMFCore.utils import contributorsplitter
 from Products.CMFCore.utils import keywordsplitter
-
 from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.CMFDefault.utils import bodyfinder
 from Products.CMFDefault.utils import formatRFC822Headers
 from Products.CMFDefault.utils import html_headcheck
 from Products.CMFDefault.utils import parseHeadersBody
 from Products.CMFDefault.utils import SimpleHTMLParser
-
 from Products.GenericSetup.interfaces import IDAVAware
 
 from exceptions import ResourceLockedError
@@ -94,8 +93,6 @@ class Event(PortalContent, DefaultDublinCoreImpl):
 
     """Events are objects for the Calendar topical query.
     """
-
-    meta_type='CMF Event'
 
     # Declarative security
     security = ClassSecurityInfo()
@@ -372,8 +369,8 @@ class Event(PortalContent, DefaultDublinCoreImpl):
         return hdrlist
 
     ## FTP handlers
-    security.declareProtected(ModifyPortalContent, 'PUT')
 
+    security.declareProtected(ModifyPortalContent, 'PUT')
     def PUT(self, REQUEST, RESPONSE):
         """ Handle HTTP (and presumably FTP?) PUT requests """
         self.dav__init(REQUEST, RESPONSE)
@@ -421,3 +418,5 @@ class Event(PortalContent, DefaultDublinCoreImpl):
         return len(self.manage_FTPget())
 
 InitializeClass(Event)
+
+EventFactory = Factory(Event)

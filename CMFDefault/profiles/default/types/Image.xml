@@ -6,8 +6,8 @@
     i18n:translate="">Image objects can be embedded in Portal documents.</property>
  <property name="content_icon">image_icon.gif</property>
  <property name="content_meta_type">Portal Image</property>
- <property name="product">CMFDefault</property>
- <property name="factory">addImage</property>
+ <property name="product"></property>
+ <property name="factory">cmf.image</property>
  <property name="immediate_view">metadata_edit_form</property>
  <property name="global_allow">True</property>
  <property name="filter_content_types">True</property>

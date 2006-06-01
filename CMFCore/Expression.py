@@ -34,11 +34,11 @@ class Expression(Persistent):
 
     def __init__(self, text):
         self.text = text
-        if text:
+        if text.strip():
             self._v_compiled = getEngine().compile(text)
 
     def __call__(self, econtext):
-        if not self.text:
+        if not self.text.strip():
             return ''
         compiled = self._v_compiled
         if compiled is None:

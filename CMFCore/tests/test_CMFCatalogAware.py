@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 import transaction
+from AccessControl.SecurityManagement import newSecurityManager
 from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
@@ -260,7 +261,6 @@ class CMFCatalogAware_CopySupport_Tests(SecurityTest):
                           , c_lambda=None
                           ):
         from AccessControl import SecurityManager
-        from Products.CMFCore.tests.base.testcase import newSecurityManager
 
         def _promiscuous( *args, **kw ):
             return 1

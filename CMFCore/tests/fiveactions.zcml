@@ -1,12 +1,12 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
-    i18n_domain="cmf"
-    >
+    i18n_domain="cmf_default">
 
   <browser:menu
       id="mymenu"
-      title="CMF menu" />
+      title="CMF menu"
+      />
 
   <browser:menuItem
       for="Products.Five.tests.testing.simplecontent.ISimpleContent"

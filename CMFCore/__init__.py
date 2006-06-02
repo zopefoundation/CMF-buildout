@@ -15,16 +15,14 @@
 $Id$
 """
 
-from sys import modules
-
-import PortalObject, PortalContent, PortalFolder
+import PortalFolder
 import MembershipTool, WorkflowTool, CatalogTool, DiscussionTool
 import ActionsTool, UndoTool, RegistrationTool, SkinsTool
 import MemberDataTool, TypesTool
 import URLTool
 import fiveactionstool
 import DirectoryView, FSImage, FSFile, FSPropertiesObject
-import FSDTMLMethod, FSPythonScript, FSSTXMethod
+import FSDTMLMethod, FSPythonScript
 import FSPageTemplate
 import FSZSQLMethod
 import ActionInformation
@@ -33,15 +31,13 @@ import ContentTypeRegistry
 import CachingPolicyManager
 import CMFBTreeFolder
 import utils
-
 from permissions import AddPortalFolders
 
 
-bases = (
-    PortalObject.PortalObjectBase,
-    PortalFolder.PortalFolder,
-    PortalContent.PortalContent,
-    )
+# Make sure security is initialized
+import FSSTXMethod
+import PortalContent
+import PortalObject
 
 tools = (
     MembershipTool.MembershipTool,
@@ -58,13 +54,6 @@ tools = (
     fiveactionstool.FiveActionsTool,
     )
 
-this_module = modules[ __name__ ]
-
-z_bases = utils.initializeBasesPhase1(bases, this_module)
-z_tool_bases = utils.initializeBasesPhase1(tools, this_module)
-
-cmfcore_globals=globals()
-
 # BBB: oldstyle constructors
 _EXTRA_CONSTRUCTORS = (PortalFolder.manage_addPortalFolder,
                        CMFBTreeFolder.manage_addCMFBTreeFolder)
@@ -79,9 +68,6 @@ __module_aliases__ = ( ( 'Products.BTreeFolder2.CMFBTreeFolder'
                      )
 
 def initialize(context):
-
-    utils.initializeBasesPhase2(z_bases, context)
-    utils.initializeBasesPhase2(z_tool_bases, context)
 
     context.registerClass(
         DirectoryView.DirectoryView,

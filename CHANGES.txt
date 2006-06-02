@@ -15,6 +15,9 @@ Trunk only (unreleased)
 
   Others
 
+    - ZClasses: Removed unmaintained support for ZClasses.
+      Marked the 'initializeBases*' methods as deprecated. 
+
     - Content: All content classes are now registered by ZCML.
       ContentInit is still used to register oldstyle constructors.
 

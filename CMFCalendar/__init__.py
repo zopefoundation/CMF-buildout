@@ -15,8 +15,6 @@
 $Id$
 """
 
-import sys
-
 import utils
 from Products.CMFCore import utils
 from Products.CMFCore.interfaces import ISiteRoot
@@ -29,23 +27,16 @@ import CalendarTool
 from permissions import AddPortalContent
 
 
-this_module = sys.modules[ __name__ ]
-
 contentConstructors = (Event.addEvent,)
-contentClasses = (Event.Event,)
-
 tools = ( CalendarTool.CalendarTool, )
-
-z_bases = utils.initializeBasesPhase1( contentClasses, this_module )
 
 # Make the skins available as DirectoryViews
 registerDirectory('skins', globals())
 
-def initialize( context ):
+def initialize(context):
+
     utils.ToolInit('CMF Calendar Tool', tools=tools, icon='tool.gif',
                    ).initialize( context )
-
-    utils.initializeBasesPhase2( z_bases, context )
 
     # BBB: register oldstyle constructors
     utils.ContentInit( 'CMF Calendar Content'

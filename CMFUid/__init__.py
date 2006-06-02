@@ -15,8 +15,6 @@
 $Id$
 """
 
-from sys import modules
-
 from Products.CMFCore import utils
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.GenericSetup import EXTENSION
@@ -26,21 +24,14 @@ import UniqueIdAnnotationTool
 import UniqueIdGeneratorTool
 import UniqueIdHandlerTool
 
+
 tools = (
     UniqueIdAnnotationTool.UniqueIdAnnotationTool,
     UniqueIdGeneratorTool.UniqueIdGeneratorTool,
     UniqueIdHandlerTool.UniqueIdHandlerTool,
 )
 
-this_module = modules[ __name__ ]
-
-z_tool_bases = utils.initializeBasesPhase1(tools, this_module)
-
-my_globals=globals()
-
 def initialize(context):
-
-    utils.initializeBasesPhase2(z_tool_bases, context)
 
     utils.ToolInit( 'CMF Unique Id Tool'
                   , tools=tools

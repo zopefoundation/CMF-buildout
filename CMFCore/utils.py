@@ -15,10 +15,11 @@
 $Id$
 """
 
-from os import path as os_path
-from os.path import abspath
 import re
 from copy import deepcopy
+from os import path as os_path
+from os.path import abspath
+from warnings import warn
 
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
@@ -49,7 +50,6 @@ from zope.i18nmessageid import MessageFactory
 
 from exceptions import AccessControl_Unauthorized
 from exceptions import NotFound
-from warnings import warn
 
 
 security = ModuleSecurityInfo( 'Products.CMFCore.utils' )
@@ -606,11 +606,14 @@ def manage_addContent( self, id, type, REQUEST=None ):
 
 
 def initializeBasesPhase1(base_classes, module):
-
     """ Execute the first part of initialization of ZClass base classes.
 
     Stuffs a _ZClass_for_x class in the module for each base.
     """
+    warn('initializeBasesPhase1() is deprecated and will be removed in CMF '
+         '2.3. There is no replacement because ZClasses are also deprecated.',
+         DeprecationWarning, stacklevel=2)
+
     rval = []
     for base_class in base_classes:
         d={}
@@ -626,13 +629,16 @@ def initializeBasesPhase1(base_classes, module):
     return rval
 
 def initializeBasesPhase2(zclasses, context):
-
     """ Finishes ZClass base initialization.
 
     o 'zclasses' is the list returned by initializeBasesPhase1().
 
     o 'context' is a ProductContext object.
     """
+    warn('initializeBasesPhase2() is deprecated and will be removed in CMF '
+         '2.3. There is no replacement because ZClasses are also deprecated.',
+         DeprecationWarning, stacklevel=2)
+
     for zclass in zclasses:
         context.registerZClass(zclass)
 
@@ -770,7 +776,6 @@ def _FSCacheHeaders(obj):
     #Last-Modified will get stomped on by a cache policy if there is
     #one set....
     RESPONSE.setHeader('Last-Modified', rfc1123_date(last_mod))
-
 
 
 class SimpleRecord:

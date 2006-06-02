@@ -15,10 +15,6 @@
 $Id$
 """
 
-import sys
-
-from ZClasses import createZClassForBase
-
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import ContentInit
 from Products.CMFCore.DirectoryView import registerDirectory
@@ -26,25 +22,20 @@ from Products.GenericSetup import EXTENSION
 from Products.GenericSetup import profile_registry
 
 import Topic
-import SimpleStringCriterion
-import SimpleIntCriterion
-import ListCriterion
-import DateCriteria
-import SortCriterion
 from permissions import AddTopics
 
 
-bases = ( Topic.Topic, )
-
-this_module = sys.modules[ __name__ ]
-
-for base in bases:
-    createZClassForBase( base, this_module )
+# Make sure security is initialized
+import DateCriteria
+import ListCriterion
+import SimpleIntCriterion
+import SimpleStringCriterion
+import SortCriterion
 
 # Make the skins available as DirectoryViews
 registerDirectory( 'skins', globals() )
 
-def initialize( context ):
+def initialize(context):
 
     context.registerHelpTitle( 'CMF Topic Help' )
     context.registerHelp( directory='help' )

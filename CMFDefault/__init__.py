@@ -15,12 +15,8 @@
 $Id$
 """
 
-import sys
-
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.utils import initializeBasesPhase1
-from Products.CMFCore.utils import initializeBasesPhase2
 from Products.CMFCore.utils import ToolInit
 from Products.CMFCore.utils import ContentInit
 from Products.CMFCore.utils import registerIcon
@@ -28,37 +24,29 @@ from Products.GenericSetup import BASE
 from Products.GenericSetup import EXTENSION
 from Products.GenericSetup import profile_registry
 
-import factory
-import utils
-from permissions import AddPortalContent
-
-import Portal
+import DefaultWorkflow
+import DiscussionTool
 import Document
-import Link
-import NewsItem
+import factory
+import Favorite
 import File
 import Image
-import Favorite
-import SkinnedFolder
-
-import DiscussionItem
-import PropertiesTool
+import Link
 import MembershipTool
 import MetadataTool
+import NewsItem
+import Portal
+import PropertiesTool
 import RegistrationTool
-import DublinCore
-import DiscussionTool
+import SkinnedFolder
 import SyndicationTool
-import DefaultWorkflow
+from permissions import AddPortalContent
 
-contentClasses = ( Document.Document
-                 , File.File
-                 , Image.Image
-                 , Link.Link
-                 , Favorite.Favorite
-                 , NewsItem.NewsItem
-                 , SkinnedFolder.SkinnedFolder
-                 )
+
+# Make sure security is initialized
+import DiscussionItem
+import DublinCore
+import utils
 
 contentConstructors = ( Document.addDocument
                       , File.addFile
@@ -69,13 +57,6 @@ contentConstructors = ( Document.addDocument
                       , SkinnedFolder.addSkinnedFolder
                       )
 
-bases = ( ( Portal.CMFSite
-          , DublinCore.DefaultDublinCoreImpl
-          , DiscussionItem.DiscussionItem
-          )
-          + contentClasses
-        )
-
 tools = ( DiscussionTool.DiscussionTool
         , MembershipTool.MembershipTool
         , RegistrationTool.RegistrationTool
@@ -84,19 +65,11 @@ tools = ( DiscussionTool.DiscussionTool
         , SyndicationTool.SyndicationTool
         )
 
-this_module = sys.modules[ __name__ ]
-
-z_bases = initializeBasesPhase1( bases, this_module )
-z_tool_bases = initializeBasesPhase1( tools, this_module )
-
 # Make the skins available as DirectoryViews.
 registerDirectory('skins', globals())
 registerDirectory('help', globals())
 
-def initialize( context ):
-
-    initializeBasesPhase2( z_bases, context )
-    initializeBasesPhase2( z_tool_bases, context )
+def initialize(context):
 
     ToolInit( 'CMF Default Tool'
             , tools=tools

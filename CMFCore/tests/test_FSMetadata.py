@@ -14,10 +14,9 @@
 
 $Id$
 """
-from unittest import TestSuite, makeSuite, main
+
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from test_FSSecurity import FSSecurityBase
 
@@ -85,9 +84,9 @@ class FSMetadata(FSSecurityBase):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(FSMetadata),
+    return unittest.TestSuite((
+        unittest.makeSuite(FSMetadata),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

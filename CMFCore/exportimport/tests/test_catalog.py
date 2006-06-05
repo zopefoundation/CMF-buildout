@@ -16,9 +16,8 @@ $Id$
 """
 
 import unittest
-import Testing
-import Zope2
-Zope2.startup()
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('ZCTextIndex', 1)
 
 import Products
 from OFS.Folder import Folder
@@ -104,6 +103,10 @@ class _CatalogToolSetup(BaseRegistryTests):
         return site
 
     def setUp(self):
+        import Products.GenericSetup.PluginIndexes
+        import Products.GenericSetup.ZCatalog
+        import Products.GenericSetup.ZCTextIndex
+
         BaseRegistryTests.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('configure.zcml',

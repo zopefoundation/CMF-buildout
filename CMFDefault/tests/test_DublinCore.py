@@ -15,10 +15,8 @@
 $Id$
 """
 
-from unittest import TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import Implicit
@@ -202,9 +200,9 @@ class DublinCoreTests(SecurityTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( DublinCoreTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite(DublinCoreTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

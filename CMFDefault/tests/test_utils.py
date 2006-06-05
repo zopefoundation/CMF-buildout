@@ -14,10 +14,9 @@
 
 $Id$
 """
-from unittest import TestCase, makeSuite, main
+
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Products.CMFCore.tests.base.content import FAUX_HTML_LEADING_TEXT
 from Products.CMFCore.tests.base.content import SIMPLE_HTML
@@ -26,7 +25,8 @@ from Products.CMFCore.tests.base.content import SIMPLE_XHTML
 from Products.CMFCore.tests.base.content import STX_WITH_HTML
 
 
-class DefaultUtilsTests(TestCase):
+class DefaultUtilsTests(unittest.TestCase):
+
     COMMON_HEADERS = '''Author: Tres Seaver
 Title: Test Products.CMFDefault.utils.parseHeadersBody'''
 
@@ -261,8 +261,11 @@ Header: value
         self.assertEqual( formatted
                         , 'Foo: foo\r\nBar: bar\r\n  \r\n  with multiline' )
 
+
 def test_suite():
-    return makeSuite(DefaultUtilsTests)
+    return unittest.TestSuite((
+        unittest.makeSuite(DefaultUtilsTests),
+        ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

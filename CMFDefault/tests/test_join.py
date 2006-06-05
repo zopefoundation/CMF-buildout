@@ -16,23 +16,30 @@ $Id$
 """
 
 import unittest
-import Testing
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('ZCTextIndex', 1)
+ZopeTestCase.installProduct('Five', 1)
+ZopeTestCase.installProduct('CMFCore', 1)
+ZopeTestCase.installProduct('CMFDefault', 1)
 
 import Products
 from Products.Five import zcml
 from zope.testing.cleanup import cleanUp
 
+from Products.CMFCore.tests.base.testcase import setUpGenericSetup
 from Products.CMFCore.tests.base.testcase import TransactionalTest
 
 
 class MembershipTests(TransactionalTest):
 
     def setUp(self):
+        import Products.DCWorkflow
+
         TransactionalTest.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
+        setUpGenericSetup()
         zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.CMFDefault)
         zcml.load_config('configure.zcml', Products.DCWorkflow)
 
     def tearDown(self):

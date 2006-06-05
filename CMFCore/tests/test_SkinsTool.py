@@ -15,13 +15,11 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 
-class SkinsContainerTests(TestCase):
+class SkinsContainerTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -39,7 +37,7 @@ class SkinsContainerTests(TestCase):
         verifyClass(ISkinsContainer, SkinsContainer)
 
 
-class SkinsToolTests(TestCase):
+class SkinsToolTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.SkinsTool import SkinsTool
@@ -91,7 +89,7 @@ class SkinsToolTests(TestCase):
         self.failUnless(paths.find('.svn') == -1)
 
 
-class SkinnableTests(TestCase):
+class SkinnableTests(unittest.TestCase):
 
     def _makeOne(self):
         from Products.CMFCore.SkinsTool import SkinsTool
@@ -128,11 +126,11 @@ class SkinnableTests(TestCase):
         
 
 def test_suite():
-    return TestSuite((
-        makeSuite(SkinsContainerTests),
-        makeSuite(SkinsToolTests),
-        makeSuite(SkinnableTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(SkinsContainerTests),
+        unittest.makeSuite(SkinsToolTests),
+        unittest.makeSuite(SkinnableTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

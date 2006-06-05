@@ -15,13 +15,11 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 
-class RegistrationToolTests(TestCase):
+class RegistrationToolTests(unittest.TestCase):
 
     def _makeOne(self):
         from Products.CMFCore.RegistrationTool import RegistrationTool
@@ -54,9 +52,9 @@ class RegistrationToolTests(TestCase):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( RegistrationToolTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite(RegistrationToolTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

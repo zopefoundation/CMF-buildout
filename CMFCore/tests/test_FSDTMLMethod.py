@@ -20,6 +20,7 @@ import Testing
 
 from os.path import join as path_join
 
+from DateTime import DateTime
 from OFS.Folder import Folder
 from Products.StandardCacheManagers import RAMCacheManager
 
@@ -32,7 +33,6 @@ from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.dummy import DummyContent
 
-from DateTime import DateTime
 
 class FSDTMLMaker(FSDVTest):
 
@@ -43,7 +43,7 @@ class FSDTMLMaker(FSDVTest):
         return FSDTMLMethod( id, path, properties=metadata.getProperties() )
 
 
-class FSDTMLMethodTests( RequestTest, FSDTMLMaker ):
+class FSDTMLMethodTests(RequestTest, FSDTMLMaker):
 
     def setUp(self):
         FSDTMLMaker.setUp(self)
@@ -55,8 +55,8 @@ class FSDTMLMethodTests( RequestTest, FSDTMLMaker ):
 
     def test_Call( self ):
         script = self._makeOne( 'testDTML', 'testDTML.dtml' )
-        script = script.__of__(self.root)
-        self.assertEqual(script(self.root, self.REQUEST), 'foo\n')
+        script = script.__of__(self.app)
+        self.assertEqual(script(self.app, self.REQUEST), 'nohost\n')
 
     def test_caching( self ):
         #   Test HTTP caching headers.

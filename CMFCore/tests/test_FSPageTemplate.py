@@ -14,10 +14,10 @@
 
 $Id$
 """
-from unittest import TestSuite, makeSuite, main
-import Testing
-import Zope2
-Zope2.startup()
+
+import unittest
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('PageTemplates', 1)
 
 from os.path import join as path_join
 
@@ -57,10 +57,9 @@ class FSPageTemplateTests( RequestTest, FSPTMaker ):
         cleanUp()
 
     def test_Call( self ):
-
         script = self._makeOne( 'testPT', 'testPT.pt' )
-        script = script.__of__(self.root)
-        self.assertEqual(script(),'foo\n')
+        script = script.__of__(self.app)
+        self.assertEqual(script(), 'nohost\n')
 
     def test_ContentType(self):
         script = self._makeOne( 'testXMLPT', 'testXMLPT.pt' )
@@ -187,10 +186,10 @@ class FSPageTemplateCustomizationTests( SecurityTest, FSPTMaker ):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(FSPageTemplateTests),
-        makeSuite(FSPageTemplateCustomizationTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(FSPageTemplateTests),
+        unittest.makeSuite(FSPageTemplateCustomizationTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

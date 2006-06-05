@@ -1,6 +1,5 @@
-from unittest import TestCase
-import Zope2
-Zope2.startup()
+import unittest
+from Testing import ZopeTestCase
 
 import logging
 import sys
@@ -16,7 +15,6 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
 from Products.Five import zcml
-from Testing.makerequest import makerequest
 
 from dummy import DummyFolder
 from security import AnonymousUser
@@ -28,6 +26,8 @@ _TRAVERSE_ZCML = """
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
     >
+
+  <include package="zope.app.traversing"/>
 
   <adapter
       for="*"
@@ -65,6 +65,12 @@ def setUpEvents():
     zcml.load_config('event.zcml', Products.Five)
     #   Now, register the CMF-specific handler
     zcml.load_config('event.zcml', Products.CMFCore)
+
+def setUpGenericSetup():
+    import Products
+
+    zcml.load_config('meta.zcml', Products.Five)
+    zcml.load_config('configure.zcml', Products.GenericSetup)
 
 
 class LogInterceptor:
@@ -126,56 +132,53 @@ class WarningInterceptor:
         sys.stderr = self._old_stderr
 
 
-class TransactionalTest( TestCase ):
+class TransactionalTest(unittest.TestCase):
 
     def setUp( self ):
         transaction.begin()
-        self.connection = Zope2.DB.open()
-        self.root =  self.connection.root()[ 'Application' ]
+        self.app = self.root = ZopeTestCase.app()
 
     def tearDown( self ):
         transaction.abort()
-        self.connection.close()
+        ZopeTestCase.close(self.app)
 
 
-class RequestTest( TransactionalTest ):
+class RequestTest(TransactionalTest):
 
     def setUp(self):
         TransactionalTest.setUp(self)
-        root = self.root = makerequest(self.root)
-        self.REQUEST  = root.REQUEST
-        self.RESPONSE = root.REQUEST.RESPONSE
+        self.app = self.root = ZopeTestCase.utils.makerequest(self.app)
+        self.REQUEST  = self.app.REQUEST
+        self.RESPONSE = self.app.REQUEST.RESPONSE
 
     def tearDown(self):
         self.REQUEST.close()
         TransactionalTest.tearDown(self)
 
 
-class SecurityTest( TestCase ):
+class SecurityTest(unittest.TestCase):
 
     def setUp(self):
         transaction.begin()
         self._policy = PermissiveSecurityPolicy()
         self._oldPolicy = setSecurityPolicy(self._policy)
-        self.connection = Zope2.DB.open()
-        self.root =  self.connection.root()[ 'Application' ]
-        newSecurityManager( None, AnonymousUser().__of__( self.root ) )
+        self.app = self.root = ZopeTestCase.app()
+        newSecurityManager(None, AnonymousUser().__of__(self.app.acl_users))
 
     def tearDown( self ):
         transaction.abort()
-        self.connection.close()
+        ZopeTestCase.close(self.app)
         noSecurityManager()
         setSecurityPolicy(self._oldPolicy)
 
 
-class SecurityRequestTest( SecurityTest ):
+class SecurityRequestTest(SecurityTest):
 
     def setUp(self):
         SecurityTest.setUp(self)
-        self.root = makerequest(self.root)
+        self.app = self.root = ZopeTestCase.utils.makerequest(self.app)
 
     def tearDown(self):
-        self.root.REQUEST.close()
         SecurityTest.tearDown(self)
 
 try:
@@ -190,11 +193,9 @@ else:
 _prefix = abspath(join(_prefix,'..'))
 
 
-class FSDVTest( TestCase, WarningInterceptor ):
-    # Base class for FSDV test, creates a fake skin
-    # copy that can be edited.
+class FSDVTest(unittest.TestCase, WarningInterceptor):
 
-    _sourceprefix = _prefix
+    tempname = _sourceprefix = _prefix
     _skinname = 'fake_skins'
     _layername = 'fake_skin'
 
@@ -208,6 +209,18 @@ class FSDVTest( TestCase, WarningInterceptor ):
         if object is not None:
             ob = self.ob = DummyFolder()
             addDirectoryViews(ob, self._skinname, self.tempname)
+
+    def setUp(self):
+        # store the skin path name
+        self.skin_path_name = join(self.tempname,self._skinname,self._layername)
+
+    def tearDown(self):
+        self._free_warning_output()
+
+
+class WritableFSDVTest(FSDVTest):
+    # Base class for FSDV test, creates a fake skin
+    # copy that can be edited.
 
     def _writeFile(self, filename, stuff):
         # write some stuff to a file on disk
@@ -278,11 +291,10 @@ class FSDVTest( TestCase, WarningInterceptor ):
         for root, dirs, files in walk(self.tempname):
             for name in files:
                 chmod(join(root, name), S_IREAD+S_IWRITE)
-        # store the skin path name
-        self.skin_path_name = join(self.tempname,self._skinname,self._layername)
+        FSDVTest.setUp(self)
 
     def tearDown(self):
-        self._free_warning_output()
+        FSDVTest.tearDown(self)
         # kill the copy
         try:
             rmtree(self.tempname)

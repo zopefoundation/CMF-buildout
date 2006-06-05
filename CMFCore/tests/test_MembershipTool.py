@@ -15,10 +15,8 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from AccessControl.SecurityManagement import newSecurityManager
 from OFS.Folder import Folder
@@ -31,7 +29,7 @@ from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
 
-class MembershipToolTests(TestCase):
+class MembershipToolTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -185,11 +183,12 @@ class MembershipToolSecurityTests(SecurityTest):
         nonlocal_member = tool.getMemberById(NONLOCAL_USER_ID)
         self.assertEqual(nonlocal_member.getId(), NONLOCAL_USER_ID)
 
+
 def test_suite():
-    return TestSuite((
-        makeSuite( MembershipToolTests ),
-        makeSuite( MembershipToolSecurityTests )
+    return unittest.TestSuite((
+        unittest.makeSuite(MembershipToolTests),
+        unittest.makeSuite(MembershipToolSecurityTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

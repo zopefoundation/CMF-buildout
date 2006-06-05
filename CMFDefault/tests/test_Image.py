@@ -16,7 +16,11 @@ $Id$
 """
 
 import unittest
-import Testing
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('ZCTextIndex', 1)
+ZopeTestCase.installProduct('Five', 1)
+ZopeTestCase.installProduct('CMFCore', 1)
+ZopeTestCase.installProduct('CMFDefault', 1)
 
 from os.path import join as path_join
 from cStringIO import StringIO
@@ -34,6 +38,7 @@ from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.tests.base.testcase import setUpEvents
+from Products.CMFCore.tests.base.testcase import setUpGenericSetup
 from Products.CMFCore.tests.base.testcase import setUpTraversing
 from Products.CMFDefault import tests
 
@@ -108,11 +113,13 @@ class TestImageCopyPaste(SecurityRequestTest):
     # Copy/pasting an image (or file) should reset the object's workflow state.
 
     def setUp(self):
+        import Products.DCWorkflow
+
         SecurityRequestTest.setUp(self)
         setUpEvents()
         setUpTraversing()
+        setUpGenericSetup()
         zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.CMFCore)
         zcml.load_config('configure.zcml', Products.CMFDefault)
         zcml.load_config('configure.zcml', Products.DCWorkflow)

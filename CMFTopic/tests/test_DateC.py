@@ -16,13 +16,19 @@ $Id$
 """
 
 import unittest
-import Testing
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('ZCTextIndex', 1)
+ZopeTestCase.installProduct('Five', 1)
+ZopeTestCase.installProduct('CMFCore', 1)
+ZopeTestCase.installProduct('CMFDefault', 1)
 
 import Products
 from DateTime.DateTime import DateTime
+from Products.Five import zcml
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.testcase import RequestTest
+from Products.CMFCore.tests.base.testcase import setUpGenericSetup
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFTopic.Topic import Topic
 
@@ -158,15 +164,13 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
     day_diffs.extend(selectable_diffs)
 
     def setUp(self):
-        import Products.CMFCore
-        import Products.Five
-        from Products.Five import zcml
-        import Products.GenericSetup
+        import Products.DCWorkflow
+
         RequestTest.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
+        setUpGenericSetup()
         zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.CMFDefault)
         zcml.load_config('configure.zcml', Products.DCWorkflow)
 
         factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite

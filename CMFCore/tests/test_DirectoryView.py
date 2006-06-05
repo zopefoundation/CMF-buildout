@@ -1,7 +1,5 @@
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from os import remove, mkdir, rmdir
 from os.path import join
@@ -13,6 +11,7 @@ from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.testcase import _prefix
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
+from Products.CMFCore.tests.base.testcase import WritableFSDVTest
 
 from Products.CMFCore.DirectoryView import DirectoryView
 
@@ -25,7 +24,7 @@ class DummyDirectoryViewSurrogate:
     pass
 
 
-class DirectoryViewPathTests( TestCase, WarningInterceptor ):
+class DirectoryViewPathTests(unittest.TestCase, WarningInterceptor):
     """
     These test that, no matter what is stored in their dirpath,
     FSDV's will do their best to find an appropriate skin
@@ -262,10 +261,10 @@ class DirectoryViewFolderTests(FSDVTest):
 
 if DevelopmentMode:
 
-  class DebugModeTests( FSDVTest ):
+  class DebugModeTests(WritableFSDVTest):
 
     def setUp( self ):
-        FSDVTest.setUp(self)
+        WritableFSDVTest.setUp(self)
         self.test1path = join(self.skin_path_name,'test1.py')
         self.test2path = join(self.skin_path_name,'test2.py')
         self.test3path = join(self.skin_path_name,'test3')
@@ -327,18 +326,18 @@ if DevelopmentMode:
 
 else:
 
-    class DebugModeTests( TestCase ):
+    class DebugModeTests(unittest.TestCase):
         pass
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(DirectoryViewPathTests),
-        makeSuite(DirectoryViewTests),
-        makeSuite(DirectoryViewIgnoreTests),
-        makeSuite(DirectoryViewFolderTests),
-        makeSuite(DebugModeTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(DirectoryViewPathTests),
+        unittest.makeSuite(DirectoryViewTests),
+        unittest.makeSuite(DirectoryViewIgnoreTests),
+        unittest.makeSuite(DirectoryViewFolderTests),
+        unittest.makeSuite(DebugModeTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

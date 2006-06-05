@@ -15,10 +15,8 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Acquisition import Implicit
 from ZPublisher.BaseRequest import BaseRequest
@@ -41,7 +39,7 @@ class DummyContent(DynamicType, Implicit):
     portal_type = 'Dummy Content 15'
 
 
-class DynamicTypeTests(TestCase):
+class DynamicTypeTests(unittest.TestCase):
 
     def setUp(self):
         self.site = DummySite('site')
@@ -113,10 +111,10 @@ class DynamicTypeSecurityTests(SecurityRequestTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(DynamicTypeTests),
-        makeSuite(DynamicTypeSecurityTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(DynamicTypeTests),
+        unittest.makeSuite(DynamicTypeSecurityTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

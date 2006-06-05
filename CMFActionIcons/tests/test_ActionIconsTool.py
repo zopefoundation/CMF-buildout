@@ -17,11 +17,9 @@ $Id$
 
 import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 
-class ActionIconToolTests( unittest.TestCase ):
+class ActionIconToolTests(unittest.TestCase):
 
     def _makeOne( self, *args, **kw ):
 

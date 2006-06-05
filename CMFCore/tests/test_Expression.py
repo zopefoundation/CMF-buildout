@@ -14,10 +14,9 @@
 
 $Id$
 """
-from unittest import TestSuite, makeSuite, main
+
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.Expression import createExprContext
@@ -89,9 +88,9 @@ class ExpressionTests( SecurityTest ):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(ExpressionTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(ExpressionTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

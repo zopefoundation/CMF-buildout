@@ -17,8 +17,6 @@ $Id$
 
 import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from OFS.Folder import Folder
 from OFS.Application import Application
@@ -66,7 +64,9 @@ class RoleMapTests(unittest.TestCase):
 
 
 def test_suite():
-    return unittest.makeSuite(RoleMapTests)
+    return unittest.TestSuite((
+        unittest.makeSuite(RoleMapTests),
+        ))
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

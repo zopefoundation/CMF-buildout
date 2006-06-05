@@ -1,7 +1,5 @@
-from unittest import TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from os.path import join
 
@@ -52,9 +50,9 @@ class FSPropertiesObjectCustomizationTests(SecurityTest, FSPOMaker):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(FSPropertiesObjectCustomizationTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(FSPropertiesObjectCustomizationTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

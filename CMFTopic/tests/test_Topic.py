@@ -16,7 +16,8 @@ $Id$
 """
 
 import unittest
-import Testing
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('CMFTopic', 1)
 
 from Acquisition import Implicit
 from zope.testing.cleanup import cleanUp

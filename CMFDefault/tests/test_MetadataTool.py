@@ -14,15 +14,14 @@
 
 $Id$
 """
+
 import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Acquisition import aq_base
 
 
-class TestMetadataElementPolicy( unittest.TestCase ):
+class TestMetadataElementPolicy(unittest.TestCase):
 
     def _getTargetClass( self ):
         from Products.CMFDefault.MetadataTool import MetadataElementPolicy
@@ -72,7 +71,7 @@ class TestMetadataElementPolicy( unittest.TestCase ):
         self.failUnless( 'yyy' in mv_policy.allowedVocabulary() )
 
 
-class TestElementSpec( unittest.TestCase ):
+class TestElementSpec(unittest.TestCase):
 
     def _getTargetClass( self ):
         from Products.CMFDefault.MetadataTool import ElementSpec
@@ -99,7 +98,7 @@ class TestElementSpec( unittest.TestCase ):
 
 
 
-class TestMetadataSchema( unittest.TestCase ):
+class TestMetadataSchema(unittest.TestCase):
 
     def _getTargetClass( self ):
         from Products.CMFDefault.MetadataTool import MetadataSchema
@@ -109,7 +108,7 @@ class TestMetadataSchema( unittest.TestCase ):
         return self._getTargetClass()( *args, **kw )
 
 
-class TestMetadataTool( unittest.TestCase ):
+class TestMetadataTool(unittest.TestCase):
 
     def _getTargetClass( self ):
         from Products.CMFDefault.MetadataTool import MetadataTool

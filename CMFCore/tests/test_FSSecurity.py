@@ -14,22 +14,21 @@
 
 $Id$
 """
-from unittest import TestSuite, makeSuite, main
+
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from time import sleep
 
 from AccessControl.Permission import Permission
 from Globals import DevelopmentMode
 
-from Products.CMFCore.tests.base.testcase import FSDVTest
-from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.testcase import LogInterceptor
+from Products.CMFCore.tests.base.testcase import RequestTest
+from Products.CMFCore.tests.base.testcase import WritableFSDVTest
 
 
-class FSSecurityBase( RequestTest, FSDVTest, LogInterceptor ):
+class FSSecurityBase(RequestTest, WritableFSDVTest, LogInterceptor):
 
     def _checkSettings(self, object, permissionname, acquire=0, roles=[]):
         # check the roles and acquire settings for a permission on an
@@ -55,7 +54,7 @@ class FSSecurityBase( RequestTest, FSDVTest, LogInterceptor ):
 
     def setUp( self ):
         # initialise skins
-        FSDVTest.setUp(self)
+        WritableFSDVTest.setUp(self)
         self._registerDirectory(self)
         # set up ZODB
         RequestTest.setUp(self)
@@ -67,7 +66,7 @@ class FSSecurityBase( RequestTest, FSDVTest, LogInterceptor ):
 
     def tearDown( self ):
         RequestTest.tearDown(self)
-        FSDVTest.tearDown(self)
+        WritableFSDVTest.tearDown(self)
         self._ignore_log_errors()
 
 
@@ -170,10 +169,10 @@ else:
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(FSSecurityTests),
-        makeSuite(DebugModeTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(FSSecurityTests),
+        unittest.makeSuite(DebugModeTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

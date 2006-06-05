@@ -136,7 +136,7 @@ class ActionsToolSecurityRequestTests(SecurityRequestTest):
                           'user': [],
                           'object': [],
                           'folder': [{'id': 'folderContents',
-                                      'url': 'http://foo/folder_contents',
+                                      'url': 'http://nohost/folder_contents',
                                       'title': 'Folder contents',
                                       'description': '',
                                       'visible': True,

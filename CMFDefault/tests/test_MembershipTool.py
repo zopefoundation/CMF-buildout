@@ -15,10 +15,8 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from AccessControl.SecurityManagement import newSecurityManager
 
@@ -30,7 +28,7 @@ from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
 
-class MembershipToolTests(TestCase):
+class MembershipToolTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFDefault.MembershipTool import MembershipTool
@@ -133,10 +131,10 @@ class MembershipToolSecurityTests(SecurityTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( MembershipToolTests ),
-        makeSuite( MembershipToolSecurityTests )
+    return unittest.TestSuite((
+        unittest.makeSuite(MembershipToolTests),
+        unittest.makeSuite(MembershipToolSecurityTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

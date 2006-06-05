@@ -15,17 +15,15 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite
 
 
-class URLToolTests(TestCase):
+class URLToolTests(unittest.TestCase):
 
     def setUp(self):
         self.site = DummySite(id='foo')
@@ -79,9 +77,9 @@ class URLToolTests(TestCase):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( URLToolTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite( URLToolTests ),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

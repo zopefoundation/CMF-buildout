@@ -15,10 +15,8 @@
 $Id$
 """
 
-from unittest import TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from common import CriterionTestCase
 
@@ -64,9 +62,9 @@ class SortCriterionTests(CriterionTestCase):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(SortCriterionTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(SortCriterionTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

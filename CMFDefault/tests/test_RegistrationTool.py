@@ -17,8 +17,6 @@ $Id$
 
 import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Products.CMFCore.tests.base.testcase import RequestTest
 
@@ -138,7 +136,7 @@ Spam, spam, spam
 
 def test_suite():
     return unittest.TestSuite((
-        unittest.makeSuite( RegistrationToolTests ),
+        unittest.makeSuite(RegistrationToolTests),
         ))
 
 if __name__ == '__main__':

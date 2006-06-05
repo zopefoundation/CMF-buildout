@@ -17,8 +17,6 @@ $Id$
 
 import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Products.CMFCore.testing import ConformsToFolder
 
@@ -37,11 +35,12 @@ class CMFBTreeFolderTests(ConformsToFolder, unittest.TestCase):
         empty = self._makeOne('test')
         self.assertEqual( len( empty.objectIds() ), 0 )
 
-    def test___module_aliases__( self ):
-        from Products.BTreeFolder2.CMFBTreeFolder \
-            import CMFBTreeFolder as BBB
-
-        self.failUnless( BBB is self._getTargetClass() )
+# this test doesn't work with ZopeTestCase.ZopeLite.installProduct
+##    def test___module_aliases__( self ):
+##        from Products.BTreeFolder2.CMFBTreeFolder \
+##            import CMFBTreeFolder as BBB
+##
+##        self.failUnless( BBB is self._getTargetClass() )
 
 
 def test_suite():

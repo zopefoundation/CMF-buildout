@@ -15,17 +15,15 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 
 
-class DiscussionToolTests(TestCase):
+class DiscussionToolTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFDefault.DiscussionTool import DiscussionTool
@@ -101,9 +99,9 @@ class DiscussionToolTests(TestCase):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( DiscussionToolTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite(DiscussionToolTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

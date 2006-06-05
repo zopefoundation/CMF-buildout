@@ -14,10 +14,9 @@
 
 $Id$
 """
+
 import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from os.path import join as path_join
 
@@ -27,7 +26,7 @@ from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
 
 
-class FSFileTests( RequestTest, FSDVTest):
+class FSFileTests(RequestTest, FSDVTest):
 
     def setUp(self):
         FSDVTest.setUp(self)

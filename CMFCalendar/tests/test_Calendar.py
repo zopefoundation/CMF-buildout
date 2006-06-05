@@ -16,9 +16,13 @@ $Id$
 """
 
 import unittest
-import Testing
-import Zope2
-Zope2.startup()
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('ZCTextIndex', 1)
+ZopeTestCase.installProduct('Five', 1)
+ZopeTestCase.installProduct('CMFCore', 1)
+ZopeTestCase.installProduct('CMFDefault', 1)
+ZopeTestCase.installProduct('CMFCalendar', 1)
+ZopeTestCase.utils.setupCoreSessions()
 
 import locale
 
@@ -29,29 +33,29 @@ from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.User import UnrestrictedUser
 from DateTime import DateTime
 from Products.Five import zcml
-from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
-from Products.Transience.Transience import TransientObjectContainer
-from Testing.makerequest import makerequest
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore import Skinnable
+from Products.CMFCore.tests.base.testcase import setUpEvents
+from Products.CMFCore.tests.base.testcase import setUpGenericSetup
+from Products.CMFCore.tests.base.testcase import setUpTraversing
 
 
 class CalendarTests(unittest.TestCase):
 
-    def _makeOne(self, *args, **kw):
+    def _getTargetClass(self):
         from Products.CMFCalendar.CalendarTool import CalendarTool
-        ctool = CalendarTool(*args, **kw)
-        ctool.firstweekday = 6
 
-        return ctool
+        return CalendarTool
+
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
         from Products.CMFCalendar.interfaces import ICalendarTool
-        from Products.CMFCalendar.CalendarTool import CalendarTool
 
-        verifyClass(ICalendarTool, CalendarTool)
+        verifyClass(ICalendarTool, self._getTargetClass())
 
     def test_new(self):
         ctool = self._makeOne()
@@ -87,6 +91,7 @@ class CalendarTests(unittest.TestCase):
 
     def test_firstweekday(self):
         ctool = self._makeOne()
+        ctool.firstweekday = 6
         self.assertEqual(ctool.getFirstWeekDay(), 6)
 
         # Try setting it to invalid values, the setting should not stick
@@ -113,9 +118,13 @@ class CalendarTests(unittest.TestCase):
 class CalendarRequestTests(unittest.TestCase):
 
     def setUp(self):
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.GenericSetup)
+        import Products.DCWorkflow
+
+        setUpEvents()
+        setUpTraversing()
+        setUpGenericSetup()
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.Five.skin)
         zcml.load_config('configure.zcml', Products.CMFCalendar)
         zcml.load_config('configure.zcml', Products.CMFCore)
         zcml.load_config('configure.zcml', Products.CMFDefault)
@@ -123,7 +132,7 @@ class CalendarRequestTests(unittest.TestCase):
         self._oldSkindata = Skinnable.SKINDATA.copy()
         transaction.begin()
 
-        app = self.app = makerequest(Zope2.app())
+        app = self.app = ZopeTestCase.utils.makerequest(ZopeTestCase.app())
         # Log in as a god :-)
         newSecurityManager( None, UnrestrictedUser('god', 'god', ['Manager'], '') )
 
@@ -134,20 +143,13 @@ class CalendarRequestTests(unittest.TestCase):
         self.Tool = app.CalendarTest.portal_calendar
 
         # sessioning setup
-        if getattr(app, 'temp_folder', None) is None:
-            temp_folder = MountedTemporaryFolder('temp_folder')
-            app._setObject('temp_folder', temp_folder)
-        if getattr(app.temp_folder, 'session_data', None) is None:
-            session_data = TransientObjectContainer('session_data')
-            app.temp_folder._setObject('session_data', session_data)
         app.REQUEST.set_lazy( 'SESSION',
                               app.session_data_manager.getSessionData )
 
     def tearDown(self):
-        self.app.REQUEST.close()
         noSecurityManager()
         transaction.abort()
-        self.app._p_jar.close()
+        ZopeTestCase.close(self.app)
         Skinnable.SKINDATA = self._oldSkindata
         cleanUp()
 

@@ -18,21 +18,15 @@ $Id$
 import unittest
 import Testing
 
-import cStringIO
-
 import transaction
 from AccessControl.SecurityManagement import newSecurityManager
-from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl import SecurityManager
 from AccessControl import Unauthorized
 from Acquisition import aq_base
 from Acquisition import Implicit
 from DateTime import DateTime
-from OFS.Application import Application
 from OFS.Image import manage_addFile
-from OFS.tests.testCopySupport import makeConnection
 from Products.Five import zcml
-from Testing.makerequest import makerequest
 from zope.component import getGlobalSiteManager
 from zope.component.interfaces import IFactory
 from zope.testing.cleanup import cleanUp
@@ -44,6 +38,7 @@ from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFactoryDispatcher
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
+from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
@@ -865,67 +860,35 @@ class _AllowedUser( Implicit ):
     def allowed( self, object, object_roles=None ):
         return self._lambdas[ 0 ]( object, object_roles )
 
-class PortalFolderCopySupportTests(unittest.TestCase):
 
-    _old_policy = None
+class PortalFolderCopySupportTests(SecurityRequestTest):
 
-    def setUp( self ):
+    def setUp(self):
         import Products
 
-        self._scrubSecurity()
+        SecurityRequestTest.setUp(self)
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('content.zcml', Products.CMFCore)
 
-    def tearDown( self ):
-        self._scrubSecurity()
-        self._cleanApp()
+    def tearDown(self):
+        SecurityRequestTest.tearDown(self)
         cleanUp()
 
-    def _initFolders( self ):
+    def _initFolders(self):
         from Products.CMFCore.PortalFolder import PortalFolder
 
-        self.connection = makeConnection()
-        try:
-            r = self.connection.root()
-            a = Application()
-            r['Application'] = a
-            self.root = a
-            responseOut = self.responseOut = cStringIO.StringIO()
-            self.app = makerequest( self.root, stdout=responseOut )
-            self.app._setObject( 'folder1', PortalFolder( 'folder1' ) )
-            self.app._setObject( 'folder2', PortalFolder( 'folder2' ) )
-            folder1 = getattr( self.app, 'folder1' )
-            folder2 = getattr( self.app, 'folder2' )
+        self.app._setObject( 'folder1', PortalFolder( 'folder1' ) )
+        self.app._setObject( 'folder2', PortalFolder( 'folder2' ) )
+        folder1 = getattr( self.app, 'folder1' )
+        folder2 = getattr( self.app, 'folder2' )
+        manage_addFile(folder1, 'file', file='', content_type='text/plain')
 
-            manage_addFile( folder1, 'file'
-                          , file='', content_type='text/plain')
-
-            # Hack, we need a _p_mtime for the file, so we make sure that it
-            # has one. We use a subtransaction, which means we can rollback
-            # later and pretend we didn't touch the ZODB.
-            transaction.savepoint(optimistic=True)
-        except:
-            self.connection.close()
-            raise
-
+        # Hack, we need a _p_mtime for the file, so we make sure that it
+        # has one. We use a subtransaction, which means we can rollback
+        # later and pretend we didn't touch the ZODB.
+        transaction.savepoint(optimistic=True)
         return self.app._getOb( 'folder1' ), self.app._getOb( 'folder2' )
-
-    def _cleanApp( self ):
-
-        transaction.abort()
-        self.connection.close()
-        del self.app
-        del self.responseOut
-        del self.root
-        del self.connection
-
-    def _scrubSecurity( self ):
-
-        noSecurityManager()
-
-        if self._old_policy is not None:
-            SecurityManager.setSecurityPolicy( self._old_policy )
 
     def _assertCopyErrorUnauth( self, callable, *args, **kw ):
 
@@ -975,10 +938,10 @@ class PortalFolderCopySupportTests(unittest.TestCase):
             c_lambda = _promiscuous
 
         scp = _SensitiveSecurityPolicy( v_lambda, c_lambda )
-        self._old_policy = SecurityManager.setSecurityPolicy( scp )
+        SecurityManager.setSecurityPolicy( scp )
 
         newSecurityManager( None
-                          , _AllowedUser( a_lambda ).__of__( self.root ) )
+                          , _AllowedUser(a_lambda).__of__(self.app.acl_users))
 
     def test_copy_baseline( self ):
 

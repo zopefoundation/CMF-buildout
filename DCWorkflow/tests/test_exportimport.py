@@ -23,7 +23,6 @@ from Products.PythonScripts.PythonScript import PythonScript
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
 from Products.Five import zcml
 
-import Products.GenericSetup.PythonScripts
 from Products.CMFCore.exportimport.tests.test_workflow \
         import _BINDINGS_TOOL_EXPORT
 from Products.CMFCore.exportimport.tests.test_workflow import _DUMMY_ZCML
@@ -34,6 +33,7 @@ from Products.CMFCore.exportimport.tests.test_workflow \
 from Products.CMFCore.exportimport.tests.test_workflow import DummyWorkflow
 from Products.CMFCore.exportimport.tests.test_workflow \
         import DummyWorkflowTool
+from Products.CMFCore.tests.base.testcase import setUpGenericSetup
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from Products.DCWorkflow.Transitions import TRIGGER_AUTOMATIC
@@ -78,9 +78,9 @@ class _WorkflowSetup(WorkflowSetupBase):
 
     def setUp(self):
         WorkflowSetupBase.setUp(self)
+        setUpGenericSetup()
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.DCWorkflow)
-        zcml.load_config('configure.zcml', Products.GenericSetup.PythonScripts)
 
     def _initDCWorkflow( self, workflow_id ):
 

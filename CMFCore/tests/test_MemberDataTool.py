@@ -15,12 +15,11 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 import Acquisition
+
 
 class DummyUserFolder(Acquisition.Implicit):
 
@@ -64,7 +63,7 @@ class DummyMemberDataTool(Acquisition.Implicit):
     pass
 
 
-class MemberDataToolTests(TestCase):
+class MemberDataToolTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.MemberDataTool import MemberDataTool
@@ -131,7 +130,7 @@ class MemberDataToolTests(TestCase):
         self.assertEqual(info_dict['orphan_count'], 0)
 
 
-class MemberDataTests(TestCase):
+class MemberDataTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.MemberDataTool import MemberData
@@ -175,10 +174,10 @@ class MemberDataTests(TestCase):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( MemberDataToolTests ),
-        makeSuite( MemberDataTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite(MemberDataToolTests),
+        unittest.makeSuite(MemberDataTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

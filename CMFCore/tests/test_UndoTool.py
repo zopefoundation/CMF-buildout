@@ -15,13 +15,11 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 
-class UndoToolTests(TestCase):
+class UndoToolTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -45,9 +43,9 @@ class UndoToolTests(TestCase):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( UndoToolTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite(UndoToolTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

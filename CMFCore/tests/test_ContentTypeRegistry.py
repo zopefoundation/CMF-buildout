@@ -15,13 +15,11 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 
-class MajorMinorPredicateTests( TestCase ):
+class MajorMinorPredicateTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ContentTypeRegistry import MajorMinorPredicate
@@ -77,7 +75,7 @@ class MajorMinorPredicateTests( TestCase ):
         assert not pred( 'foo', 'image/png', 'asdfljksadf' )
 
 
-class ExtensionPredicateTests( TestCase ):
+class ExtensionPredicateTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ContentTypeRegistry import ExtensionPredicate
@@ -127,7 +125,7 @@ class ExtensionPredicateTests( TestCase ):
         assert not pred( 'foo.bar', 'text/html', 'asdfljksadf' )
 
 
-class MimeTypeRegexPredicateTests( TestCase ):
+class MimeTypeRegexPredicateTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ContentTypeRegistry \
@@ -174,7 +172,7 @@ class MimeTypeRegexPredicateTests( TestCase ):
         assert not pred( 'foo', 'image/png', 'asdfljksadf' )
 
 
-class NameRegexPredicateTests( TestCase ):
+class NameRegexPredicateTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ContentTypeRegistry import NameRegexPredicate
@@ -219,7 +217,7 @@ class NameRegexPredicateTests( TestCase ):
         assert not pred( 'bar', 'text/plain', 'asdfljksadf' )
 
 
-class ContentTypeRegistryTests( TestCase ):
+class ContentTypeRegistryTests(unittest.TestCase):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ContentTypeRegistry import ContentTypeRegistry
@@ -278,13 +276,13 @@ class ContentTypeRegistryTests( TestCase ):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( MajorMinorPredicateTests ),
-        makeSuite( ExtensionPredicateTests ),
-        makeSuite( MimeTypeRegexPredicateTests ),
-        makeSuite( NameRegexPredicateTests ),
-        makeSuite( ContentTypeRegistryTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite(MajorMinorPredicateTests),
+        unittest.makeSuite(ExtensionPredicateTests),
+        unittest.makeSuite(MimeTypeRegexPredicateTests),
+        unittest.makeSuite(NameRegexPredicateTests),
+        unittest.makeSuite(ContentTypeRegistryTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

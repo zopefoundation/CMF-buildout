@@ -15,13 +15,11 @@
 $Id$
 """
 
-from unittest import TestCase, TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 
-class DiscussionToolTests(TestCase):
+class DiscussionToolTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -44,7 +42,7 @@ class DiscussionToolTests(TestCase):
         verifyClass(IOldstyleDiscussionTool, DiscussionTool)
 
 
-class OldDiscussableTests(TestCase):
+class OldDiscussableTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -63,10 +61,10 @@ class OldDiscussableTests(TestCase):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite( DiscussionToolTests ),
-        makeSuite( OldDiscussableTests ),
+    return unittest.TestSuite((
+        unittest.makeSuite(DiscussionToolTests),
+        unittest.makeSuite(OldDiscussableTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

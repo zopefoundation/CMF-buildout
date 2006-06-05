@@ -14,11 +14,10 @@
 
 $Id$
 """
-import unittest
 
-import Testing
-import Zope2
-Zope2.startup()
+import unittest
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('PythonScripts', 1)
 
 from os.path import join
 from sys import exc_info
@@ -29,8 +28,8 @@ from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
 from Products.StandardCacheManagers import RAMCacheManager
 
-from Products.CMFCore.FSPythonScript import FSPythonScript
 from Products.CMFCore.FSMetadata import FSMetadata
+from Products.CMFCore.FSPythonScript import FSPythonScript
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import WarningInterceptor

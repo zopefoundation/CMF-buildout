@@ -1,16 +1,16 @@
-from unittest import TestSuite, makeSuite, main
-from os.path import join
+import unittest
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('ZSQLMethods', 1)
 
-import Testing
-import Zope2
-Zope2.startup()
+from os.path import join
 
 from OFS.Folder import Folder
 
-from Products.CMFCore.FSZSQLMethod import FSZSQLMethod
 from Products.CMFCore.FSMetadata import FSMetadata
+from Products.CMFCore.FSZSQLMethod import FSZSQLMethod
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
+
 
 class FSZSQLMaker(FSDVTest):
 
@@ -20,7 +20,8 @@ class FSZSQLMaker(FSDVTest):
         metadata.read()
         return FSZSQLMethod( id, path, properties=metadata.getProperties() )
 
-class FSZSQLMethodTests( FSDVTest ):
+
+class FSZSQLMethodTests(FSDVTest):
 
     def setUp(self):
         FSDVTest.setUp(self)
@@ -89,10 +90,10 @@ class FSZSQLMethodCustomizationTests(SecurityTest, FSZSQLMaker):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(FSZSQLMethodTests),
-        makeSuite(FSZSQLMethodCustomizationTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(FSZSQLMethodTests),
+        unittest.makeSuite(FSZSQLMethodCustomizationTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

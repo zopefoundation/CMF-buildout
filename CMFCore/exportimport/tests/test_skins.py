@@ -16,9 +16,8 @@ $Id$
 """
 
 import unittest
-import Testing
-import Zope2
-Zope2.startup()
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('CMFCore', 1)
 
 import os
 

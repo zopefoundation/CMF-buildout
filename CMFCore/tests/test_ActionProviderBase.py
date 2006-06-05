@@ -15,10 +15,8 @@
 $Id$
 """
 
-from unittest import TestSuite, makeSuite, main
+import unittest
 import Testing
-import Zope2
-Zope2.startup()
 
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
@@ -286,9 +284,9 @@ class ActionProviderBaseTests(SecurityRequestTest):
 
 
 def test_suite():
-    return TestSuite((
-        makeSuite(ActionProviderBaseTests),
+    return unittest.TestSuite((
+        unittest.makeSuite(ActionProviderBaseTests),
         ))
 
 if __name__ == '__main__':
-    main(defaultTest='test_suite')
+    unittest.main(defaultTest='test_suite')

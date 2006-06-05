@@ -31,7 +31,7 @@ from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.tests.test_PortalFolder import _AllowedUser
 from Products.CMFCore.tests.test_PortalFolder import _SensitiveSecurityPolicy
 from Products.CMFCore.tests.base.testcase import LogInterceptor
-from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.tests.base.testcase import setUpEvents
 
 CMF_SECURITY_INDEXES = CMFCatalogAware._cmf_security_indexes
@@ -216,44 +216,26 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
     # FIXME: more tests needed
 
 
-class CMFCatalogAware_CopySupport_Tests(SecurityTest):
+class CMFCatalogAware_CopySupport_Tests(SecurityRequestTest):
 
     def setUp(self):
-        SecurityTest.setUp(self)
+        SecurityRequestTest.setUp(self)
         setUpEvents()
 
     def tearDown(self):
-        SecurityTest.tearDown(self)
+        SecurityRequestTest.tearDown(self)
         cleanUp()
 
     def _makeSite(self):
-        import cStringIO
-        from OFS.Application import Application
-        from OFS.tests.testCopySupport import makeConnection
-        from Testing.makerequest import makerequest
-
-        self.connection = makeConnection()
-        try:
-            r = self.connection.root()
-            a = Application()
-            r['Application'] = a
-            self.root = a
-            responseOut = self.responseOut = cStringIO.StringIO()
-            self.app = makerequest(self.root, stdout=responseOut)
-            site = SimpleFolder('site')
-            self.app._setObject('site', site)
-            site = self.app._getOb('site')
-            site._setObject('portal_catalog', DummyCatalog())
-            site._setObject('portal_workflow', DummyWorkflowTool())
-            # Hack, we need a _p_mtime for the file, so we make sure that it
-            # has one. We use a subtransaction, which means we can rollback
-            # later and pretend we didn't touch the ZODB.
-            transaction.savepoint(optimistic=True)
-        except:
-            self.connection.close()
-            raise
-        else:
-            return site
+        self.app._setObject('site', SimpleFolder('site'))
+        site = self.app._getOb('site')
+        site._setObject('portal_catalog', DummyCatalog())
+        site._setObject('portal_workflow', DummyWorkflowTool())
+        # Hack, we need a _p_mtime for the file, so we make sure that it
+        # has one. We use a subtransaction, which means we can rollback
+        # later and pretend we didn't touch the ZODB.
+        transaction.savepoint(optimistic=True)
+        return site
 
     def _initPolicyAndUser( self
                           , a_lambda=None
@@ -277,7 +259,7 @@ class CMFCatalogAware_CopySupport_Tests(SecurityTest):
         scp = _SensitiveSecurityPolicy( v_lambda, c_lambda )
         SecurityManager.setSecurityPolicy( scp )
         newSecurityManager( None
-                          , _AllowedUser( a_lambda ).__of__( self.root ) )
+                          , _AllowedUser(a_lambda).__of__(self.app.acl_users))
 
     def test_object_indexed_after_adding(self):
 

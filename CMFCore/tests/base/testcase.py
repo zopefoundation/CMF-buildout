@@ -70,6 +70,7 @@ def setUpGenericSetup():
     import Products
 
     zcml.load_config('meta.zcml', Products.Five)
+    zcml.load_config('meta.zcml', Products.GenericSetup)
     zcml.load_config('configure.zcml', Products.GenericSetup)
 
 

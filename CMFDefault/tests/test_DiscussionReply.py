@@ -47,7 +47,7 @@ class DiscussionReplyTest(RequestTest):
         zcml.load_config('configure.zcml', Products.DCWorkflow)
         try:
             factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
-            factory('cmf', 'CMFDefault:default', snapshot=False)
+            factory('cmf', 'Products.CMFDefault:default', snapshot=False)
             self.portal = self.root.cmf
             # Become a Manager
             self.uf = self.portal.acl_users

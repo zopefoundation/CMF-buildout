@@ -7,4 +7,6 @@
 
   <include file="content.zcml"/>
 
+  <include file="profiles.zcml"/>
+
 </configure>

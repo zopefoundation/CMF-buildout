@@ -21,7 +21,6 @@ ZopeTestCase.installProduct('ZCTextIndex', 1)
 ZopeTestCase.installProduct('Five', 1)
 ZopeTestCase.installProduct('CMFCore', 1)
 ZopeTestCase.installProduct('CMFDefault', 1)
-ZopeTestCase.installProduct('CMFCalendar', 1)
 ZopeTestCase.utils.setupCoreSessions()
 
 import locale
@@ -137,8 +136,8 @@ class CalendarRequestTests(unittest.TestCase):
         newSecurityManager( None, UnrestrictedUser('god', 'god', ['Manager'], '') )
 
         factory = app.manage_addProduct['CMFDefault'].addConfiguredSite
-        factory('CalendarTest', 'CMFDefault:default', snapshot=False,
-                extension_ids=('CMFCalendar:default',))
+        factory('CalendarTest', 'Products.CMFDefault:default', snapshot=False,
+                extension_ids=('Products.CMFCalendar:default',))
         self.Site = app.CalendarTest
         self.Tool = app.CalendarTest.portal_calendar
 

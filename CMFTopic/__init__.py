@@ -15,11 +15,8 @@
 $Id$
 """
 
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import ContentInit
 from Products.CMFCore.DirectoryView import registerDirectory
-from Products.GenericSetup import EXTENSION
-from Products.GenericSetup import profile_registry
 
 import Topic
 from permissions import AddTopics
@@ -46,12 +43,3 @@ def initialize(context):
                , permission=AddTopics
                , extra_constructors=(Topic.addTopic,)
                ).initialize( context )
-
-    profile_registry.registerProfile('default',
-                                     'CMFTopic',
-                                     'Adds topic portal type.',
-                                     'profiles/default',
-                                     'CMFTopic',
-                                     EXTENSION,
-                                     for_=ISiteRoot,
-                                    )

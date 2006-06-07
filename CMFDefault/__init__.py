@@ -16,13 +16,9 @@ $Id$
 """
 
 from Products.CMFCore.DirectoryView import registerDirectory
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import ToolInit
 from Products.CMFCore.utils import ContentInit
 from Products.CMFCore.utils import registerIcon
-from Products.GenericSetup import BASE
-from Products.GenericSetup import EXTENSION
-from Products.GenericSetup import profile_registry
 
 import DefaultWorkflow
 import DiscussionTool
@@ -82,33 +78,6 @@ def initialize(context):
                , permission=AddPortalContent
                , extra_constructors=contentConstructors
                ).initialize( context )
-
-    profile_registry.registerProfile('default',
-                                     'CMFDefault Site',
-                                     'Profile for a default CMFSite.',
-                                     'profiles/default',
-                                     'CMFDefault',
-                                     BASE,
-                                     for_=ISiteRoot,
-                                    )
-
-    profile_registry.registerProfile('sample_content',
-                                     'Sample CMFDefault Content',
-                                     'Content for a sample CMFSite.',
-                                     'profiles/sample_content',
-                                     'CMFDefault',
-                                     EXTENSION,
-                                     for_=ISiteRoot,
-                                    )
-
-    profile_registry.registerProfile('views_support',
-                                     'Experimental CMFDefault Browser Views',
-                                     'Hooks up the browser views.',
-                                     'profiles/views_support',
-                                     'CMFDefault',
-                                     EXTENSION,
-                                     for_=ISiteRoot,
-                                    )
 
     context.registerClass( Portal.CMFSite
                          , constructors=(factory.addConfiguredSiteForm,

@@ -49,7 +49,7 @@ class MembershipTests(TransactionalTest):
     def _makePortal(self):
         # Create a portal instance suitable for testing
         factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
-        factory('site', 'CMFDefault:default', snapshot=False)
+        factory('site', 'Products.CMFDefault:default', snapshot=False)
 
         return self.root.site
 

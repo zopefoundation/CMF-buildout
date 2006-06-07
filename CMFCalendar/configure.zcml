@@ -1,6 +1,8 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five">
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="cmf_calendar">
 
   <!-- Load CMFDefault.skin first, we use the layer named "cmf" it defines -->
   <include package="Products.CMFDefault.skin"/>
@@ -18,6 +20,24 @@
   <utility
       component=".Event.EventFactory"
       name="cmf.event"
+      />
+
+  <!-- profiles -->
+
+  <genericsetup:registerProfile
+      name="default"
+      title="CMFCalendar"
+      description="Adds calendar support."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      />
+
+  <genericsetup:registerProfile
+      name="views_support"
+      title="Experimental CMFCalendar Browser Views"
+      description="Hooks up the browser views."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFCore.interfaces.ISiteRoot"
       />
 
 </configure>

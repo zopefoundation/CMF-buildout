@@ -16,9 +16,6 @@ $Id$
 """
 
 from Products.CMFCore import utils
-from Products.CMFCore.interfaces import ISiteRoot
-from Products.GenericSetup import EXTENSION
-from Products.GenericSetup import profile_registry
 
 import UniqueIdAnnotationTool
 import UniqueIdGeneratorTool
@@ -37,12 +34,3 @@ def initialize(context):
                   , tools=tools
                   , icon='tool.gif'
                   ).initialize(context)
-
-    profile_registry.registerProfile('default',
-                                     'CMFUid',
-                                     'Adds UID support.',
-                                     'profiles/default',
-                                     'CMFUid',
-                                     EXTENSION,
-                                     for_=ISiteRoot,
-                                    )

@@ -18,29 +18,16 @@ $Id$
 """
 
 from Products.CMFCore.DirectoryView import registerDirectory
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import ToolInit
-from Products.GenericSetup import EXTENSION
-from Products.GenericSetup import profile_registry
 
 import ActionIconsTool
 
-actionicons_globals = globals()
 
-registerDirectory( 'skins', actionicons_globals )
+registerDirectory('skins', globals())
 
-def initialize( context ):
+def initialize(context):
 
     ToolInit( meta_type='CMF Action Icons Tool'
             , tools=( ActionIconsTool.ActionIconsTool, )
             , icon="tool.gif"
             ).initialize( context )
-
-    profile_registry.registerProfile('actionicons',
-                                     'CMFActionIcons',
-                                     'Adds action icon tool / settings.',
-                                     'profiles/actionicons',
-                                     'CMFActionIcons',
-                                     EXTENSION,
-                                     for_=ISiteRoot,
-                                     )

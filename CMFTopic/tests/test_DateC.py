@@ -174,7 +174,7 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
         zcml.load_config('configure.zcml', Products.DCWorkflow)
 
         factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
-        factory('site', 'CMFDefault:default', snapshot=False)
+        factory('site', 'Products.CMFDefault:default', snapshot=False)
         self.site = self.root.site
         self.site._setObject( 'topic', Topic('topic') )
         self.topic = self.site.topic

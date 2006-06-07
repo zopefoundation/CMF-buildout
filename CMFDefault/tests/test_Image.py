@@ -125,7 +125,7 @@ class TestImageCopyPaste(SecurityRequestTest):
         zcml.load_config('configure.zcml', Products.DCWorkflow)
         try:
             factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
-            factory('cmf', 'CMFDefault:default', snapshot=False)
+            factory('cmf', 'Products.CMFDefault:default', snapshot=False)
             self.site = self.root.cmf
             newSecurityManager(None, OmnipotentUser().__of__(self.site))
             self.site.invokeFactory('File', id='file')

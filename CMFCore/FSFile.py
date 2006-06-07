@@ -162,6 +162,7 @@ class FSFile(FSObject):
 Globals.InitializeClass(FSFile)
 
 registerFileExtension('doc', FSFile)
+registerFileExtension('txt', FSFile)
 registerFileExtension('pdf', FSFile)
 registerFileExtension('swf', FSFile)
 registerFileExtension('jar', FSFile)

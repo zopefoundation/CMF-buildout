@@ -15,6 +15,10 @@ Trunk only (unreleased)
 
   Others
 
+    - FSFile: Added registration for 'txt' extension.
+
+    - Profiles: All profiles are now registered by ZCML.
+
     - ZClasses: Removed unmaintained support for ZClasses.
       Marked the 'initializeBases*' methods as deprecated. 
 

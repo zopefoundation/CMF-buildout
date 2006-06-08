@@ -104,6 +104,7 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
 
     def tearDown(self):
         self._ignore_log_errors()
+        self._ignore_log_errors(subsystem='CMFCore.CMFCatalogAware')
 
     def test_indexObject(self):
         foo = self.site.foo
@@ -167,16 +168,13 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
 
     def test_reindexObjectSecurity_missing_noraise(self):
         # Raising disabled
+        self._catch_log_errors(subsystem='CMFCore.CMFCatalogAware')
         foo = self.site.foo
         missing = TheClass('missing').__of__(foo)
         missing.GETOBJECT_RAISES = False
         cat = self.site.portal_catalog
-        try:
-            self._catch_log_errors()
-            cat.setObs([foo, missing])
-            foo.reindexObjectSecurity()
-        finally:
-            self._ignore_log_errors()
+        cat.setObs([foo, missing])
+        foo.reindexObjectSecurity()
         self.assertEquals(cat.log,
                           ["reindex /site/foo %s"%str(CMF_SECURITY_INDEXES)])
         self.failIf(foo.notified)

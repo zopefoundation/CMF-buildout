@@ -51,6 +51,9 @@ from utils import SimpleItemWithProperties
 from utils import UniqueObject
 
 
+logger = logging.getLogger('CMFCore.TypesTool')
+
+
 _marker = []  # Create a new marker.
 
 
@@ -384,8 +387,7 @@ class FactoryTypeInformation(TypeInformation):
         try:
             p = dispatcher[self.product]
         except AttributeError:
-            logging.exception('Types Tool',
-                              '_queryFactoryMethod raised an exception')
+            logger.exception("_queryFactoryMethod raised an exception")
             return default
 
         m = getattr(p, self.factory, None)

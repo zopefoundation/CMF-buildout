@@ -15,11 +15,11 @@
 $Id$
 """
 
+import logging
 import Globals
 from AccessControl import ClassSecurityInfo
 from Acquisition import ImplicitAcquisitionWrapper
 from Products.ZSQLMethods.SQL import SQL
-from zLOG import LOG, ERROR
 
 from DirectoryView import registerFileExtension
 from DirectoryView import registerMetaType
@@ -28,6 +28,9 @@ from permissions import View
 from permissions import ViewManagementScreens
 from utils import _dtmldir
 from utils import expandpath
+
+
+logger = logging.getLogger('CMFCore.FSZSQLMethod')
 
 
 class FSZSQLMethod(SQL, FSObject):
@@ -137,11 +140,7 @@ class FSZSQLMethod(SQL, FSObject):
                 self._updateFromFS()
                 return self
             except:
-                import sys
-                LOG('FS Z SQL Method',
-                    ERROR,
-                    'Error during __of__',
-                    error=sys.exc_info())
+                logger.error("Error during __of__", exc_info=True)
                 raise
 
 Globals.InitializeClass(FSZSQLMethod)

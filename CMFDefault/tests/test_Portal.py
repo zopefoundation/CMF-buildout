@@ -39,8 +39,10 @@ class CMFSiteTests( PlacelessSetup, SecurityRequestTest, WarningInterceptor):
         SecurityRequestTest.setUp( self )
         self._trap_warning_output()
         zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.DCWorkflow)
 
     def tearDown( self ):
         self._free_warning_output()
@@ -63,19 +65,6 @@ class CMFSiteTests( PlacelessSetup, SecurityRequestTest, WarningInterceptor):
             content.editMetadata( **kw )
 
         return content
-
-    def setUp(self):
-        PlacelessSetup.setUp(self)
-        SecurityRequestTest.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.GenericSetup)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-        zcml.load_config('configure.zcml', Products.DCWorkflow)
-
-    def tearDown(self):
-        SecurityRequestTest.tearDown(self)
-        PlacelessSetup.tearDown(self)
 
     def test_new( self ):
 

@@ -18,6 +18,7 @@ the browser request.  Skins are stored in a fixed-name subobject.
 $Id$
 """
 
+import logging
 from thread import get_ident
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
@@ -25,6 +26,9 @@ from Acquisition import ImplicitAcquisitionWrapper
 from Globals import InitializeClass
 from OFS.ObjectManager import ObjectManager
 from ZODB.POSException import ConflictError
+
+
+logger = logging.getLogger('CMFCore.Skinnable')
 
 
 # superGetAttr is assigned to whatever ObjectManager.__getattr__
@@ -189,10 +193,7 @@ class SkinnableObjectManager(ObjectManager):
         except:
             # This shouldn't happen, even if the requested skin
             # does not exist.
-            import sys
-            from zLOG import LOG, ERROR
-            LOG('CMFCore', ERROR, 'Unable to setupCurrentSkin()',
-                error=sys.exc_info())
+            logger.error("Unable to setupCurrentSkin()", exc_info=True)
         return w_self
 
     def _checkId(self, id, allow_dup=0):

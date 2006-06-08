@@ -22,7 +22,6 @@ from AccessControl.PermissionRole import rolesForPermissionOn
 from DateTime import DateTime
 from Globals import DTMLFile
 from Globals import InitializeClass
-from Products.ZCatalog.ZCatalog import LOG
 from Products.ZCatalog.ZCatalog import ZCatalog
 from Products.ZCTextIndex.HTMLSplitter import HTMLWordSplitter
 from Products.ZCTextIndex.Lexicon import CaseNormalizer

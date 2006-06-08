@@ -25,7 +25,6 @@ from AccessControl import getSecurityManager, ClassSecurityInfo, Permissions
 from ZPublisher import BeforeTraverse
 import Globals
 from Globals import HTMLFile
-from zLOG import LOG, ERROR
 from ZPublisher.HTTPRequest import HTTPRequest
 from OFS.Folder import Folder
 from zExceptions import Redirect

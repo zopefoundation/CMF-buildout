@@ -4,6 +4,7 @@ Zope2.startup()
 
 import sys
 import time
+import logging
 from os import chmod, curdir, mkdir, remove, stat, walk
 from os.path import join, abspath, dirname
 from shutil import copytree, rmtree
@@ -14,7 +15,6 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
 from Testing.makerequest import makerequest
-import zLOG
 import transaction
 
 from dummy import DummyFolder
@@ -54,31 +54,37 @@ _TRAVERSE_ZCML = """
 
 class LogInterceptor:
 
-    _old_log_write = None
     logged = None
+    installed = ()
+    level = 0
 
-    def _catch_log_errors( self, ignored_level=zLOG.PROBLEM ):
+    def _catch_log_errors(self, ignored_level=logging.WARNING, subsystem=''):
 
-        if self._old_log_write is not None:
+        if subsystem in self.installed:
+            raise ValueError, 'Already installed filter!'
+
+        root_logger = logging.getLogger(subsystem)
+        self.installed += (subsystem,)
+        self.level = ignored_level
+        root_logger.addFilter(self)
+
+    def filter(self, record):
+        if record.levelno > self.level:
+            return True
+        if self.logged is None:
+            self.logged = []
+        self.logged.append(record)
+        return False
+
+    def _ignore_log_errors(self, subsystem=''):
+
+        if subsystem not in self.installed:
             return
 
-        def log_write(subsystem, severity, summary, detail, error):
-            if severity > ignored_level:
-                assert 0, "%s(%s): %s" % (subsystem, severity, summary)
-            if self.logged is None:
-                self.logged = []
-            self.logged.append( ( subsystem, severity, summary, detail ) )
+        root_logger = logging.getLogger(subsystem)
+        root_logger.removeFilter(self)
+        self.installed = tuple([s for s in self.installed if s != subsystem])
 
-        self._old_log_write = zLOG.log_write
-        zLOG.log_write = log_write
-
-    def _ignore_log_errors( self ):
-
-        if self._old_log_write is None:
-            return
-
-        zLOG.log_write = self._old_log_write
-        del self._old_log_write
 
 class WarningInterceptor:
 

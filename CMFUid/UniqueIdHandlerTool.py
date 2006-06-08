@@ -18,10 +18,10 @@ $Id$
 """
 
 import os
+import logging
 
 import Missing
 
-import zLOG
 from Globals import InitializeClass
 from Globals import package_home
 from AccessControl import ClassSecurityInfo
@@ -191,9 +191,8 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         # print a message to the log  if more than one object has
         # the same uid (uups!)
         if len_result > 1:
-            zLOG.LOG("CMUid ASSERT:", zLOG.INFO,
-                     "Uups, %s objects have '%s' as uid!!!" % \
-                     (len_result, uid))
+            logging.getLogger('CMFUid').error(
+                "ASSERT: %d objects have %r as uid!!!", len_result, uid)
         
         return result[0]
     

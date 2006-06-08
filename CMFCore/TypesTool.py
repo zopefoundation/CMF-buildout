@@ -15,8 +15,8 @@
 $Id$
 """
 
-from sys import exc_info
 from warnings import warn
+import logging
 
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
@@ -27,7 +27,6 @@ from Globals import InitializeClass
 from OFS.Folder import Folder
 from OFS.ObjectManager import IFAwareObjectManager
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-from zLOG import LOG, ERROR
 import Products
 
 from ActionProviderBase import ActionProviderBase
@@ -52,6 +51,9 @@ from utils import UniqueObject
 from utils import getToolByName
 
 from zope.interface import implements
+
+logger = logging.getLogger('CMFCore.TypesTool')
+
 
 _marker = []  # Create a new marker.
 
@@ -524,8 +526,8 @@ class FactoryTypeInformation(TypeInformation):
         try:
             p = dispatcher[self.product]
         except AttributeError:
-            LOG('Types Tool', ERROR, '_queryFactoryMethod raised an exception',
-                error=exc_info())
+            logger.error("_queryFactoryMethod raised an exception",
+                         exc_info=True)
             return default
 
         m = getattr(p, self.factory, None)

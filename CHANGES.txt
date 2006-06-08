@@ -15,6 +15,8 @@ CMF 1.6.1-beta (2006/06/03)
     - IndexableObjectWrapper: Fixed list of provided interfaces.
       The interfaces declared for the wrapped object are no longer masked.
 
+    - Got rid of zLOG in favor of python's logging module.
+
 
 CMF 1.6.0 (2006/02/26)
 

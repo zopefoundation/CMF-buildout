@@ -68,6 +68,7 @@ class FSSecurityBase(RequestTest, WritableFSDVTest, LogInterceptor):
         RequestTest.tearDown(self)
         WritableFSDVTest.tearDown(self)
         self._ignore_log_errors()
+        self._ignore_log_errors(subsystem='CMFCore.DirectoryView')
 
 
 class FSSecurityTests( FSSecurityBase, LogInterceptor ):
@@ -82,7 +83,7 @@ class FSSecurityTests( FSSecurityBase, LogInterceptor ):
 
     def test_invalidPermissionNames( self ):
         import logging
-        self._catch_log_errors(logging.ERROR)
+        self._catch_log_errors(logging.ERROR,subsystem='CMFCore.DirectoryView')
         # Test for an invalid permission name
         # baseline
         self._checkSettings(self.ob.fake_skin.test5,'View',1,[])

@@ -49,6 +49,9 @@ from utils import getToolByName
 from utils import UniqueObject
 
 
+logger = logging.getLogger('CMFCore.MembershipTool')
+
+
 class MembershipTool(UniqueObject, Folder, ActionProviderBase):
 
     """ This tool accesses member data through an acl_users object.
@@ -145,8 +148,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
             except ConflictError:
                 raise
             except:
-                logging.exception('CMFCore.MembershipTool',
-                                  'Error during wrapUser')
+                logger.exception("Error during wrapUser")
         return u
 
     security.declareProtected(ManagePortal, 'getPortalRoles')

@@ -1,9 +1,9 @@
 import unittest
 from Testing import ZopeTestCase
 
-import logging
 import sys
 import time
+import logging
 from os import chmod, curdir, mkdir, remove, stat, walk
 from os.path import join, abspath, dirname
 from shutil import copytree, rmtree
@@ -77,16 +77,16 @@ def setUpGenericSetup():
 class LogInterceptor:
 
     logged = None
-    installed = False
+    installed = ()
     level = 0
 
-    def _catch_log_errors( self, ignored_level=logging.WARNING ):
+    def _catch_log_errors(self, ignored_level=logging.WARNING, subsystem=''):
 
-        if self.installed:
+        if subsystem in self.installed:
             raise ValueError, 'Already installed filter!'
 
-        root_logger = logging.getLogger('')
-        self.installed = True
+        root_logger = logging.getLogger(subsystem)
+        self.installed += (subsystem,)
         self.level = ignored_level
         root_logger.addFilter(self)
 
@@ -98,14 +98,14 @@ class LogInterceptor:
         self.logged.append(record)
         return False
 
-    def _ignore_log_errors( self ):
+    def _ignore_log_errors(self, subsystem=''):
 
-        if not self.installed:
+        if subsystem not in self.installed:
             return
 
-        root_logger = logging.getLogger('')
+        root_logger = logging.getLogger(subsystem)
         root_logger.removeFilter(self)
-        self.installed = False
+        self.installed = tuple([s for s in self.installed if s != subsystem])
 
 
 class WarningInterceptor:

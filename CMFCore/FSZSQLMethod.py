@@ -30,6 +30,9 @@ from utils import _dtmldir
 from utils import expandpath
 
 
+logger = logging.getLogger('CMFCore.FSZSQLMethod')
+
+
 class FSZSQLMethod(SQL, FSObject):
     """FSZSQLMethods act like Z SQL Methods but are not directly
     modifiable from the management interface."""
@@ -141,8 +144,7 @@ class FSZSQLMethod(SQL, FSObject):
                 self._updateFromFS()
                 return self
             except:
-                logging.exception('FS Z SQL Method',
-                                  'Error during __of__')
+                logger.exception("Error during __of__")
                 raise
 
 Globals.InitializeClass(FSZSQLMethod)

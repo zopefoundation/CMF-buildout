@@ -15,11 +15,16 @@
 $Id$
 """
 
+import logging
 from os.path import exists
 from ConfigParser import ConfigParser
 from warnings import warn
 
 import re
+
+
+logger = logging.getLogger('CMFCore.FSMetadata')
+
 
 class CMFConfigParser(ConfigParser):
     """ This our wrapper around ConfigParser to
@@ -88,8 +93,7 @@ class FSMetadata:
             self._security = self._getSectionDict(cfg, 'security',
                                                   self._securityParser)
         except:
-            logging.exception('FSMetadata',
-                              'Error parsing .metadata file')
+            logger.exception("Error parsing .metadata file")
 
         # to add in a new value such as proxy roles,
         # just add in the section, call it using getSectionDict
@@ -165,8 +169,7 @@ class FSMetadata:
                 if len(kv) == 2:
                     props[kv[0].strip()] = kv[1].strip()
                 else:
-                    logging.exception('FSMetadata',
-                                      'Error parsing .properties file')
+                    logger.exception("Error parsing .properties file")
 
             return props
 
@@ -201,7 +204,7 @@ class FSMetadata:
                         if role:
                             roles.append(role)
                 except:
-                    logging.exception('DirectoryView',
-                        'Error reading permission from .security file')
+                    logger.exception("Error reading permission "
+                                     "from .security file")
                 prm[permission]=(acquire,roles)
             return prm

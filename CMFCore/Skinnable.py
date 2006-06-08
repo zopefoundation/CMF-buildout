@@ -29,6 +29,9 @@ from OFS.ObjectManager import ObjectManager
 from ZODB.POSException import ConflictError
 
 
+logger = logging.getLogger('CMFCore.Skinnable')
+
+
 # superGetAttr is assigned to whatever ObjectManager.__getattr__
 # used to do.
 try:
@@ -191,7 +194,7 @@ class SkinnableObjectManager(ObjectManager):
         except:
             # This shouldn't happen, even if the requested skin
             # does not exist.
-            logging.exception('CMFCore', 'Unable to setupCurrentSkin()')
+            logger.exception("Unable to setupCurrentSkin()")
         return w_self
 
     def _checkId(self, id, allow_dup=0):

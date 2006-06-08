@@ -155,8 +155,7 @@ class DirectoryInformation:
                     path.walk(self._filepath, self._walker, filelist)
                     filelist.sort()
             except:
-                logger.error("Error checking for directory modification",
-                             exc_info=True)
+                logger.exception("Error checking for directory modification")
 
             if mtime != self._v_last_read or filelist != self._v_last_filelist:
                 self._v_last_read = mtime
@@ -178,7 +177,7 @@ class DirectoryInformation:
                 self.data, self.objects = self.prepareContents(registry,
                     register_subdirs=changed)
             except:
-                logger.error("Error during prepareContents", exc_info=True)
+                logger.exception("Error during prepareContents")
                 self.data = {}
                 self.objects = ()
 
@@ -247,11 +246,11 @@ class DirectoryInformation:
                         import traceback
                         typ, val, tb = exc_info()
                         try:
+                            logger.exception("prepareContents")
+
                             exc_lines = traceback.format_exception( typ,
                                                                     val,
                                                                     tb )
-                            logger.error('\n'.join(exc_lines))
-
                             ob = BadFile( name,
                                           entry_minimal_fp,
                                           exc_str='\r\n'.join(exc_lines),
@@ -267,16 +266,14 @@ class DirectoryInformation:
                             try:
                                 ob.manage_permission(name,roles,acquire)
                             except ValueError:
-                                logger.error("Error setting permissions",
-                                             exc_info=True)
+                                logger.exception("Error setting permissions")
 
                     # only DTML Methods and Python Scripts can have proxy roles
                     if hasattr(ob, '_proxy_roles'):
                         try:
                             ob._proxy_roles = tuple(metadata.getProxyRoles())
                         except:
-                            logger.error("Error setting proxy role",
-                                         exc_info=True)
+                            logger.exception("Error setting proxy role")
 
                     ob_id = ob.getId()
                     data[ob_id] = ob

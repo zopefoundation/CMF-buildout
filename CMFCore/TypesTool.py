@@ -526,8 +526,7 @@ class FactoryTypeInformation(TypeInformation):
         try:
             p = dispatcher[self.product]
         except AttributeError:
-            logger.error("_queryFactoryMethod raised an exception",
-                         exc_info=True)
+            logger.exception("_queryFactoryMethod raised an exception")
             return default
 
         m = getattr(p, self.factory, None)

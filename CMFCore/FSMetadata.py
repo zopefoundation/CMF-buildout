@@ -93,7 +93,7 @@ class FSMetadata:
             self._security = self._getSectionDict(cfg, 'security',
                                                   self._securityParser)
         except:
-            logger.error("Error parsing .metadata file", exc_info=True)
+            logger.exception("Error parsing .metadata file")
 
         # to add in a new value such as proxy roles,
         # just add in the section, call it using getSectionDict
@@ -169,8 +169,7 @@ class FSMetadata:
                 if len(kv) == 2:
                     props[kv[0].strip()] = kv[1].strip()
                 else:
-                    logger.error("Error parsing .properties file",
-                                 exc_info=True)
+                    logger.exception("Error parsing .properties file")
 
             return props
 
@@ -205,7 +204,7 @@ class FSMetadata:
                         if role:
                             roles.append(role)
                 except:
-                    logger.error("Error reading permission from .security file",
-                                 exc_info=True)
+                    logger.exception("Error reading permission "
+                                     "from .security file")
                 prm[permission]=(acquire,roles)
             return prm

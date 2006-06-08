@@ -193,7 +193,7 @@ class SkinnableObjectManager(ObjectManager):
         except:
             # This shouldn't happen, even if the requested skin
             # does not exist.
-            logger.error("Unable to setupCurrentSkin()", exc_info=True)
+            logger.exception("Unable to setupCurrentSkin()")
         return w_self
 
     def _checkId(self, id, allow_dup=0):

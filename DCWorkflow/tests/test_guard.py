@@ -19,7 +19,11 @@ import unittest
 import Testing
 
 from AccessControl import getSecurityManager
-from Products.PageTemplates.TALES import CompilerError
+try:
+    from zope.tales.tales import CompilerError
+except ImportError:
+    # BBB: Zope < 2.10
+    from Products.PageTemplates.TALES import CompilerError
 
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite

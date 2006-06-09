@@ -17,14 +17,11 @@ $Id$
 
 import unittest
 import Testing
+import warnings
 
 from AccessControl import getSecurityManager
-try:
-    from zope.tales.tales import CompilerError
-except ImportError:
-    # BBB: Zope < 2.10
-    from Products.PageTemplates.TALES import CompilerError
-
+warnings.filterwarnings('ignore', "Products.PageTemplates.TALES has moved")
+from Products.PageTemplates.TALES import CompilerError
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool

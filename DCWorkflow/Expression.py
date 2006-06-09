@@ -24,8 +24,25 @@ from DateTime import DateTime
 from Products.CMFCore.WorkflowCore import ObjectDeleted, ObjectMoved
 from Products.CMFCore.Expression import Expression
 from Products.PageTemplates.Expressions import getEngine
-from Products.PageTemplates.TALES import SafeMapping
 from Products.PageTemplates.Expressions import SecureModuleImporter
+
+
+# We don't import SafeMapping from Products.PageTemplates.TALES
+# because it's deprecated in Zope 2.10
+from MultiMapping import MultiMapping
+class SafeMapping(MultiMapping):
+    """Mapping with security declarations and limited method exposure.
+
+    Since it subclasses MultiMapping, this class can be used to wrap
+    one or more mapping objects.  Restricted Python code will not be
+    able to mutate the SafeMapping or the wrapped mappings, but will be
+    able to read any value.
+    """
+    __allow_access_to_unprotected_subobjects__ = 1
+    push = pop = None
+    _push = MultiMapping.push
+    _pop = MultiMapping.pop
+
 
 class StateChangeInfo:
     '''

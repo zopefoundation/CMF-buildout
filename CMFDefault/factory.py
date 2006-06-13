@@ -68,5 +68,5 @@ def addConfiguredSite(dispatcher, site_id, profile_id, snapshot=True,
         setup_tool.createSnapshot( 'initial_configuration' )
 
     if RESPONSE is not None:
-        RESPONSE.redirect( '%s/manage_main?update_menu=1'
-                         % dispatcher.absolute_url() )
+        RESPONSE.redirect( '%s/%s/manage_main?update_menu=1'
+                         % (dispatcher.absolute_url(), site_id) )

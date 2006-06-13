@@ -17,7 +17,7 @@ $Id$
 
 from xml.dom.minidom import parseString
 
-from zope.app import zapi
+from zope.component import queryMultiAdapter
 
 from Products.CMFCore.TypesTool import FactoryTypeInformation
 from Products.CMFCore.TypesTool import ScriptableTypeInformation
@@ -44,6 +44,9 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
                 context = stool._getImportContext(info['id'])
                 file_ids = context.listDirectory('types')
                 for file_id in file_ids or ():
+                    if not file_id.endswith('.xml'):
+                        continue
+
                     filename = 'types/%s' % file_id
                     body = context.readDataFile(filename)
                     if body is None:
@@ -76,6 +79,9 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
         context = stool._getImportContext(profile_id)
         file_ids = context.listDirectory('types')
         for file_id in file_ids or ():
+            if not file_id.endswith('.xml'):
+                continue
+
             filename = 'types/%s' % file_id
             body = context.readDataFile(filename)
             if body is None:
@@ -96,7 +102,7 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
             if meta_type != self.klass.meta_type:
                 continue
 
-            importer = zapi.queryMultiAdapter((obj, context), IBody)
+            importer = queryMultiAdapter((obj, context), IBody)
             if importer is None:
                 continue
 

@@ -11,6 +11,9 @@ CMF 2.0.1-beta (unreleased)
     - CMFCore.exportimport.typeinfo:  Added BBB support for really old
       typeinfo instances which still return mappings instead of ActionInfos.
 
+    - standard_error_message.pt was out of sync with Zope.
+      (http://www.zope.org/Collectors/Zope/2133)
+
 
 CMF 2.0.0 (2006/04/16)
 

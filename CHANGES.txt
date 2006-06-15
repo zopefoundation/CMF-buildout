@@ -1,3 +1,11 @@
+CMF 1.6.2-beta (unreleased)
+
+  Bug Fixes
+
+    - standard_error_message.pt was out of sync with Zope.
+      (http://www.zope.org/Collectors/Zope/2133)
+
+
 CMF 1.6.1 (2006/06/09)
 
   Other

@@ -20,7 +20,6 @@ from AccessControl.PermissionRole import rolesForPermissionOn
 from DateTime import DateTime
 from Globals import DTMLFile
 from Globals import InitializeClass
-from Products.ZCatalog.ZCatalog import LOG
 from Products.ZCatalog.ZCatalog import ZCatalog
 from Products.ZCTextIndex.HTMLSplitter import HTMLWordSplitter
 from Products.ZCTextIndex.Lexicon import CaseNormalizer
@@ -356,13 +355,15 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
     # copied from revision 31005 of ZCatalog.py
     def manage_convertIndexes(self, REQUEST=None, RESPONSE=None, URL1=None):
         """Recreate indexes derived from UnIndex because the implementation of
-           __len__ changed in Zope 2.8. Pre-Zope 2.7 installation used to implement
-           __len__ as persistent attribute of the index instance which is totally
-           incompatible with the new extension class implementation based on new-style
-           classes. 
+           __len__ changed in Zope 2.8. Pre-Zope 2.7 installation used to
+           implement __len__ as persistent attribute of the index instance
+           which is totally incompatible with the new extension class
+           implementation based on new-style classes. 
         """
+        import logging
+        logger = logging.getLogger('CMFCore.CatalogTool')
 
-        LOG.info('Start migration of indexes for %s' % self.absolute_url(1))
+        logger.info('Start migration of indexes for %s' % self.absolute_url(1))
         
         reindex_ids = []
 
@@ -381,7 +382,7 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
             if found:
                 idx_type = idx.meta_type
                 idx_id = idx.getId()
-                LOG.info('processing index %s' % idx_id)
+                logger.info('processing index %s' % idx_id)
 
                 indexed_attrs = getattr(idx, 'indexed_attrs', None)
 
@@ -401,14 +402,15 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
                 reindex_ids.append(idx_id)
         
         if reindex_ids:
-            LOG.info('Reindexing %s' % ', '.join(reindex_ids))
+            logger.info('Reindexing %s' % ', '.join(reindex_ids))
             self.manage_reindexIndex(reindex_ids, REQUEST)
 
         self._migrated_280 = True
-        LOG.info('Finished migration of indexes for %s' % self.absolute_url(1))
+        logger.info('Finished migration of indexes for %s'
+                        % self.absolute_url(1))
 
         if RESPONSE:
-            RESPONSE.redirect( URL1 +
-            '/manage_main?manage_tabs_message=Indexes%20converted%20and%20reindexed')
+            RESPONSE.redirect( URL1 + '/manage_main?manage_tabs_message='
+                                      'Indexes%20converted%20and%20reindexed')
 
 InitializeClass(CatalogTool)

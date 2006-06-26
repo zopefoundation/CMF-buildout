@@ -2,6 +2,9 @@ CMF 1.5.7-beta (unreleased)
 
   Bug Fixes
 
+    - CMFCore.CatalogTool:  Removed import of LOG object from ZCatalog in
+     favor of the new 'logger' pattern using Python's logging module.
+
     - Forward-ported fix for DCWorkflow global actions missing IDs
       (http://www.zope.org/Collectors/CMF/308).
 

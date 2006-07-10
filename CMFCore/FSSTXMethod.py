@@ -19,17 +19,17 @@ import Globals
 from AccessControl import ClassSecurityInfo
 from StructuredText.StructuredText import HTML
 
-from permissions import FTPAccess
-from permissions import View
-from permissions import ViewManagementScreens
 from DirectoryView import registerFileExtension
 from DirectoryView import registerMetaType
 from FSObject import FSObject
+from permissions import FTPAccess
+from permissions import View
+from permissions import ViewManagementScreens
 from utils import _dtmldir
-from utils import expandpath
 
 
-class FSSTXMethod( FSObject ):
+class FSSTXMethod(FSObject):
+
     """
         A chunk of StructuredText, rendered as a skin method of a
         CMFSite.
@@ -49,10 +49,10 @@ class FSSTXMethod( FSObject ):
                    )
 
     security = ClassSecurityInfo()
-    security.declareObjectProtected( View )
+    security.declareObjectProtected(View)
 
-    security.declareProtected( ViewManagementScreens, 'manage_main')
-    manage_main = Globals.DTMLFile( 'custstx', _dtmldir )
+    security.declareProtected(ViewManagementScreens, 'manage_main')
+    manage_main = Globals.DTMLFile('custstx', _dtmldir)
 
     #
     #   FSObject interface
@@ -63,16 +63,14 @@ class FSSTXMethod( FSObject ):
         """
         raise NotImplementedError, "See next week's model."
 
-    def _readFile( self, reparse ):
-
-        fp = expandpath( self._filepath )
-        file = open( fp, 'r' )  # not binary, we want CRLF munging here.
-
+    def _readFile(self, reparse):
+        """Read the data from the filesystem.
+        """
+        file = open(self._filepath, 'r') # not 'rb', as this is a text file!
         try:
             data = file.read()
         finally:
             file.close()
-
         self.raw = data
 
         if reparse:

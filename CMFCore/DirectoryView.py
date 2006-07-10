@@ -15,10 +15,10 @@
 $Id$
 """
 
+import logging
 import re
 from os import path, listdir, stat
 from sys import platform
-import logging
 from warnings import warn
 
 from AccessControl import ClassSecurityInfo
@@ -42,9 +42,7 @@ from utils import _dtmldir
 from utils import minimalpath
 from utils import normalize
 
-
 logger = logging.getLogger('CMFCore.DirectoryView')
-
 
 __reload_module__ = 0
 
@@ -191,9 +189,9 @@ class DirectoryInformation:
                     registry.registerDirectoryByPath(entry_filepath)
                     info = registry.getDirectoryInfo(entry_minimal_fp)
                 if info is not None:
-                    # Folders on the file system have no extension or 
+                    # Folders on the file system have no extension or
                     # meta_type, as a crutch to enable customizing what gets
-                    # created to represent a filesystem folder in a 
+                    # created to represent a filesystem folder in a
                     # DirectoryView we use a fake type "FOLDER". That way
                     # other implementations can register for that type and
                     # circumvent the hardcoded assumption that all filesystem
@@ -239,7 +237,7 @@ class DirectoryInformation:
                     metadata = FSMetadata(entry_filepath)
                     metadata.read()
                     try:
-                        ob = t(name, entry_minimal_fp, fullname=entry,
+                        ob = t(name, entry_filepath, fullname=entry,
                                properties=metadata.getProperties())
                     except:
                         import sys
@@ -252,7 +250,7 @@ class DirectoryInformation:
                                                                     val,
                                                                     tb )
                             ob = BadFile( name,
-                                          entry_minimal_fp,
+                                          entry_filepath,
                                           exc_str='\r\n'.join(exc_lines),
                                           fullname=entry )
                         finally:

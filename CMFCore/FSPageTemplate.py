@@ -18,7 +18,8 @@ $Id$
 import re
 
 import Globals
-from AccessControl import getSecurityManager, ClassSecurityInfo
+from AccessControl import ClassSecurityInfo
+from AccessControl import getSecurityManager
 from OFS.Cache import Cacheable
 from Products.PageTemplates.PageTemplate import PageTemplate
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate, Src
@@ -30,11 +31,12 @@ from FSObject import FSObject
 from permissions import FTPAccess
 from permissions import View
 from permissions import ViewManagementScreens
-from utils import _setCacheHeaders, _checkConditionalGET
-from utils import expandpath
+from utils import _checkConditionalGET
+from utils import _dtmldir
+from utils import _setCacheHeaders
 
 xml_detect_re = re.compile('^\s*<\?xml\s+(?:[^>]*?encoding=["\']([^"\'>]+))?')
-_marker = []  # Create a new marker object.
+_marker = object()
 
 
 class FSPageTemplate(FSObject, Script, PageTemplate):
@@ -43,7 +45,6 @@ class FSPageTemplate(FSObject, Script, PageTemplate):
     """
 
     meta_type = 'Filesystem Page Template'
-
     _owner = None  # Unowned
 
     manage_options=(
@@ -51,14 +52,14 @@ class FSPageTemplate(FSObject, Script, PageTemplate):
             {'label':'Customize', 'action':'manage_main'},
             {'label':'Test', 'action':'ZScriptHTML_tryForm'},
             )
-            +Cacheable.manage_options
+            + Cacheable.manage_options
         )
 
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)
 
     security.declareProtected(ViewManagementScreens, 'manage_main')
-    manage_main = Globals.DTMLFile('dtml/custpt', globals())
+    manage_main = Globals.DTMLFile('custpt', _dtmldir)
 
     # Declare security for unprotected PageTemplate methods.
     security.declarePrivate('pt_edit', 'write')
@@ -78,8 +79,9 @@ class FSPageTemplate(FSObject, Script, PageTemplate):
 #        return 0
 
     def _readFile(self, reparse):
-        fp = expandpath(self._filepath)
-        file = open(fp, 'rU')    # not 'rb', as this is a text file!
+        """Read the data from the filesystem.
+        """
+        file = open(self._filepath, 'rU') # not 'rb', as this is a text file!
         try:
             data = file.read()
         finally:
@@ -131,7 +133,7 @@ class FSPageTemplate(FSObject, Script, PageTemplate):
             # no content
             if _checkConditionalGET(self, extra_context):
                 return ''
-        
+
         result = FSPageTemplate.inheritedAttribute('pt_render')(
                                 self, source, extra_context
                                 )

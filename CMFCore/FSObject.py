@@ -19,25 +19,25 @@ from os import path, stat
 
 import Globals
 from AccessControl import ClassSecurityInfo
-from AccessControl.Role import RoleManager
 from AccessControl.Permission import Permission
-from Acquisition import Implicit
+from AccessControl.Role import RoleManager
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
+from Acquisition import Implicit
+from DateTime import DateTime
 from OFS.Cache import Cacheable
 from OFS.SimpleItem import Item
-from DateTime import DateTime
 from Products.PythonScripts.standard import html_quote
 
 from permissions import ManagePortal
 from permissions import View
 from permissions import ViewManagementScreens
-from utils import expandpath
 from utils import getToolByName
 
 
 class FSObject(Implicit, Item, RoleManager, Cacheable):
+
     """FSObject is a base class for all filesystem based look-alikes.
 
     Subclasses of this class mimic ZODB based objects like Image and
@@ -47,12 +47,11 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
 
     # Always empty for FS based, non-editable objects.
     title = ''
+    _file_mod_time = 0
+    _parsed = 0
 
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)
-
-    _file_mod_time = 0
-    _parsed = 0
 
     def __init__(self, id, filepath, fullname=None, properties=None):
         if properties:
@@ -69,10 +68,11 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
         self.id = id
         self.__name__ = id # __name__ is used in traceback reporting
         self._filepath = filepath
-        fp = expandpath(self._filepath)
 
-        try: self._file_mod_time = stat(fp)[8]
-        except: pass
+        try:
+             self._file_mod_time = stat(filepath)[8]
+        except:
+             pass
         self._readFile(0)
 
     security.declareProtected(ViewManagementScreens, 'manage_doCustomize')
@@ -87,7 +87,7 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
 
         # Preserve cache manager associations
         cachemgr_id = self.ZCacheable_getManagerId()
-        if ( cachemgr_id and 
+        if ( cachemgr_id and
              getattr(obj, 'ZCacheable_setManagerId', None) is not None ):
             obj.ZCacheable_setManagerId(cachemgr_id)
 
@@ -150,7 +150,7 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
     def _readFile(self, reparse):
         """Read the data from the filesystem.
 
-        Read the file indicated by exandpath(self._filepath), and parse the
+        Read the file indicated by self._filepath, and parse the
         data if necessary.  'reparse' is set when reading the second
         time and beyond.
         """
@@ -161,9 +161,10 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
     def _updateFromFS(self):
         parsed = self._parsed
         if not parsed or Globals.DevelopmentMode:
-            fp = expandpath(self._filepath)
-            try:    mtime=stat(fp)[8]
-            except: mtime=0
+            try:
+                mtime = stat(self._filepath)[8]
+            except:
+                mtime = 0
             if not parsed or mtime != self._file_mod_time:
                 # if we have to read the file again, remove the cache
                 self.ZCacheable_invalidate()
@@ -174,8 +175,7 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
     security.declareProtected(View, 'get_size')
     def get_size(self):
         """Get the size of the underlying file."""
-        fp = expandpath(self._filepath)
-        return path.getsize(fp)
+        return path.getsize(self._filepath)
 
     security.declareProtected(View, 'getModTime')
     def getModTime(self):
@@ -195,7 +195,8 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
 Globals.InitializeClass(FSObject)
 
 
-class BadFile( FSObject ):
+class BadFile(FSObject):
+
     """
         Represent a file which was not readable or parseable
         as its intended type.
@@ -240,17 +241,12 @@ class BadFile( FSObject ):
         """
         return self.showError( self, REQUEST )
 
-    security.declarePrivate( '_readFile' )
-    def _readFile( self, reparse ):
+    security.declarePrivate('_readFile')
+    def _readFile(self, reparse):
         """Read the data from the filesystem.
-
-        Read the file indicated by exandpath(self._filepath), and parse the
-        data if necessary.  'reparse' is set when reading the second
-        time and beyond.
         """
         try:
-            fp = expandpath(self._filepath)
-            file = open(fp, 'rb')
+            file = open(self._filepath, 'rb')
             try:
                 data = self.file_contents = file.read()
             finally:

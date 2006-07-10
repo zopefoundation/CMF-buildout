@@ -16,16 +16,16 @@ $Id$
 """
 
 import codecs
+
 import Globals
 from AccessControl import ClassSecurityInfo
-from DateTime import DateTime
 from OFS.Cache import Cacheable
+from OFS.Image import File
 try:
     from zope.contenttype import guess_content_type
 except ImportError:
     # BBB: for Zope 2.9
     from zope.app.content_types import guess_content_type
-from OFS.Image import File
 
 from DirectoryView import registerFileExtension
 from DirectoryView import registerMetaType
@@ -33,17 +33,21 @@ from FSObject import FSObject
 from permissions import FTPAccess
 from permissions import View
 from permissions import ViewManagementScreens
+from utils import _checkConditionalGET
 from utils import _dtmldir
-from utils import _setCacheHeaders, _ViewEmulator
-from utils import expandpath, _FSCacheHeaders, _checkConditionalGET
+from utils import _FSCacheHeaders
+from utils import _setCacheHeaders
+from utils import _ViewEmulator
 
 
 class FSFile(FSObject):
+
     """FSFiles act like images but are not directly
     modifiable from the management interface."""
     # Note that OFS.Image.File is not a base class because it is mutable.
 
     meta_type = 'Filesystem File'
+    content_type = 'unknown/unknown'
 
     manage_options=(
         {'label':'Customize', 'action':'manage_main'},
@@ -52,13 +56,12 @@ class FSFile(FSObject):
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)
 
+    security.declareProtected(ViewManagementScreens, 'manage_main')
+    manage_main = Globals.DTMLFile('custfile', _dtmldir)
+
     def __init__(self, id, filepath, fullname=None, properties=None):
         id = fullname or id # Use the whole filename.
         FSObject.__init__(self, id, filepath, fullname, properties)
-
-    security.declareProtected(ViewManagementScreens, 'manage_main')
-    manage_main = Globals.DTMLFile('custfile', _dtmldir)
-    content_type = 'unknown/unknown'
 
     def _createZODBClone(self):
         return File(self.getId(), '', self._readFile(1))
@@ -92,10 +95,14 @@ class FSFile(FSObject):
         return content_type
 
     def _readFile(self, reparse):
-        fp = expandpath(self._filepath)
-        file = open(fp, 'rb')
-        try: data = file.read()
-        finally: file.close()
+        """Read the data from the filesystem.
+        """
+        file = open(self._filepath, 'rb')
+        try:
+            data = file.read()
+        finally:
+            file.close()
+
         if reparse or self.content_type == 'unknown/unknown':
             self.ZCacheable_invalidate()
             self.content_type=self._get_content_type(file, data, self.id)

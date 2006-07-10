@@ -16,7 +16,8 @@ $Id$
 """
 
 import Globals
-from AccessControl import ClassSecurityInfo, getSecurityManager
+from AccessControl import ClassSecurityInfo
+from AccessControl import getSecurityManager
 from AccessControl.DTML import RestrictedDTML
 from AccessControl.Role import RoleManager
 from OFS.Cache import Cacheable
@@ -28,19 +29,23 @@ from FSObject import FSObject
 from permissions import FTPAccess
 from permissions import View
 from permissions import ViewManagementScreens
+from utils import _checkConditionalGET
 from utils import _dtmldir
-from utils import _setCacheHeaders, _checkConditionalGET
-from utils import expandpath
+from utils import _setCacheHeaders
 
-
-_marker = []  # Create a new marker object.
+_marker = object()
 
 
 class FSDTMLMethod(RestrictedDTML, RoleManager, FSObject, Globals.HTML):
+
     """FSDTMLMethods act like DTML methods but are not directly
-    modifiable from the management interface."""
+    modifiable from the management interface.
+    """
 
     meta_type = 'Filesystem DTML Method'
+    _proxy_roles = ()
+    _cache_namespace_keys = ()
+    _reading = 0
 
     manage_options=(
         (
@@ -50,20 +55,14 @@ class FSDTMLMethod(RestrictedDTML, RoleManager, FSObject, Globals.HTML):
             {'label':'Proxy', 'action':'manage_proxyForm',
              'help':('OFSP','DTML-DocumentOrMethod_Proxy.stx')},
             )
-            +Cacheable.manage_options
+            + Cacheable.manage_options
         )
 
-    _proxy_roles=()
-    _cache_namespace_keys=()
-
-    # Use declarative security
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)
 
     security.declareProtected(ViewManagementScreens, 'manage_main')
     manage_main = Globals.DTMLFile('custdtml', _dtmldir)
-
-    _reading = 0
 
     def __init__(self, id, filepath, fullname=None, properties=None):
         FSObject.__init__(self, id, filepath, fullname, properties)
@@ -76,13 +75,15 @@ class FSDTMLMethod(RestrictedDTML, RoleManager, FSObject, Globals.HTML):
         return DTMLMethod(self.read(), __name__=self.getId())
 
     def _readFile(self, reparse):
-        fp = expandpath(self._filepath)
-        file = open(fp, 'r')    # not 'rb', as this is a text file!
+        """Read the data from the filesystem.
+        """
+        file = open(self._filepath, 'r') # not 'rb', as this is a text file!
         try:
             data = file.read()
         finally:
             file.close()
         self.raw = data
+
         if reparse:
             self._reading = 1  # Avoid infinite recursion
             try:

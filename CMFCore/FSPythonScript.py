@@ -35,20 +35,23 @@ from permissions import FTPAccess
 from permissions import View
 from permissions import ViewManagementScreens
 from utils import _dtmldir
-from utils import expandpath
 
-_marker = []
+_marker = object()
 
 
 class bad_func_code:
+
     co_varnames = ()
     co_argcount = 0
 
 
 class CustomizedPythonScript(PythonScript):
+
     """ Subclass which captures the "source" version's text.
     """
+
     #meta_type = 'Customized Python Script'  #(need permissions here)
+
     security = ClassSecurityInfo()
 
     def __init__(self, id, text):
@@ -79,7 +82,9 @@ class CustomizedPythonScript(PythonScript):
 
 InitializeClass(CustomizedPythonScript)
 
-class FSPythonScript (FSObject, Script):
+
+class FSPythonScript(FSObject, Script):
+
     """FSPythonScripts act like Python Scripts but are not directly
     modifiable from the management interface."""
 
@@ -87,7 +92,6 @@ class FSPythonScript (FSObject, Script):
     _params = _body = ''
     _v_f = None
     _proxy_roles = ()
-
     _owner = None  # Unowned
 
     manage_options=(
@@ -100,32 +104,30 @@ class FSPythonScript (FSObject, Script):
             + Cacheable.manage_options
         )
 
-    # Use declarative security
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)
+
+    security.declareProtected(ViewManagementScreens, 'manage_main')
+    manage_main = DTMLFile('custpy', _dtmldir)
+
     security.declareProtected(View, 'index_html',)
     # Prevent the bindings from being edited TTW
     security.declarePrivate('ZBindings_edit','ZBindingsHTML_editForm',
                             'ZBindingsHTML_editAction')
 
-    security.declareProtected(ViewManagementScreens, 'manage_main')
-    manage_main = DTMLFile('custpy', _dtmldir)
-
     def _createZODBClone(self):
         """Create a ZODB (editable) equivalent of this object."""
-        obj = CustomizedPythonScript(self.getId(), self.read())
-        return obj
+        return CustomizedPythonScript(self.getId(), self.read())
 
     def _readFile(self, reparse):
         """Read the data from the filesystem.
-
-        Read the file (indicated by exandpath(self._filepath), and parse the
-        data if necessary.
         """
-        fp = expandpath(self._filepath)
-        file = open(fp, 'rU')
-        try: data = file.read()
-        finally: file.close()
+        file = open(self._filepath, 'rU')
+        try:
+            data = file.read()
+        finally:
+            file.close()
+
         if reparse:
             self._write(data, reparse)
 
@@ -314,10 +316,12 @@ InitializeClass(FSPythonScript)
 
 
 class FSPythonScriptTracebackSupplement:
+
     """Implementation of ITracebackSupplement
 
     Makes script-specific info available in exception tracebacks.
     """
+
     def __init__(self, script, line=-1):
         self.object = script
         # If line is set to -1, it means to use tb_lineno.

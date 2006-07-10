@@ -14,6 +14,7 @@
 
 $Id$
 """
+
 import logging
 
 import Globals
@@ -27,13 +28,12 @@ from FSObject import FSObject
 from permissions import View
 from permissions import ViewManagementScreens
 from utils import _dtmldir
-from utils import expandpath
-
 
 logger = logging.getLogger('CMFCore.FSZSQLMethod')
 
 
 class FSZSQLMethod(SQL, FSObject):
+
     """FSZSQLMethods act like Z SQL Methods but are not directly
     modifiable from the management interface."""
 
@@ -47,9 +47,7 @@ class FSZSQLMethod(SQL, FSObject):
             )
         )
 
-    # Use declarative security
     security = ClassSecurityInfo()
-
     security.declareObjectProtected(View)
 
     # Make mutators private
@@ -84,11 +82,13 @@ class FSZSQLMethod(SQL, FSObject):
         return s
 
     def _readFile(self, reparse):
-        fp = expandpath(self._filepath)
-        file = open(fp, 'r')    # not 'rb', as this is a text file!
+        """Read the data from the filesystem.
+        """
+        file = open(self._filepath, 'r') # not 'rb', as this is a text file!
         try:
             data = file.read()
-        finally: file.close()
+        finally:
+            file.close()
 
         # parse parameters
         parameters={}
@@ -103,7 +103,7 @@ class FSZSQLMethod(SQL, FSObject):
             if len(pair)!=2:
                 continue
             parameters[pair[0].strip().lower()]=pair[1].strip()
-        
+
         # check for required parameters
         try:
             connection_id =   ( parameters.get('connection id', '') or

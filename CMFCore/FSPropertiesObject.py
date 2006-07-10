@@ -14,6 +14,7 @@
 
 $Id$
 """
+
 import Globals
 from AccessControl import ClassSecurityInfo
 from Acquisition import ImplicitAcquisitionWrapper
@@ -26,10 +27,10 @@ from DirectoryView import registerMetaType
 from FSObject import FSObject
 from permissions import ViewManagementScreens
 from utils import _dtmldir
-from utils import expandpath
 
 
-class FSPropertiesObject (FSObject, PropertyManager):
+class FSPropertiesObject(FSObject, PropertyManager):
+
     """FSPropertiesObjects simply hold properties."""
 
     meta_type = 'Filesystem Properties Object'
@@ -85,13 +86,8 @@ class FSPropertiesObject (FSObject, PropertyManager):
 
     def _readFile(self, reparse):
         """Read the data from the filesystem.
-
-        Read the file (indicated by exandpath(self._filepath), and parse the
-        data if necessary.
         """
-        fp = expandpath(self._filepath)
-
-        file = open(fp, 'r')    # not 'rb', as this is a text file!
+        file = open(self._filepath, 'r') # not 'rb', as this is a text file!
         try:
             lines = file.readlines()
         finally:

@@ -25,6 +25,7 @@ from ZTUtils import make_query
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.permissions import View
+from Products.CMFDefault.utils import getBrowserCharset
 from Products.CMFDefault.utils import html_marshal
 from Products.CMFDefault.utils import Message as _
 from Products.CMFDefault.utils import translate
@@ -92,6 +93,10 @@ class ViewBase(BrowserView):
         ptool = self._getTool('portal_properties')
         return ptool.getProperty('default_charset', None)
 
+    @memoize
+    def _getBrowserCharset(self):
+        return getBrowserCharset(self.request)
+
     # interface
 
     @memoize
@@ -120,7 +125,7 @@ class FormViewBase(ViewBase):
         message = self.request.other.get('portal_status_message', '')
         if message:
             if isinstance(message, unicode):
-                message = message.encode(self._getDefaultCharset())
+                message = message.encode(self._getBrowserCharset())
             kw['portal_status_message'] = message
         for k in keys.split(','):
             k = k.strip()

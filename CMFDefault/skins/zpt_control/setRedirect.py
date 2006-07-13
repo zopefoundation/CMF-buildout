@@ -2,10 +2,9 @@
 ##
 from ZTUtils import make_query
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import getBrowserCharset
 
 utool = getToolByName(script, 'portal_url')
-ptool = getToolByName(script, 'portal_properties')
-default_charset = ptool.getProperty('default_charset', None)
 portal_url = utool()
 
 
@@ -17,7 +16,7 @@ except ValueError:
 message = context.REQUEST.other.get('portal_status_message', '')
 if message:
     if isinstance(message, unicode):
-        message = unicode(message).encode(default_charset)
+        message = unicode(message).encode(getBrowserCharset(context.REQUEST))
     kw['portal_status_message'] = message
 for k, v in kw.items():
     if not v:

@@ -2,6 +2,7 @@
 ##
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
+from Products.CMFDefault.utils import getBrowserCharset
 
 atool = getToolByName(script, 'portal_actions')
 mtool = getToolByName(script, 'portal_membership')
@@ -10,14 +11,18 @@ utool = getToolByName(script, 'portal_url')
 wtool = getToolByName(script, 'portal_workflow')
 portal_object = utool.getPortalObject()
 
-default_charset = ptool.getProperty('default_charset', None)
-if default_charset:
-    context.REQUEST.RESPONSE.setHeader('Content-Type',
-                                     'text/html;charset=%s' % default_charset)
+if not 'charset' in context.REQUEST.RESPONSE.getHeader('content-type'):
+    # Some newstyle views set a different charset - don't override it.
+    # Oldstyle views need the default_charset.
+    default_charset = ptool.getProperty('default_charset', None)
+    if default_charset:
+        context.REQUEST.RESPONSE.setHeader('content-type',
+                                    'text/html; charset=%s' % default_charset)
 
 message = context.REQUEST.get('portal_status_message')
 if message and isinstance(message, str):
-    message = message.decode(default_charset)
+    # portal_status_message uses always the browser charset.
+    message = message.decode(getBrowserCharset(context.REQUEST))
 
 globals = {'utool': utool,
            'mtool': mtool,

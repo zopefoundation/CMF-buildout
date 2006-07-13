@@ -26,6 +26,7 @@ from Globals import package_home
 from Products.PageTemplates.GlobalTranslationService \
         import getGlobalTranslationService
 from ZTUtils.Zope import complex_marshal
+from zope.i18n.interfaces import IUserPreferredCharsets
 from zope.i18nmessageid import MessageFactory
 
 from Products.CMFCore.utils import getToolByName
@@ -456,6 +457,14 @@ def translate(message, context):
         except (TypeError, IndexError):
             pass
     return GTS.translate('cmf_default', message, context=context)
+
+security.declarePublic('getBrowserCharset')
+def getBrowserCharset(request):
+    """ Get charset preferred by the browser.
+    """
+    envadapter = IUserPreferredCharsets(request)
+    charsets = envadapter.getPreferredCharsets() or ['utf-8']
+    return charsets[0]
 
 security.declarePublic('Message')
 Message = _ = MessageFactory('cmf_default')

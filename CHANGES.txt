@@ -2,6 +2,10 @@ Trunk only (unreleased)
 
   New Features
 
+    - CMFDefault utils: Added getBrowserCharset function.
+      Returns the charset preferred by the browser. Strings encoded with this
+      charset are decoded correctly by Five.browser.decode.processInputs.
+
     - Content: Added IFactory utilities for all content classes.
       They are now used by default instead of the old constructor methods.
 
@@ -14,6 +18,10 @@ Trunk only (unreleased)
     -
 
   Others
+
+    - skins: Changed encoding of translated portal_status_messages.
+      Now getBrowserCharset is used to play nice with Five forms. Customized
+      setRedirect and getMainGlobals scripts have to be updated.
 
     - FSFile: Added registration for 'txt' extension.
 

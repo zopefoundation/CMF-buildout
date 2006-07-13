@@ -178,11 +178,11 @@ class DirectoryInformation:
         for entry in _filtered_listdir(self._filepath, ignore=self.ignore):
             if not self._isAllowableFilename(entry):
                 continue
-            entry_minimal_fp = '/'.join( (self._minimal_fp, entry) )
             entry_filepath = path.join(self._filepath, entry)
             if path.isdir(entry_filepath):
                 # Add a subdirectory only if it was previously registered,
                 # unless register_subdirs is set.
+                entry_minimal_fp = '/'.join( (self._minimal_fp, entry) )
                 info = registry.getDirectoryInfo(entry_minimal_fp)
                 if info is None and register_subdirs:
                     # Register unknown subdirs

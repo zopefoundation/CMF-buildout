@@ -95,7 +95,7 @@ class PortalContent(DynamicType, CMFCatalogAware, SimpleItem):
         """
         ti = self.getTypeInfo()
         method_id = ti and ti.queryMethodID('(Default)', context=self)
-        if method_id:
+        if method_id and method_id!='(Default)':
             method = getattr(self, method_id)
             if getattr(aq_base(method), 'isDocTemp', 0):
                 return method(self, self.REQUEST, self.REQUEST['RESPONSE'])

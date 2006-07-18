@@ -2,6 +2,10 @@ CMF 1.5.7-beta (unreleased)
 
   Bug Fixes
 
+    - CMFCore.PortalContent:  '_guessAliases' may leave type information
+      with a default alias of '(Default)';  work around that case.
+      (http://www.zope.org/Collectors/CMF/445)
+
     - CMFCore.CatalogTool:  Removed import of LOG object from ZCatalog in
      favor of the new 'logger' pattern using Python's logging module.
 

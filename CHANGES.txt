@@ -2,6 +2,10 @@ CMF 1.6.2-beta (unreleased)
 
   Bug Fixes
 
+    - CMFCore.PortalContent:  '_guessAliases' may leave type information
+      with a default alias of '(Default)';  work around that case.
+      (http://www.zope.org/Collectors/CMF/445)
+
     - standard_error_message.pt was out of sync with Zope.
       (http://www.zope.org/Collectors/Zope/2133)
 

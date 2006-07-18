@@ -52,6 +52,9 @@ class IndexableObjectWrapperTests(unittest.TestCase):
         verifyClass(IIndexableObjectWrapper, self._getTargetClass())
 
     def test_allowedRolesAndUsers(self):
+        # XXX This test fails when verbose security is enabled in zope.conf,
+        # because the roles will then contain '_View_Permission' as well as
+        # 'Manager'.
         obj = DummyContent()
         w = self._makeOne({}, obj)
         self.assertEqual(w.allowedRolesAndUsers(), ['Manager'])

@@ -44,10 +44,25 @@ _TRAVERSE_ZCML = """
 </configure>
 """
 
+_REQUEST_ZCML = """
+<configure
+    xmlns:five="http://namespaces.zope.org/five"
+    >
+
+  <!-- make Zope 2's REQUEST implement the right thing -->
+  <five:implements
+      class="ZPublisher.HTTPRequest.HTTPRequest"
+      interface="zope.publisher.interfaces.browser.IBrowserRequest"
+      />
+
+</configure>
+"""
+
 def setUpTraversing():
     import Products
 
     zcml.load_config('meta.zcml', Products.Five)
+    zcml.load_string(_REQUEST_ZCML)
     try:
         import zope.traversing
         zcml.load_config('traversing.zcml', Products.Five)
@@ -57,7 +72,7 @@ def setUpTraversing():
 
 def setUpEvents():
     import Products
-    import zope.app
+    import zope.app.event
 
     #   First, set up "stock" OFS event propagation
     zcml.load_config('meta.zcml', Products.Five)

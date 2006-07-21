@@ -18,7 +18,6 @@ $Id$
 import unittest
 from Testing import ZopeTestCase
 ZopeTestCase.installProduct('ZCTextIndex', 1)
-ZopeTestCase.installProduct('Five', 1)
 ZopeTestCase.installProduct('CMFCore', 1)
 ZopeTestCase.installProduct('CMFDefault', 1)
 
@@ -120,6 +119,7 @@ class TestImageCopyPaste(SecurityRequestTest):
         setUpTraversing()
         setUpGenericSetup()
         zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.Five.browser)
         zcml.load_config('configure.zcml', Products.CMFCore)
         zcml.load_config('configure.zcml', Products.CMFDefault)
         zcml.load_config('configure.zcml', Products.DCWorkflow)

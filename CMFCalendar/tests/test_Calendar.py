@@ -18,7 +18,6 @@ $Id$
 import unittest
 from Testing import ZopeTestCase
 ZopeTestCase.installProduct('ZCTextIndex', 1)
-ZopeTestCase.installProduct('Five', 1)
 ZopeTestCase.installProduct('CMFCore', 1)
 ZopeTestCase.installProduct('CMFDefault', 1)
 ZopeTestCase.utils.setupCoreSessions()
@@ -123,6 +122,7 @@ class CalendarRequestTests(unittest.TestCase):
         setUpTraversing()
         setUpGenericSetup()
         zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.Five.browser)
         zcml.load_config('configure.zcml', Products.Five.skin)
         zcml.load_config('configure.zcml', Products.CMFCalendar)
         zcml.load_config('configure.zcml', Products.CMFCore)

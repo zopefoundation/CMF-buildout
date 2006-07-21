@@ -46,13 +46,14 @@ _TRAVERSE_ZCML = """
 
 def setUpTraversing():
     import Products.Five
+
     zcml.load_config('meta.zcml', Products.Five)
     try:
-        # BBB: for Zope 2.9
-        from Products.Five.traversable import FiveTraversable
-        zcml.load_string(_TRAVERSE_ZCML)
-    except ImportError:
+        import zope.traversing
         zcml.load_config('traversing.zcml', Products.Five)
+    except ImportError:
+        # BBB: for Zope 2.9
+        zcml.load_string(_TRAVERSE_ZCML)
 
 
 class LogInterceptor:

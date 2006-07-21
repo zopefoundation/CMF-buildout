@@ -81,14 +81,6 @@ class _WorkflowSetup(WorkflowSetupBase):
         setUpGenericSetup()
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.DCWorkflow)
-        try:
-            import zope.traversing
-        except ImportError:
-            # BBB: Zope < 2.10
-            pass
-        else:
-            # Traversal adapters are needed for TALES
-            zcml.load_config('configure.zcml', zope.traversing)
 
     def _initDCWorkflow( self, workflow_id ):
 

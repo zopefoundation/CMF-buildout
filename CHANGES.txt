@@ -27,6 +27,13 @@ CMF 1.5.7-beta (unreleased)
       fix (universal line-endings support) is now used here too.
       (http://www.zope.org/Collectors/CMF/403)
 
+  Other:
+
+    - The Actions Tool Action Providers ZMI tab now shows the action IDs
+      provided by each listed provider.
+      (http://www.zope.org/Collectors/CMF/447)
+
+
 CMF 1.5.6 (2006/02/26)
   
   Bug Fixes

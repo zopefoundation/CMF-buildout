@@ -2,6 +2,10 @@ CMF 1.6.2-beta (unreleased)
 
   Bug Fixes
 
+    - CMFCore.CatalogTool: Added 'cmf_uid' method to IndexableObjectWrapper
+      so that CMFUid UIDs are not acquired during indexing.
+      (http://www.zope.org/Collectors/CMF/446)
+
     - CMFCore.PortalContent:  '_guessAliases' may leave type information
       with a default alias of '(Default)';  work around that case.
       (http://www.zope.org/Collectors/CMF/445)

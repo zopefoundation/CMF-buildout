@@ -220,6 +220,32 @@ class UniqueIdHandlerTests(SecurityTest):
         # IMHO it makes sense here to catch exceptions in general here!
         self.assertRaises(Exception, handler.setUid, dummy, DummyUid())
 
+    def test_UidCataloging(self):
+        handler = self.root.portal_uidhandler
+        catalog = self.root.portal_catalog
+        dummy = self.root.dummy
+
+        uid = handler.register(dummy)
+        brains = catalog(cmf_uid=uid)
+        self.assertEqual(len(brains), 1)
+
+    def test_UidCatalogingDoesNotAcquireUid(self):
+        handler = self.root.portal_uidhandler
+        catalog = self.root.portal_catalog
+        self.root._setObject('folder', DummyFolder('folder'))
+        folder = self.root.folder
+
+        uid = handler.register(folder)
+        brains = catalog(cmf_uid=uid)
+        self.assertEqual(len(brains), 1)
+
+        # Now catalog an unregistered subobject of the folder.
+        # It should not acquire the cmf_uid, obviously.
+        folder._setObject('dummy', DummyContent(id='dummy'))
+        folder.dummy.indexObject()
+        brains = catalog(cmf_uid=uid)
+        self.assertEqual(len(brains), 1)
+
 
 def test_suite():
     return unittest.TestSuite((

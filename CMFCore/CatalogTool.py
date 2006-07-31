@@ -17,9 +17,11 @@ $Id$
 
 from AccessControl import ClassSecurityInfo
 from AccessControl.PermissionRole import rolesForPermissionOn
+from Acquisition import aq_base
 from DateTime import DateTime
 from Globals import DTMLFile
 from Globals import InitializeClass
+from Products.PluginIndexes.common import safe_callable
 from Products.ZCatalog.ZCatalog import ZCatalog
 from Products.ZCTextIndex.HTMLSplitter import HTMLWordSplitter
 from Products.ZCTextIndex.Lexicon import CaseNormalizer
@@ -74,6 +76,16 @@ class IndexableObjectWrapper:
         if allowed.has_key('Owner'):
             del allowed['Owner']
         return list(allowed.keys())
+
+    def cmf_uid(self):
+        """
+        Return the CMFUid UID of the object while making sure
+        it is not accidentally acquired.
+        """
+        cmf_uid = getattr(aq_base(self.__ob), 'cmf_uid', '')
+        if safe_callable(cmf_uid):
+            return cmf_uid()
+        return cmf_uid
 
 
 class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):

@@ -21,6 +21,7 @@ from ZClasses import createZClassForBase
 
 from Products.CMFCore.utils import ContentInit
 from Products.CMFCore.DirectoryView import registerDirectory
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.GenericSetup import EXTENSION
 from Products.GenericSetup import profile_registry
 
@@ -64,4 +65,5 @@ def initialize( context ):
                                      'Adds topic portal type.',
                                      'profiles/default',
                                      'CMFTopic',
-                                     EXTENSION)
+                                     EXTENSION,
+                                     for_=ISiteRoot)

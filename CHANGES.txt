@@ -13,6 +13,14 @@ CMF 1.6.2-beta (unreleased)
     - standard_error_message.pt was out of sync with Zope.
       (http://www.zope.org/Collectors/Zope/2133)
 
+  Other
+
+    - CMFUid: Removed remnants of CMFSetup. Made sure the extension profile is
+      registered for ISiteRoot.
+
+    - CMFDefault + CMFTopic: Made sure extension profiles are registered for
+      ISiteRoot.
+
 
 CMF 1.6.1 (2006/06/09)
 

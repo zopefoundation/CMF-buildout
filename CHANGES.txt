@@ -94,6 +94,9 @@ After CMF 1.4.8
       Z28-incompatible borrowings of bound methods from base classes
       (http://www.zope.org/Collectors/CMF/321)
 
+    - CMFCore.MembershipTool: Don't attempt to create member areas for
+      special users (users whose getId method returns None).
+
   New Features
 
     - CMFCore.CachingPolicyManager:  Landed a number of changes pioneered

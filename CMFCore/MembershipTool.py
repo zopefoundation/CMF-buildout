@@ -144,8 +144,10 @@ class MembershipTool (UniqueObject, SimpleItem, ActionProviderBase):
                 # Check for the member area creation flag and
                 # take appropriate (non-) action
                 if getattr(self, 'memberareaCreationFlag', 0) != 0:
-                    if self.getHomeUrl(portal_user.getId()) is None:
-                        self.createMemberarea(portal_user.getId())
+                    member_id = portal_user.getId()
+                    if (member_id is not None and
+                        self.getHomeUrl(member_id) is None):
+                        self.createMemberarea(member_id)
 
                 return portal_user
             except ConflictError:

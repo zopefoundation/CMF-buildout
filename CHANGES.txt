@@ -2,6 +2,9 @@ CMF 2.0.1-beta (unreleased)
 
   Bug Fixes
 
+    - CMFCore.FSDTMLMethod: Add class-default '_owner', to prevent unintended
+      acquisition of ownership (http://www.zope.org/Collectors/CMF/450)
+
     - CMFCore.CatalogTool: Added 'cmf_uid' method to IndexableObjectWrapper
       so that CMFUid UIDs are not acquired during indexing.
       (http://www.zope.org/Collectors/CMF/446)

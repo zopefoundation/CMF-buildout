@@ -1,3 +1,10 @@
+After CMF 1.6.2-beta
+
+  Bug Fixes
+
+    - CMFCore.FSDTMLMethod: Add class-default '_owner', to prevent unintended
+      acquisition of ownership (http://www.zope.org/Collectors/CMF/450)
+
 CMF 1.6.2-beta (2006/08/08)
 
   Bug Fixes

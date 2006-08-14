@@ -41,6 +41,7 @@ class FSDTMLMethod(RestrictedDTML, RoleManager, FSObject, Globals.HTML):
     modifiable from the management interface."""
 
     meta_type = 'Filesystem DTML Method'
+    _owner = None
 
     manage_options=(
         (

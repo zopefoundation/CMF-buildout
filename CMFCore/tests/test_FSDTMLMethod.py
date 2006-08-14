@@ -69,6 +69,18 @@ class FSDTMLMethodTests(RequestTest, FSDTMLMaker):
         self.failUnless( 'foo' in self.RESPONSE.headers.keys() )
         self.failUnless( 'bar' in self.RESPONSE.headers.keys() )
 
+    def test_ownership( self ):
+        script = self._makeOne( 'testDTML', 'testDTML.dtml' )
+        script = script.__of__(self.root)
+        # fsdtmlmethod has no owner
+        owner_tuple = script.getOwnerTuple()
+        self.assertEqual(owner_tuple, None)
+
+        # and ownership is not acquired [CMF/450]
+        self.root._owner= ('/foobar', 'baz')
+        owner_tuple = script.getOwnerTuple()
+        self.assertEqual(owner_tuple, None)
+
     def test_304_response_from_cpm( self ):
         # test that we get a 304 response from the cpm via this template
 

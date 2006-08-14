@@ -43,6 +43,7 @@ class FSDTMLMethod(RestrictedDTML, RoleManager, FSObject, Globals.HTML):
     """
 
     meta_type = 'Filesystem DTML Method'
+    _owner = None
     _proxy_roles = ()
     _cache_namespace_keys = ()
     _reading = 0

@@ -1,4 +1,4 @@
-CMF 1.5.7-beta (unreleased)
+CMF 1.5.7-beta (08/17/06)
 
   Bug Fixes
 

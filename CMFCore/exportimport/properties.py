@@ -70,7 +70,7 @@ def importSiteProperties(context):
 
     importer = queryMultiAdapter((site, context), IBody)
     if importer is None:
-        logger.warning('Import adapter misssing.')
+        logger.warning('Import adapter missing.')
         return
 
     importer.body = body
@@ -83,7 +83,7 @@ def exportSiteProperties(context):
 
     exporter = queryMultiAdapter((site, context), IBody)
     if exporter is None:
-        logger.warning('Export adapter misssing.')
+        logger.warning('Export adapter missing.')
         return
 
     context.writeDataFile(_FILENAME, exporter.body, exporter.mime_type)

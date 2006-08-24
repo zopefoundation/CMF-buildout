@@ -2270,7 +2270,7 @@ class Test_importWorkflow( _WorkflowSetup
             self.assertEqual( len( var_exprs ), len( expected[ 9 ] ) )
 
             for var_id, expr in var_exprs.items():
-                self.assertEqual( expr, expected[ 9 ][ var_id ] )
+                self.assertEqual( expr.text, expected[ 9 ][ var_id ] )
 
             guard = transition.getGuard()
 

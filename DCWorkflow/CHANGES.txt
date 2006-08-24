@@ -1,6 +1,10 @@
 
 Next release
 
+- Fixed errors and site breakage on GenericSetup import of transitions
+with variable expressions set.  They were previously being imported as
+text rather tha Expressions.
+
 - Added support for groups.  Although the implementation is currently
 tied to a particular implementation of groups, it should be
 easy to generalize to any product that adds groups to Zope.

@@ -1,6 +1,6 @@
 CMF 1.6.3-beta (unreleased)
 
-  Bug Fixed
+  Bug Fixes
 
     - DCWorkflow: Fixed errors and site breakage on GenericSetup import 
       of transitions with variable expressions set.  They were previously 

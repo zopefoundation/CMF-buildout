@@ -18,6 +18,7 @@ $Id$
 import re
 from xml.dom.minidom import parseString
 
+from Expression import Expression
 from AccessControl import ClassSecurityInfo
 from Acquisition import Implicit
 from Globals import InitializeClass
@@ -1075,8 +1076,9 @@ def _initDCWorkflowTransitions( workflow, transitions ):
                        , actbox_category = action[ 'category' ]
                        , props = props
                        )
-
-        t.var_exprs = PersistentMapping( t_info[ 'variables' ].items() )
+        var_mapping = [(name, Expression(text)) for name, text in
+                       t_info[ 'variables' ].items()]
+        t.var_exprs = PersistentMapping(var_mapping)
 
 def _initDCWorkflowWorklists( workflow, worklists ):
 

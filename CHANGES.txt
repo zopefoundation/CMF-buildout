@@ -1,3 +1,11 @@
+After CMF 1.5.7 
+
+  Others
+
+    - CMFDefault.Portal:  Reverted deprecation of 'manage_addCMFSite', assed
+      in CMF 1.5.5-beta, because it violates the policy / expectation that
+      features are added / deprecated only at "second-dot" releases.
+
 CMF 1.5.7 (08/27/06)
 
   No changes from 1.5.7-beta

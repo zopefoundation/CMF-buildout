@@ -299,14 +299,6 @@ def manage_addCMFSite(self, id, title='Portal', description='',
                          RESPONSE=None):
     """ Adds a portal instance.
     """
-    from warnings import warn
-
-    warn("manage_addCMFSite is a deprecated way to create a CMF site;  in the "
-         "future, please use CMFSetup's 'Configured CMF Site' (from the ZMI "
-         "add menu) or 'CMFSetup.factory.addConfiguredSite' (from Python).  "
-         "manage_addCMFSite will be removed in CMF 2.0.",
-         DeprecationWarning, 2)
-
     gen = PortalGenerator()
     id = id.strip()
     p = gen.create(self, id, create_userfolder)

@@ -198,22 +198,6 @@ class CMFSiteTests( SecurityRequestTest
         doc.edit( '<h1>Extra!</h1>' )
         self.assertEqual( _getMetadata( catalog, rid ), 'Bar' )
 
-    def test_manage_addCMFSite_emits_DeprecationWarning( self ):
-
-        # This warning is recorded in *our* globals (stacklevel=2).
-        registry = globals().get("__warningregistry__")
-
-        if registry is not None:
-            registry.clear()
-
-        # Check that a warning was raised.
-        site = self._makeSite( 'emits_warning' )
-
-        self.assertEqual( len( registry ), 1 )
-        message, category, linenoe  = registry.keys()[ 0 ]
-        self.failUnless( 'manage_addCMFSite' in message, message )
-        self.failUnless( category is DeprecationWarning, category )
-
 def _getMetadata( catalog, rid, field='Title' ):
     md = catalog.getMetadataForRID( rid )
     return md[ field ]

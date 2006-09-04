@@ -36,12 +36,19 @@ except ImportError:
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
+from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyObject
 from OFS.Folder import Folder
 
-class PortalContentTests(TestCase):
+class PortalContentTests(TestCase, WarningInterceptor):
+
+    def setUp(self):
+        self._free_warning_output()
+
+    def tearDown(self):
+        self._free_warning_output()
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -96,6 +103,7 @@ class PortalContentTests(TestCase):
                        )
         ob = self._setupCallTests(test_aliases)
         # blank default is BBB
+        self._trap_warning_output()
         self.assertEqual( ob(), 'dummy' )
 
     def test_SpecificAlias(self):

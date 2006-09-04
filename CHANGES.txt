@@ -17,7 +17,7 @@ Trunk only (unreleased)
 
     - CMFCore.CatalogTool: Use current executable's proxy roles, if any,
       in place of user's roles when computing 'allowedRolesAndUsers' for
-      a query.
+      a query. (http://www.zope.org/Collectors/CMF/380)
 
   Others
 

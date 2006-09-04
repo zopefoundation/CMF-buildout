@@ -15,7 +15,9 @@ Trunk only (unreleased)
 
   Bug Fixes
 
-    -
+    - CMFCore.CatalogTool: Use current executable's proxy roles, if any,
+      in place of user's roles when computing 'allowedRolesAndUsers' for
+      a query.
 
   Others
 

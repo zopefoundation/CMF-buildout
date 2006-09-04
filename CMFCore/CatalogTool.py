@@ -16,6 +16,7 @@ $Id$
 """
 
 from AccessControl import ClassSecurityInfo
+from AccessControl import getSecurityManager
 from AccessControl.PermissionRole import rolesForPermissionOn
 from Acquisition import aq_base
 from DateTime import DateTime
@@ -143,7 +144,14 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
     #
 
     def _listAllowedRolesAndUsers(self, user):
-        result = list( user.getRoles() )
+        effective_roles = user.getRoles()
+        sm = getSecurityManager()
+        if sm.calledByExecutable():
+            eo = sm._context.stack[-1]
+            proxy_roles = getattr(eo, '_proxy_roles', None)
+            if proxy_roles is not None:
+                effective_roles = proxy_roles
+        result = list( effective_roles )
         result.append( 'Anonymous' )
         result.append( 'user:%s' % user.getId() )
         return result

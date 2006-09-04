@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from AccessControl.SecurityManagement import newSecurityManager
+from AccessControl.SecurityManagement import noSecurityManager
 from DateTime import DateTime
 
 from Products.CMFCore.tests.base.dummy import DummyContent
@@ -127,6 +128,13 @@ class CatalogToolTests(SecurityTest):
         user = OmnipotentUser().__of__(self.root)
         newSecurityManager(None, user)
 
+    def setupProxyRoles(self, *proxy_roles):
+        from AccessControl import getSecurityManager
+        class FauxExecutable:
+            _proxy_roles = proxy_roles
+        sm = getSecurityManager()
+        sm.addContext(FauxExecutable())
+
     def test_processActions(self):
         """
             Tracker #405:  CatalogTool doesn't accept optional third
@@ -147,6 +155,56 @@ class CatalogToolTests(SecurityTest):
 
         self.assertEqual(1, len(catalog._catalog.searchResults()))
         self.assertEqual(0, len(catalog.searchResults()))
+
+    def test_search_member_with_valid_roles(self):
+        catalog = self._makeOne()
+        catalog.addIndex('allowedRolesAndUsers', 'KeywordIndex')
+        dummy = DummyContent(catalog=1)
+        dummy._View_Permission = ('Blob',)
+        catalog.catalog_object(dummy, '/dummy')
+
+        self.loginWithRoles('Blob')
+
+        self.assertEqual(1, len(catalog._catalog.searchResults()))
+        self.assertEqual(1, len(catalog.searchResults()))
+
+    def test_search_member_with_valid_roles_but_proxy_roles_limit(self):
+        catalog = self._makeOne()
+        catalog.addIndex('allowedRolesAndUsers', 'KeywordIndex')
+        dummy = DummyContent(catalog=1)
+        dummy._View_Permission = ('Blob',)
+        catalog.catalog_object(dummy, '/dummy')
+
+        self.loginWithRoles('Blob')
+        self.setupProxyRoles('Waggle')
+
+        self.assertEqual(1, len(catalog._catalog.searchResults()))
+        self.assertEqual(0, len(catalog.searchResults()))
+
+    def test_search_member_wo_valid_roles(self):
+        catalog = self._makeOne()
+        catalog.addIndex('allowedRolesAndUsers', 'KeywordIndex')
+        dummy = DummyContent(catalog=1)
+        dummy._View_Permission = ('Blob',)
+        catalog.catalog_object(dummy, '/dummy')
+
+        self.loginWithRoles('Waggle')
+
+        self.assertEqual(1, len(catalog._catalog.searchResults()))
+        self.assertEqual(0, len(catalog.searchResults()))
+
+    def test_search_member_wo_valid_roles_but_proxy_roles_allow(self):
+        catalog = self._makeOne()
+        catalog.addIndex('allowedRolesAndUsers', 'KeywordIndex')
+        dummy = DummyContent(catalog=1)
+        dummy._View_Permission = ('Blob',)
+        catalog.catalog_object(dummy, '/dummy')
+
+        self.loginWithRoles('Waggle')
+        self.setupProxyRoles('Blob')
+
+        self.assertEqual(1, len(catalog._catalog.searchResults()))
+        self.assertEqual(1, len(catalog.searchResults()))
 
     def test_search_inactive(self):
         catalog = self._makeOne()

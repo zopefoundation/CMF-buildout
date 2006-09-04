@@ -1,5 +1,11 @@
 After CMF 1.5.7 
 
+  Bug Fixes
+
+    - CMFSetup.workflow: Split out subdirectory when exporting workflow
+      scripts.
+      (http://www.zope.org/Collectors/CMF/373)
+
   Others
 
     - CMFDefault.Portal:  Reverted deprecation of 'manage_addCMFSite', added

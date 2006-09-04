@@ -2134,7 +2134,7 @@ class Test_exportWorkflow( _WorkflowSetup
         self._initWorklists( dcworkflow )
         self._initScripts( dcworkflow )
 
-        context = DummyExportContext( site )
+        context = DummyExportContext( site, preserve_subdir=True )
 
         from Products.CMFSetup.workflow import exportWorkflowTool
         exportWorkflowTool( context )
@@ -2142,13 +2142,14 @@ class Test_exportWorkflow( _WorkflowSetup
         # workflows list, wf defintion and 3 scripts
         self.assertEqual( len( context._wrote ), 5 )
 
-        filename, text, content_type = context._wrote[ 0 ]
+        filename, text, content_type, subdir = context._wrote[ 0 ]
         self.assertEqual( filename, 'workflows.xml' )
         self._compareDOM( text, _NORMAL_TOOL_EXPORT )
         self.assertEqual( content_type, 'text/xml' )
+        self.assertEqual( subdir, None )
 
-        filename, text, content_type = context._wrote[ 1 ]
-        self.assertEqual( filename, 'workflows/%s/definition.xml' % WF_ID_DC )
+        filename, text, content_type, subdir = context._wrote[ 1 ]
+        self.assertEqual( filename, 'definition.xml' )
         self._compareDOM( text
                         , _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID_DC
@@ -2157,12 +2158,14 @@ class Test_exportWorkflow( _WorkflowSetup
                             , 'workflow_filename' : WF_ID_DC.replace(' ', '_')
                             } )
         self.assertEqual( content_type, 'text/xml' )
+        self.assertEqual( subdir, 'workflows/%s' % WF_ID_DC )
 
         # just testing first script
-        filename, text, content_type = context._wrote[ 2 ]
-        self.assertEqual( filename, 'workflows/%s/scripts/after_close.py' % WF_ID_DC )
+        filename, text, content_type, subdir = context._wrote[ 2 ]
+        self.assertEqual( filename, 'after_close.py' )
         self.assertEqual( text, _AFTER_CLOSE_SCRIPT)
         self.assertEqual( content_type, 'text/plain' )
+        self.assertEqual( subdir, 'workflows/%s/scripts' % WF_ID_DC )
 
     def test_with_filenames( self ):
 
@@ -2182,7 +2185,7 @@ class Test_exportWorkflow( _WorkflowSetup
         self._initWorklists( dcworkflow )
         self._initScripts( dcworkflow )
 
-        context = DummyExportContext( site )
+        context = DummyExportContext( site, preserve_subdir=True )
 
         from Products.CMFSetup.workflow import exportWorkflowTool
         exportWorkflowTool( context )
@@ -2190,14 +2193,14 @@ class Test_exportWorkflow( _WorkflowSetup
         # workflows list, wf defintion and 3 scripts
         self.assertEqual( len( context._wrote ), 5 )
 
-        filename, text, content_type = context._wrote[ 0 ]
+        filename, text, content_type, subdir = context._wrote[ 0 ]
         self.assertEqual( filename, 'workflows.xml' )
         self._compareDOM( text, _FILENAME_TOOL_EXPORT )
         self.assertEqual( content_type, 'text/xml' )
+        self.assertEqual( subdir, None )
 
-        filename, text, content_type = context._wrote[ 1 ]
-        self.assertEqual( filename
-                        , 'workflows/name_with_spaces/definition.xml' )
+        filename, text, content_type, subdir = context._wrote[ 1 ]
+        self.assertEqual( filename, 'definition.xml' )
         self._compareDOM( text
                         , _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID_DC
@@ -2206,13 +2209,15 @@ class Test_exportWorkflow( _WorkflowSetup
                             , 'workflow_filename' : WF_ID_DC.replace(' ', '_')
                             } )
         self.assertEqual( content_type, 'text/xml' )
+        self.assertEqual( subdir, 'workflows/name_with_spaces' )
 
         # just testing first script
-        filename, text, content_type = context._wrote[ 2 ]
-        self.assertEqual( filename, 'workflows/%s/scripts/after_close.py' %
-                          WF_ID_DC.replace(' ', '_'))
+        filename, text, content_type, subdir = context._wrote[ 2 ]
+        self.assertEqual( filename, 'after_close.py' )
         self.assertEqual( text, _AFTER_CLOSE_SCRIPT)
         self.assertEqual( content_type, 'text/plain' )
+        self.assertEqual( subdir, 'workflows/%s/scripts'
+                                        % WF_ID_DC.replace(' ', '_'))
 
 class Test_importWorkflow( _WorkflowSetup
                          , _GuardChecker

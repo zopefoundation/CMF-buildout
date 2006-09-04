@@ -190,16 +190,24 @@ def exportWorkflowTool( context ):
         wf_scripts = wfdc.getWorkflowScripts(wf_id)
 
         if wf_xml is not None:
+            wf_dir = 'workflows/%s' % wf_dirname
             context.writeDataFile( 'definition.xml'
                                  , wf_xml
                                  , 'text/xml'
                                  , 'workflows/%s' % wf_dirname
                                  )
             for script_info in wf_scripts:
-                if script_info['filename']:
-                    context.writeDataFile(script_info['filename'],
+                filename = script_info['filename']
+                if filename:
+                    if '/' in filename:
+                        subdir, filename = filename.rsplit('/', 1)
+                    else:
+                        subdir = ''
+                    context.writeDataFile(filename,
                                           script_info['body'],
-                                          'text/plain')
+                                          'text/plain',
+                                          subdir,
+                                          )
 
     return 'Workflows exported.'
 

@@ -147,17 +147,21 @@ class TarballTester( DOMComparator ):
 
 class DummyExportContext:
 
-    def __init__( self, site ):
+    def __init__( self, site, preserve_subdir=False ):
         self._site = site
         self._wrote = []
+        self._preserve_subdir = preserve_subdir
 
     def getSite( self ):
         return self._site
 
     def writeDataFile( self, filename, text, content_type, subdir=None ):
-        if subdir is not None:
-            filename = '%s/%s' % ( subdir, filename )
-        self._wrote.append( ( filename, text, content_type ) )
+        if self._preserve_subdir:
+            self._wrote.append( ( filename, text, content_type, subdir ) )
+        else:
+            if subdir is not None:
+                filename = '%s/%s' % ( subdir, filename )
+            self._wrote.append( ( filename, text, content_type ) )
 
 class DummyImportContext:
 

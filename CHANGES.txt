@@ -4,7 +4,7 @@ CMF 2.0.1-beta (unreleased)
 
     - CMFCore.CatalogTool: Use current executable's proxy roles, if any,
       in place of user's roles when computing 'allowedRolesAndUsers' for
-      a query.
+      a query. (http://www.zope.org/Collectors/CMF/380)
 
     - CMFCore.FSDTMLMethod: Add class-default '_owner', to prevent unintended
       acquisition of ownership (http://www.zope.org/Collectors/CMF/450)

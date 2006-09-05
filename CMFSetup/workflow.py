@@ -200,7 +200,8 @@ def exportWorkflowTool( context ):
                 filename = script_info['filename']
                 if filename:
                     if '/' in filename:
-                        subdir, filename = filename.rsplit('/', 1)
+                        last = filename.rindex('/')
+                        subdir, filename = filename[:last], filename[last+1:]
                     else:
                         subdir = ''
                     context.writeDataFile(filename,

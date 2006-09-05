@@ -97,6 +97,40 @@ class ActionTests(unittest.TestCase):
                    ['url', 'icon'] )
         self.assertEqual( a.getInfoData(), WANTED )
 
+    def test_manage_propertiesForm_allows_adding(self):
+        from OFS.SimpleItem import SimpleItem
+        def _header(*args, **kw):
+            return 'HEADER'
+        def _footer(*args, **kw):
+            return 'HEADER'
+        container = SimpleItem()
+
+        container.REQUEST = request = DummyRequest()
+        request.set('manage_page_header', _header)
+        request.set('manage_page_footer', _footer)
+        request.set('BASEPATH1', '/one/two')
+        request.set('URL1', '/one/two')
+        request._steps = ['one', 'two']
+
+        prd = {'ac_permissions': ('a', 'b')}
+        container._getProductRegistryData = prd.get
+
+        a = self._makeOne('extensible').__of__(container)
+        form_html = a.manage_propertiesForm(request)
+
+        self.failUnless('value=" Add "' in form_html)
+
+class DummyRequest:
+    def __init__(self):
+        self._data = {}
+    def set(self, k, v):
+        self._data[k] = v
+    def get(self, k, default):
+        return self._data.get(k, default)
+    def __getitem__(self, k):
+        return self._data[k]
+    def __len__(self):
+        return len(self._data)
 
 class ActionInfoTests(unittest.TestCase):
 

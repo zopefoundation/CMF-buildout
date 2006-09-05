@@ -15,6 +15,9 @@ Trunk only (unreleased)
 
   Bug Fixes
 
+    - CMFCore.ActionInformation: don't use a fixed set of properties for
+      ActionInformation. (http://www.zope.org/Collectors/CMF/232/)
+
     - CMFCore.CatalogTool: Use current executable's proxy roles, if any,
       in place of user's roles when computing 'allowedRolesAndUsers' for
       a query. (http://www.zope.org/Collectors/CMF/380)

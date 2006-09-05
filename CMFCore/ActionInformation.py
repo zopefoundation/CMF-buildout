@@ -22,6 +22,7 @@ from Acquisition import aq_base, aq_inner, aq_parent
 from Globals import InitializeClass
 from OFS.ObjectManager import IFAwareObjectManager
 from OFS.OrderedFolder import OrderedFolder
+from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
 from zope.i18nmessageid import Message
 from zope.interface import implements
@@ -35,7 +36,6 @@ from permissions import View
 from utils import _checkPermission
 from utils import _wwwdir
 from utils import getToolByName
-from utils import SimpleItemWithProperties
 
 
 _unchanged = [] # marker
@@ -69,7 +69,7 @@ class ActionCategory(IFAwareObjectManager, OrderedFolder):
 InitializeClass(ActionCategory)
 
 
-class Action(SimpleItemWithProperties):
+class Action(PropertyManager, SimpleItem):
 
     """ Reference to an action.
     """
@@ -98,6 +98,10 @@ class Action(SimpleItemWithProperties):
         {'id': 'visible', 'type': 'boolean', 'mode': 'w',
          'label': 'Visible?'},
         )
+
+    manage_options = (
+        PropertyManager.manage_options
+        + SimpleItem.manage_options)
 
     def __init__(self, id, **kw):
         self.id = id

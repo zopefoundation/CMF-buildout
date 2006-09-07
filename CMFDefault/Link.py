@@ -38,6 +38,9 @@ from utils import _dtmldir
 from utils import formatRFC822Headers
 from utils import parseHeadersBody
 
+from zope.interface import implements
+from Products.GenericSetup.interfaces import IDAVAware
+
 factory_type_information = (
   { 'id'             : 'Link'
   , 'meta_type'      : 'Link'
@@ -90,6 +93,7 @@ class Link( PortalContent
         A Link
     """
 
+    implements(IDAVAware)
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )

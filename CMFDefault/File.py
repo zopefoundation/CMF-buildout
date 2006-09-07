@@ -26,6 +26,8 @@ from DublinCore import DefaultDublinCoreImpl
 from permissions import View
 from permissions import ModifyPortalContent
 
+from zope.interface import implements
+from Products.GenericSetup.interfaces import IDAVAware
 
 factory_type_information = (
   { 'id'             : 'File'
@@ -110,6 +112,7 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
         A Portal-managed File
     """
 
+    implements(IDAVAware)
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )

@@ -2,6 +2,11 @@ CMF 1.6.3-beta (unreleased)
 
   Bug Fixes
 
+    - CMFDefault: The "Sample CMF Content" GenericSetup profile was 
+      registered but missing all of its files and necessary interface 
+      declarations in the CMFDefault content classes.
+      (http://www.zope.org/Collectors/CMF/453)
+
     - DCWorkflow: Fixed errors and site breakage on GenericSetup import 
       of transitions with variable expressions set.  They were previously 
       being imported as text rather tha Expressions.

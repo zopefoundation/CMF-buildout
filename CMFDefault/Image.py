@@ -25,6 +25,9 @@ from DublinCore import DefaultDublinCoreImpl
 from permissions import View
 from permissions import ModifyPortalContent
 
+from zope.interface import implements
+from Products.GenericSetup.interfaces import IDAVAware
+
 factory_type_information = (
   { 'id'             : 'Image'
   , 'meta_type'      : 'Portal Image'
@@ -102,6 +105,7 @@ class Image(PortalContent, OFS.Image.Image, DefaultDublinCoreImpl):
         A Portal-managed Image
     """
 
+    implements(IDAVAware)
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )

@@ -1,9 +1,5 @@
 import unittest
 
-from os.path import join
-
-from OFS.Folder import Folder
-
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
@@ -22,10 +18,13 @@ class FSPOTests(SecurityTest, FSDVTest):
         return FSPropertiesObject
 
     def _makeOne( self, id, filename ):
+        from os.path import join
         path = join(self.skin_path_name, filename)
         return self._getTargetClass()( id, path ) 
 
     def _makeContext( self, po_id, po_filename ):
+        from OFS.Folder import Folder
+
         self.root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
         skins = self.root.portal_skins
 

@@ -40,8 +40,38 @@ class FSPOTests(SecurityTest, FSDVTest):
 
         return custom, fsdir, fspo
 
-    def test_customize( self ):
+    def test__readFile( self ):
+        from DateTime.DateTime import DateTime
 
+        custom, fsdir, fspo = self._makeContext( 'test_props'
+                                               , 'test_props.props')
+
+        self.assertEqual( fspo.getProperty( 'title' ), 'Test properties' )
+        self.assertEqual( fspo.getProperty( 'value1' ), 'one' )
+        self.assertEqual( fspo.getProperty( 'value2' ), 'two' )
+        self.assertEqual( fspo.getProperty( 'an_int' ), 42 )
+        self.assertEqual( fspo.getProperty( 'a_float' ), 3.1415926 )
+        self.assertEqual( fspo.getProperty( 'a_boolean' ), False )
+        self.assertEqual( fspo.getProperty( 'a_long' ), 40000000000 )
+        self.assertEqual( fspo.getProperty( 'a_date' )
+                        , DateTime( '01/01/2001' ) )
+        self.assertEqual( fspo.getProperty( 'a_tokens' )
+                        , [ 'peter', 'paul', 'mary' ] )
+
+    def test__createZODBClone( self ):
+
+        from OFS.Folder import Folder
+
+        custom, fsdir, fspo = self._makeContext( 'test_props'
+                                               , 'test_props.props')
+
+        target = fspo._createZODBClone()
+        self.failUnless( isinstance( target, Folder ) )
+        for prop_id in fspo.propertyIds():
+            self.assertEqual( target.getProperty( prop_id )
+                            , fspo.getProperty( prop_id ) )
+
+    def test_manage_doCustomize( self ):
         custom, fsdir, fspo = self._makeContext( 'test_props'
                                                , 'test_props.props')
 

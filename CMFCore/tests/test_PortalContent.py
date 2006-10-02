@@ -23,13 +23,15 @@ from Acquisition import aq_base
 from OFS.Folder import Folder
 from zope.testing.cleanup import cleanUp
 
+from Products.CMFCore.exceptions import NotFound
+from Products.CMFCore.tests.base.dummy import DummyContent
+from Products.CMFCore.tests.base.dummy import DummyObject
 from Products.CMFCore.tests.base.dummy import DummySite
+from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.tests.base.testcase import setUpEvents
-from Products.CMFCore.tests.base.dummy import DummyTool
-from Products.CMFCore.tests.base.dummy import DummyContent
-from Products.CMFCore.tests.base.dummy import DummyObject
+
 
 class PortalContentTests(unittest.TestCase):
 
@@ -59,7 +61,7 @@ class PortalContentTests(unittest.TestCase):
 
         # set up dummy type info with problematic double-default alias
         root._setObject( 'portal_types', DummyTool() )
-        root.portal_types.view_actions = aliases
+        root.portal_types._type_actions = aliases
 
         # dummy content and skin
         root._setObject( 'dummycontent', DummyContent() )
@@ -71,24 +73,23 @@ class PortalContentTests(unittest.TestCase):
                          ('view', 'dummy_view'),
                        )
         ob = self._setupCallTests(test_aliases)
-        # in unfixed version fail here with AttributeError
-        # can end up with this arrangement using _getAliases though
-        # in fixed version, falls through to _getViewFor, which is BBB
-        self.assertEqual( ob(), 'dummy' )
+        # PortalContent no longer supports the BBB '(Default)' alias
+        self.assertRaises(NotFound, ob)
 
     def test_BlankDefaultAlias(self):
         test_aliases = ( ('(Default)', ''),
                          ('view', 'dummy_view'),
                        )
         ob = self._setupCallTests(test_aliases)
-        # blank default is BBB
-        self.assertEqual( ob(), 'dummy' )
+        # blank values are not valid
+        self.assertRaises(NotFound, ob)
 
     def test_SpecificAlias(self):
         test_aliases = ( ('(Default)', 'dummy_view'),
                        )
         ob = self._setupCallTests(test_aliases)
         self.assertEqual( ob(), 'dummy' )
+
 
 class TestContentCopyPaste(SecurityRequestTest):
 

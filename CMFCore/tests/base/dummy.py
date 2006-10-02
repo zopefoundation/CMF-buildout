@@ -98,31 +98,6 @@ class DummyType(DummyObject):
         return True
 
 
-    def listActions(self, info=None, object=None):
-        rs = []
-        for k,v in self._actions.items():
-           rs.append( DummyAction( k,v ) )
-        return rs
-
-class DummyAction:
-
-    def __init__( self, id, target, permissions=() ):
-        self._id = id
-        self.target = target
-        self.permissions = permissions
-
-    def getId( self ):
-        return self._id
-
-    # can this be right? e.g. utils._getViewFor calls action
-    # attribute directly, which is not part of API but no other way
-    # to do it...
-    def action( self, context ):
-        return self.target
-
-    def getPermissions( self ):
-        return self.permissions
-
 class DummyContent( PortalContent, Item ):
     """
     A Dummy piece of PortalContent

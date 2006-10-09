@@ -1,4 +1,4 @@
-Trunk only (unreleased)
+CMF 2.1-alpha (2006/10/09)
 
   New Features
 
@@ -47,10 +47,6 @@ Trunk only (unreleased)
 
     - setup handlers: Removed support for CMF 1.5 CMFSetup profiles.
 
-CMF 2.0.x
-
-  For a complete list see CHANGES.txt of the 2.0 branch.
-
-CMF 1.6.x and previous
+CMF 2.0.x and earlier
 
   For a complete list of changes see HISTORY.txt.

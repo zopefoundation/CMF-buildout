@@ -21,6 +21,9 @@ Zope Content Management Framework (CMF) README
 
       * The 'docs/' directory contains user-oriented documentation
 
+      * Information about future developments can be found on the
+        "Roadmap", http://www.zope.org/Products/CMF/docs/roadmap
+
     Developer
 
       * The CMFDefault package is an example application, built using

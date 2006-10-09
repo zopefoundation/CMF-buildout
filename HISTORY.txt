@@ -1,3 +1,438 @@
+CMF 2.0.0 (2006/04/16)
+
+  New Features
+
+    - CMFCalendar.CalendarTool: The first day of the week preference can
+      now be set on the calendar tool through the ZMI.
+      (http://www.zope.org/Collectors/CMF/400)
+
+    - CMFCalendar: Added experimental Zope 3-style browser views.
+      The views are disabled by default. See README.txt of the browser
+      sub-package for further information.
+
+  Bug Fixes
+
+    - IndexableObjectWrapper: Fixed list of provided interfaces.
+      The interfaces declared for the wrapped object are no longer masked.
+
+    - CMFDefault: Removed CMF specific slots from five_template.
+      The CMF specific slots added in CMF 2.0.0-alpha have been removed again
+      from the five_template.
+
+  Others
+
+    - CalendarTool: Slightly modified the behavior of getUseSession.
+      This method now explicitly returns a boolean value.
+
+    - Skins, views and FSSTXMethod: Removed 'Desktop' class div tags.
+      There is still the 'Desktop' ID div tag in main_template.
+
+
+CMF 2.0.0-beta2 (2006/03/26)
+
+  Bug Fixes
+
+    - CMFDefault: Refactored slots in five_template and main_template.
+      main_template has now a new 'body' slot that wraps around 'header' and
+      'main' slot. main_template's 'header' slot is now empty by default.
+
+    - PortalFolder: Content IDs starting with '@@' are now disallowed.
+      These names are reserved for browser views.
+
+    - CMFDefault: Changed the way browser views are hooked up.
+      To become independent of the lookup order views are now named different
+      than the corresponding skin methods. The views are now enabled by
+      default and hooked up by a new extension profile.
+
+  Others
+
+    - CMFDefault skins and views: Removed 'full_metadata_edit_form'.
+      'metadata_edit_form' is now used for the full set of metadata.
+
+
+CMF 2.0.0-beta (2006/02/26)
+
+  New Features
+
+    - CMFDefault skins: Improved support for custom i18n domains.
+      If setStatus is used portal status messages are now translated before
+      they are added to the query string of a redirect.
+
+    - CMFDefault utils:  Added 'translate' function.
+      This should only be used if the message can't be translated in the
+      template. It is a small shortcut to getGlobalTranslationService.
+
+    - CMFDefault: Added experimental Zope 3-style browser views.
+      The views are disabled by default. See README.txt of the browser
+      sub-package for further information.
+
+    - skins: All page templates now use unicode.
+      Please make sure to pass only 'ascii' strings or unicode to them.
+
+    - CMFDefault utils: Added 'decode' function.
+      It decodes values using the default_charset of the site.
+
+  Bug Fixes
+
+    - CMFDefault setuphandlers: Disabled password encryption.
+      'registeredNotify' and 'mailPassword' don't work with encrypted
+      passwords.
+
+    - CMFDefault skins: Fixed clipboard data validation.
+      Split off validateClipboardData from folder_paste_control.
+
+    - CMFDefault skins: Refactored and improved discussion_reply_form.
+
+    - CMFDefault utils: Fixed html_marshal function.
+      The return values are no longer escaped to avoid double quoting and no
+      longer stringified. The page templates take care of these steps.
+
+  Others
+
+    - CMFDefault RegistrationTool and skins: Refactored mail creation.
+      'mailPassword' now calls the 'password_email' script and
+      'registeredNotify' the 'registered_email' script. These scripts call the
+      templates and do the necessary string decoding and encoding.
+
+    - CMFDefault skins: Refactored 'logged_in' page and 'password_form'.
+      'logged_in' now redirects to the 'password_form' if a new member has to
+      change her password.
+
+    - Replaced deprecated 'manage_afterAdd' and 'manage_beforeDelete' hooks
+      in CookieCrumbler with a Z3-style event subscriber which does the
+      registration with the container's __before_traverse__.
+
+
+CMF 2.0.0-alpha (2006/01/22)
+
+  New Features
+
+    - CMFCore.FSPythonScript:  Customized versions now track the "original"
+      source from which they were customized, and can present a diff between
+      that version and their current source text.
+
+    - CMFDefault and CMFCalendar: Added locales directories with .pot files.
+      A modified i18nextract.py script from Zope 3 is used to extract
+      translatable strings from .py, .pt, .html and .xml files.
+
+    - CMFDefault.MetadataTool:  support arbitrary additional schemas.
+      The "stock" DublinCore-specific API is still accessible, implemented
+      via a special "DCMI" subobject.
+
+    - WorkflowTool and DCWorkflow: Improved add form for workflow objects.
+      Presettings can now be loaded from workflow settings in setup profiles.
+      This replaces the feature that did allow to load presettings from the
+      oldstyle workflow factories registry.
+
+    - WorkflowTool: Switched to generic plug-in mechanism for workflows.
+      Any class registered for IWorkflowDefinition can now be used in the
+      WorkflowTool.
+
+    - DCWorkflow: Added 'revision2' profile.
+      This replaces the hardcoded 'Revision 2' default workflow.
+
+    - CMFActionIcons, CMFCalendar, CMFDefault, CMFTopic, CMFUid:
+      use the new 'for_' argument in GenericSetup's profile registry API
+      to indicate that profiles are intended for CMFCore's ISiteRoot sites.
+
+    - CMFTopic:  added specialized GenericSetup support for topics, to
+      allow capturing criteria in a single XML file.
+
+    - CMFDefault and CMFTopic: Split off CMFTopic profile.
+      CMFTopic support is now configured by an optional extension profile.
+      CMFDefault no longer depends on CMFTopic.
+
+    - TypesTool: Improved add form for type info objects.
+      Presettings can now be loaded from type info settings in setup profiles.
+      This replaces the feature that did allow to load presettings from
+      registered (oldstyle) fti data.
+
+    - CMFCore.CachingPolicyManager: Caching policies can now control all the 
+      Cache-Control tokens defined in the HTTP 1.1 spec (s-maxage, public, 
+      private, no-transform).  When no-cache is enabled, a Pragma: no-cache 
+      header is also sent for HTTP 1.0 clients. Thanks go to Geoff Davis
+      for contributing the necessary patches.
+
+    - ActionsTool: Improved add form for 'CMF Action' objects.
+      Presettings can now be loaded from Action settings in setup profiles.
+
+    - CMFCore and GenericSetup: Added catalog tool setup handlers.
+      This includes node adapters for PluginIndexes, ZCTextIndex and ZCatalog.
+      Support for additional indexes can be added by providing INode adapters.
+      All indexes are cleared by this handler, so please make sure to
+      re-catalog existing content if necessary.
+
+    - GenericSetup.utils: Added new sub-framework for XML im- and export.
+      Instead of using ConfiguratorBase configurators should now implement
+      IBody or INode. These adapters should subclass from XMLAdapterBase or
+      NodeAdapterBase and mix in ObjectManagerHelpers and / or
+      PropertyManagerHelpers if needed.
+
+    - CMFCore.exportimport:  Added framework and interfaces for exporting
+      and importing content using the export / import contexts provided by
+      GenericSetup.
+
+    - The features of CMFonFive have been folder into CMFCore and
+      CMFDefault:
+
+      * Zope 3 menus (browser:menu) are bridged to CMF actions using the
+        portal_fiveactions tool. Any menuItem registered will be
+        accessible though the portal_actions tool, where the menu for
+        which the item was registered will be used as the action
+        category.
+
+      * The Zope 3 'cmf' skin layer provides integration between the
+        Zope3 standard macros and the CMF main template, by redefining
+        five_template.pt.
+
+    - TypeInformation and newstyle Actions: Added i18n support.
+      If 'i18n_domain' is specified, 'title' and 'description' are returned as
+      MassageID objects instead of strings. This allows to use different i18n
+      domains for different TypeInfos and Actions.
+
+    - Replaced user messages by Message objects to improve the i18n support.
+
+    - CMFDefault GenericSetup profile: Added CMF BTree Folder to the list of
+      automatically instantiated types in the types tool.
+      (http://www.zope.org/Collectors/CMF/371)
+
+    - CMFDefault skins: Added members_delete_form.
+      This adds a confirmation step to avoid accidental deletion of members.
+
+    - DirectoryView and derived classes can now have metadata associated with
+      them just like regular FSObject-derived objects can.
+
+    - DirectoryView and derived classes: It is now possible to customize what 
+      gets created to represent directories inside the directory view.
+      Previously, the code had a fixed assumption that all directories on the 
+      file system must turn into instances of 
+      CMFCore.DirectoryView.DirectoryView(Surrogate). It is now possible to 
+      register a class deriving from DirectoryView and have that be 
+      instantiated instead.
+
+    - ActionsTool: Added new way to define Actions.
+      'CMF Action Category' objects can now be added to the portal_actions
+      tool and 'CMF Action' objects to categories or subcategories. To
+      migrate oldstyle Actions (ActionInformation objects) you can create a
+      snapshot and re-import Actions using the portal_setup tool.
+
+    - TypesTool: TypeInformation classes are now pluggable.
+      Any class registered for ITypeInformation can now be used in the
+      TypesTool.
+
+  Bug Fixes
+
+    - PortalFolder: Synced _verifyObjectPaste code with OFS.CopySupport.
+      The behavior is almost the same as before, but the code is less tolerant
+      if content types are not registered properly.
+
+    - ActionProviderBase: getActionObject did stumble over newstyle Actions.
+
+    - CMFCore.exportimport.content:  Ensure that BODYFILE in our "faux"
+      request is a file-like object, FBO objects which expect to call its
+      'read' method.
+
+    - Got rid of the "CMF Site" and "Configured CMF Site" duality in the ZMI
+      add list by removing the "CMF Site" class registration in CMFDefault
+      and moving the "Configured CMF Site" registration from CMFSetup into
+      CMFDefault, renaming it to "CMF Site". 
+      (http://www.zope.org/Collectors/CMF/364)
+
+    - Updated RELEASE.txt and the slurp_release script to now use Subversion
+      instead of CVS, and to reflect the new tag/branch naming conventions
+      used in the CMF repository.
+
+    - Added testing framework to suppress / examine output from warnings
+      module and from zLOG.
+
+    - CMFUid/UniqueIdGeneratorTool.py: Replaced the old BTree.Length.Length
+      implementation by a simple counter. Using a BTree.Length.Length object
+      as counter may have caused setting the same unique id to multiple 
+      objects under high load. The tools counter gets automigrated on the 
+      first access. This is a forward port from CMF-1_5-branch before the 
+      CMF 1.5.2 release.
+
+    - CMFCore.utils.ToolInit: For icon registration to work with ToolInit
+      you would have to have the same product_name parameter as the actual
+      product name of the product. Now we just pick up that product name from
+      the product context instead, and ignore the product_name parameter (with
+      a deprecation warning).
+
+    - CMFSetup: Merged the registerClass and registerIcon call since 
+      registerClass is capable of registering icons.
+
+    - DublinCore and PortalFolder: Changed fallback in 'Type' method.
+      The fallback is only necessary if the related type info is missing.
+
+    - CMFCore.PortalContent: Wrong variable name in __call__ would blow up
+      if no default view could be found for a piece of content.
+
+  Others
+
+    - Moved GenericSetup out of the CMF package, it is now a standalone
+      product, but still distributed as part of the CMF package.
+
+    - Replaced use of deprecated 'zLOG' module with standard Python
+      'logging' module.
+
+    - TypeInformation: Removed support for old setting formats.
+      If TypeInformation objects are initialized with keyword arguments,
+      'actions' and 'aliases' keys have to use the format introduced in
+      CMF 1.5.
+
+    - CMFSetup and GenericSetup: Removed obsolete CMFSetup product.
+      Added __module_aliases__ to support setup tools created with CMFSetup. 
+
+    - DCWorkflow: Removed hardcoded default workflows.
+
+    - Workflow: Removed deprecated WorkflowInformation and getActionsFor.
+
+    - CMFCore and GenericSetup: Moved mechanisms for content export / import
+      to GenericSetup/content.py, and made more generic.
+
+    - CMFDefault: Removed PortalGenerator and manage_addCMFSite.
+
+    - Portal Types: Removed factory_type_information data.
+      TypesTool.listDefaultTypeInformation was removed, the 'fti' argument of
+      utils.ContentInit and the 'typeinfo_name' argument of
+      TypesTool.manage_addTypeInformation are ignored.
+
+    - CatalogTool: A new portal_catalog is now empty.
+      Removed enumerateIndexes, enumerateLexicons, enumerateColumns and
+      _initIndexes. Please use the setup tool to populate the catalog.
+
+    - CMFActionIcons, CMFCalendar and CMFTopic: Removed old install scripts.
+
+    - Refactored and extended CMFDefault.tests.test_join so it can be easily 
+      subclassed and reused for alternative membership implementations. All
+      that is needed is to ovverride _createPortal to return a portal with
+      the desired non-default membership-related tools installed.
+
+    - Remove all "old-style" actions from tools that still carried them 
+      (CMFDefault.MembershipTool, CMFDefault.PropertiesTool, 
+      CMFDefault.RegistrationTool, CMFDefault.SyndicationTool,
+      CMFDefault.DiscussionTool, CMFCore.UndoTool). These have been
+      superceded by "new-style" action information objects stored inside
+      the Actions Tool.
+
+    - Some simplifications to the slurp_release release helper script and
+      updates to the RELEASE.txt release instructions.
+
+    - The CMF now depends on Zope 2.9.0 including Five.
+
+    - Non-release packages moved out of the /CMF/ repository package:
+
+      o hotfixes moved to /CMF_Hotfixes
+
+      o others (CMFCollector, CMFStaging, CMFTracker, CMFWorkspaces)
+        moved to /CMF_Extras/
+
+    - To document how to create a CMF release from CMF a description is now
+      included in RELEASE.txt at the root of the CMF package. This text can
+      guide release managers or volunteers with the appropriate release
+      privileges.
+
+    - Added DeprecationWarning to the all_cmf_tests.py script. The canonical
+      way to run the tests is using "zopectl test".
+      (http://www.zope.org/Collectors/CMF/272)
+
+    - CMFDefault: Oldstyle DefaultWorkflowDefinition is no longer registered.
+      So you can't accidentally add this deprecated workflow.
+
+    - The "Access future portal content" was not used anywhere and has been
+      removed. (http://www.zope.org/Collectors/CMF/240)
+
+    - CMFDefault: Marked 'manage_addCMFSite' as deprecated.
+      To add a new CMF site, select 'Configured CMF Site'. The 'CMFDefault
+      Site' profile creates a new site like those you know from 'CMF Site'.
+
+    - CMFDefault: Cleaned out some super-ancient code for migrating
+      or fixing PTK content so it would work with CMF.
+
+    - CatalogTool: Removed deprecated indexes and metadata.
+      'Creator' was replaced by 'listCreators', 'portal_type' should be used
+      instead of 'meta_type'.
+
+    - CMFCore: Removed some deprecated aliases and constants.
+
+    - Permissions: Removed deprecated oldstyle permission modules.
+
+    - TypeInformation: Removed deprecated Type method.
+
+    - PortalFolder: Removed deprecated _morphSpec() and spec arguments.
+
+    - Portal Types: Removed deprecated _getViewFor / getActionById machinery.
+      PortalContent objects might be used as methods, so __call__() still
+      returns their default view.
+
+    - CMFDefault and CMFTopic skins: Removed deprecated DTML skins and layers.
+
+    - ActionsTool: Removed deprecated support for oldstyle Action Providers.
+      If Action Providers don't implement the ActionProvider interface they
+      are now ignored.
+
+    - Workflow: Removed deprecated WorkflowMethod machinery.
+
+
+CMF 1.6.2 (2006/08/15)
+
+  Bug Fixes
+
+    - CMFCore.FSDTMLMethod: Add class-default '_owner', to prevent unintended
+      acquisition of ownership (http://www.zope.org/Collectors/CMF/450)
+
+
+CMF 1.6.2-beta (2006/08/08)
+
+  Bug Fixes
+
+    - CMFCore.CatalogTool: Added 'cmf_uid' method to IndexableObjectWrapper
+      so that CMFUid UIDs are not acquired during indexing.
+      (http://www.zope.org/Collectors/CMF/446)
+
+    - CMFCore.PortalContent:  '_guessAliases' may leave type information
+      with a default alias of '(Default)';  work around that case.
+      (http://www.zope.org/Collectors/CMF/445)
+
+    - standard_error_message.pt was out of sync with Zope.
+      (http://www.zope.org/Collectors/Zope/2133)
+
+  Other
+
+    - CMFUid: Removed remnants of CMFSetup. Made sure the extension profile is
+      registered for ISiteRoot.
+
+    - CMFDefault + CMFTopic: Made sure extension profiles are registered for
+      ISiteRoot.
+
+
+CMF 1.6.1 (2006/06/09)
+
+  Other
+
+    - Updated GenericSetup to trunk at revision 68556
+
+
+CMF 1.6.1-beta (2006/06/03)
+
+  Bug Fixes
+
+    - Forward-ported fix for DCWorkflow global actions missing IDs
+      (http://www.zope.org/Collectors/CMF/308).
+
+    - CMFCore Expression: Fixed 'request' provided by expression contexts.
+      'request' was not set correctly if 'object' is not specified.
+
+    - CMFCore.interfaces._tools: Corrected the API given for
+      WorkflowDefinition.isActionSupported.
+      (http://www.zope.org/Collectors/CMF/407)
+
+    - IndexableObjectWrapper: Fixed list of provided interfaces.
+      The interfaces declared for the wrapped object are no longer masked.
+
+    - Got rid of zLOG in favor of python's logging module.
+
+
 CMF 1.6.0 (2006/02/26)
 
   Bug Fixes
@@ -42,6 +477,51 @@ CMF 1.6.0-beta (2006/02/19)
 
     - Changed TypesTool.manage_addTypeInformation method to log a warning
       instead of raise an exception if the typeinfo_name is not found.           
+
+
+CMF 1.5.7 (08/27/06)
+
+  No changes from 1.5.7-beta
+
+
+CMF 1.5.7-beta (08/17/06)
+
+  Bug Fixes
+
+    - CMFCore.CatalogTool: Added 'cmf_uid' method to IndexableObjectWrapper
+      so that CMFUid UIDs are not acquired during indexing.
+      (http://www.zope.org/Collectors/CMF/446)
+
+    - CMFCore.PortalContent:  '_guessAliases' may leave type information
+      with a default alias of '(Default)';  work around that case.
+      (http://www.zope.org/Collectors/CMF/445)
+
+    - CMFCore.CatalogTool:  Removed import of LOG object from ZCatalog in
+     favor of the new 'logger' pattern using Python's logging module.
+
+    - Forward-ported fix for DCWorkflow global actions missing IDs
+      (http://www.zope.org/Collectors/CMF/308).
+
+    - CMFCore Expression: Fixed 'request' provided by expression contexts.
+      'request' was not set correctly if 'object' is not specified.
+
+    - CMFCore.interfaces.portal_workflow: Corrected the API given for
+      WorkflowDefinition.isActionSupported.
+      (http://www.zope.org/Collectors/CMF/407)
+
+    - A re-used variable name led to rendering errors in some cases
+      (http://www.zope.org/Collectors/CMF/411)
+
+    - The line-endings problem fixed for file-based PythonScripts applies to
+      multi-line python code in file-based PageTemplates as well. The same
+      fix (universal line-endings support) is now used here too.
+      (http://www.zope.org/Collectors/CMF/403)
+
+  Other:
+
+    - The Actions Tool Action Providers ZMI tab now shows the action IDs
+      provided by each listed provider.
+      (http://www.zope.org/Collectors/CMF/447)
 
 
 CMF 1.5.6 (2006/02/26)

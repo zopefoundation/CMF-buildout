@@ -1,4 +1,4 @@
-CMF 2.1-beta (unreleased)
+CMF 2.1.0-beta (unreleased)
 
   New Features
 
@@ -8,7 +8,7 @@ CMF 2.1-beta (unreleased)
       (http://www.zope.org/Collectors/CMF/454)
 
 
-CMF 2.1-alpha (2006/10/09)
+CMF 2.1.0-alpha (2006/10/09)
 
   New Features
 

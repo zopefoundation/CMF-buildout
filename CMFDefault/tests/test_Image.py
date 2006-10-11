@@ -32,9 +32,12 @@ from Products.Five import zcml
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.testing import ConformsToContent
+from Products.CMFCore.tests.base.dummy import DummyCachingManager
+from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.security import OmnipotentUser
+from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.tests.base.testcase import setUpGenericSetup
@@ -197,11 +200,118 @@ class TestImageCopyPaste(SecurityRequestTest):
         review_state = self.workflow.getInfoFor(self.site.image2, 'review_state')
         self.assertEqual(review_state, 'published')
 
+class TestCaching(RequestTest):
+
+    def _extractFile( self ):
+
+        f = open( TEST_JPG, 'rb' )
+        try:
+            data = f.read()
+        finally:
+            f.close()
+
+        return TEST_JPG, data
+
+    def _getTargetClass(self):
+        from Products.CMFDefault.Image import Image
+
+        return Image
+
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
+
+    def test_index_html_with_304_from_cpm( self ):
+        self.root.caching_policy_manager = DummyCachingManagerWithPolicy()
+        path, ref = self._extractFile()
+
+        from webdav.common import rfc1123_date
+        from Products.CMFCore.tests.base.dummy import FAKE_ETAG
+
+        self.root.file = self._makeOne('test_file', 'test_image.jpg', file=ref)
+        file = self.root.file
+
+        mod_time = file.modified()
+
+        self.REQUEST.environ[ 'IF_MODIFIED_SINCE'
+                            ] = '%s;' % rfc1123_date( mod_time )
+        self.REQUEST.environ[ 'IF_NONE_MATCH'
+                            ] = '%s;' % FAKE_ETAG
+
+        data = file.index_html( self.REQUEST, self.RESPONSE )
+        self.assertEqual( len(data), 0 )
+        self.assertEqual( self.RESPONSE.getStatus(), 304 )
+
+    def test_caching( self ):
+        self.root.caching_policy_manager = DummyCachingManager()
+        original_len = len(self.RESPONSE.headers)
+        image = self._makeOne('test_image', 'test_image.jpg')
+        image = image.__of__(self.root)
+        image.index_html(self.REQUEST, self.RESPONSE)
+        headers = self.RESPONSE.headers
+        self.failUnless(len(headers) >= original_len + 3)
+        self.failUnless('foo' in headers.keys())
+        self.failUnless('bar' in headers.keys())
+        self.assertEqual(headers['test_path'], '/test_image')
+
+    def test_index_html_200_with_cpm( self ):
+        self.root.caching_policy_manager = DummyCachingManagerWithPolicy()
+        path, ref = self._extractFile()
+
+        from webdav.common import rfc1123_date
+
+        file = self._makeOne( 'test_file', 'test_image.jpg', file=ref )
+        file = file.__of__( self.root )
+
+        mod_time = file.modified()
+
+        data = file.index_html( self.REQUEST, self.RESPONSE )
+
+        # should behave the same as without cpm
+        self.assertEqual( len( data ), len( ref ) )
+        self.assertEqual( data, ref )
+        # ICK!  'HTTPResponse.getHeader' doesn't case-flatten the key!
+        self.assertEqual( self.RESPONSE.getHeader( 'Content-Length'.lower() )
+                        , str(len(ref)) )
+        self.assertEqual( self.RESPONSE.getHeader( 'Content-Type'.lower() )
+                        , 'image/jpeg' )
+        self.assertEqual( self.RESPONSE.getHeader( 'Last-Modified'.lower() )
+                        , rfc1123_date( mod_time ) )
+
+    def test_index_html_with_304_and_caching( self ):
+
+        # See collector #355
+        self.root.caching_policy_manager = DummyCachingManager()
+        original_len = len(self.RESPONSE.headers)
+        path, ref = self._extractFile()
+
+        from webdav.common import rfc1123_date
+
+        self.root.image = self._makeOne( 'test_image', 'test_image.gif' )
+        image = self.root.image
+        import transaction
+        transaction.savepoint(optimistic=True)
+
+        mod_time = image.modified()
+
+        self.REQUEST.environ[ 'IF_MODIFIED_SINCE'
+                            ] = '%s;' % rfc1123_date( mod_time+1 )
+
+        data = image.index_html( self.REQUEST, self.RESPONSE )
+
+        self.assertEqual( data, '' )
+        self.assertEqual( self.RESPONSE.getStatus(), 304 )
+
+        headers = self.RESPONSE.headers
+        self.failUnless(len(headers) >= original_len + 3)
+        self.failUnless('foo' in headers.keys())
+        self.failUnless('bar' in headers.keys())
+        self.assertEqual(headers['test_path'], '/test_image') 
 
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(TestImageElement),
         unittest.makeSuite(TestImageCopyPaste),
+        unittest.makeSuite(TestCaching),
         ))
 
 if __name__ == '__main__':

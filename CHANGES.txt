@@ -1,3 +1,13 @@
+CMF 2.1-beta (unreleased)
+
+  New Features
+
+    - CMFDefault.Image and CMFDefault.File: Overridden index_html methods
+      add Cache Policy Manager-awareness and thus bring these implementations
+      in line with CMFCore.FSFile and CMFCore.FSImage
+      (http://www.zope.org/Collectors/CMF/454)
+
+
 CMF 2.1-alpha (2006/10/09)
 
   New Features

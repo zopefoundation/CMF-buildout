@@ -24,6 +24,10 @@ from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFCore.PortalContent import PortalContent
+from Products.CMFCore.utils import _OldCacheHeaders
+from Products.CMFCore.utils import _setCacheHeaders
+from Products.CMFCore.utils import _ViewEmulator
+from Products.CMFCore.utils import _checkConditionalGET
 from Products.GenericSetup.interfaces import IDAVAware
 
 from DublinCore import DefaultDublinCoreImpl
@@ -164,6 +168,45 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
         self._edit( precondition, file )
         self.reindexObject()
 
+    security.declareProtected(View, 'index_html')
+    def index_html(self, REQUEST, RESPONSE):
+        """
+        The default view of the contents of a File or Image.
+
+        Returns the contents of the file or image.  Also, sets the
+        Content-Type HTTP header to the objects content type.
+        """
+        view = _ViewEmulator().__of__(self)
+
+        # If we have a conditional get, set status 304 and return
+        # no content 
+        if _checkConditionalGET(view, extra_context={}):
+            return ''
+
+        RESPONSE.setHeader('Content-Type', self.content_type)
+
+        # old-style If-Modified-Since header handling.
+        if self._setOldCacheHeaders():
+            # Make sure the CachingPolicyManager gets a go as well
+            _setCacheHeaders(view, extra_context={})
+            return ''
+
+        rendered = OFS.Image.File.index_html(self, REQUEST, RESPONSE)
+
+        # There are 2 Cache Managers which can be in play....
+        # need to decide which to use to determine where the cache headers
+        # are decided on.
+        if self.ZCacheable_getManager() is not None:
+            self.ZCacheable_set(None)
+        else:
+            _setCacheHeaders(view, extra_context={})
+
+        return rendered
+
+    def _setOldCacheHeaders(self):
+        # return False to disable this simple caching behaviour
+        return _OldCacheHeaders(self) 
+
     security.declareProtected(View, 'download')
     def download(self, REQUEST, RESPONSE):
         """Download this item.
@@ -180,7 +223,7 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
 
         RESPONSE.setHeader('Content-Disposition',
                            'attachment; filename=%s' % self.getId())
-        return OFS.Image.File.index_html(self, REQUEST, RESPONSE)
+        return self.index_html(self, REQUEST, RESPONSE)
 
     security.declareProtected(View, 'Format')
     def Format(self):

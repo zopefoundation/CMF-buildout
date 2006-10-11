@@ -18,11 +18,16 @@ $Id$
 
 import OFS.Image
 from AccessControl import ClassSecurityInfo
+from DateTime.DateTime import DateTime
 from Globals import InitializeClass
 from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFCore.PortalContent import PortalContent
+from Products.CMFCore.utils import _OldCacheHeaders
+from Products.CMFCore.utils import _setCacheHeaders
+from Products.CMFCore.utils import _ViewEmulator
+from Products.CMFCore.utils import _checkConditionalGET
 from Products.GenericSetup.interfaces import IDAVAware
 
 from DublinCore import DefaultDublinCoreImpl
@@ -166,9 +171,33 @@ class Image(PortalContent, OFS.Image.Image, DefaultDublinCoreImpl):
         Display the image, with or without standard_html_[header|footer],
         as appropriate.
         """
-        #if REQUEST['PATH_INFO'][-10:] == 'index_html':
-        #    return self.view(self, REQUEST)
-        return OFS.Image.Image.index_html(self, REQUEST, RESPONSE)
+        view = _ViewEmulator().__of__(self)
+
+        # If we have a conditional get, set status 304 and return
+        # no content
+        if _checkConditionalGET(view, extra_context={}):
+            return ''
+
+        # old-style If-Modified-Since header handling.
+        if self._setOldCacheHeaders():
+            # Make sure the CachingPolicyManager gets a go as well
+            _setCacheHeaders(view, extra_context={})
+            return ''
+
+        rendered = OFS.Image.Image.index_html(self, REQUEST, RESPONSE)
+
+        if self.ZCacheable_getManager() is None:
+            # not none cache manager already taken care of
+            _setCacheHeaders(view, extra_context={})
+        else:
+            self.ZCacheable_set(None)
+
+        return rendered
+
+    security.declarePrivate('_setOldCacheHeaders')
+    def _setOldCacheHeaders(self):
+        # return False to disable this simple caching behaviour
+        return _OldCacheHeaders(self)
 
     security.declareProtected(View, 'Format')
     def Format(self):

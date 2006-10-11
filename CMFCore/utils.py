@@ -742,9 +742,42 @@ def minimalpath(p):
             break
     return p.replace('\\','/')
 
+def _OldCacheHeaders(obj):
+    # Old-style checking of modified headers
+
+    REQUEST = getattr(obj, 'REQUEST', None)
+    if REQUEST is None:
+        return False
+
+    RESPONSE = REQUEST.RESPONSE
+    header = REQUEST.get_header('If-Modified-Since', None)
+    last_mod = long(obj.modified().timeTime())
+
+    if header is not None:
+        header = header.split(';')[0]
+        # Some proxies seem to send invalid date strings for this
+        # header. If the date string is not valid, we ignore it
+        # rather than raise an error to be generally consistent
+        # with common servers such as Apache (which can usually
+        # understand the screwy date string as a lucky side effect
+        # of the way they parse it).
+        try:
+            mod_since=DateTime(header)
+            mod_since=long(mod_since.timeTime())
+        except TypeError:
+            mod_since=None
+               
+        if mod_since is not None:
+            if last_mod > 0 and last_mod <= mod_since:
+                RESPONSE.setStatus(304)
+                return True
+
+    #Last-Modified will get stomped on by a cache policy if there is
+    #one set....
+    RESPONSE.setHeader('Last-Modified', rfc1123_date(last_mod))
 
 def _FSCacheHeaders(obj):
-    # Old-style setting of modified headers
+    # Old-style setting of modified headers for FS-based objects
 
     REQUEST = getattr(obj, 'REQUEST', None)
     if REQUEST is None:

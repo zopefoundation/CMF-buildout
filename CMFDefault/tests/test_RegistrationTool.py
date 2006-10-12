@@ -18,6 +18,8 @@ $Id$
 import unittest
 import Testing
 
+from zope.testing import doctest
+
 from Products.CMFCore.tests.base.testcase import RequestTest
 
 
@@ -137,6 +139,8 @@ Spam, spam, spam
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(RegistrationToolTests),
+        doctest.DocFileSuite('RegistrationTool.txt',
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
         ))
 
 if __name__ == '__main__':

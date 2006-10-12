@@ -1,0 +1,48 @@
+RegistrationTool
+
+  First we need some dummy code::
+
+    >>> class Member:
+    ...     def __repr__(self): return 'foo'
+    ...     def getProperty(self, id): return 'foo@example.org'
+    ...     def getPassword(self): return 'secret'
+
+    >>> class MembershipTool:
+    ...     def getMemberById(self, id): return Member()
+
+    >>> class MailHost:
+    ...     def send(self, messageText): self.lastMessage = messageText
+
+    >>> def password_email(**kw):
+    ...     return 'Reminder: %(member)s, %(password)s' % kw
+
+    >>> def mail_password_response(*args):
+    ...     return 'done'
+
+    >>> def registered_email(**kw):
+    ...     return 'Welcome: %(member)s, %(password)s, %(email)s' % kw
+
+  Now we can set up a RegistrationTool with dummy context::
+
+    >>> from Products.CMFDefault.RegistrationTool import RegistrationTool
+    >>> rtool = RegistrationTool()
+    >>> rtool.MailHost = MailHost()
+    >>> rtool.portal_membership = MembershipTool()
+    >>> rtool.password_email = password_email
+    >>> rtool.mail_password_response = mail_password_response
+    >>> rtool.registered_email = registered_email
+
+  mailPassword sends a password reminder and returns a response page::
+
+    >>> rtool.mailPassword('foo', None)
+    'done'
+
+    >>> rtool.MailHost.lastMessage
+    'Reminder: foo, secret'
+
+  registeredNotify sends a welcome message::
+
+    >>> rtool.registeredNotify('foo')
+
+    >>> rtool.MailHost.lastMessage
+    'Welcome: foo, secret, foo@example.org'

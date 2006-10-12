@@ -183,8 +183,6 @@ class RegistrationTool(BaseTool):
         host = self.MailHost
         host.send( mail_text )
 
-        return self.mail_password_response( self, self.REQUEST )
-
     security.declareProtected(ManagePortal, 'editMember')
     def editMember( self
                   , member_id

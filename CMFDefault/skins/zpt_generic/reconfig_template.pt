@@ -94,6 +94,17 @@
   </td>
  </tr>
  <tr>
+  <th i18n:translate="">Portal email encoding</th>
+  <td>
+   <input name="email_charset" value=""
+      tal:attributes="value form/email_charset" />
+   <dl class="FieldHelp">
+    <dd i18n:translate="">Charset used to encode emails send by the portal.
+     If empty, 'utf-8' is used if necessary.</dd>
+   </dl>
+  </td>
+ </tr>
+ <tr>
   <td>&nbsp;</td>
   <td>
    <metal:macro metal:use-macro="context/form_widgets/macros/buttons" />

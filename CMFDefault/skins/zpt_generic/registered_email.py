@@ -1,22 +1,17 @@
-##parameters=member=None, password='baz', email='foo@example.org'
+##parameters=member=None, password='secret', email='foo@example.org'
 ##
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
+from Products.CMFDefault.utils import makeEmail
+from Products.CMFDefault.utils import Message as _
 
 atool = getToolByName(script, 'portal_actions')
 ptool = getToolByName(script, 'portal_properties')
 utool = getToolByName(script, 'portal_url')
-default_charset = ptool.getProperty('default_charset')
 portal_url = utool()
 
 
 options = {}
-
-email_from_name = ptool.getProperty('email_from_name')
-email_from_address = ptool.getProperty('email_from_address')
-options['portal_address'] = '%s <%s>' % (email_from_name, email_from_address)
-options['member_address'] = '<%s>' % email
-options['content_type'] = 'text/plain; charset=%s' % default_charset
 
 options['portal_title'] = ptool.title()
 options['portal_description'] = ptool.getProperty('description')
@@ -28,10 +23,16 @@ options['password'] = password
 
 target = atool.getActionInfo('user/login')['url']
 options['login_url'] = '%s' % target
+
+email_from_name = ptool.getProperty('email_from_name')
 options['signature'] = email_from_name
 
-rendered = context.registered_email_template(**decode(options, script))
-if isinstance(rendered, unicode):
-    return rendered.encode(default_charset)
-else:
-    return rendered
+headers = {}
+headers['Subject'] = _(u'${portal_title}: Your Membership Information',
+                      mapping={'portal_title': decode(ptool.title(), script)})
+headers['From'] = '%s <%s>' % (email_from_name,
+                               ptool.getProperty('email_from_address'))
+headers['To'] = '<%s>' % email
+
+mtext = context.registered_email_template(**decode(options, script))
+return makeEmail(mtext, script, headers)

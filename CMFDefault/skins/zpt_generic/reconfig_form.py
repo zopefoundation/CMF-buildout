@@ -30,6 +30,7 @@ options['form'] = { 'action': target,
                     'validate_email': ptool.getProperty('validate_email'),
                     'default_charset':
                                     ptool.getProperty('default_charset', ''),
+                    'email_charset': ptool.getProperty('email_charset', ''),
                     'listButtonInfos': tuple(buttons) }
 
 return context.reconfig_template(**decode(options, script))

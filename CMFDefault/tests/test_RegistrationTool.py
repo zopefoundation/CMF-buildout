@@ -140,7 +140,7 @@ def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(RegistrationToolTests),
         doctest.DocFileSuite('RegistrationTool.txt',
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
+               optionflags=(doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)),
         ))
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 RegistrationTool
+----------------
 
   First we need some dummy code::
 
@@ -46,3 +47,164 @@ RegistrationTool
 
     >>> rtool.MailHost.lastMessage
     'Welcome: foo, secret, foo@example.org'
+
+password_email and registered_email
+-----------------------------------
+
+  First we need some dummy code::
+
+    >>> from os.path import join
+    >>> from OFS.Folder import Folder
+    >>> from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
+    >>> from Products.PythonScripts.PythonScript import PythonScript
+    >>> class DummySite(Folder):
+    ...     def getPhysicalRoot(self): return self
+    ...     def getPhysicalPath(self): return ('root',)
+    ...     def addResource(self, dir, f_name):
+    ...         r_name, f_type = f_name.split('.')
+    ...         if f_type == 'pt': r = ZopePageTemplate(r_name)
+    ...         if f_type == 'py': r = PythonScript(r_name)
+    ...         f = file(join(dir, f_name), 'r')
+    ...         r.write(f.read())
+    ...         f.close()
+    ...         setattr(self, r_name, r)
+
+    >>> class DummyTool(Folder):
+    ...     def getActionInfo(self, action_chain): return self.login_action
+    ...     def getProperty(self, id, d=None): return getattr(self, id, d)
+    ...     def title(self): return self.Title
+    ...     def __call__(self): return self.url
+
+    >>> from zope import interface
+    >>> from zope.i18n.interfaces import INegotiator
+    >>> class Negotiator:
+    ...     interface.implements(INegotiator)
+    ...     def getLanguage(*ignored): return 'test'
+
+    >>> from zope.i18n.testmessagecatalog import TestMessageFallbackDomain
+    >>> class DummyFallbackTranslationService:
+    ...     def translate(self, domain, msgid, mapping, context,
+    ...                   target_language, default):
+    ...         util = TestMessageFallbackDomain(domain)
+    ...         return util.translate(msgid, mapping, context,
+    ...                               target_language, default)
+
+  And have to set up security and dummy translations::
+
+    >>> from AccessControl.SecurityManagement import newSecurityManager
+    >>> from AccessControl.User import UnrestrictedUser
+    >>> newSecurityManager(None, UnrestrictedUser('god', '', ['Manager'], ''))
+
+    >>> from zope import component
+    >>> component.provideUtility(Negotiator())
+    >>> from Products.Five import i18n
+    >>> old_fallback_translation_service = i18n._fallback_translation_service
+    >>> i18n._fallback_translation_service = DummyFallbackTranslationService()
+
+  Now we can set up password_email and registered_email with dummy context::
+
+    >>> from Testing.makerequest import makerequest
+    >>> s = makerequest(DummySite())
+    >>> s.REQUEST.environ['HTTP_X_FORWARDED_FOR'] = 'NNN.NNN.NNN.NNN'
+    >>> s.portal_actions = s.portal_properties = s.portal_url = DummyTool()
+    >>> s.ZopeTime = 'NNNN/NN/NN'
+    >>> s.description = 'THE SITE DESCRIPTION.'
+    >>> s.default_charset = 'utf-8'
+    >>> s.email_from_name = u'WEBMASTER \xc4\xd6\xdc'.encode('utf-8')
+    >>> s.email_from_address = 'WEBMASTER@EXAMPLE.ORG'
+    >>> s.Title = 'WWW.EXAMPLE.ORG'
+    >>> s.url = 'PORTAL_URL'
+    >>> s.login_action = {'url': 'LOGIN_URL'}
+
+    >>> from os.path import dirname
+    >>> from Products import CMFDefault
+    >>> dir = join(dirname(CMFDefault.__file__), 'skins', 'zpt_generic')
+    >>> s.addResource(dir, 'password_email.py')
+    >>> s.addResource(dir, 'password_email_template.pt')
+    >>> s.addResource(dir, 'registered_email.py')
+    >>> s.addResource(dir, 'registered_email_template.pt')
+
+  password_email creates a complete reminder email::
+
+    >>> s.email_charset = 'iso-8859-1'
+    >>> print s.password_email()
+    Content-Type: text/plain; charset="us-ascii"
+    MIME-Version: 1.0
+    Content-Transfer-Encoding: 7bit
+    To: <foo@example.org>
+    From: WEBMASTER =?iso-8859-1?q?=C4=D6=DC?= <WEBMASTER@EXAMPLE.ORG>
+    Subject: [[cmf_default][WWW.EXAMPLE.ORG: Membership reminder]]
+    <BLANKLINE>
+    [[cmf_default][Your password: secret]]
+    <BLANKLINE>
+    [[cmf_default][Request made by IP NNN.NNN.NNN.NNN at NNNN/NN/NN]]
+    <BLANKLINE>
+    <BLANKLINE>
+
+    >>> s.email_charset = ''
+    >>> print s.password_email()
+    Content-Type: text/plain; charset="us-ascii"
+    MIME-Version: 1.0
+    Content-Transfer-Encoding: 7bit
+    To: <foo@example.org>
+    From: WEBMASTER =?utf-8?b?w4TDlsOc?= <WEBMASTER@EXAMPLE.ORG>
+    Subject: [[cmf_default][WWW.EXAMPLE.ORG: Membership reminder]]
+    <BLANKLINE>
+    [[cmf_default][Your password: secret]]
+    <BLANKLINE>
+    [[cmf_default][Request made by IP NNN.NNN.NNN.NNN at NNNN/NN/NN]]
+    <BLANKLINE>
+    <BLANKLINE>
+
+  registered_email creates a complete welcome email::
+
+    >>> s.email_charset = 'iso-8859-1'
+    >>> print s.registered_email()
+    Content-Type: text/plain; charset="iso-8859-1"
+    MIME-Version: 1.0
+    Content-Transfer-Encoding: quoted-printable
+    To: <foo@example.org>
+    From: WEBMASTER =?iso-8859-1?q?=C4=D6=DC?= <WEBMASTER@EXAMPLE.ORG>
+    Subject: [[cmf_default][WWW.EXAMPLE.ORG: Your Membership Information]]
+    <BLANKLINE>
+    [[cmf_default][You have been ... (You have been ...)]]
+    <BLANKLINE>
+    [[cmf_default][This describes the purpose of the website:]]
+    <BLANKLINE>
+    THE SITE DESCRIPTION.
+    <BLANKLINE>
+    [[cmf_default][Visit us at PORTAL_URL]]
+    <BLANKLINE>
+    [[cmf_default][Here is your login data (mind upper and lower case):]]
+    <BLANKLINE>
+    [[cmf_default][Member ID]]: foo
+    [[cmf_default][Password]]: secret
+    <BLANKLINE>
+    [[cmf_default][You can use this URL to log in:]]
+    <BLANKLINE>
+    LOGIN_URL
+    <BLANKLINE>
+    <BLANKLINE>
+    WEBMASTER =C4=D6=DC
+    <BLANKLINE>
+    <BLANKLINE>
+
+    >>> s.email_charset = ''
+    >>> print s.registered_email()
+    Content-Type: text/plain; charset="utf-8"
+    MIME-Version: 1.0
+    Content-Transfer-Encoding: base64
+    To: <foo@example.org>
+    From: WEBMASTER =?utf-8?b?w4TDlsOc?= <WEBMASTER@EXAMPLE.ORG>
+    Subject: [[cmf_default][WWW.EXAMPLE.ORG: Your Membership Information]]
+    <BLANKLINE>
+    W1tj...
+    <BLANKLINE>
+
+  Finally we have to clean up::
+
+    >>> i18n._fallback_translation_service = old_fallback_translation_service
+    >>> from AccessControl.SecurityManagement import noSecurityManager
+    >>> noSecurityManager()
+    >>> from zope.testing.cleanup import cleanUp
+    >>> cleanUp()

@@ -1,12 +1,5 @@
 <tal:page i18n:domain="cmf_default"
->Subject: <tal:span i18n:translate=""><tal:span i18n:name="portal_title"
-    tal:content="options/portal_title"
-    />: Your Membership Information</tal:span>
-From: <tal:span tal:replace="structure options/portal_address" />
-To: <tal:span tal:replace="structure options/member_address" />
-Content-Type: <tal:span tal:replace="structure options/content_type" />
-
-<tal:span i18n:translate=""
+><tal:span i18n:translate=""
 >You have been registered as a member of "<tal:span i18n:name="portal_title"
    tal:content="options/portal_title" />", which
 allows you to personalize your view of the website and participate in the

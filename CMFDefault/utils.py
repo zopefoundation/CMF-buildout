@@ -19,6 +19,8 @@ import os
 import re
 import StringIO
 import rfc822
+from email.Header import make_header
+from email.MIMEText import MIMEText
 from sgmllib import SGMLParser
 
 from AccessControl import ModuleSecurityInfo
@@ -26,6 +28,7 @@ from Globals import package_home
 from Products.PageTemplates.GlobalTranslationService \
         import getGlobalTranslationService
 from ZTUtils.Zope import complex_marshal
+from zope import i18n
 from zope.i18n.interfaces import IUserPreferredCharsets
 from zope.i18nmessageid import MessageFactory
 
@@ -465,6 +468,25 @@ def getBrowserCharset(request):
     envadapter = IUserPreferredCharsets(request)
     charsets = envadapter.getPreferredCharsets() or ['utf-8']
     return charsets[0]
+
+security.declarePublic('makeEmail')
+def makeEmail(mtext, context, headers={}):
+    """ Make email message.
+    """
+    ptool = getToolByName(context, 'portal_properties')
+    email_charset = ptool.getProperty('email_charset', None) or 'utf-8'
+    try:
+        msg = MIMEText(mtext.encode(), 'plain')
+    except UnicodeEncodeError:
+        msg = MIMEText(mtext.encode(email_charset), 'plain', email_charset)
+    for k, val in headers.items():
+        if isinstance(val, str):
+            val = decode(val, context)
+        if isinstance(val, i18n.Message):
+            val = translate(val, context)
+        header = make_header([ (w, email_charset) for w in val.split(' ') ])
+        msg[k] = str(header)
+    return msg.as_string()
 
 security.declarePublic('Message')
 Message = _ = MessageFactory('cmf_default')

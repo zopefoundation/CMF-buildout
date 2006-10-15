@@ -89,7 +89,10 @@ password_email and registered_email
     ...         return util.translate(msgid, mapping, context,
     ...                               target_language, default)
 
-  And have to set up security and dummy translations::
+  And have to set up traversing, security and dummy translations::
+
+    >>> from Products.CMFCore.tests.base.testcase import setUpTraversing
+    >>> setUpTraversing()
 
     >>> from AccessControl.SecurityManagement import newSecurityManager
     >>> from AccessControl.User import UnrestrictedUser

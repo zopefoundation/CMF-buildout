@@ -15,44 +15,50 @@
 $Id$
 """
 
-import Globals
 from AccessControl import ClassSecurityInfo
-from StructuredText.StructuredText import HTML
+from DocumentTemplate.DT_HTML import HTML as DTML_HTML
+from Globals import DTMLFile
+from Globals import HTML as Global_HTML
+from Globals import InitializeClass
+from OFS.DTMLDocument import DTMLDocument
+from StructuredText.StructuredText import HTML as STX_HTML
 
-from DirectoryView import registerFileExtension
-from DirectoryView import registerMetaType
-from FSObject import FSObject
-from permissions import FTPAccess
-from permissions import View
-from permissions import ViewManagementScreens
-from utils import _dtmldir
+from Products.CMFCore.DirectoryView import registerFileExtension
+from Products.CMFCore.DirectoryView import registerMetaType
+from Products.CMFCore.FSObject import FSObject
+from Products.CMFCore.permissions import FTPAccess
+from Products.CMFCore.permissions import View
+from Products.CMFCore.permissions import ViewManagementScreens
+from Products.CMFCore.utils import _dtmldir
+from Products.CMFCore.utils import _checkConditionalGET
+from Products.CMFCore.utils import _setCacheHeaders
 
+_DEFAULT_TEMPLATE_DTML = """\
+<dtml-var standard_html_header>
+<dtml-var cooked>
+<dtml-var standard_html_footer>"""
+
+_CUSTOMIZED_TEMPLATE_DTML = """\
+<dtml-var standard_html_header>
+<dtml-var stx fmt="structured-text">
+<dtml-var standard_html_footer>"""
 
 class FSSTXMethod(FSObject):
-
+    """ A chunk of StructuredText, rendered as a skin method of a CMF site.
     """
-        A chunk of StructuredText, rendered as a skin method of a
-        CMFSite.
-    """
-
     meta_type = 'Filesystem STX Method'
+    _owner = None # unowned
 
-    manage_options=( { 'label'      : 'Customize'
-                     , 'action'     : 'manage_main'
-                     }
-                   , { 'label'      : 'View'
-                     , 'action'     : ''
-                     , 'help'       : ('OFSP'
-                                      ,'DTML-DocumentOrMethod_View.stx'
-                                      )
-                     }
+    manage_options=({'label' : 'Customize','action' : 'manage_main'},
+                    {'label' : 'View','action' : '',
+                     'help' : ('OFSP' ,'DTML-DocumentOrMethod_View.stx')},
                    )
 
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)
 
     security.declareProtected(ViewManagementScreens, 'manage_main')
-    manage_main = Globals.DTMLFile('custstx', _dtmldir)
+    manage_main = DTMLFile('custstx', _dtmldir)
 
     #
     #   FSObject interface
@@ -61,7 +67,9 @@ class FSSTXMethod(FSObject):
         """
             Create a ZODB (editable) equivalent of this object.
         """
-        raise NotImplementedError, "See next week's model."
+        target = DTMLDocument(_CUSTOMIZED_TEMPLATE_DTML, __name__=self.getId())
+        target._setProperty('stx', self.raw, 'text')
+        return target
 
     def _readFile(self, reparse):
         """Read the data from the filesystem.
@@ -82,75 +90,79 @@ class FSSTXMethod(FSObject):
     class func_code:
         pass
 
-    func_code=func_code()
-    func_code.co_varnames= ()
-    func_code.co_argcount=0
-    func_code.__roles__=()
+    func_code = func_code()
+    func_code.co_varnames = ()
+    func_code.co_argcount = 0
+    func_code.__roles__ = ()
 
-    func_defaults__roles__=()
-    func_defaults=()
+    func_defaults__roles__ = ()
+    func_defaults = ()
 
     index_html = None   # No accidental acquisition
 
     default_content_type = 'text/html'
 
-    def cook( self ):
-        if not hasattr( self, '_v_cooked' ):
-            self._v_cooked = HTML(self.raw, level=1, header=0)
+    def cook(self):
+        if not hasattr(self, '_v_cooked'):
+            self._v_cooked = STX_HTML(self.raw, level=1, header=0)
         return self._v_cooked
 
-    _default_template = Globals.HTML( """\
-<dtml-var standard_html_header>
-<dtml-var cooked>
-<dtml-var standard_html_footer>""" )
+    _default_template = DTML_HTML(_DEFAULT_TEMPLATE_DTML)
 
     def __call__( self, REQUEST={}, RESPONSE=None, **kw ):
-        """
-            Return our rendered StructuredText.
+        """ Return our rendered StructuredText.
         """
         self._updateFromFS()
 
         if RESPONSE is not None:
             RESPONSE.setHeader( 'Content-Type', 'text/html' )
+
+        faux_wrapped = self.__of__(self) # we are our own "content"
+        if _checkConditionalGET(faux_wrapped, extra_context={}):
+            return ''
+
+        _setCacheHeaders(faux_wrapped, extra_context={})
+
         return self._render(REQUEST, RESPONSE, **kw)
 
-    security.declarePrivate( '_render' )
-    def _render( self, REQUEST={}, RESPONSE=None, **kw ):
-        """
-            Find the appropriate rendering template and use it to
-            render us.
-        """
-        template = getattr( self, 'stxmethod_view', self._default_template )
+    security.declarePrivate('modified')
+    def modified(self):
+        return self.getModTime()
 
-        if getattr( template, 'isDocTemp', 0 ):
-            posargs = ( self, REQUEST, RESPONSE )
+    security.declarePrivate('_render')
+    def _render(self, REQUEST={}, RESPONSE=None, **kw):
+        """ Find the appropriate rendering template and use it to render us.
+        """
+        template = getattr(self, 'stxmethod_view', self._default_template)
+
+        if getattr(template, 'isDocTemp', 0):
+            #posargs = (self, REQUEST, RESPONSE)
+            posargs = (self, REQUEST)
         else:
             posargs = ()
 
-        return template(*posargs, **{ 'cooked' : self.cook() } )
+        kwargs = {'cooked': self.cook()}
+        return template(*posargs, **kwargs)
 
-    security.declareProtected( FTPAccess, 'manage_FTPget' )
-    def manage_FTPget( self ):
-        """
-            Fetch our source for delivery via FTP.
+    security.declareProtected(FTPAccess, 'manage_FTPget')
+    def manage_FTPget(self):
+        """ Fetch our source for delivery via FTP.
         """
         return self.raw
 
-    security.declareProtected( ViewManagementScreens, 'PrincipiaSearchSource' )
-    def PrincipiaSearchSource( self ):
-        """
-            Fetch our source for indexing in a catalog.
+    security.declareProtected(ViewManagementScreens, 'PrincipiaSearchSource')
+    def PrincipiaSearchSource(self):
+        """ Fetch our source for indexing in a catalog.
         """
         return self.raw
 
-    security.declareProtected( ViewManagementScreens, 'document_src' )
+    security.declareProtected(ViewManagementScreens, 'document_src')
     def document_src( self ):
-        """
-            Fetch our source for indexing in a catalog.
+        """ Fetch our source for rendering in the ZMI.
         """
         return self.raw
 
-Globals.InitializeClass( FSSTXMethod )
+InitializeClass(FSSTXMethod)
 
-registerFileExtension( 'stx', FSSTXMethod )
-registerMetaType( 'STX Method', FSSTXMethod )
+registerFileExtension('stx', FSSTXMethod)
+registerMetaType('STX Method', FSSTXMethod)

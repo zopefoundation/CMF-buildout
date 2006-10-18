@@ -1,0 +1,179 @@
+##############################################################################
+#
+# Copyright (c) 2006 Zope Corporation and Contributors. All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+""" Unit tests for FSSTXMethod module.
+
+$Id$
+"""
+import unittest
+import os
+
+#import Testing
+
+from Products.CMFCore.tests.base.testcase import FSDVTest
+from Products.CMFCore.tests.base.testcase import RequestTest
+from Products.CMFCore.tests.base.testcase import SecurityTest
+
+class FSSTXMaker(FSDVTest):
+
+    def _makeOne( self, id, filename ):
+        from Products.CMFCore.FSMetadata import FSMetadata
+        from Products.CMFCore.FSSTXMethod import FSSTXMethod
+        path = os.path.join(self.skin_path_name, filename)
+        metadata = FSMetadata(path)
+        metadata.read()
+        return FSSTXMethod( id, path, properties=metadata.getProperties() )
+
+_EXPECTED_HTML = """\
+<html>
+<body>
+
+<h1>Title Goes Here</h1>
+<h2>  Subhead Here</h2>
+<p>    And this is a paragraph,
+    broken across lines.</p>
+
+</body>
+</html>
+"""
+
+class FSSTXMethodTests(RequestTest, FSSTXMaker):
+
+    def setUp(self):
+        FSSTXMaker.setUp(self)
+        RequestTest.setUp(self)
+        self.root.standard_html_header = (
+                lambda *args, **kw: '<html>\n<body>\n')
+        self.root.standard_html_footer = (
+                lambda *args, **kw: '</body>\n</html>\n')
+
+    def tearDown(self):
+        RequestTest.tearDown(self)
+        FSSTXMaker.tearDown(self)
+
+    def test___call__( self ):
+        script = self._makeOne( 'testSTX', 'testSTX.stx' )
+        script = script.__of__(self.app)
+        self.assertEqual(script(self.REQUEST), _EXPECTED_HTML)
+
+    def test_caching( self ):
+        #   Test HTTP caching headers.
+        from Products.CMFCore.tests.base.dummy import DummyCachingManager
+        self.root.caching_policy_manager = DummyCachingManager()
+        original_len = len( self.RESPONSE.headers )
+        script = self._makeOne('testSTX', 'testSTX.stx')
+        script = script.__of__(self.root)
+        script(self.REQUEST, self.RESPONSE)
+        self.failUnless( len( self.RESPONSE.headers ) >= original_len + 2 )
+        self.failUnless( 'foo' in self.RESPONSE.headers.keys() )
+        self.failUnless( 'bar' in self.RESPONSE.headers.keys() )
+
+    def test_ownership( self ):
+        script = self._makeOne( 'testSTX', 'testSTX.stx' )
+        script = script.__of__(self.root)
+        # FSSTXMethod has no owner
+        owner_tuple = script.getOwnerTuple()
+        self.assertEqual(owner_tuple, None)
+
+        # and ownership is not acquired [CMF/450]
+        self.root._owner= ('/foobar', 'baz')
+        owner_tuple = script.getOwnerTuple()
+        self.assertEqual(owner_tuple, None)
+
+    def test_304_response_from_cpm( self ):
+        # test that we get a 304 response from the cpm via this template
+        from DateTime import DateTime
+        from webdav.common import rfc1123_date
+        from Products.CMFCore.tests.base.dummy \
+            import DummyCachingManagerWithPolicy
+        from Products.CMFCore.tests.base.dummy import DummyContent
+
+        mod_time = DateTime()
+        self.root.caching_policy_manager = DummyCachingManagerWithPolicy()
+        script = self._makeOne('testSTX', 'testSTX.stx')
+        script = script.__of__(self.root)
+        self.REQUEST.environ[ 'IF_MODIFIED_SINCE'
+                            ] = '%s;' % rfc1123_date( mod_time+3600 )
+        data = script(self.REQUEST, self.RESPONSE)
+
+        self.assertEqual( data, '' )
+        self.assertEqual( self.RESPONSE.getStatus(), 304 )
+
+class FSSTXMethodCustomizationTests( SecurityTest, FSSTXMaker ):
+
+    def setUp( self ):
+        from OFS.Folder import Folder
+        FSSTXMaker.setUp(self)
+        SecurityTest.setUp( self )
+
+        self.root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
+        self.skins = self.root.portal_skins
+
+        self.skins._setObject( 'custom', Folder( 'custom' ) )
+        self.custom = self.skins.custom
+
+        self.skins._setObject( 'fsdir', Folder( 'fsdir' ) )
+        self.fsdir = self.skins.fsdir
+
+        self.fsdir._setObject( 'testSTX'
+                             , self._makeOne( 'testSTX', 'testSTX.stx' ) )
+
+        self.fsSTX = self.fsdir.testSTX
+
+    def test_customize( self ):
+        from OFS.DTMLDocument import DTMLDocument
+        from Products.CMFCore.FSSTXMethod import _CUSTOMIZED_TEMPLATE_DTML
+
+        self.fsSTX.manage_doCustomize(folder_path='custom')
+
+        self.assertEqual(len(self.custom.objectIds()), 1)
+        self.failUnless('testSTX' in self.custom.objectIds())
+        target = self.custom._getOb('testSTX')
+
+        self.failUnless(isinstance(target, DTMLDocument))
+
+        propinfo = target.propdict()['stx']
+        self.assertEqual(propinfo['type'], 'text')
+        self.assertEqual(target.stx, self.fsSTX.raw)
+
+        self.assertEqual(target.document_src(), _CUSTOMIZED_TEMPLATE_DTML)
+
+    def test_customize_caching(self):
+        # Test to ensure that cache manager associations survive customizing
+        from Products.StandardCacheManagers import RAMCacheManager
+        cache_id = 'gofast'
+        RAMCacheManager.manage_addRAMCacheManager( self.root
+                                                 , cache_id
+                                                 , REQUEST=None
+                                                 )
+        self.fsSTX.ZCacheable_setManagerId(cache_id, REQUEST=None)
+
+        self.assertEqual(self.fsSTX.ZCacheable_getManagerId(), cache_id)
+
+        self.fsSTX.manage_doCustomize(folder_path='custom')
+        custom_pt = self.custom.testSTX
+
+        self.assertEqual(custom_pt.ZCacheable_getManagerId(), cache_id)
+
+    def tearDown(self):
+        SecurityTest.tearDown(self)
+        FSSTXMaker.tearDown(self)
+
+
+def test_suite():
+    return unittest.TestSuite((
+        unittest.makeSuite(FSSTXMethodTests),
+        unittest.makeSuite(FSSTXMethodCustomizationTests),
+        ))
+
+if __name__ == '__main__':
+    unittest.main(defaultTest='test_suite')

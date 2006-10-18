@@ -2,6 +2,9 @@ CMF 2.1.0-beta (unreleased)
 
   New Features
 
+    - CMFCore.FSSTXMethdo:  Modernized, added tests, made customization
+      possible.
+
     - Portal: Added 'email_charset' property.
 
     - CMFDefault utils: Added 'makeEmail' function.

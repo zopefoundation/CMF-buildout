@@ -13,12 +13,12 @@
 </dtml-let>
 <dtml-var manage_tabs>
 
-  <FORM ACTION="manage_doCustomize" METHOD="POST">
-    <TABLE CELLSPACING="2">
-      <TR>
-	<TH ALIGN="LEFT" VALIGN="TOP" class="form-label">Id</TH>
-	<TD ALIGN="LEFT" VALIGN="TOP" class="form-element"><dtml-var getId></TD>
-      </TR>
+  <form ACTION="manage_doCustomize" METHOD="POST">
+    <table CELLSPACING="2">
+      <tr>
+	<th ALIGN="LEFT" VALIGN="TOP" class="form-label">Id</th>
+	<td ALIGN="LEFT" VALIGN="TOP" class="form-element"><dtml-var getId></td>
+      </tr>
       <tr>
 	<th align="left" valign="top" class="form-label">
         <em>Size</em>
@@ -58,8 +58,8 @@
           <input type="submit" name="submit" value=" Customize ">
         </td>
       </tr>
-    </TABLE>
-  </FORM>
+    </table>
+  </form>
 <table border="1" bgcolor="#cccccc"><tr><td>
 <pre>
 <dtml-var document_src>

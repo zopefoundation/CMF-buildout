@@ -2,8 +2,10 @@ CMF 2.1.0-beta (unreleased)
 
   New Features
 
-    - CMFCore.FSSTXMethdo:  Modernized, added tests, made customization
-      possible.
+    - Added CMFCore.FSRestMethod:  ReST equivalent of FSSTXMethod.
+
+    - CMFCore.FSSTXMethod:  Modernized, added tests, made customization
+      possible (now renders via ZPT by default, using 'main_template').
 
     - Portal: Added 'email_charset' property.
 

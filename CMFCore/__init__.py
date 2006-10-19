@@ -35,6 +35,7 @@ from permissions import AddPortalFolders
 
 
 # Make sure security is initialized
+import FSReSTMethod
 import FSSTXMethod
 import PortalContent
 import PortalObject

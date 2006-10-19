@@ -11,19 +11,18 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-""" FSSTXMethod: Filesystem methodish Structured Text document.
+""" FSReSTMethod: Filesystem methodish Structured Text document.
 
 $Id$
 """
 
 from AccessControl import ClassSecurityInfo
-from DocumentTemplate.DT_HTML import HTML as DTML_HTML
+from docutils.core import publish_parts
+from docutils.writers.html4css1 import Writer
 from Globals import DTMLFile
-from Globals import HTML as Global_HTML
 from Globals import InitializeClass
-from OFS.DTMLDocument import DTMLDocument
-from StructuredText.StructuredText import HTML as STX_HTML
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
+from Products.ZReST.ZReST import Warnings
 
 from Products.CMFCore.DirectoryView import registerFileExtension
 from Products.CMFCore.DirectoryView import registerMetaType
@@ -36,20 +35,8 @@ from Products.CMFCore.utils import _checkConditionalGET
 from Products.CMFCore.utils import _setCacheHeaders
 from Products.CMFCore.utils import _ViewEmulator
 
-_STX_TEMPLATE = 'ZPT'  # or 'DTML'
-
-_DEFAULT_TEMPLATE_DTML = """\
-<dtml-var standard_html_header>
-<dtml-var cooked>
-<dtml-var standard_html_footer>"""
-
-_CUSTOMIZED_TEMPLATE_DTML = """\
-<dtml-var standard_html_header>
-<dtml-var stx fmt="structured-text">
-<dtml-var standard_html_footer>"""
-
 _DEFAULT_TEMPLATE_ZPT = """\
-<html metal:use-macro="context/main_template/macros/master">
+<html metal:use-macro="context/main_template/macros/main">
 <body>
 
 <metal:block metal:fill-slot="body"
@@ -68,8 +55,8 @@ _CUSTOMIZED_TEMPLATE_ZPT = """\
 
 <metal:block metal:fill-slot="body"
 ><div tal:define="std modules/Products/PythonScripts/standard;
-                  stx nocall:std/structured_text;"
-      tal:replace="structure python:stx(template.stx)">
+                  rest nocall:std/restructured_text;"
+      tal:replace="structure python:rest(template.rest)">
 COOKED TEXT HERE
 </div>
 </metal:block>
@@ -78,11 +65,14 @@ COOKED TEXT HERE
 </html>
 """
 
-class FSSTXMethod(FSObject):
+class FSReSTMethod(FSObject):
     """ A chunk of StructuredText, rendered as a skin method of a CMF site.
     """
-    meta_type = 'Filesystem STX Method'
+    meta_type = 'Filesystem ReST Method'
     _owner = None # unowned
+    report_level = 1
+    input_encoding = 'ascii'
+    output_encoding = 'utf8'
 
     manage_options=({'label' : 'Customize','action' : 'manage_main'},
                     {'label' : 'View','action' : '',
@@ -102,13 +92,8 @@ class FSSTXMethod(FSObject):
         """
             Create a ZODB (editable) equivalent of this object.
         """
-        if _STX_TEMPLATE == 'DTML':
-            target = DTMLDocument(_CUSTOMIZED_TEMPLATE_DTML,
-                                  __name__=self.getId())
-        elif _STX_TEMPLATE == 'ZPT':
-            target = ZopePageTemplate(self.getId(), _CUSTOMIZED_TEMPLATE_ZPT)
-
-        target._setProperty('stx', self.raw, 'text')
+        target = ZopePageTemplate(self.getId(), _CUSTOMIZED_TEMPLATE_ZPT)
+        target._setProperty('rest', self.raw, 'text')
         return target
 
     def _readFile(self, reparse):
@@ -144,12 +129,26 @@ class FSSTXMethod(FSObject):
 
     def cook(self):
         if not hasattr(self, '_v_cooked'):
-            self._v_cooked = STX_HTML(self.raw, level=1, header=0)
+            settings = {
+                'halt_level': 6,
+                'report_level' : self.report_level,
+                'input_encoding': self.input_encoding,
+                'output_encoding': self.output_encoding,
+                'initial_header_level' : 1,
+                'stylesheet' : None,
+                'stylesheet_path' : None,
+                'pub.settings.warning_stream' :  Warnings(),
+                'file_insertion_enabled' : 0,
+                'raw_enabled' : 0,
+                }
+
+            parts = publish_parts(self.raw, writer=Writer(),
+                                settings_overrides=settings)
+            self._v_cooked = parts['html_body']
         return self._v_cooked
 
-    _default_DTML_template = DTML_HTML(_DEFAULT_TEMPLATE_DTML)
-    _default_ZPT_template = ZopePageTemplate('stxmethod_view',
-                                             _DEFAULT_TEMPLATE_ZPT, 'text/html')
+    _default_template = ZopePageTemplate('restmethod_view',
+                                         _DEFAULT_TEMPLATE_ZPT, 'text/html')
 
     def __call__( self, REQUEST={}, RESPONSE=None, **kw ):
         """ Return our rendered StructuredText.
@@ -175,14 +174,7 @@ class FSSTXMethod(FSObject):
     def _render(self, REQUEST={}, RESPONSE=None, **kw):
         """ Find the appropriate rendering template and use it to render us.
         """
-        if _STX_TEMPLATE == 'DTML':
-            default_template = self._default_DTML_template
-        elif _STX_TEMPLATE == 'ZPT':
-            default_template = self._default_ZPT_template
-        else:
-            raise TypeError('Invalid STX template: %s' % _STX_TEMPLATE)
-
-        template = getattr(self, 'stxmethod_view', default_template)
+        template = getattr(self, 'restmethod_view', self._default_template)
 
         if getattr(template, 'isDocTemp', 0):
             #posargs = (self, REQUEST, RESPONSE)
@@ -211,7 +203,7 @@ class FSSTXMethod(FSObject):
         """
         return self.raw
 
-InitializeClass(FSSTXMethod)
+InitializeClass(FSReSTMethod)
 
-registerFileExtension('stx', FSSTXMethod)
-registerMetaType('STX Method', FSSTXMethod)
+registerFileExtension('rst', FSReSTMethod)
+registerMetaType('ReST Method', FSReSTMethod)

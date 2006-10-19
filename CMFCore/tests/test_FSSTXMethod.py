@@ -16,8 +16,7 @@ $Id$
 """
 import unittest
 import os
-
-#import Testing
+import re
 
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
@@ -46,28 +45,81 @@ _EXPECTED_HTML = """\
 </html>
 """
 
-class FSSTXMethodTests(RequestTest, FSSTXMaker):
+_TEST_MAIN_TEMPLATE = """\
+<html metal:define-macro="main">
+<body>
+
+<metal:block define-slot="body">
+<h1>Title Goes Here</h1>
+<h2>  Subhead Here</h2>
+<p>    And this is a paragraph,
+    broken across lines.</p>
+</metal:block>
+</body>
+</html>
+"""
+
+WS = re.compile(r'\s+')
+
+def _normalize_whitespace(text):
+    return ' '.join(WS.split(text))
+
+
+class _TemplateSwitcher:
 
     def setUp(self):
-        FSSTXMaker.setUp(self)
-        RequestTest.setUp(self)
-        self.root.standard_html_header = (
-                lambda *args, **kw: '<html>\n<body>\n')
-        self.root.standard_html_footer = (
-                lambda *args, **kw: '</body>\n</html>\n')
+        import Products.CMFCore.FSSTXMethod
+        self._old_STX_TEMPLATE = Products.CMFCore.FSSTXMethod._STX_TEMPLATE
 
     def tearDown(self):
         RequestTest.tearDown(self)
         FSSTXMaker.tearDown(self)
+        self._setWhichTemplate(self._old_STX_TEMPLATE)
 
-    def test___call__( self ):
+    def _setWhichTemplate(self, which):
+        import Products.CMFCore.FSSTXMethod
+        from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
+        Products.CMFCore.FSSTXMethod._STX_TEMPLATE = which
+
+        if which == 'DTML':
+            self.root.standard_html_header = (
+                    lambda *args, **kw: '<html>\n<body>\n')
+            self.root.standard_html_footer = (
+                    lambda *args, **kw: '</body>\n</html>\n')
+        elif which == 'ZPT':
+            main = ZopePageTemplate('main_template', _TEST_MAIN_TEMPLATE)
+            self.root._setOb('main_template', main)
+
+class FSSTXMethodTests(RequestTest, FSSTXMaker, _TemplateSwitcher):
+
+    def setUp(self):
+        _TemplateSwitcher.setUp(self)
+        FSSTXMaker.setUp(self)
+        RequestTest.setUp(self)
+
+    def tearDown(self):
+        RequestTest.tearDown(self)
+        FSSTXMaker.tearDown(self)
+        _TemplateSwitcher.tearDown(self)
+
+    def test___call___with_DTML( self ):
+        self._setWhichTemplate('DTML')
         script = self._makeOne( 'testSTX', 'testSTX.stx' )
         script = script.__of__(self.app)
-        self.assertEqual(script(self.REQUEST), _EXPECTED_HTML)
+        self.assertEqual(_normalize_whitespace(script(self.REQUEST)),
+                         _normalize_whitespace(_EXPECTED_HTML))
+
+    def test___call___with_ZPT( self ):
+        self._setWhichTemplate('ZPT')
+        script = self._makeOne( 'testSTX', 'testSTX.stx' )
+        script = script.__of__(self.app)
+        self.assertEqual(_normalize_whitespace(script(self.REQUEST)),
+                         _normalize_whitespace(_EXPECTED_HTML))
 
     def test_caching( self ):
         #   Test HTTP caching headers.
         from Products.CMFCore.tests.base.dummy import DummyCachingManager
+        self._setWhichTemplate('DTML')
         self.root.caching_policy_manager = DummyCachingManager()
         original_len = len( self.RESPONSE.headers )
         script = self._makeOne('testSTX', 'testSTX.stx')
@@ -108,12 +160,22 @@ class FSSTXMethodTests(RequestTest, FSSTXMaker):
         self.assertEqual( data, '' )
         self.assertEqual( self.RESPONSE.getStatus(), 304 )
 
-class FSSTXMethodCustomizationTests( SecurityTest, FSSTXMaker ):
+ADD_ZPT = 'Add page templates'
+ZPT_META_TYPES = ( { 'name'        : 'Page Template'
+                   , 'action'      : 'manage_addPageTemplate'
+                   , 'permission'  : ADD_ZPT
+                   }
+                 ,
+                 )
+
+class FSSTXMethodCustomizationTests( SecurityTest, FSSTXMaker,
+                                     _TemplateSwitcher ):
 
     def setUp( self ):
         from OFS.Folder import Folder
         FSSTXMaker.setUp(self)
         SecurityTest.setUp( self )
+        _TemplateSwitcher.setUp( self )
 
         self.root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
         self.skins = self.root.portal_skins
@@ -129,9 +191,16 @@ class FSSTXMethodCustomizationTests( SecurityTest, FSSTXMaker ):
 
         self.fsSTX = self.fsdir.testSTX
 
-    def test_customize( self ):
+    def tearDown( self ):
+        _TemplateSwitcher.tearDown( self )
+        FSSTXMaker.tearDown( self )
+        SecurityTest.tearDown( self )
+
+    def test_customize_with_DTML( self ):
         from OFS.DTMLDocument import DTMLDocument
         from Products.CMFCore.FSSTXMethod import _CUSTOMIZED_TEMPLATE_DTML
+
+        self._setWhichTemplate('DTML')
 
         self.fsSTX.manage_doCustomize(folder_path='custom')
 
@@ -147,10 +216,33 @@ class FSSTXMethodCustomizationTests( SecurityTest, FSSTXMaker ):
 
         self.assertEqual(target.document_src(), _CUSTOMIZED_TEMPLATE_DTML)
 
+    def test_customize_with_ZPT( self ):
+        from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
+        from Products.CMFCore.FSSTXMethod import _CUSTOMIZED_TEMPLATE_ZPT
+
+        self._setWhichTemplate('ZPT')
+        self.custom.all_meta_types = ZPT_META_TYPES
+
+        self.fsSTX.manage_doCustomize(folder_path='custom')
+
+        self.assertEqual(len(self.custom.objectIds()), 1)
+        self.failUnless('testSTX' in self.custom.objectIds())
+        target = self.custom._getOb('testSTX')
+
+        self.failUnless(isinstance(target, ZopePageTemplate))
+
+        propinfo = target.propdict()['stx']
+        self.assertEqual(propinfo['type'], 'text')
+        self.assertEqual(target.stx, self.fsSTX.raw)
+
+        self.assertEqual(target.document_src(), _CUSTOMIZED_TEMPLATE_ZPT)
+
     def test_customize_caching(self):
         # Test to ensure that cache manager associations survive customizing
         from Products.StandardCacheManagers import RAMCacheManager
         cache_id = 'gofast'
+        self._setWhichTemplate('ZPT')
+        self.custom.all_meta_types = ZPT_META_TYPES
         RAMCacheManager.manage_addRAMCacheManager( self.root
                                                  , cache_id
                                                  , REQUEST=None

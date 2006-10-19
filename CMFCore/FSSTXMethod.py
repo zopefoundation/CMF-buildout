@@ -1,6 +1,7 @@
 ##############################################################################
 #
-# Copyright (c) 2001 Zope Corporation and Contributors. All Rights Reserved.
+# Copyright (c) 2001, 2006 Zope Corporation and Contributors.
+# All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
@@ -22,6 +23,7 @@ from Globals import HTML as Global_HTML
 from Globals import InitializeClass
 from OFS.DTMLDocument import DTMLDocument
 from StructuredText.StructuredText import HTML as STX_HTML
+from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 
 from Products.CMFCore.DirectoryView import registerFileExtension
 from Products.CMFCore.DirectoryView import registerMetaType
@@ -32,6 +34,9 @@ from Products.CMFCore.permissions import ViewManagementScreens
 from Products.CMFCore.utils import _dtmldir
 from Products.CMFCore.utils import _checkConditionalGET
 from Products.CMFCore.utils import _setCacheHeaders
+from Products.CMFCore.utils import _ViewEmulator
+
+_STX_TEMPLATE = 'ZPT'  # or 'DTML'
 
 _DEFAULT_TEMPLATE_DTML = """\
 <dtml-var standard_html_header>
@@ -42,6 +47,50 @@ _CUSTOMIZED_TEMPLATE_DTML = """\
 <dtml-var standard_html_header>
 <dtml-var stx fmt="structured-text">
 <dtml-var standard_html_footer>"""
+
+_DEFAULT_TEMPLATE_ZPT = """\
+<html metal:use-macro="context/main_template/macros/main">
+<body>
+
+<metal:block metal:fill-slot="body"
+><div tal:replace="structure options/cooked">
+COOKED TEXT HERE
+</div>
+</metal:block>
+
+</body>
+</html>
+"""
+
+_DEFAULT_TEMPLATE_ZPT = """\
+<html metal:use-macro="context/main_template/macros/master">
+<body>
+
+<metal:block metal:fill-slot="body"
+><div tal:replace="structure options/cooked">
+COOKED TEXT HERE
+</div>
+</metal:block>
+
+</body>
+</html>
+"""
+
+_CUSTOMIZED_TEMPLATE_ZPT = """\
+<html metal:use-macro="context/main_template/macros/master">
+<body>
+
+<metal:block metal:fill-slot="body"
+><div tal:define="std modules/Products/PythonScripts/standard;
+                  stx nocall:std/structured_text;"
+      tal:replace="structure python:stx(template.stx)">
+COOKED TEXT HERE
+</div>
+</metal:block>
+
+</body>
+</html>
+"""
 
 class FSSTXMethod(FSObject):
     """ A chunk of StructuredText, rendered as a skin method of a CMF site.
@@ -67,7 +116,12 @@ class FSSTXMethod(FSObject):
         """
             Create a ZODB (editable) equivalent of this object.
         """
-        target = DTMLDocument(_CUSTOMIZED_TEMPLATE_DTML, __name__=self.getId())
+        if _STX_TEMPLATE == 'DTML':
+            target = DTMLDocument(_CUSTOMIZED_TEMPLATE_DTML,
+                                  __name__=self.getId())
+        elif _STX_TEMPLATE == 'ZPT':
+            target = ZopePageTemplate(self.getId(), _CUSTOMIZED_TEMPLATE_ZPT)
+
         target._setProperty('stx', self.raw, 'text')
         return target
 
@@ -107,7 +161,9 @@ class FSSTXMethod(FSObject):
             self._v_cooked = STX_HTML(self.raw, level=1, header=0)
         return self._v_cooked
 
-    _default_template = DTML_HTML(_DEFAULT_TEMPLATE_DTML)
+    _default_DTML_template = DTML_HTML(_DEFAULT_TEMPLATE_DTML)
+    _default_ZPT_template = ZopePageTemplate('stxmethod_view',
+                                             _DEFAULT_TEMPLATE_ZPT, 'text/html')
 
     def __call__( self, REQUEST={}, RESPONSE=None, **kw ):
         """ Return our rendered StructuredText.
@@ -117,11 +173,11 @@ class FSSTXMethod(FSObject):
         if RESPONSE is not None:
             RESPONSE.setHeader( 'Content-Type', 'text/html' )
 
-        faux_wrapped = self.__of__(self) # we are our own "content"
-        if _checkConditionalGET(faux_wrapped, extra_context={}):
+        view = _ViewEmulator(self.getId()).__of__(self)
+        if _checkConditionalGET(view, extra_context={}):
             return ''
 
-        _setCacheHeaders(faux_wrapped, extra_context={})
+        _setCacheHeaders(view, extra_context={})
 
         return self._render(REQUEST, RESPONSE, **kw)
 
@@ -133,7 +189,14 @@ class FSSTXMethod(FSObject):
     def _render(self, REQUEST={}, RESPONSE=None, **kw):
         """ Find the appropriate rendering template and use it to render us.
         """
-        template = getattr(self, 'stxmethod_view', self._default_template)
+        if _STX_TEMPLATE == 'DTML':
+            default_template = self._default_DTML_template
+        elif _STX_TEMPLATE == 'ZPT':
+            default_template = self._default_ZPT_template
+        else:
+            raise TypeError('Invalid STX template: %s' % _STX_TEMPLATE)
+
+        template = getattr(self, 'stxmethod_view', default_template)
 
         if getattr(template, 'isDocTemp', 0):
             #posargs = (self, REQUEST, RESPONSE)

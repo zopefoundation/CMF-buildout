@@ -46,14 +46,11 @@ _EXPECTED_HTML = """\
 """
 
 _TEST_MAIN_TEMPLATE = """\
-<html metal:define-macro="main">
+<html metal:define-macro="master">
 <body>
 
 <metal:block define-slot="body">
-<h1>Title Goes Here</h1>
-<h2>  Subhead Here</h2>
-<p>    And this is a paragraph,
-    broken across lines.</p>
+BODY GOES HERE
 </metal:block>
 </body>
 </html>

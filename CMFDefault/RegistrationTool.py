@@ -206,32 +206,43 @@ class RegistrationTool(BaseTool):
 
 InitializeClass(RegistrationTool)
 
-# See URL: http://www.zopelabs.com/cookbook/1033402597
+# See URL: http://www.zopelabs.com/cookbook/1033402597 and
+#          http://aspn.activestate.com/ASPN/Cookbook/Rx/Recipe/68432
 
-_TESTS = ( ( re.compile("^[0-9a-zA-Z\.\-\_\+\']+\@[0-9a-zA-Z\.\-]+$")
+_TESTS = ( 
+           # characters allowed on local-part: 0-9a-Z-._+' on domain: 0-9a-Z-.
+           # on between: @
+           ( re.compile("^[0-9a-zA-Z\.\-\_\+\']+\@[0-9a-zA-Z\.\-]+$")
            , True
            , "Failed a"
            )
+           # must start or end with alpha or num
          , ( re.compile("^[^0-9a-zA-Z]|[^0-9a-zA-Z]$")
            , False
            , "Failed b"
            )
+           # local-part must end with alpha or num or _
          , ( re.compile("([0-9a-zA-Z_]{1})\@.")
            , True
            , "Failed c"
            )
+           # domain must start with alpha or num
          , ( re.compile(".\@([0-9a-zA-Z]{1})")
            , True
            , "Failed d"
            )
+           # pair .- or -. or .. or -- not allowed
          , ( re.compile(".\.\-.|.\-\..|.\.\..|.\-\-.")
            , False
            , "Failed e"
            )
+           # pair ._ or -_ or _. or _- or __ not allowed
          , ( re.compile(".\.\_.|.\-\_.|.\_\..|.\_\-.|.\_\_.")
            , False
            , "Failed f"
            )
+           # domain must end with '.' plus 2, 3 or 4 alpha for TopLevelDomain
+           # (MUST be modified in future!)
          , ( re.compile(".\.([a-zA-Z]{2,3})$|.\.([a-zA-Z]{2,4})$")
            , True
            , "Failed g"

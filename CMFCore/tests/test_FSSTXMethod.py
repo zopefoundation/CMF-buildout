@@ -18,9 +18,12 @@ import unittest
 import os
 import re
 
+from zope.component.testing import PlacelessSetup
+
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.utils import _setUpDefaultTraversable
 
 class FSSTXMaker(FSDVTest):
 
@@ -59,7 +62,7 @@ BODY GOES HERE
 WS = re.compile(r'\s+')
 
 def _normalize_whitespace(text):
-    return ' '.join(WS.split(text))
+    return ' '.join(WS.split(text.rstrip()))
 
 
 class _TemplateSwitcher:
@@ -87,14 +90,20 @@ class _TemplateSwitcher:
             main = ZopePageTemplate('main_template', _TEST_MAIN_TEMPLATE)
             self.root._setOb('main_template', main)
 
-class FSSTXMethodTests(RequestTest, FSSTXMaker, _TemplateSwitcher):
+class FSSTXMethodTests(RequestTest,
+                       FSSTXMaker,
+                       _TemplateSwitcher,
+                       PlacelessSetup,
+                      ):
 
     def setUp(self):
         _TemplateSwitcher.setUp(self)
         FSSTXMaker.setUp(self)
         RequestTest.setUp(self)
+        PlacelessSetup.setUp(self)
 
     def tearDown(self):
+        PlacelessSetup.tearDown(self)
         RequestTest.tearDown(self)
         FSSTXMaker.tearDown(self)
         _TemplateSwitcher.tearDown(self)
@@ -110,6 +119,7 @@ class FSSTXMethodTests(RequestTest, FSSTXMaker, _TemplateSwitcher):
         self._setWhichTemplate('ZPT')
         script = self._makeOne( 'testSTX', 'testSTX.stx' )
         script = script.__of__(self.app)
+        _setUpDefaultTraversable()
         self.assertEqual(_normalize_whitespace(script(self.REQUEST)),
                          _normalize_whitespace(_EXPECTED_HTML))
 
@@ -165,14 +175,18 @@ ZPT_META_TYPES = ( { 'name'        : 'Page Template'
                  ,
                  )
 
-class FSSTXMethodCustomizationTests( SecurityTest, FSSTXMaker,
-                                     _TemplateSwitcher ):
+class FSSTXMethodCustomizationTests(SecurityTest,
+                                    FSSTXMaker,
+                                    _TemplateSwitcher,
+                                    PlacelessSetup,
+                                   ):
 
     def setUp( self ):
         from OFS.Folder import Folder
         FSSTXMaker.setUp(self)
         SecurityTest.setUp( self )
         _TemplateSwitcher.setUp( self )
+        PlacelessSetup.setUp(self)
 
         self.root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
         self.skins = self.root.portal_skins
@@ -189,6 +203,7 @@ class FSSTXMethodCustomizationTests( SecurityTest, FSSTXMaker,
         self.fsSTX = self.fsdir.testSTX
 
     def tearDown( self ):
+        PlacelessSetup.tearDown(self)
         _TemplateSwitcher.tearDown( self )
         FSSTXMaker.tearDown( self )
         SecurityTest.tearDown( self )
@@ -232,7 +247,8 @@ class FSSTXMethodCustomizationTests( SecurityTest, FSSTXMaker,
         self.assertEqual(propinfo['type'], 'text')
         self.assertEqual(target.stx, self.fsSTX.raw)
 
-        self.assertEqual(target.document_src(), _CUSTOMIZED_TEMPLATE_ZPT)
+        self.assertEqual(_normalize_whitespace(target.document_src()),
+                         _normalize_whitespace(_CUSTOMIZED_TEMPLATE_ZPT))
 
     def test_customize_caching(self):
         # Test to ensure that cache manager associations survive customizing

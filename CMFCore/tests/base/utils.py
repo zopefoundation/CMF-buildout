@@ -26,3 +26,15 @@ def has_path( catalog, path ):
         if catalog.getpath( rid ) == path:
             return 1
     return 0
+
+def _setUpDefaultTraversable():
+    from zope.interface import Interface
+    from zope.component import provideAdapter
+    try:
+        from zope.traversing.interfaces import ITraversable
+        from zope.traversing.adapters import DefaultTraversable
+    except ImportError: # Zope < 2.10
+        from zope.app.traversing.interfaces import ITraversable
+        from zope.app.traversing.adapters import DefaultTraversable
+
+    provideAdapter(DefaultTraversable, (Interface,), ITraversable)

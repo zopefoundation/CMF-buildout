@@ -18,6 +18,8 @@ CMF 2.1.0-beta (unreleased)
 
   Bug Fixes
 
+    - Fixed test breakage induced by use of Z3 pagetempalates in Zope 2.10+.
+
     - CMFDefault skins: Fixed encoding issues in welcome and reminder emails.
       'password_email' and 'registered_email' now encode their return value
       correctly, using 'email_charset' and the new 'makeEmail' function.

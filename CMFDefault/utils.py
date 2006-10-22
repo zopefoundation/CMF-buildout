@@ -34,6 +34,7 @@ from zope.i18nmessageid import MessageFactory
 
 from Products.CMFCore.utils import getToolByName
 
+from exceptions import EmailAddressInvalid
 from exceptions import IllegalHTML
 
 
@@ -487,6 +488,30 @@ def makeEmail(mtext, context, headers={}):
         header = make_header([ (w, email_charset) for w in val.split(' ') ])
         msg[k] = str(header)
     return msg.as_string()
+
+# RFC 2822 local-part: dot-atom or quoted-string
+# characters allowed in atom: A-Za-z0-9!#$%&'*+-/=?^_`{|}~
+# RFC 2821 domain: max 255 characters
+_LOCAL_RE = re.compile(r'([A-Za-z0-9!#$%&\'*+\-/=?^_`{|}~]+'
+                     r'(\.[A-Za-z0-9!#$%&\'*+\-/=?^_`{|}~]+)*|'
+                     r'"[^(\|")]*")@[^@]{3,255}$')
+
+# RFC 2821 local-part: max 64 characters
+# RFC 2821 domain: sequence of dot-separated labels
+# characters allowed in label: A-Za-z0-9-, first is a letter
+_DOMAIN_RE = re.compile(r'[^@]{1,64}@[A-Za-z][A-Za-z0-9-]*'
+                                r'(\.[A-Za-z][A-Za-z0-9-]*)+$')
+
+security.declarePublic('checkEmailAddress')
+def checkEmailAddress(address):
+    """ Check email address.
+
+    This should catch most invalid but no valid addresses.
+    """
+    if not _LOCAL_RE.match(address):
+        raise EmailAddressInvalid
+    if not _DOMAIN_RE.match(address):
+        raise EmailAddressInvalid
 
 security.declarePublic('Message')
 Message = _ = MessageFactory('cmf_default')

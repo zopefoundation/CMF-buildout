@@ -2,6 +2,8 @@ CMF 2.1.0-beta (unreleased)
 
   New Features
 
+    - CMFDefault utils: Added 'checkEmailAddress' function.
+
     - Added CMFCore.FSRestMethod:  ReST equivalent of FSSTXMethod.
 
     - CMFCore.FSSTXMethod:  Modernized, added tests, made customization
@@ -17,6 +19,9 @@ CMF 2.1.0-beta (unreleased)
       (http://www.zope.org/Collectors/CMF/454)
 
   Bug Fixes
+
+    - CMFDefault RegistrationTool: Fixed too restrictive email checking.
+      The new 'checkEmailAddress' function is now used.
 
     - Fixed test breakage induced by use of Z3 pagetempalates in Zope 2.10+.
 

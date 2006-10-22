@@ -20,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: CMFCore/RegistrationTool.py:144
-#: CMFDefault/RegistrationTool.py:81
+#: CMFDefault/RegistrationTool.py:96
 msgid "The login name you selected is already in use or is not valid. Please choose another."
 msgstr ""
 
@@ -53,44 +53,40 @@ msgstr ""
 msgid "Intervening changes from elsewhere detected. Please refetch the document and reapply your changes. (You may be able to recover your version using the browser 'back' button, but will have to apply them to a freshly fetched copy.)"
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:119
-#: CMFDefault/RegistrationTool.py:155
+#: CMFDefault/RegistrationTool.py:101
+msgid "You must enter an email address."
+msgstr ""
+
+#: CMFDefault/RegistrationTool.py:106
+#: CMFDefault/RegistrationTool.py:115
+#: CMFDefault/RegistrationTool.py:121
+msgid "You must enter a valid email address."
+msgstr ""
+
+#: CMFDefault/RegistrationTool.py:135
+#: CMFDefault/RegistrationTool.py:164
 msgid "The username you entered could not be found."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:125
-msgid "That user does not have an email address."
-msgstr ""
-
-#: CMFDefault/RegistrationTool.py:164
+#: CMFDefault/RegistrationTool.py:51
 # Default: ""
 msgid "No email address is registered for member: ${member_id}"
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:55
+#: CMFDefault/RegistrationTool.py:70
 msgid "You must enter a password."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:58
+#: CMFDefault/RegistrationTool.py:73
 msgid "Your password must contain at least 5 characters."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:61
+#: CMFDefault/RegistrationTool.py:76
 msgid "Your password and confirmation did not match. Please try again."
 msgstr ""
 
-#: CMFDefault/RegistrationTool.py:78
+#: CMFDefault/RegistrationTool.py:93
 msgid "You must enter a valid name."
-msgstr ""
-
-#: CMFDefault/RegistrationTool.py:86
-msgid "You must enter an email address."
-msgstr ""
-
-#: CMFDefault/RegistrationTool.py:90
-#: CMFDefault/RegistrationTool.py:99
-#: CMFDefault/RegistrationTool.py:105
-msgid "You must enter a valid email address."
 msgstr ""
 
 #: CMFDefault/browser/document.py:107
@@ -642,32 +638,36 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:269
+#: CMFDefault/browser/utils.py:274
 msgid "Previous item"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:271
+#: CMFDefault/browser/utils.py:276
 # Default: ""
 msgid "Previous ${count} items"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:283
+#: CMFDefault/browser/utils.py:288
 msgid "Next item"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:285
+#: CMFDefault/browser/utils.py:290
 # Default: ""
 msgid "Next ${count} items"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:296
+#: CMFDefault/browser/utils.py:301
 #: CMFDefault/skins/zpt_generic/search.py:47
 msgid "item"
 msgstr ""
 
-#: CMFDefault/browser/utils.py:296
+#: CMFDefault/browser/utils.py:301
 #: CMFDefault/skins/zpt_generic/search.py:47
 msgid "items"
+msgstr ""
+
+#: CMFDefault/exceptions.py:68
+msgid "Invalid email address."
 msgstr ""
 
 #: CMFDefault/profiles/default/actions.xml:10
@@ -691,37 +691,45 @@ msgstr ""
 msgid "Syndication"
 msgstr ""
 
-#: CMFDefault/profiles/default/actions.xml:141
+#: CMFDefault/profiles/default/actions.xml:137
+msgid "Interfaces"
+msgstr ""
+
+#: CMFDefault/profiles/default/actions.xml:138
+msgid "Assign marker interfaces"
+msgstr ""
+
+#: CMFDefault/profiles/default/actions.xml:153
 msgid "Folder contents"
 msgstr ""
 
-#: CMFDefault/profiles/default/actions.xml:156
+#: CMFDefault/profiles/default/actions.xml:168
 msgid "Manage members"
 msgstr ""
 
-#: CMFDefault/profiles/default/actions.xml:157
+#: CMFDefault/profiles/default/actions.xml:169
 msgid "Manage portal members"
 msgstr ""
 
-#: CMFDefault/profiles/default/actions.xml:170
+#: CMFDefault/profiles/default/actions.xml:182
 msgid "Delete members"
 msgstr ""
 
-#: CMFDefault/profiles/default/actions.xml:171
+#: CMFDefault/profiles/default/actions.xml:183
 msgid "Delete portal members"
 msgstr ""
 
-#: CMFDefault/profiles/default/actions.xml:183
+#: CMFDefault/profiles/default/actions.xml:195
 #: CMFDefault/skins/zpt_generic/undo_form.pt:44
 #: CMFDefault/skins/zpt_generic/undo_form.pt:100
 msgid "Undo"
 msgstr ""
 
-#: CMFDefault/profiles/default/actions.xml:195
+#: CMFDefault/profiles/default/actions.xml:207
 msgid "Reconfigure Portal"
 msgstr ""
 
-#: CMFDefault/profiles/default/actions.xml:196
+#: CMFDefault/profiles/default/actions.xml:208
 msgid "Reconfigure the portal"
 msgstr ""
 
@@ -847,14 +855,6 @@ msgstr ""
 
 #: CMFDefault/profiles/default/types/News_Item.xml:5
 msgid "News Items contain short text articles and carry a title as well as an optional description."
-msgstr ""
-
-#: CMFDefault/profiles/views_support/actions.xml:6
-msgid "Interfaces"
-msgstr ""
-
-#: CMFDefault/profiles/views_support/actions.xml:7
-msgid "Assign marker interfaces"
 msgstr ""
 
 #: CMFDefault/skins/zpt_content/content_hide_form.pt:10
@@ -1100,7 +1100,7 @@ msgstr ""
 msgid "Selected members deleted."
 msgstr ""
 
-#: CMFDefault/skins/zpt_control/portal_config_control.py:12
+#: CMFDefault/skins/zpt_control/portal_config_control.py:14
 msgid "CMF Settings changed."
 msgstr ""
 
@@ -1356,13 +1356,13 @@ msgstr ""
 #: CMFDefault/skins/zpt_generic/join_template.pt:57
 #: CMFDefault/skins/zpt_generic/login_form.pt:22
 #: CMFDefault/skins/zpt_generic/password_form_template.pt:26
-#: CMFDefault/skins/zpt_generic/registered_email_template.pt:27
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:20
 msgid "Member ID"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/join_template.pt:71
 #: CMFDefault/skins/zpt_generic/login_form.pt:29
-#: CMFDefault/skins/zpt_generic/registered_email_template.pt:29
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:22
 msgid "Password"
 msgstr ""
 
@@ -1598,16 +1598,17 @@ msgstr ""
 msgid "News"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/password_email_template.pt:13
-msgid "Request made by IP ${ip} at ${time}"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/password_email_template.pt:2
+#: CMFDefault/skins/zpt_generic/password_email.py:18
+# Default: ""
 msgid "${portal_title}: Membership reminder"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/password_email_template.pt:8
+#: CMFDefault/skins/zpt_generic/password_email_template.pt:2
 msgid "Your password: ${password}"
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/password_email_template.pt:7
+msgid "Request made by IP ${ip} at ${time}"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/password_form.py:29
@@ -1694,6 +1695,10 @@ msgstr ""
 msgid "This form is used to set the portal configuration options."
 msgstr ""
 
+#: CMFDefault/skins/zpt_generic/reconfig_template.pt:102
+msgid "Charset used to encode emails send by the portal. If empty, 'utf-8' is used if necessary."
+msgstr ""
+
 #: CMFDefault/skins/zpt_generic/reconfig_template.pt:17
 msgid "Portal 'From' name"
 msgstr ""
@@ -1758,32 +1763,37 @@ msgstr ""
 msgid "Charset used to decode portal content strings. If empty, 'ascii' is used."
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/registered_email_template.pt:10
-msgid "You have been registered as a member of \"${portal_title}\", which allows you to personalize your view of the website and participate in the community."
+#: CMFDefault/skins/zpt_generic/reconfig_template.pt:97
+msgid "Portal email encoding"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/registered_email_template.pt:15
-msgid "This describes the purpose of the website:"
-msgstr ""
-
-#: CMFDefault/skins/zpt_generic/registered_email_template.pt:2
+#: CMFDefault/skins/zpt_generic/registered_email.py:31
+# Default: ""
 msgid "${portal_title}: Your Membership Information"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/registered_email_template.pt:21
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:14
 msgid "Visit us at ${portal_url}"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/registered_email_template.pt:24
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:17
 msgid "Here is your login data (mind upper and lower case):"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/registered_email_template.pt:32
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:25
 msgid "You can use this URL to log in:"
 msgstr ""
 
-#: CMFDefault/skins/zpt_generic/registered_email_template.pt:37
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:3
+msgid "You have been registered as a member of \"${portal_title}\", which allows you to personalize your view of the website and participate in the community."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:30
 msgid "Be aware that this URL might wrap over two lines. If your browser shows an error message when you try to access the URL please make sure that you put in the complete string."
+msgstr ""
+
+#: CMFDefault/skins/zpt_generic/registered_email_template.pt:8
+msgid "This describes the purpose of the website:"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/review.pt:14
@@ -1942,7 +1952,7 @@ msgid "A resource that this resource relies on may be encountering an error."
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/standard_error_message.pt:44
-msgid "For more detailed information about the error, please refer to the HTML source for this page."
+msgid "For more detailed information about the error, please refer to the error log."
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/standard_error_message.pt:48
@@ -2061,17 +2071,17 @@ msgstr ""
 msgid "Comments:"
 msgstr ""
 
-#: CMFDefault/utils.py:324
+#: CMFDefault/utils.py:329
 # Default: ""
 msgid "JavaScript event '${attribute}' not allowed."
 msgstr ""
 
-#: CMFDefault/utils.py:329
+#: CMFDefault/utils.py:334
 # Default: ""
 msgid "JavaScript URI '${value}' not allowed."
 msgstr ""
 
-#: CMFDefault/utils.py:342
+#: CMFDefault/utils.py:347
 # Default: ""
 msgid "Dynamic tag '${tag}' not allowed."
 msgstr ""
@@ -2104,16 +2114,16 @@ msgstr ""
 msgid "Query Parameters:"
 msgstr ""
 
-#: DCWorkflow/DCWorkflow.py:279
+#: DCWorkflow/DCWorkflow.py:280
 msgid "Object is in an undefined state."
 msgstr ""
 
-#: DCWorkflow/DCWorkflow.py:284
+#: DCWorkflow/DCWorkflow.py:285
 # Default: ""
 msgid "Transition '${action_id}' is not triggered by a user action."
 msgstr ""
 
-#: DCWorkflow/DCWorkflow.py:467
+#: DCWorkflow/DCWorkflow.py:468
 # Default: ""
 msgid "Destination state undefined: ${state_id}"
 msgstr ""

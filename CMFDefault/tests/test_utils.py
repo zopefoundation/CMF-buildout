@@ -203,6 +203,38 @@ Header: value
         self.assertEqual( toUnicode( {'foo': 'bar'}, 'iso-8859-1' ),
                           {'foo': u'bar'} )
 
+    def test_checkEmailAddress(self):
+        from Products.CMFDefault.exceptions import EmailAddressInvalid
+        from Products.CMFDefault.utils import checkEmailAddress
+
+        self.assertEqual(checkEmailAddress('foo@example.com'), None)
+        self.assertEqual(checkEmailAddress('$.-@example.com'), None)
+        self.assertEqual(checkEmailAddress(u'foo@example.com'), None)
+        # CMF Collector issue #322
+        self.assertEqual(checkEmailAddress('user+site@example.com'), None)
+        # CMF Collector issue #326
+        self.assertEqual(checkEmailAddress('username_@example.com'), None)
+        # CMF Collector issue #401
+        self.assertEqual(checkEmailAddress("user'site@example.com"), None)
+        self.assertRaises(EmailAddressInvalid, checkEmailAddress,
+                          'this is not an e-mail address')
+        self.assertRaises(EmailAddressInvalid, checkEmailAddress,
+                          'foo@example.com, bar@example.com')
+        self.assertRaises(EmailAddressInvalid, checkEmailAddress,
+                          'foo.@example.com')
+        self.assertRaises(EmailAddressInvalid, checkEmailAddress,
+                          '.foo@example.com')
+        self.assertRaises(EmailAddressInvalid, checkEmailAddress,
+                          'foo@1bar.example.com')
+        self.assertRaises(EmailAddressInvalid, checkEmailAddress,
+                          'foo@-bar.example.com')
+        # RFC 2821 local-part: max 64 characters
+        self.assertRaises(EmailAddressInvalid, checkEmailAddress,
+                          'f'*63+'oo@example.com')
+        # RFC 2821 domain: max 255 characters
+        self.assertRaises(EmailAddressInvalid, checkEmailAddress,
+                          'foo@'+'b'*242+'ar.example.com')
+
     def test_formatRFC822Headers_simple(self):
         from Products.CMFDefault.utils import formatRFC822Headers
 

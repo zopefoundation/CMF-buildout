@@ -15,6 +15,10 @@
 $Id$
 """
 
+from zope.schema import ValidationError
+from zope.i18nmessageid import MessageFactory
+_ = MessageFactory('cmf_default')
+
 from AccessControl import ModuleSecurityInfo
 security = ModuleSecurityInfo('Products.CMFDefault.exceptions')
 
@@ -59,3 +63,6 @@ security.declarePublic('MetadataError')
 class MetadataError(Exception):
     """ Metadata error.
     """
+
+class EmailAddressInvalid(ValidationError):
+    __doc__ = _(u'Invalid email address.')

@@ -20,12 +20,14 @@ import re
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 from Globals import InitializeClass
+from zope.schema import ValidationError
 
 from Products.CMFCore.RegistrationTool import RegistrationTool as BaseTool
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 
 from permissions import ManagePortal
+from utils import checkEmailAddress
 from utils import Message as _
 
 
@@ -39,6 +41,19 @@ class RegistrationTool(BaseTool):
     meta_type = 'Default Registration Tool'
 
     security = ClassSecurityInfo()
+
+    def _getValidEmailAddress(self, member):
+        email = member.getProperty('email')
+
+        # assert that we can actually get an email address, otherwise
+        # the template will be made with a blank To:, this is bad
+        if email is None:
+            msg = _(u'No email address is registered for member: '
+                    u'${member_id}', mapping={'member_id': new_member_id})
+            raise ValueError(msg)
+
+        checkEmailAddress(email)
+        return email
 
     #
     #   'portal_registration' interface
@@ -85,17 +100,18 @@ class RegistrationTool(BaseTool):
             if email is None:
                 return _(u'You must enter an email address.')
 
-            ok, message =  _checkEmail( email )
-            if not ok:
+            try:
+                checkEmailAddress(email)
+            except ValidationError:
                 return _(u'You must enter a valid email address.')
 
         else: # Existing member.
             email = props.get('email')
 
             if email is not None:
-
-                ok, message =  _checkEmail( email )
-                if not ok:
+                try:
+                    checkEmailAddress(email)
+                except ValidationError:
                     return _(u'You must enter a valid email address.')
 
             # Not allowed to clear an existing non-empty email.
@@ -119,14 +135,7 @@ class RegistrationTool(BaseTool):
             raise ValueError(_(u'The username you entered could not be '
                                u'found.'))
 
-        # assert that we can actually get an email address, otherwise
-        # the template will be made with a blank To:, this is bad
-        if not member.getProperty('email'):
-            raise ValueError(_(u'That user does not have an email address.'))
-
-        check, msg = _checkEmail(member.getProperty('email'))
-        if not check:
-            raise ValueError, msg
+        email = self._getValidEmailAddress(member)
 
         # Rather than have the template try to use the mailhost, we will
         # render the message ourselves and send it from here (where we
@@ -158,16 +167,7 @@ class RegistrationTool(BaseTool):
         if password is None:
             password = member.getPassword()
 
-        email = member.getProperty( 'email' )
-
-        if email is None:
-            msg = _(u'No email address is registered for member: '
-                    u'${member_id}', mapping={'member_id': new_member_id})
-            raise ValueError(msg)
-
-        check, msg = _checkEmail(email)
-        if not check:
-            raise ValueError(msg)
+        email = self._getValidEmailAddress(member)
 
         # Rather than have the template try to use the mailhost, we will
         # render the message ourselves and send it from here (where we
@@ -205,53 +205,3 @@ class RegistrationTool(BaseTool):
         return member
 
 InitializeClass(RegistrationTool)
-
-# See URL: http://www.zopelabs.com/cookbook/1033402597 and
-#          http://aspn.activestate.com/ASPN/Cookbook/Rx/Recipe/68432
-
-_TESTS = ( 
-           # characters allowed on local-part: 0-9a-Z-._+' on domain: 0-9a-Z-.
-           # on between: @
-           ( re.compile("^[0-9a-zA-Z\.\-\_\+\']+\@[0-9a-zA-Z\.\-]+$")
-           , True
-           , "Failed a"
-           )
-           # must start or end with alpha or num
-         , ( re.compile("^[^0-9a-zA-Z]|[^0-9a-zA-Z]$")
-           , False
-           , "Failed b"
-           )
-           # local-part must end with alpha or num or _
-         , ( re.compile("([0-9a-zA-Z_]{1})\@.")
-           , True
-           , "Failed c"
-           )
-           # domain must start with alpha or num
-         , ( re.compile(".\@([0-9a-zA-Z]{1})")
-           , True
-           , "Failed d"
-           )
-           # pair .- or -. or .. or -- not allowed
-         , ( re.compile(".\.\-.|.\-\..|.\.\..|.\-\-.")
-           , False
-           , "Failed e"
-           )
-           # pair ._ or -_ or _. or _- or __ not allowed
-         , ( re.compile(".\.\_.|.\-\_.|.\_\..|.\_\-.|.\_\_.")
-           , False
-           , "Failed f"
-           )
-           # domain must end with '.' plus 2, 3 or 4 alpha for TopLevelDomain
-           # (MUST be modified in future!)
-         , ( re.compile(".\.([a-zA-Z]{2,3})$|.\.([a-zA-Z]{2,4})$")
-           , True
-           , "Failed g"
-           )
-         )
-
-def _checkEmail( address ):
-    for pattern, expected, message in _TESTS:
-        matched = pattern.search( address ) is not None
-        if matched != expected:
-            return False, message
-    return True, ''

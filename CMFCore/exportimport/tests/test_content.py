@@ -45,7 +45,7 @@ class SiteStructureExporterTests(unittest.TestCase):
         return SetupTool('portal_setup')
 
     def _setUpAdapters(self):
-        from zope.app.tests import ztapi
+        from zope.app.testing import ztapi
         #from OFS.Image import File
 
         from Products.GenericSetup.interfaces import IFilesystemExporter

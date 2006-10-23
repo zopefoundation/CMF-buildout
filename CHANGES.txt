@@ -2,6 +2,9 @@ CMF 2.0.1-beta (unreleased)
 
   Bug Fixes
 
+    - Fixed test failures due to changes in TALES expression parsing under
+      Zope 2.10.
+
     - CMFCore.ActionInformation: don't use a fixed set of properties for
       ActionInformation. (http://www.zope.org/Collectors/CMF/232/)
 

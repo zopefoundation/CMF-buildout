@@ -39,7 +39,7 @@ from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.security import UserWithRoles
-from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.tests.base.testcase import setUpTraversing
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.tests.base.tidata import FTIDATA_ACTIONS
@@ -48,7 +48,7 @@ from Products.CMFCore.tests.base.tidata import FTIDATA_DUMMY
 from Products.CMFCore.tests.base.tidata import STI_SCRIPT
 
 
-class TypesToolTests(SecurityTest, WarningInterceptor):
+class TypesToolTests(SecurityRequestTest, WarningInterceptor):
 
     def _makeOne(self):
         from Products.CMFCore.TypesTool import TypesTool
@@ -58,7 +58,7 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
     def setUp(self):
         from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 
-        SecurityTest.setUp(self)
+        SecurityRequestTest.setUp(self)
         setUpTraversing()
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.Five.browser)
@@ -71,7 +71,7 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
         self.ttool._setObject( 'Dummy Content', FTI(**fti) )
 
     def tearDown(self):
-        SecurityTest.tearDown(self)
+        SecurityRequestTest.tearDown(self)
         cleanUp()
         self._free_warning_output()
 

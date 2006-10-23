@@ -29,9 +29,9 @@ from Products.CMFCore.Expression import Expression
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool as DummyMembershipTool
+from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import setUpTraversing
-from Products.CMFCore.tests.base.testcase import TransactionalTest
 
 
 class ActionCategoryTests(unittest.TestCase):
@@ -323,11 +323,11 @@ class ActionInfoSecurityTests(SecurityTest):
         self.assertEqual( ai2['allowed'], True )
 
 
-class ActionInformationTests(TransactionalTest):
+class ActionInformationTests(RequestTest):
 
     def setUp(self):
         import Products.CMFCore
-        TransactionalTest.setUp(self)
+        RequestTest.setUp(self)
         setUpTraversing()
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.CMFCore)
@@ -340,7 +340,7 @@ class ActionInformationTests(TransactionalTest):
         self.object = DummyContent('bar', 'url_bar')
 
     def tearDown(self):
-        TransactionalTest.tearDown(self)
+        RequestTest.tearDown(self)
         cleanUp()
 
     def _makeOne(self, *args, **kw):

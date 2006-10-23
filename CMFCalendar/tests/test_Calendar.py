@@ -30,7 +30,8 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.User import UnrestrictedUser
 from DateTime import DateTime
-from Products.ExternalMethod.ExternalMethod import manage_addExternalMethod
+import Products
+from Products.Five import zcml
 from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 from Products.Transience.Transience import TransientObjectContainer
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
@@ -42,6 +43,14 @@ except ImportError:
     # BBB: for Zope 2.7
     from Products.CMFCore.utils import transaction
 from Products.CMFCore import Skinnable
+
+try:
+    from zope.testing.cleanup import cleanUp
+except:
+    # BBB: for Zope 2.8
+    from zope.testing.cleanup import CleanUp
+    cleanup_ob = CleanUp()
+    cleanUp = cleanup_ob.cleanUp
 
 
 class CalendarTests(unittest.TestCase):
@@ -88,6 +97,12 @@ class CalendarRequestTests(unittest.TestCase, WarningInterceptor):
 
     def setUp(self):
         self._trap_warning_output()
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.GenericSetup)
+        zcml.load_config('configure.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.CMFDefault)
+        zcml.load_config('configure.zcml', Products.DCWorkflow)
         self._oldSkindata = Skinnable.SKINDATA.copy()
         transaction.begin()
 
@@ -96,23 +111,13 @@ class CalendarRequestTests(unittest.TestCase, WarningInterceptor):
         newSecurityManager(None,
                            UnrestrictedUser('god', 'god', ['Manager'], '') )
 
-        #app.manage_addProduct['CMFDefault'].manage_addCMFSite('CalendarTest')
-        addConfiguredSite(app, 'CalendarTest', 'CMFDefault:default')
+        factory = app.manage_addProduct['CMFDefault'].addConfiguredSite
+        factory('CalendarTest', 'CMFDefault:default', snapshot=False,
+                extension_ids=('CMFCalendar:default',))
 
         self.Site = app.CalendarTest
 
-        manage_addExternalMethod(app.CalendarTest,
-                                 id='install_events',
-                                 title="Install Events",
-                                 module="CMFCalendar.Install",
-                                 function="install")
-
-        ExMethod = app.restrictedTraverse('/CalendarTest/install_events')
-        ExMethod()
         self.Tool = app.CalendarTest.portal_calendar
-
-        self.Site.clearCurrentSkin()
-        self.Site.setupCurrentSkin(app.REQUEST)
 
         # sessioning setup
         if getattr(app, 'temp_folder', None) is None:
@@ -131,6 +136,7 @@ class CalendarRequestTests(unittest.TestCase, WarningInterceptor):
         self.app._p_jar.close()
         Skinnable.SKINDATA = self._oldSkindata
         self._free_warning_output()
+        cleanUp()
 
     def _testURL(self,url,params=None):
         Site = self.Site

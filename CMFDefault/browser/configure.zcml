@@ -1,105 +1,102 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:five="http://namespaces.zope.org/five">
-
-  <five:traversable class="Products.CMFCore.DynamicType.DynamicType"/>
+    xmlns:browser="http://namespaces.zope.org/browser">
 
   <browser:page
       for="Products.CMFCore.interfaces.IFolderish"
+      layer="..interfaces.ICMFDefaultSkin"
       name="view.html"
       class=".folder.FolderView"
       template="templates/folder.pt"
       permission="zope2.View"
-      layer="cmf"
       />
 
   <browser:page
       for="Products.CMFCore.interfaces.IFolderish"
+      layer="..interfaces.ICMFDefaultSkin"
       name="edit.html"
       class=".folder.FolderContentsView"
       template="templates/folder_contents.pt"
       permission="cmf.ListFolderContents"
-      layer="cmf"
       />
 
   <browser:page
       for="Products.CMFCore.interfaces.IMutableMinimalDublinCore"
+      layer="..interfaces.ICMFDefaultSkin"
       name="properties.html"
       class=".metadata.MetadataMinimalEditView"
       template="templates/metadata_minimal_edit.pt"
       permission="zope2.ManageProperties"
-      layer="cmf"
       />
 
   <browser:page
       for="Products.CMFCore.interfaces.IMutableDublinCore"
+      layer="..interfaces.ICMFDefaultSkin"
       name="properties.html"
       class=".metadata.MetadataEditView"
       template="templates/metadata_edit.pt"
       permission="cmf.ModifyPortalContent"
-      layer="cmf"
       />
 
   <browser:page
-      for="Products.CMFDefault.interfaces.IDocument"
+      for="..interfaces.IDocument"
+      layer="..interfaces.ICMFDefaultSkin"
       name="view.html"
       class=".document.DocumentView"
       template="templates/document.pt"
       permission="zope2.View"
-      layer="cmf"
       />
 
   <browser:page
-      for="Products.CMFDefault.interfaces.IMutableDocument"
+      for="..interfaces.IMutableDocument"
+      layer="..interfaces.ICMFDefaultSkin"
       name="edit.html"
       class=".document.DocumentEditView"
       template="templates/document_edit.pt"
       permission="cmf.ModifyPortalContent"
-      layer="cmf"
       />
 
   <browser:page
-      for="Products.CMFDefault.interfaces.IMutableNewsItem"
+      for="..interfaces.IMutableNewsItem"
+      layer="..interfaces.ICMFDefaultSkin"
       name="edit.html"
       class=".newsitem.NewsItemEditView"
       template="templates/newsitem_edit.pt"
       permission="cmf.ModifyPortalContent"
-      layer="cmf"
       />
 
   <browser:page
-      for="Products.CMFDefault.interfaces.ILink"
+      for="..interfaces.ILink"
+      layer="..interfaces.ICMFDefaultSkin"
       name="view.html"
       class=".link.LinkView"
       template="templates/link.pt"
       permission="zope2.View"
-      layer="cmf"
       />
 
   <browser:page
-      for="Products.CMFDefault.interfaces.IMutableLink"
+      for="..interfaces.IMutableLink"
+      layer="..interfaces.ICMFDefaultSkin"
       name="edit.html"
       class=".link.LinkEditView"
       template="templates/link_edit.pt"
       permission="cmf.ModifyPortalContent"
-      layer="cmf"
       />
 
   <browser:page
       for="*"
+      layer="..interfaces.ICMFDefaultSkin"
       name="form_widget"
       template="templates/form_widgets.pt"
       permission="zope2.View"
-      layer="cmf"
       />
 
   <browser:page
       for="*"
+      layer="..interfaces.ICMFDefaultSkin"
       name="batch_widget"
       template="templates/batch_widgets.pt"
       permission="zope2.View"
-      layer="cmf"
       />
 
 </configure>

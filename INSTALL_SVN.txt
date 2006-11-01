@@ -12,7 +12,7 @@ Overview
       the sources for a specific version from Subversion.
 
   * Please note that the trunk version of the CMF requires Zope 
-    2.9.0 or later.
+    2.10.0 or later.
 
   * For help with Subversion in general, see "Version Control with 
     Subversion" at http://svnbook.red-bean.com/

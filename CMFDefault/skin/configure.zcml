@@ -3,13 +3,10 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="cmf_default">
 
-  <browser:layer
+  <interface
+      interface="..interfaces.ICMFDefaultSkin"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
       name="cmf"
-      />
-
-  <browser:skin
-      name="cmf"
-      layers="cmf default"
       />
 
   <browser:defaultSkin
@@ -19,10 +16,10 @@
   <!-- Define a default template with css-oriented slots -->
   <browser:page
       for="Products.CMFCore.interfaces.IDynamicType"
+      layer="..interfaces.ICMFDefaultSkin"
       template="five_template.pt"
       name="five_template"
       permission="zope.Public"
-      layer="cmf"
       />
 
 </configure>

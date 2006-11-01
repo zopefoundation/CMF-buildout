@@ -22,8 +22,8 @@ ZopeTestCase.installProduct('PageTemplates', 1)
 from os.path import join as path_join
 
 from OFS.Folder import Folder
-from Products.PageTemplates.TALES import Undefined
 from Products.StandardCacheManagers import RAMCacheManager
+from zope.tales.tales import Undefined
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.FSPageTemplate import FSPageTemplate

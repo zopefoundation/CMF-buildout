@@ -15,8 +15,16 @@
 $Id$
 """
 
+from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from _content import *
 from _tools import *
+
+
+class ICMFDefaultSkin(IDefaultBrowserLayer):
+
+    """CMF default skin.
+    """
+
 
 # BBB: will be removed in CMF 2.2
 #      create zope2 interfaces

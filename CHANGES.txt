@@ -29,6 +29,10 @@ CMF 2.1.0-beta (unreleased)
       'password_email' and 'registered_email' now encode their return value
       correctly, using 'email_charset' and the new 'makeEmail' function.
 
+  Others
+
+    - The CMF now depends on Zope 2.10.0.
+
 
 CMF 2.1.0-alpha (2006/10/09)
 

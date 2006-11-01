@@ -21,29 +21,6 @@ from security import AnonymousUser
 from security import PermissiveSecurityPolicy
 
 
-_TRAVERSE_ZCML = """
-<configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five"
-    >
-
-  <include package="zope.app.traversing"/>
-
-  <adapter
-      for="*"
-      factory="Products.Five.traversable.FiveTraversable"
-      provides="zope.app.traversing.interfaces.ITraversable"
-      />
-
-  <adapter
-      for="*"
-      factory="zope.app.traversing.adapters.Traverser"
-      provides="zope.app.traversing.interfaces.ITraverser"
-      />
-
-</configure>
-"""
-
 _REQUEST_ZCML = """
 <configure
     xmlns:five="http://namespaces.zope.org/five"
@@ -63,20 +40,13 @@ def setUpTraversing():
 
     zcml.load_config('meta.zcml', Products.Five)
     zcml.load_string(_REQUEST_ZCML)
-    try:
-        import zope.traversing
-        zcml.load_config('traversing.zcml', Products.Five)
-    except ImportError:
-        # BBB: for Zope 2.9
-        zcml.load_string(_TRAVERSE_ZCML)
+    zcml.load_config('traversing.zcml', Products.Five)
 
 def setUpEvents():
     import Products
-    import zope.app.event
 
     #   First, set up "stock" OFS event propagation
     zcml.load_config('meta.zcml', Products.Five)
-    zcml.load_config('configure.zcml', zope.app.event)
     zcml.load_config('event.zcml', Products.Five)
     #   Now, register the CMF-specific handler
     zcml.load_config('event.zcml', Products.CMFCore)

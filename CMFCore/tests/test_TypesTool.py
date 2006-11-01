@@ -454,7 +454,7 @@ class FTINewstyleConstructionTests(FTIConstructionTestCase, SecurityTest):
     def setUp(self):
         SecurityTest.setUp(self)
         gsm = getGlobalSiteManager()
-        gsm.provideUtility(IFactory, DummyFactory, 'test.dummy')
+        gsm.registerUtility(DummyFactory, IFactory, 'test.dummy')
 
         self.f = DummyFolder()
         self.ti = self._makeOne('Foo', meta_type='Dummy',

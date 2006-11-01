@@ -35,7 +35,7 @@ def test_fiveactionstool():
 
     For menus to work, the request must have defaultSkin.
     
-      >>> from zope.app.publication.browser import setDefaultSkin
+      >>> from zope.publisher.browser import setDefaultSkin
       >>> setDefaultSkin(self.folder.REQUEST)
       
     We need to make Zope 3 use Zope 2s security policy

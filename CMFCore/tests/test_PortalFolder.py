@@ -69,7 +69,7 @@ class PortalFolderFactoryTests(SecurityTest):
         SecurityTest.setUp(self)
         setUpEvents()
         gsm = getGlobalSiteManager()
-        gsm.provideUtility(IFactory, self._getTargetObject(), 'cmf.folder')
+        gsm.registerUtility(self._getTargetObject(), IFactory, 'cmf.folder')
         self.site = DummySite('site').__of__(self.root)
         acl_users = self.site._setObject('acl_users', DummyUserFolder())
         newSecurityManager(None, acl_users.all_powerful_Oz)
@@ -136,7 +136,7 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         zcml.load_config('permissions.zcml', Products.Five)
         zcml.load_config('content.zcml', Products.CMFCore)
         gsm = getGlobalSiteManager()
-        gsm.provideUtility(IFactory, PortalFolderFactory, 'cmf.folder')
+        gsm.registerUtility(PortalFolderFactory, IFactory, 'cmf.folder')
         self.site = DummySite('site').__of__(self.root)
 
     def tearDown(self):

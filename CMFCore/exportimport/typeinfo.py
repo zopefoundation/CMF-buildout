@@ -15,9 +15,6 @@
 $Id$
 """
 
-from xml.dom.minidom import parseString
-
-import Products
 from zope.component import adapts
 
 from Products.GenericSetup.interfaces import ISetupEnviron

@@ -14,16 +14,15 @@
 
 $Id$
 """
+
 import os
 
 from AccessControl import ClassSecurityInfo
-from AccessControl.Permission import Permission
 from Globals import InitializeClass
 from Globals import package_home
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 from Products.CMFCore.utils import getToolByName
-
 from Products.GenericSetup.utils import CONVERTER
 from Products.GenericSetup.utils import DEFAULT
 from Products.GenericSetup.utils import ExportConfiguratorBase

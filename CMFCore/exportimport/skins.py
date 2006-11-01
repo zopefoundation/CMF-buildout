@@ -26,7 +26,6 @@ from Products.GenericSetup.utils import NodeAdapterBase
 from Products.GenericSetup.utils import ObjectManagerHelpers
 from Products.GenericSetup.utils import XMLAdapterBase
 
-from Products.CMFCore.DirectoryView import createDirectoryView
 from Products.CMFCore.interfaces import IDirectoryView
 from Products.CMFCore.interfaces import ISkinsTool
 from Products.CMFCore.utils import getToolByName

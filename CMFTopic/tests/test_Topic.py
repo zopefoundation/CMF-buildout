@@ -83,7 +83,6 @@ class DummyCatalog( Implicit ):
 
     def searchResults( self, REQUEST=None, **kw ):
 
-        from sets import Set
         limit = None
 
         criteria = kw.copy()
@@ -92,7 +91,7 @@ class DummyCatalog( Implicit ):
             for k, v in REQUEST:
                 criteria[ k ] = v
 
-        results = Set( range( len( self._objects ) ) )
+        results = set(range(len(self._objects)))
 
         for k, v in criteria.items():
 
@@ -100,8 +99,7 @@ class DummyCatalog( Implicit ):
                 limit = v
 
             else:
-                results &= Set( self._indexes[ k ].get( v, [] ) )
-
+                results &= set(self._indexes[k].get(v, []))
 
         results = [ x for x in results ]
 

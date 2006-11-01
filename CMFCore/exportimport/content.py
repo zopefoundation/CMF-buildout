@@ -14,16 +14,11 @@
 
 $Id$
 """
-try:
-    set = set
-except NameError:
-    from sets import Set as set
 
 from csv import reader
 from csv import register_dialect
 from csv import writer
 from ConfigParser import ConfigParser
-import re
 from StringIO import StringIO
 
 from zope.interface import implements
@@ -209,4 +204,3 @@ class StructureFolderWalkingAdapter(object):
             content.setDescription(description)
 
         return content
-

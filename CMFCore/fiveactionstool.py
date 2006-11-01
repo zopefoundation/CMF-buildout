@@ -15,9 +15,7 @@
 $Id$
 """
 
-import zope.thread
 from AccessControl import ClassSecurityInfo
-from Acquisition import aq_base
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 from Products.Five import security

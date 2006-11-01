@@ -18,7 +18,6 @@ $Id$
 
 import OFS.Image
 from AccessControl import ClassSecurityInfo
-from DateTime.DateTime import DateTime
 from Globals import InitializeClass
 from zope.component.factory import Factory
 from zope.interface import implements

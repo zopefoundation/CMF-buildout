@@ -16,7 +16,6 @@ $Id$
 """
 
 from AccessControl.SecurityInfo import ClassSecurityInfo
-from DateTime.DateTime import DateTime
 from Globals import InitializeClass
 from Products.Five import BrowserView
 from Products.PythonScripts.standard import thousands_commas

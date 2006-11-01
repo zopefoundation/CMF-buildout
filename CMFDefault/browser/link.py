@@ -15,8 +15,6 @@
 $Id$
 """
 
-import urlparse
-
 from Products.CMFDefault.exceptions import ResourceLockedError
 from Products.CMFDefault.utils import Message as _
 

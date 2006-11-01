@@ -14,9 +14,9 @@
 
 $Id$
 """
+
 from xml.dom.minidom import parseString
 
-from Acquisition import Implicit
 from zope.interface import implements
 
 from Products.GenericSetup.interfaces import IFilesystemExporter
@@ -158,4 +158,3 @@ class SubtopicFactory(object):
         topic = Topic(id)
         topic.portal_type = 'Topic'
         return topic
-

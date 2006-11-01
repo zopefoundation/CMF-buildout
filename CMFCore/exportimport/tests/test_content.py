@@ -27,8 +27,6 @@ from zope.testing.cleanup import cleanUp
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
-from conformance import ConformsToIFilesystemImporter
-
 
 class SiteStructureExporterTests(unittest.TestCase):
 

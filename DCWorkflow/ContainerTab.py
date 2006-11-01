@@ -15,13 +15,13 @@
 $Id$
 """
 
-from OFS.Folder import Folder
-from OFS.SimpleItem import Item_w__name__
 from Acquisition import aq_base, aq_inner, aq_parent
+from OFS.Folder import Folder
 
 _marker = []  # Create a new marker object.
 
-class ContainerTab (Folder):
+
+class ContainerTab(Folder):
 
     def __init__(self, id):
         self.id = id
@@ -116,4 +116,3 @@ class ContainerTab (Folder):
         if REQUEST is not None:
             return self.manage_main(REQUEST)
         return None
-

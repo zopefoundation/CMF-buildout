@@ -15,7 +15,6 @@
 $Id$
 """
 
-import Products
 from zope.component import adapts
 
 from Products.GenericSetup.interfaces import ISetupEnviron

@@ -2,6 +2,11 @@ CMF 2.1.0-beta (unreleased)
 
   New Features
 
+    - CMFDefault formlib: Added zope.formlib support.
+      This includes some CMF specific base classes and an 'EmailLine' field.
+
+    - browser views: Added some zope.formlib based forms.
+
     - CMFDefault utils: Added 'checkEmailAddress' function.
 
     - Added CMFCore.FSRestMethod:  ReST equivalent of FSSTXMethod.

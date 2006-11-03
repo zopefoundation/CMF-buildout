@@ -2,12 +2,18 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser">
 
+  <adapter factory=".event.EventSchemaAdapter"/>
+
+  <utility
+      component=".event.EventTypeVocabularyFactory"
+      name="AvailableEventTypes"
+      />
+
   <browser:page
       for="Products.CMFCalendar.interfaces.IEvent"
       layer="Products.CMFDefault.interfaces.ICMFDefaultSkin"
       name="view.html"
       class=".event.EventView"
-      template="templates/event.pt"
       permission="zope2.View"
       />
 
@@ -16,7 +22,6 @@
       layer="Products.CMFDefault.interfaces.ICMFDefaultSkin"
       name="edit.html"
       class=".event.EventEditView"
-      template="templates/event_edit.pt"
       permission="cmf.ModifyPortalContent"
       />
 

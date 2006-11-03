@@ -65,6 +65,8 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <adapter factory=".link.LinkSchemaAdapter"/>
+
   <browser:page
       for="..interfaces.ILink"
       layer="..interfaces.ICMFDefaultSkin"
@@ -79,7 +81,16 @@
       layer="..interfaces.ICMFDefaultSkin"
       name="edit.html"
       class=".link.LinkEditView"
-      template="templates/link_edit.pt"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <adapter factory=".favorite.FavoriteSchemaAdapter"/>
+
+  <browser:page
+      for="..interfaces.IMutableFavorite"
+      layer="..interfaces.ICMFDefaultSkin"
+      name="edit.html"
+      class=".favorite.FavoriteEditView"
       permission="cmf.ModifyPortalContent"
       />
 

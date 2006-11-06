@@ -19,20 +19,16 @@ import unittest
 from Testing import ZopeTestCase
 ZopeTestCase.installProduct('ZCTextIndex', 1)
 ZopeTestCase.installProduct('CMFCore', 1)
-ZopeTestCase.installProduct('CMFDefault', 1)
 
-import Products
 from Acquisition import aq_base
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
-from Products.CMFCore.tests.base.testcase import setUpEvents
-from Products.CMFCore.tests.base.testcase import setUpGenericSetup
-from Products.CMFCore.tests.base.testcase import setUpTraversing
+from Products.CMFDefault.testing import FunctionalZCMLLayer
 
 
 class CMFSiteTests(SecurityRequestTest):
+
+    layer = FunctionalZCMLLayer
 
     def _makeSite( self, id='testsite' ):
 
@@ -51,23 +47,6 @@ class CMFSiteTests(SecurityRequestTest):
             content.editMetadata( **kw )
 
         return content
-
-    def setUp(self):
-        import Products.DCWorkflow
-
-        SecurityRequestTest.setUp(self)
-        setUpEvents()
-        setUpTraversing()
-        setUpGenericSetup()
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.Five.browser)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-        zcml.load_config('configure.zcml', Products.CMFDefault)
-        zcml.load_config('configure.zcml', Products.DCWorkflow)
-
-    def tearDown(self):
-        SecurityRequestTest.tearDown(self)
-        cleanUp()
 
     def test_new( self ):
 
@@ -117,11 +96,11 @@ class CMFSiteTests(SecurityRequestTest):
             self.assertEqual( _getMetadata( catalog, rid ), 'Bar' )
 
             site._delObject( doc.getId() )
-            
+
             if isUidEnabledFavorite:
                 # unindex the site root by hand
                 catalog.unindexObject(site)
-                
+
             self.assertEqual( len( catalog ), 0 )
 
     def test_DocumentEditCataloguing( self ):
@@ -223,4 +202,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

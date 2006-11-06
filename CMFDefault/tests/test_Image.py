@@ -19,17 +19,13 @@ import unittest
 from Testing import ZopeTestCase
 ZopeTestCase.installProduct('ZCTextIndex', 1)
 ZopeTestCase.installProduct('CMFCore', 1)
-ZopeTestCase.installProduct('CMFDefault', 1)
 
 from os.path import join as path_join
 from cStringIO import StringIO
 
-import Products
 import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
@@ -39,10 +35,9 @@ from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
-from Products.CMFCore.tests.base.testcase import setUpEvents
-from Products.CMFCore.tests.base.testcase import setUpGenericSetup
-from Products.CMFCore.tests.base.testcase import setUpTraversing
 from Products.CMFDefault import tests
+from Products.CMFDefault.factory import addConfiguredSite
+from Products.CMFDefault.testing import FunctionalZCMLLayer
 
 TESTS_HOME = tests.__path__[0]
 TEST_JPG = path_join(TESTS_HOME, 'TestImage.jpg')
@@ -114,21 +109,13 @@ class TestImageCopyPaste(SecurityRequestTest):
     # Tests related to http://www.zope.org/Collectors/CMF/176
     # Copy/pasting an image (or file) should reset the object's workflow state.
 
-    def setUp(self):
-        import Products.DCWorkflow
+    layer = FunctionalZCMLLayer
 
+    def setUp(self):
         SecurityRequestTest.setUp(self)
-        setUpEvents()
-        setUpTraversing()
-        setUpGenericSetup()
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.Five.browser)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-        zcml.load_config('configure.zcml', Products.CMFDefault)
-        zcml.load_config('configure.zcml', Products.DCWorkflow)
         try:
-            factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
-            factory('cmf', 'Products.CMFDefault:default', snapshot=False)
+            addConfiguredSite(self.root, 'cmf', 'Products.CMFDefault:default',
+                              snapshot=False)
             self.site = self.root.cmf
             newSecurityManager(None, OmnipotentUser().__of__(self.site))
             self.site.invokeFactory('File', id='file')
@@ -146,11 +133,10 @@ class TestImageCopyPaste(SecurityRequestTest):
     def tearDown(self):
         noSecurityManager()
         SecurityRequestTest.tearDown(self)
-        cleanUp()
 
     def test_File_CopyPasteResetsWorkflowState(self):
         # Copy/pasting a File should reset wf state to private
-        cb = self.site.manage_copyObjects(['file']) 
+        cb = self.site.manage_copyObjects(['file'])
         self.subfolder.manage_pasteObjects(cb)
         review_state = self.workflow.getInfoFor(self.subfolder.file, 'review_state')
         self.assertEqual(review_state, 'private')
@@ -163,20 +149,20 @@ class TestImageCopyPaste(SecurityRequestTest):
 
     def test_File_CutPasteKeepsWorkflowState(self):
         # Cut/pasting a File should keep the wf state
-        cb = self.site.manage_cutObjects(['file']) 
+        cb = self.site.manage_cutObjects(['file'])
         self.subfolder.manage_pasteObjects(cb)
         review_state = self.workflow.getInfoFor(self.subfolder.file, 'review_state')
         self.assertEqual(review_state, 'published')
 
     def test_File_RenameKeepsWorkflowState(self):
         # Renaming a File should keep the wf state
-        self.site.manage_renameObjects(['file'], ['file2']) 
+        self.site.manage_renameObjects(['file'], ['file2'])
         review_state = self.workflow.getInfoFor(self.site.file2, 'review_state')
         self.assertEqual(review_state, 'published')
 
     def test_Image_CopyPasteResetsWorkflowState(self):
         #  Copy/pasting an Image should reset wf state to private
-        cb = self.site.manage_copyObjects(['image']) 
+        cb = self.site.manage_copyObjects(['image'])
         self.subfolder.manage_pasteObjects(cb)
         review_state = self.workflow.getInfoFor(self.subfolder.image, 'review_state')
         self.assertEqual(review_state, 'private')
@@ -189,14 +175,14 @@ class TestImageCopyPaste(SecurityRequestTest):
 
     def test_Image_CutPasteKeepsWorkflowState(self):
         # Cut/pasting an Image should keep the wf state
-        cb = self.site.manage_cutObjects(['image']) 
+        cb = self.site.manage_cutObjects(['image'])
         self.subfolder.manage_pasteObjects(cb)
         review_state = self.workflow.getInfoFor(self.subfolder.image, 'review_state')
         self.assertEqual(review_state, 'published')
 
     def test_Image_RenameKeepsWorkflowState(self):
         # Renaming an Image should keep the wf state
-        self.site.manage_renameObjects(['image'], ['image2']) 
+        self.site.manage_renameObjects(['image'], ['image2'])
         review_state = self.workflow.getInfoFor(self.site.image2, 'review_state')
         self.assertEqual(review_state, 'published')
 
@@ -305,7 +291,8 @@ class TestCaching(RequestTest):
         self.failUnless(len(headers) >= original_len + 3)
         self.failUnless('foo' in headers.keys())
         self.failUnless('bar' in headers.keys())
-        self.assertEqual(headers['test_path'], '/test_image') 
+        self.assertEqual(headers['test_path'], '/test_image')
+
 
 def test_suite():
     return unittest.TestSuite((
@@ -315,4 +302,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

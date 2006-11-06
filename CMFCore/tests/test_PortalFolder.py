@@ -26,21 +26,20 @@ from Acquisition import aq_base
 from Acquisition import Implicit
 from DateTime import DateTime
 from OFS.Image import manage_addFile
-from Products.Five import zcml
 from zope.component import getGlobalSiteManager
 from zope.component.interfaces import IFactory
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.CatalogTool import CatalogTool
 from Products.CMFCore.exceptions import BadRequest
 from Products.CMFCore.testing import ConformsToFolder
+from Products.CMFCore.testing import EventZCMLLayer
+from Products.CMFCore.testing import FunctionalZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFactoryDispatcher
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
-from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
 from Products.CMFCore.tests.base.tidata import FTIDATA_DUMMY
 from Products.CMFCore.tests.base.utils import has_path
@@ -56,6 +55,7 @@ def extra_meta_types():
 
 class PortalFolderFactoryTests(SecurityTest):
 
+    layer = EventZCMLLayer
     _PORTAL_TYPE = 'Test Folder'
 
     def _getTargetObject(self):
@@ -67,7 +67,6 @@ class PortalFolderFactoryTests(SecurityTest):
         from Products.CMFCore.PortalFolder import PortalFolder
 
         SecurityTest.setUp(self)
-        setUpEvents()
         gsm = getGlobalSiteManager()
         gsm.registerUtility(self._getTargetObject(), IFactory, 'cmf.folder')
         self.site = DummySite('site').__of__(self.root)
@@ -85,10 +84,6 @@ class PortalFolderFactoryTests(SecurityTest):
 
         self.f = self.site._setObject('container', PortalFolder('container'))
         self.f._setPortalTypeName(self._PORTAL_TYPE)
-
-    def tearDown(self):
-        SecurityTest.tearDown(self)
-        cleanUp()
 
     def test_invokeFactory(self):
         f = self.f
@@ -118,6 +113,8 @@ class PortalFolderFactoryTests(SecurityTest):
 
 class PortalFolderTests(ConformsToFolder, SecurityTest):
 
+    layer = FunctionalZCMLLayer
+
     def _getTargetClass(self):
         from Products.CMFCore.PortalFolder import PortalFolder
 
@@ -128,20 +125,12 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
                                     self._getTargetClass()(id, *args, **kw))
 
     def setUp(self):
-        import Products
         from Products.CMFCore.PortalFolder import PortalFolderFactory
 
         SecurityTest.setUp(self)
-        setUpEvents()
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('content.zcml', Products.CMFCore)
         gsm = getGlobalSiteManager()
         gsm.registerUtility(PortalFolderFactory, IFactory, 'cmf.folder')
         self.site = DummySite('site').__of__(self.root)
-
-    def tearDown(self):
-        SecurityTest.tearDown(self)
-        cleanUp()
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -436,15 +425,12 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
 
 class PortalFolderMoveTests(SecurityTest):
 
+    layer = EventZCMLLayer
+
     def setUp(self):
         SecurityTest.setUp(self)
-        setUpEvents()
         self.root._setObject( 'site', DummySite('site') )
         self.site = self.root.site
-
-    def tearDown(self):
-        SecurityTest.tearDown(self)
-        cleanUp()
 
     def _makeOne(self, id, *args, **kw):
         from Products.CMFCore.PortalFolder import PortalFolder
@@ -863,17 +849,7 @@ class _AllowedUser( Implicit ):
 
 class PortalFolderCopySupportTests(SecurityRequestTest):
 
-    def setUp(self):
-        import Products
-
-        SecurityRequestTest.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('content.zcml', Products.CMFCore)
-
-    def tearDown(self):
-        SecurityRequestTest.tearDown(self)
-        cleanUp()
+    layer = FunctionalZCMLLayer
 
     def _initFolders(self):
         from Products.CMFCore.PortalFolder import PortalFolder
@@ -1257,4 +1233,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

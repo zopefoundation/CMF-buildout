@@ -17,10 +17,10 @@ $Id$
 
 import unittest
 import Testing
-
 from zope.testing import doctest
 
 from Products.CMFCore.tests.base.testcase import RequestTest
+from Products.CMFDefault.testing import FunctionalZCMLLayer
 
 
 class FauxMembershipTool:
@@ -81,11 +81,14 @@ Spam, spam, spam
 
 
 def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(RegistrationToolTests),
-        doctest.DocFileSuite('RegistrationTool.txt',
-               optionflags=(doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)),
-        ))
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(RegistrationToolTests))
+    s = doctest.DocFileSuite('RegistrationTool.txt',
+                optionflags=(doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE))
+    s.layer = FunctionalZCMLLayer
+    suite.addTest(s)
+    return suite
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

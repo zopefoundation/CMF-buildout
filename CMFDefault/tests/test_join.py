@@ -19,38 +19,20 @@ import unittest
 from Testing import ZopeTestCase
 ZopeTestCase.installProduct('ZCTextIndex', 1)
 ZopeTestCase.installProduct('CMFCore', 1)
-ZopeTestCase.installProduct('CMFDefault', 1)
 
-import Products
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
-
-from Products.CMFCore.tests.base.testcase import setUpGenericSetup
 from Products.CMFCore.tests.base.testcase import TransactionalTest
+from Products.CMFDefault.factory import addConfiguredSite
+from Products.CMFDefault.testing import FunctionalZCMLLayer
 
 
 class MembershipTests(TransactionalTest):
 
-    def setUp(self):
-        import Products.DCWorkflow
-
-        TransactionalTest.setUp(self)
-        setUpGenericSetup()
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.Five.browser)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-        zcml.load_config('configure.zcml', Products.CMFDefault)
-        zcml.load_config('configure.zcml', Products.DCWorkflow)
-
-    def tearDown(self):
-        TransactionalTest.tearDown(self)
-        cleanUp()
+    layer = FunctionalZCMLLayer
 
     def _makePortal(self):
         # Create a portal instance suitable for testing
-        factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
-        factory('site', 'Products.CMFDefault:default', snapshot=False)
-
+        addConfiguredSite(self.root, 'site', 'Products.CMFDefault:default',
+                          snapshot=False)
         return self.root.site
 
     def test_join( self ):
@@ -127,4 +109,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

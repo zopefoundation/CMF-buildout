@@ -18,14 +18,12 @@ $Id$
 import unittest
 import Testing
 
-from zope.testing.cleanup import cleanUp
-
 from Products.CMFCore.CatalogTool import CatalogTool
+from Products.CMFCore.testing import EventZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.testcase import SecurityTest
-from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.tests.base.tidata import FTIDATA_DUMMY
 from Products.CMFCore.tests.base.utils import has_path
 from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
@@ -103,17 +101,14 @@ class DiscussionItemContainerTests(unittest.TestCase):
 
 class DiscussionTests(SecurityTest):
 
+    layer = EventZCMLLayer
+
     def setUp(self):
         SecurityTest.setUp(self)
-        setUpEvents()
         self.site = DummySite('site').__of__(self.root)
         self.site._setObject( 'portal_discussion', DiscussionTool() )
         self.site._setObject( 'portal_membership', DummyTool() )
         self.site._setObject( 'portal_types', TypesTool() )
-
-    def tearDown(self):
-        SecurityTest.tearDown(self)
-        cleanUp()
 
     def _makeDummyContent(self, id, *args, **kw):
         return self.site._setObject( id, DummyContent(id, *args, **kw) )
@@ -351,4 +346,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

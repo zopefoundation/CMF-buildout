@@ -20,12 +20,11 @@ from Testing import ZopeTestCase
 ZopeTestCase.installProduct('CMFTopic', 1)
 
 from Acquisition import Implicit
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.testing import ConformsToFolder
+from Products.CMFCore.testing import EventZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.testcase import SecurityTest
-from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 from Products.CMFCore.TypesTool import TypesTool
 
@@ -125,6 +124,8 @@ class TestTopic(ConformsToFolder, SecurityTest):
     """ Test all the general Topic cases.
     """
 
+    layer = EventZCMLLayer
+
     def _getTargetClass(self):
         from Products.CMFTopic.Topic import Topic
 
@@ -149,12 +150,7 @@ class TestTopic(ConformsToFolder, SecurityTest):
 
     def setUp(self):
         SecurityTest.setUp(self)
-        setUpEvents()
         self.site = DummySite('site').__of__(self.root)
-
-    def tearDown(self):
-        SecurityTest.tearDown(self)
-        cleanUp()
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -344,4 +340,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

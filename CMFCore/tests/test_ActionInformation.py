@@ -18,19 +18,16 @@ $Id$
 import unittest
 import Testing
 
-import Products.Five
 from OFS.Folder import manage_addFolder
-from Products.Five import zcml
 from Products.PythonScripts.PythonScript import manage_addPythonScript
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.Expression import createExprContext
 from Products.CMFCore.Expression import Expression
+from Products.CMFCore.testing import FunctionalZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool as DummyMembershipTool
 from Products.CMFCore.tests.base.testcase import SecurityTest
-from Products.CMFCore.tests.base.testcase import setUpTraversing
 from Products.CMFCore.tests.base.testcase import TransactionalTest
 
 
@@ -325,12 +322,10 @@ class ActionInfoSecurityTests(SecurityTest):
 
 class ActionInformationTests(TransactionalTest):
 
+    layer = FunctionalZCMLLayer
+
     def setUp(self):
-        import Products.CMFCore
         TransactionalTest.setUp(self)
-        setUpTraversing()
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore)
 
         root = self.root
         root._setObject('portal', DummyContent('portal', 'url_portal'))
@@ -338,10 +333,6 @@ class ActionInformationTests(TransactionalTest):
         portal.portal_membership = DummyMembershipTool()
         self.folder = DummyContent('foo', 'url_foo')
         self.object = DummyContent('bar', 'url_bar')
-
-    def tearDown(self):
-        TransactionalTest.tearDown(self)
-        cleanUp()
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ActionInformation import ActionInformation
@@ -468,4 +459,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

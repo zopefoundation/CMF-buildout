@@ -23,16 +23,15 @@ from AccessControl.SecurityManagement import newSecurityManager
 from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.CMFCore.exceptions import NotFound
 from Products.CMFCore.interfaces import IContentish
+from Products.CMFCore.testing import EventZCMLLayer
 from Products.CMFCore.tests.test_PortalFolder import _AllowedUser
 from Products.CMFCore.tests.test_PortalFolder import _SensitiveSecurityPolicy
 from Products.CMFCore.tests.base.testcase import LogInterceptor
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
-from Products.CMFCore.tests.base.testcase import setUpEvents
 
 CMF_SECURITY_INDEXES = CMFCatalogAware._cmf_security_indexes
 
@@ -216,13 +215,7 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
 
 class CMFCatalogAware_CopySupport_Tests(SecurityRequestTest):
 
-    def setUp(self):
-        SecurityRequestTest.setUp(self)
-        setUpEvents()
-
-    def tearDown(self):
-        SecurityRequestTest.tearDown(self)
-        cleanUp()
+    layer = EventZCMLLayer
 
     def _makeSite(self):
         self.app._setObject('site', SimpleFolder('site'))
@@ -344,4 +337,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

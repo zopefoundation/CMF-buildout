@@ -14,49 +14,10 @@ import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
-from Products.Five import zcml
 
 from dummy import DummyFolder
 from security import AnonymousUser
 from security import PermissiveSecurityPolicy
-
-
-_REQUEST_ZCML = """
-<configure
-    xmlns:five="http://namespaces.zope.org/five"
-    >
-
-  <!-- make Zope 2's REQUEST implement the right thing -->
-  <five:implements
-      class="ZPublisher.HTTPRequest.HTTPRequest"
-      interface="zope.publisher.interfaces.browser.IBrowserRequest"
-      />
-
-</configure>
-"""
-
-def setUpTraversing():
-    import Products
-
-    zcml.load_config('meta.zcml', Products.Five)
-    zcml.load_string(_REQUEST_ZCML)
-    zcml.load_config('traversing.zcml', Products.Five)
-
-def setUpEvents():
-    import Products
-
-    #   First, set up "stock" OFS event propagation
-    zcml.load_config('meta.zcml', Products.Five)
-    zcml.load_config('event.zcml', Products.Five)
-    #   Now, register the CMF-specific handler
-    zcml.load_config('event.zcml', Products.CMFCore)
-
-def setUpGenericSetup():
-    import Products
-
-    zcml.load_config('meta.zcml', Products.Five)
-    zcml.load_config('meta.zcml', Products.GenericSetup)
-    zcml.load_config('configure.zcml', Products.GenericSetup)
 
 
 class LogInterceptor:
@@ -239,7 +200,7 @@ class WritableFSDVTest(FSDVTest):
 
     def _addedOrRemoved(self, old_mtime):
         # Called after adding/removing a file from self.skin_path_name.
-        
+
         if sys.platform == 'win32':
             # Windows doesn't reliably update directory mod times, so
             # DirectoryView has an expensive workaround.  The

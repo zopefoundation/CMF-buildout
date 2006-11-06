@@ -33,7 +33,6 @@ from Products.CMFCore.exportimport.tests.test_workflow \
 from Products.CMFCore.exportimport.tests.test_workflow import DummyWorkflow
 from Products.CMFCore.exportimport.tests.test_workflow \
         import DummyWorkflowTool
-from Products.CMFCore.tests.base.testcase import setUpGenericSetup
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from Products.DCWorkflow.Transitions import TRIGGER_AUTOMATIC
@@ -78,8 +77,9 @@ class _WorkflowSetup(WorkflowSetupBase):
 
     def setUp(self):
         WorkflowSetupBase.setUp(self)
-        setUpGenericSetup()
         zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('meta.zcml', Products.GenericSetup)
+        zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.DCWorkflow)
 
     def _initDCWorkflow( self, workflow_id ):

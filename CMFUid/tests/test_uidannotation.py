@@ -21,18 +21,18 @@ import Testing
 from OFS.event import ObjectClonedEvent
 from zope.app.container.contained import ObjectAddedEvent
 from zope.event import notify
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.PortalFolder import PortalFolder
+from Products.CMFCore.testing import EventZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.testcase import SecurityTest
-from Products.CMFCore.tests.base.testcase import setUpEvents
-
 
 UID_ATTRNAME = 'cmf_uid'
 
 
 class UniqueIdAnnotationToolTests(SecurityTest):
+
+    layer = EventZCMLLayer
 
     def _getTargetClass(self):
         from Products.CMFUid.UniqueIdAnnotationTool \
@@ -42,13 +42,8 @@ class UniqueIdAnnotationToolTests(SecurityTest):
 
     def setUp(self):
         SecurityTest.setUp(self)
-        setUpEvents()
         self.root._setObject('portal_uidannotation', self._getTargetClass()())
         self.root._setObject('dummy', DummyContent(id='dummy'))
-
-    def tearDown(self):
-        SecurityTest.tearDown(self)
-        cleanUp()
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
@@ -151,4 +146,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

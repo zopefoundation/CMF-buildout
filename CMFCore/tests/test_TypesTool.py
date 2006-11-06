@@ -18,13 +18,11 @@ $Id$
 import unittest
 import Testing
 
-import Products
 from AccessControl import Unauthorized
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
 from Acquisition import aq_base
-from Products.Five import zcml
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.PythonScripts.standard import html_quote
 from webdav.NullResource import NullResource
@@ -34,6 +32,7 @@ from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.PortalFolder import PortalFolder
+from Products.CMFCore.testing import FunctionalZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyFactory
 from Products.CMFCore.tests.base.dummy import DummyFactoryDispatcher
 from Products.CMFCore.tests.base.dummy import DummyFolder
@@ -43,7 +42,6 @@ from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.security import UserWithRoles
 from Products.CMFCore.tests.base.testcase import SecurityTest
-from Products.CMFCore.tests.base.testcase import setUpTraversing
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.tests.base.tidata import FTIDATA_ACTIONS
 from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
@@ -52,6 +50,8 @@ from Products.CMFCore.tests.base.tidata import STI_SCRIPT
 
 
 class TypesToolTests(SecurityTest, WarningInterceptor):
+
+    layer = FunctionalZCMLLayer
 
     def _makeOne(self):
         from Products.CMFCore.TypesTool import TypesTool
@@ -62,11 +62,6 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
         from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 
         SecurityTest.setUp(self)
-        setUpTraversing()
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.Five.browser)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
         self.site = DummySite('site').__of__(self.root)
         self.acl_users = self.site._setObject( 'acl_users', DummyUserFolder() )
         self.ttool = self.site._setObject( 'portal_types', self._makeOne() )
@@ -75,7 +70,6 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
 
     def tearDown(self):
         SecurityTest.tearDown(self)
-        cleanUp()
         self._free_warning_output()
 
     def test_z2interfaces(self):
@@ -433,7 +427,7 @@ class FTIConstructionTestCase(unittest.TestCase):
 
 
 class FTIOldstyleConstructionTests(FTIConstructionTestCase):
-    
+
     def setUp(self):
         self.f = DummyFolder(fake_product=1)
         self.ti = self._makeOne('Foo', product='FooProduct', factory='addFoo')
@@ -476,4 +470,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

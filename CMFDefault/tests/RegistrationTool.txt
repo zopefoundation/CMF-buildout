@@ -75,34 +75,11 @@ password_email and registered_email
     ...     def title(self): return self.Title
     ...     def __call__(self): return self.url
 
-    >>> from zope import interface
-    >>> from zope.i18n.interfaces import INegotiator
-    >>> class Negotiator:
-    ...     interface.implements(INegotiator)
-    ...     def getLanguage(*ignored): return 'test'
-
-    >>> from zope.i18n.testmessagecatalog import TestMessageFallbackDomain
-    >>> class DummyFallbackTranslationService:
-    ...     def translate(self, domain, msgid, mapping, context,
-    ...                   target_language, default):
-    ...         util = TestMessageFallbackDomain(domain)
-    ...         return util.translate(msgid, mapping, context,
-    ...                               target_language, default)
-
-  And have to set up traversing, security and dummy translations::
-
-    >>> from Products.CMFCore.tests.base.testcase import setUpTraversing
-    >>> setUpTraversing()
+  And have to set up security::
 
     >>> from AccessControl.SecurityManagement import newSecurityManager
     >>> from AccessControl.User import UnrestrictedUser
     >>> newSecurityManager(None, UnrestrictedUser('god', '', ['Manager'], ''))
-
-    >>> from zope import component
-    >>> component.provideUtility(Negotiator())
-    >>> from Products.Five import i18n
-    >>> old_fallback_translation_service = i18n._fallback_translation_service
-    >>> i18n._fallback_translation_service = DummyFallbackTranslationService()
 
   Now we can set up password_email and registered_email with dummy context::
 
@@ -206,8 +183,5 @@ password_email and registered_email
 
   Finally we have to clean up::
 
-    >>> i18n._fallback_translation_service = old_fallback_translation_service
     >>> from AccessControl.SecurityManagement import noSecurityManager
     >>> noSecurityManager()
-    >>> from zope.testing.cleanup import cleanUp
-    >>> cleanUp()

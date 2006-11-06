@@ -14,11 +14,11 @@
 
 $Id$
 """
+
 import unittest
 import Testing
 
 from zope.interface import implements
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import ICallableOpaqueItem
 from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
@@ -28,10 +28,10 @@ from Products.CMFCore.interfaces.IOpaqueItems \
 from Products.CMFCore.interfaces.IOpaqueItems \
         import ICallableOpaqueItemEvents as z2ICallableOpaqueItemEvents
 from Products.CMFCore.PortalFolder import PortalFolder
+from Products.CMFCore.testing import EventZCMLLayer
 from Products.CMFCore.tests.base.dummy \
     import DummyContent as OriginalDummyContent
 from Products.CMFCore.tests.base.testcase import SecurityTest
-from Products.CMFCore.tests.base.testcase import setUpEvents
 from Products.CMFCore.TypesTool import TypesTool
 
 
@@ -90,10 +90,10 @@ class OpaqueBase:
         self.addCounter = self.cloneCounter = self.deleteCounter = 1
         self.id = id
         setattr(obj, id, self)
-        
+
     def __call__():
         return
-        
+
     def getId(self):
         return self.id
 
@@ -114,7 +114,7 @@ class Hooks(OpaqueBase):
     __implements__ = (
         z2ICallableOpaqueItemEvents,
     )
-    
+
     def manage_afterAdd(self, item, container):
         self.addCount = self.addCounter
         self.addCounter += 1
@@ -140,9 +140,10 @@ class MarkerAndHooks(Marker, Hooks):
 
 class ManageBeforeAfterTests(SecurityTest):
 
+    layer = EventZCMLLayer
+
     def setUp(self):
         SecurityTest.setUp(self)
-        setUpEvents()
 
         root = self.root
 
@@ -176,10 +177,6 @@ class ManageBeforeAfterTests(SecurityTest):
             sub._delObject('dummy')
         except AttributeError:
             pass
-
-    def tearDown(self):
-        SecurityTest.tearDown(self)
-        cleanUp()
 
     def test_nonCallableItem(self):
         # no exception should be raised
@@ -287,4 +284,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

@@ -19,35 +19,24 @@ import unittest
 from Testing import ZopeTestCase
 ZopeTestCase.installProduct('ZCTextIndex', 1)
 ZopeTestCase.installProduct('CMFCore', 1)
-ZopeTestCase.installProduct('CMFDefault', 1)
 
-import Products
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.testcase import RequestTest
-from Products.CMFCore.tests.base.testcase import setUpGenericSetup
-from Products.CMFCore.tests.base.testcase import setUpTraversing
+from Products.CMFDefault.factory import addConfiguredSite
+from Products.CMFDefault.testing import FunctionalZCMLLayer
 
 
 class DiscussionReplyTest(RequestTest):
 
-    def setUp(self):
-        import Products.DCWorkflow
+    layer = FunctionalZCMLLayer
 
+    def setUp(self):
         RequestTest.setUp(self)
-        setUpTraversing()
-        setUpGenericSetup()
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.Five.browser)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-        zcml.load_config('configure.zcml', Products.CMFDefault)
-        zcml.load_config('configure.zcml', Products.DCWorkflow)
         try:
-            factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
-            factory('cmf', 'Products.CMFDefault:default', snapshot=False)
+            addConfiguredSite(self.root, 'cmf', 'Products.CMFDefault:default',
+                              snapshot=False)
             self.portal = self.root.cmf
             # Become a Manager
             self.uf = self.portal.acl_users
@@ -67,7 +56,6 @@ class DiscussionReplyTest(RequestTest):
     def tearDown(self):
         noSecurityManager()
         RequestTest.tearDown(self)
-        cleanUp()
 
     def login(self, name):
         user = self.uf.getUserById(name)
@@ -104,4 +92,5 @@ def test_suite():
     return suite
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

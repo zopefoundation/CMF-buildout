@@ -19,16 +19,13 @@ import unittest
 from Testing import ZopeTestCase
 ZopeTestCase.installProduct('ZCTextIndex', 1)
 ZopeTestCase.installProduct('CMFCore', 1)
-ZopeTestCase.installProduct('CMFDefault', 1)
 
-import Products
 from DateTime.DateTime import DateTime
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.testcase import RequestTest
-from Products.CMFCore.tests.base.testcase import setUpGenericSetup
 from Products.CMFCore.tests.base.dummy import DummyContent
+from Products.CMFDefault.factory import addConfiguredSite
+from Products.CMFDefault.testing import FunctionalZCMLLayer
 from Products.CMFTopic.Topic import Topic
 
 from common import CriterionTestCase
@@ -129,7 +126,7 @@ class FriendlyDateCriterionTests(CriterionTestCase):
         self.assertEqual( result[0][1]['range'], 'min:max' )
 
     def test_FiveDaysOld( self ):
-        # This should create a query 
+        # This should create a query
         friendly = self._makeOne('foo', 'foofield')
 
         friendly.apply( self.lessThanFiveDaysOld )
@@ -155,7 +152,11 @@ class FriendlyDateCriterionTests(CriterionTestCase):
         self.assertEqual( expect_now.Date(), DateTime().Date() )
         self.assertEqual( result[0][1]['range'], 'min:max' )
 
+
 class FriendlyDateCriterionFunctionalTests(RequestTest):
+
+    layer = FunctionalZCMLLayer
+
     # Test the date criterion using a "real CMF" with catalog etc.
     selectable_diffs = [0, 1, 2, 5, 7, 14, 31, 93, 186, 365, 730]
     nonzero_diffs = [1, 2, 5, 7, 14, 31, 93, 186, 365, 730]
@@ -163,18 +164,10 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
     day_diffs.extend(selectable_diffs)
 
     def setUp(self):
-        import Products.DCWorkflow
-
         RequestTest.setUp(self)
-        setUpGenericSetup()
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.Five.browser)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-        zcml.load_config('configure.zcml', Products.CMFDefault)
-        zcml.load_config('configure.zcml', Products.DCWorkflow)
 
-        factory = self.root.manage_addProduct['CMFDefault'].addConfiguredSite
-        factory('site', 'Products.CMFDefault:default', snapshot=False)
+        addConfiguredSite(self.root, 'site', 'Products.CMFDefault:default',
+                          snapshot=False)
         self.site = self.root.site
         self.site._setObject( 'topic', Topic('topic') )
         self.topic = self.site.topic
@@ -193,10 +186,6 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
             dummy_ob = getattr(self.site, dummy_id)
             dummy_ob.modified_date = self.now + i
             dummy_ob.reindexObject()
-
-    def tearDown(self):
-        RequestTest.tearDown(self)
-        cleanUp()
 
     def test_Harness(self):
         # Make sure the test harness is set up OK
@@ -246,11 +235,11 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
                                , daterange='old'
                                )
             results = self.topic.queryCatalog()
-            
-            # As we move up in our date difference range, we must find as 
-            # many items as we have "modified" values <= the current value 
-            # in our sequence of user-selectable time differences. As we 
-            # increase the "value", we actually move backwards in time, so 
+
+            # As we move up in our date difference range, we must find as
+            # many items as we have "modified" values <= the current value
+            # in our sequence of user-selectable time differences. As we
+            # increase the "value", we actually move backwards in time, so
             # the expected count of results *decreases*
             self.assertEquals(len(results), resultset_size)
             for brain in results:
@@ -262,7 +251,7 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
         # What items are modified "More than 0 days ago"?
         # This represents a special case. The "special munging"
         # that corrects the query terms to what a human would expect
-        # are not applied and the search is a simple 
+        # are not applied and the search is a simple
         # "everything in the future" search.
         resultset_size = len(self.selectable_diffs)
         self.criterion.edit( value=0
@@ -273,7 +262,6 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
         self.assertEquals(len(results), resultset_size)
         for brain in results:
             self.failUnless(brain.modified >= self.now)
- 
 
     def test_MoreThanDaysAhead(self):
         # What items are modified "More than X days ahead"
@@ -285,11 +273,11 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
                                , daterange='ahead'
                                )
             results = self.topic.queryCatalog()
-            
-            # As we move up in our date difference range, we must find as 
-            # many items as we have "modified" values >= the current value 
-            # in our sequence of user-selectable time differences. As we 
-            # increase the "value", we actually move formward in time, so 
+
+            # As we move up in our date difference range, we must find as
+            # many items as we have "modified" values >= the current value
+            # in our sequence of user-selectable time differences. As we
+            # increase the "value", we actually move formward in time, so
             # the expected count of results *decreases*
             self.assertEquals(len(results), resultset_size)
             for brain in results:
@@ -301,7 +289,7 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
         # What items are modified "More than 0 days ahead"?
         # This represents a special case. The "special munging"
         # that corrects the query terms to what a human would expect
-        # are not applied and the search is a simple 
+        # are not applied and the search is a simple
         # "everything in the future" search.
         resultset_size = len(self.selectable_diffs)
         self.criterion.edit( value=0
@@ -323,7 +311,7 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
                                , daterange='old'
                                )
             results = self.topic.queryCatalog()
-            
+
             # With this query we are looking for items modified "less than
             # X days ago", meaning between the given time and now. As we move
             # through the selectable day values we increase the range to
@@ -338,7 +326,7 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
         # What items are modified "Less than 0 days ago"?
         # This represents a special case. The "special munging"
         # that corrects the query terms to what a human would expect
-        # are not applied and the search is a simple 
+        # are not applied and the search is a simple
         # "everything in the past" search.
         resultset_size = len(self.selectable_diffs)
         self.criterion.edit( value=0
@@ -349,7 +337,7 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
         self.assertEquals(len(results), resultset_size)
         for brain in results:
             self.failUnless(brain.modified <= self.now)
-            
+
     def test_LessThanDaysAhead(self):
         # What items are modified "Less than X days ahead"
         resultset_size = 2
@@ -360,7 +348,7 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
                                , daterange='ahead'
                                )
             results = self.topic.queryCatalog()
-            
+
             # With this query we are looking for items modified "less than
             # X days ahead", meaning between now and the given time. As we move
             # through the selectable day values we increase the range to
@@ -375,7 +363,7 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
         # What items are modified "Less than 0 days ahead"?
         # This represents a special case. The "special munging"
         # that corrects the query terms to what a human would expect
-        # are not applied and the search is a simple 
+        # are not applied and the search is a simple
         # "everything in the past" search.
         resultset_size = len(self.selectable_diffs)
         self.criterion.edit( value=0
@@ -395,4 +383,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

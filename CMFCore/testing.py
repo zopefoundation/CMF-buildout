@@ -10,10 +10,23 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-""" Unit tests mixin classes.
+""" Unit test mixin classes and layers.
 
 $Id$
 """
+
+from Acquisition import aq_acquire
+from Products.Five import i18n
+from Products.Five import zcml
+from zope.component import adapts
+from zope.i18n.interfaces import INegotiator
+from zope.i18n.interfaces import IUserPreferredLanguages
+from zope.i18n.testmessagecatalog import TestMessageFallbackDomain
+from zope.interface import implements
+from zope.publisher.interfaces.http import IHTTPRequest
+from zope.testing import testrunner
+from zope.testing.cleanup import cleanUp
+
 
 class ConformsToFolder:
 
@@ -78,3 +91,88 @@ class ConformsToContent:
         verifyClass(IDublinCore, self._getTargetClass())
         verifyClass(IDynamicType, self._getTargetClass())
         verifyClass(IMutableDublinCore, self._getTargetClass())
+
+
+class BrowserLanguages(object):
+
+    implements(IUserPreferredLanguages)
+    adapts(IHTTPRequest)
+
+    def __init__(self, context):
+        self.context = context
+
+    def getPreferredLanguages(self):
+        return ('test',)
+
+
+class _Negotiator(object):
+
+    implements(INegotiator)
+
+    def getLanguage(*ignored):
+        return 'test'
+
+negotiator = _Negotiator()
+
+
+class _FallbackTranslationService(object):
+
+    def translate(self, domain, msgid, mapping, context, target_language,
+                  default):
+        util = TestMessageFallbackDomain(domain)
+        if context is not None:
+            context = aq_acquire(context, 'REQUEST', None)
+        return util.translate(msgid, mapping, context, target_language,
+                              default)
+
+
+class EventZCMLLayer:
+
+    @classmethod
+    def setUp(cls):
+        import Products
+
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('event.zcml', Products.Five)
+        zcml.load_config('event.zcml', Products.CMFCore)
+
+    @classmethod
+    def tearDown(cls):
+        cleanUp()
+
+
+class TraversingZCMLLayer:
+
+    @classmethod
+    def setUp(cls):
+        import Products.Five
+
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('traversing.zcml', Products.Five)
+
+    @classmethod
+    def tearDown(cls):
+        cleanUp()
+
+
+class FunctionalZCMLLayer:
+
+    @classmethod
+    def setUp(cls):
+        import Products
+
+        cls._fallback_translation_service = i18n._fallback_translation_service
+        i18n._fallback_translation_service = _FallbackTranslationService()
+        zcml.load_config('testing.zcml', Products.CMFCore)
+
+    @classmethod
+    def tearDown(cls):
+        i18n._fallback_translation_service = cls._fallback_translation_service
+        cleanUp()
+
+
+def run(test_suite):
+    options = testrunner.get_options()
+    options.resume_layer = None
+    options.resume_number = 0
+    testrunner.run_with_options(options, test_suite)

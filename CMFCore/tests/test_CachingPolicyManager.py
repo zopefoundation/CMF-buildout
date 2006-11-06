@@ -21,21 +21,19 @@ import Testing
 import base64
 import os
 
-import Products.Five
 from AccessControl.SecurityManagement import newSecurityManager
 from App.Common import rfc1123_date
 from DateTime.DateTime import DateTime
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.FSPageTemplate import FSPageTemplate
+from Products.CMFCore.testing import FunctionalZCMLLayer
+from Products.CMFCore.testing import TraversingZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
-from Products.CMFCore.tests.base.testcase import setUpTraversing
 
 ACCLARK = DateTime( '2001/01/01' )
 portal_owner = 'portal_owner'
@@ -57,6 +55,8 @@ class DummyContent2:
 
 class CachingPolicyTests(unittest.TestCase):
 
+    layer = TraversingZCMLLayer
+
     def _makePolicy( self, policy_id, **kw ):
         from Products.CMFCore.CachingPolicyManager import CachingPolicy
 
@@ -68,11 +68,7 @@ class CachingPolicyTests(unittest.TestCase):
                               , 'foo_view', kw, self._epoch )
 
     def setUp(self):
-        setUpTraversing()
         self._epoch = DateTime(0)
-
-    def tearDown(self):
-        cleanUp()
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
@@ -394,17 +390,15 @@ class CachingPolicyTests(unittest.TestCase):
 
 class CachingPolicyManagerTests(unittest.TestCase):
 
+    layer = TraversingZCMLLayer
+
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.CachingPolicyManager import CachingPolicyManager
 
         return CachingPolicyManager(*args, **kw)
 
     def setUp(self):
-        setUpTraversing()
         self._epoch = DateTime()
-
-    def tearDown(self):
-        cleanUp()
 
     def assertEqualDelta( self, lhs, rhs, delta ):
         self.failUnless( abs( lhs - rhs ) <= delta )
@@ -466,7 +460,7 @@ class CachingPolicyManagerTests(unittest.TestCase):
         self.assertEqual(p.getLastModified(), 0)
         self.assertEqual(p.getPreCheck(), 2)
         self.assertEqual(p.getPostCheck(), 3)
-        
+
         mgr.updatePolicy('first', 'python:0', 'mtime2', 2, 1, 0, 1, 'vary2',
                          'etag2', None, 1, 0, 1, 0, 1, 0, 1, 3, 2)
         p = mgr._policies['first']
@@ -611,14 +605,13 @@ class CachingPolicyManagerTests(unittest.TestCase):
 
 class CachingPolicyManager304Tests(RequestTest, FSDVTest):
 
+    layer = FunctionalZCMLLayer
+
     def setUp(self):
         from Products.CMFCore import CachingPolicyManager
 
         RequestTest.setUp(self)
         FSDVTest.setUp(self)
-        setUpTraversing()
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore)
 
         now = DateTime()
 
@@ -626,7 +619,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         self.portal = DummySite(id='portal').__of__(self.root)
         self.portal._setObject('portal_types', DummyTool())
 
-        # This is a FSPageTemplate that will be used as the View for 
+        # This is a FSPageTemplate that will be used as the View for
         # our content objects. It doesn't matter what it returns.
         path = os.path.join(self.skin_path_name, 'testPT2.pt')
         self.portal._setObject('dummy_view', FSPageTemplate('dummy_view', path))
@@ -640,7 +633,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         newSecurityManager(None, user)
         owner_auth = '%s:%s' % (portal_owner, password)
         self.auth_header = "Basic %s" % base64.encodestring(owner_auth)
-        
+
         self.portal._setObject('doc1', DummyContent('doc1'))
         self.portal._setObject('doc2', DummyContent('doc2'))
         self.portal._setObject('doc3', DummyContent('doc3'))
@@ -664,7 +657,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
                       etag_func = '',
                       enable_304s = 1)
 
-        # This policy only applies to doc2. It will emit an ETag with 
+        # This policy only applies to doc2. It will emit an ETag with
         # the constant value "abc" and also enable if-modified-since handling.
         cpm.addPolicy(policy_id = 'policy_etag',
                       predicate = 'python:object.getId()=="doc2"',
@@ -693,7 +686,6 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
     def tearDown(self):
         RequestTest.tearDown(self)
         FSDVTest.tearDown(self)
-        cleanUp()
 
     def _cleanup(self):
         # Clean up request and response
@@ -735,7 +727,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         # want the full rendering. This must return a 304 response.
         request.environ['IF_MODIFIED_SINCE'] = rfc1123_date(doc1.modified_date)
         request.environ['HTTP_AUTHORIZATION'] = self.auth_header
-        doc1() 
+        doc1()
         self.assertEqual(response.getStatus(), 304)
         self._cleanup()
 
@@ -747,7 +739,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         self.assertEqual(response.getStatus(), 200)
         self._cleanup()
 
-        # We are asking for an ETag as well as modifications after doc2 has 
+        # We are asking for an ETag as well as modifications after doc2 has
         # been created. Both won't match and wwe get the full rendering.
         request.environ['IF_NONE_MATCH'] = '"123"'
         request.environ['IF_MODIFIED_SINCE'] = rfc1123_date(doc1.modified_date)
@@ -797,8 +789,8 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         doc2()
         self.assertEqual(response.getStatus(), 304)
         self._cleanup()
-        
-        # We specify an ETag and a modification time condition that dooes not 
+
+        # We specify an ETag and a modification time condition that dooes not
         # match, so we get the full rendering
         request.environ['IF_MODIFIED_SINCE'] = rfc1123_date(doc2.modified_date)
         request.environ['IF_NONE_MATCH'] = '"123"'
@@ -816,7 +808,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         doc2()
         self.assertEqual(response.getStatus(), 200)
         self._cleanup()
-        
+
         # Now we pass an ETag that matches the policy and a modified time
         # condition that is not fulfilled. It is safe to serve a 304.
         request.environ['IF_MODIFIED_SINCE'] = rfc1123_date(doc2.modified_date)
@@ -825,7 +817,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         doc2()
         self.assertEqual(response.getStatus(), 304)
         self._cleanup()
-        
+
     def testConditionalGETDisabled(self):
         yesterday = DateTime() - 1
         doc3 = self.portal.doc3
@@ -839,7 +831,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         doc3()
         self.assertEqual(response.getStatus(), 200)
         self._cleanup()
-        
+
         # Now both the ETag and the modified condition would trigger a 304
         # response *if* 304-handling was enabled. It is not in our policy, so
         # we get the full rendering again.
@@ -850,7 +842,7 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         self.assertEqual(response.getStatus(), 200)
         self._cleanup()
 
-        
+
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(CachingPolicyTests),
@@ -859,4 +851,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

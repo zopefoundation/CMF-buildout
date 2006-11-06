@@ -22,10 +22,10 @@ Converting skins to views:
   [x] IEvent @@view.html:
 
       [x] event_view.py -> EventView
-      [x] event_view_template.pt -> templates/event.pt
+      [x] event_view_template.pt -> formlib based
 
   [x] IMutableEvent @@edit.html:
 
       [x] event_edit_form.py -> EventEditView
-      [x] event_edit_template.pt -> templates/event_edit.pt
-      [x] event_edit_control.py -> EventEditView.edit_control
+      [x] event_edit_template.pt -> formlib based
+      [x] event_edit_control.py -> formlib based

@@ -76,8 +76,8 @@ Converting skins to views:
   [x] IMutableLink @@edit.html:
 
       link_edit_form.py -> LinkEditView
-      link_edit_template.pt -> templates/link_edit.pt
-      link_edit_control.py -> LinkEditView.edit_control
+      link_edit_template.pt -> formlib based
+      link_edit_control.py -> formlib based
 
   [ ] IFile @@view.html:
 
@@ -87,8 +87,8 @@ Converting skins to views:
   [ ] IMutableFile @@edit.html:
 
       file_edit_form.py -> FileEditView
-      file_edit_template.pt -> templates/file_edit.pt
-      file_edit_control.py -> FileEditView.edit_control
+      file_edit_template.pt -> formlib based
+      file_edit_control.py -> formlib based
 
   [ ] IImage @@view.html:
 
@@ -98,7 +98,7 @@ Converting skins to views:
   [ ] IMutableImage @@edit.html:
 
       image_edit_form.py -> ImageEditView
-      image_edit_template.pt -> templates/image_edit.pt
-      image_edit_control.py -> ImageEditView.edit_control
+      image_edit_template.pt -> formlib based
+      image_edit_control.py -> formlib based
 
   [ ] complete this todo list

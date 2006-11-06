@@ -21,8 +21,6 @@
   <five:deprecatedManageAddDelete
       class="Products.CMFCore.tests.base.dummy.DummyContent"/>
 
-  <utility component=".testing.negotiator"/>
-
   <utility
       component="zope.i18n.testmessagecatalog.TestMessageFallbackDomain"/>
 

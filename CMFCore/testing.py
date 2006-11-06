@@ -19,7 +19,6 @@ from Acquisition import aq_acquire
 from Products.Five import i18n
 from Products.Five import zcml
 from zope.component import adapts
-from zope.i18n.interfaces import INegotiator
 from zope.i18n.interfaces import IUserPreferredLanguages
 from zope.i18n.testmessagecatalog import TestMessageFallbackDomain
 from zope.interface import implements
@@ -105,16 +104,7 @@ class BrowserLanguages(object):
         return ('test',)
 
 
-class _Negotiator(object):
-
-    implements(INegotiator)
-
-    def getLanguage(*ignored):
-        return 'test'
-
-negotiator = _Negotiator()
-
-
+# BBB: for Five < 1.5.2
 class _FallbackTranslationService(object):
 
     def translate(self, domain, msgid, mapping, context, target_language,
@@ -161,13 +151,17 @@ class FunctionalZCMLLayer:
     def setUp(cls):
         import Products
 
+        # BBB: for Five < 1.5.2
         cls._fallback_translation_service = i18n._fallback_translation_service
         i18n._fallback_translation_service = _FallbackTranslationService()
+
         zcml.load_config('testing.zcml', Products.CMFCore)
 
     @classmethod
     def tearDown(cls):
+        # BBB: for Five < 1.5.2
         i18n._fallback_translation_service = cls._fallback_translation_service
+
         cleanUp()
 
 

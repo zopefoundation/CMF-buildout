@@ -29,7 +29,7 @@
       for="*"
       layer="Products.CMFDefault.interfaces.ICMFDefaultSkin"
       name="calendar_day.html"
-      class=".calendar.CalendarView"
+      class=".calendartool.CalendarView"
       template="templates/calendar_day.pt"
       permission="zope2.View"
       />
@@ -47,7 +47,7 @@
       for="*"
       layer="Products.CMFDefault.interfaces.ICMFDefaultSkin"
       name="calendar_box_view"
-      class=".calendar.CalendarBoxView"
+      class=".calendartool.CalendarBoxView"
       permission="zope2.View"
       />
 

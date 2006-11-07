@@ -15,12 +15,18 @@
 $Id$
 """
 
+from Testing import ZopeTestCase
+ZopeTestCase.installProduct('ZCTextIndex', 1)
+ZopeTestCase.installProduct('CMFCore', 1)
+
+import transaction
 from Products.Five import zcml
 
+from Products.CMFDefault.factory import addConfiguredSite
 from Products.CMFDefault.testing import FunctionalZCMLLayer
 
 
-class FunctionalZCMLLayer(FunctionalZCMLLayer):
+class FunctionalLayer(FunctionalZCMLLayer):
 
     @classmethod
     def setUp(cls):
@@ -28,6 +34,16 @@ class FunctionalZCMLLayer(FunctionalZCMLLayer):
 
         zcml.load_config('configure.zcml', Products.CMFCalendar)
 
+        app = ZopeTestCase.app()
+        addConfiguredSite(app, 'site', 'Products.CMFDefault:default',
+                          snapshot=False,
+                          extension_ids=('Products.CMFCalendar:default',))
+        transaction.commit()
+        ZopeTestCase.close(app)
+
     @classmethod
     def tearDown(cls):
-        pass
+        app = ZopeTestCase.app()
+        app._delObject('site')
+        transaction.commit()
+        ZopeTestCase.close(app)

@@ -17,22 +17,15 @@ $Id$
 
 import unittest
 from Testing import ZopeTestCase
-ZopeTestCase.installProduct('ZCTextIndex', 1)
-ZopeTestCase.installProduct('CMFCore', 1)
 ZopeTestCase.utils.setupCoreSessions()
 
 import locale
 
-import transaction
 from AccessControl.SecurityManagement import newSecurityManager
-from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.User import UnrestrictedUser
 from DateTime import DateTime
 
-from Products.CMFCore import Skinnable
-from Products.CMFDefault.factory import addConfiguredSite
-
-from Products.CMFCalendar.testing import FunctionalZCMLLayer
+from Products.CMFCalendar.testing import FunctionalLayer
 
 
 class CalendarTests(unittest.TestCase):
@@ -109,69 +102,53 @@ class CalendarTests(unittest.TestCase):
             locale.setlocale(locale.LC_ALL, old_locale)
 
 
-class CalendarRequestTests(unittest.TestCase):
+class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
 
-    layer = FunctionalZCMLLayer
+    layer = FunctionalLayer
 
-    def setUp(self):
-        self._oldSkindata = Skinnable.SKINDATA.copy()
-        transaction.begin()
-        app = self.app = ZopeTestCase.app()
-        # Log in as a god :-)
-        newSecurityManager( None, UnrestrictedUser('god', 'god', ['Manager'], '') )
-
-        addConfiguredSite(app, 'CalendarTest', 'Products.CMFDefault:default',
-                          snapshot=False,
-                          extension_ids=('Products.CMFCalendar:default',))
-        self.Site = app.CalendarTest
-        self.Tool = app.CalendarTest.portal_calendar
+    def afterSetUp(self):
+        newSecurityManager(None, UnrestrictedUser('god', '', ['Manager'], ''))
 
         # sessioning setup
-        app.REQUEST.set_lazy( 'SESSION',
-                              app.session_data_manager.getSessionData )
+        sdm = self.app.session_data_manager
+        self.app.REQUEST.set_lazy('SESSION', sdm.getSessionData)
 
-    def tearDown(self):
-        noSecurityManager()
-        transaction.abort()
-        ZopeTestCase.close(self.app)
-        Skinnable.SKINDATA = self._oldSkindata
-
-    def _testURL(self,url,params=None):
-        Site = self.Site
-        obj = Site.restrictedTraverse(url)
+    def _testURL(self, url, params=None):
+        obj = self.app.site.restrictedTraverse(url)
         if params is None:
-            params=(obj, Site.REQUEST)
+            params=(obj, self.app.site.REQUEST)
         obj(*params)
 
     def test_sessions_skinsview(self):
-        self.Tool.edit_configuration(show_types=['Event'], use_session="True")
-
-        self._testURL('/CalendarTest/calendarBox', ())
+        caltool = self.app.site.portal_calendar
+        caltool.edit_configuration(show_types=['Event'], use_session="True")
+        self._testURL('/site/calendarBox', ())
 
         self.failUnless(self.app.REQUEST.SESSION.get('calendar_year',None))
 
     def test_sessions_fiveview(self):
-        self.Tool.edit_configuration(show_types=['Event'], use_session="True")
-
-        self._testURL('/CalendarTest/@@calendar_widget', ())
+        caltool = self.app.site.portal_calendar
+        caltool.edit_configuration(show_types=['Event'], use_session="True")
+        self._testURL('/site/@@calendar_widget', ())
 
         self.failUnless(self.app.REQUEST.SESSION.get('calendar_year',None))
 
     def test_noSessions_skinsview(self):
-        self.Tool.edit_configuration(show_types=['Event'], use_session="")
-
-        self._testURL('/CalendarTest/calendarBox', ())
+        caltool = self.app.site.portal_calendar
+        caltool.edit_configuration(show_types=['Event'], use_session="")
+        self._testURL('/site/calendarBox', ())
 
         self.failIf(self.app.REQUEST.SESSION.get('calendar_year',None))
 
     def test_noSessions_fiveview(self):
-        self.Tool.edit_configuration(show_types=['Event'], use_session="")
-
-        self._testURL('/CalendarTest/@@calendar_widget', ())
+        caltool = self.app.site.portal_calendar
+        caltool.edit_configuration(show_types=['Event'], use_session="")
+        self._testURL('/site/@@calendar_widget', ())
 
         self.failIf(self.app.REQUEST.SESSION.get('calendar_year',None))
 
     def test_simpleCalendarRendering(self):
+        caltool = self.app.site.portal_calendar
         data = [
                 [
                  {'day': 0, 'event': 0, 'eventslist':[]},
@@ -219,13 +196,14 @@ class CalendarRequestTests(unittest.TestCase):
                  {'day': 0, 'event': 0, 'eventslist':[]},
                  ]
                 ]
-        result = self.Tool.getEventsForCalendar(month='5', year='2002')
+        result = caltool.getEventsForCalendar(month='5', year='2002')
         self.assertEqual(result, data)
 
     def test_singleEventCalendarRendering(self):
-
-        self.Site.Members.invokeFactory(type_name="Event",id='Event1')
-        event = self.app.restrictedTraverse('/CalendarTest/Members/Event1')
+        site = self.app.site
+        caltool = self.app.site.portal_calendar
+        site.Members.invokeFactory(type_name="Event",id='Event1')
+        event = self.app.restrictedTraverse('/site/Members/Event1')
         event.edit( title='title'
                     , description='description'
                     , eventType=( 'eventType', )
@@ -240,10 +218,7 @@ class CalendarRequestTests(unittest.TestCase):
                     , stop_time="11:59"
                     , stopAMPM="PM"
                     )
-        self.Site.portal_workflow.doActionFor(
-                                              event,
-                                              'publish',
-                                              comment='testing')
+        site.portal_workflow.doActionFor(event, 'publish', comment='testing')
 
         data = [
                 [
@@ -292,13 +267,14 @@ class CalendarRequestTests(unittest.TestCase):
                  {'day': 0, 'event': 0, 'eventslist':[]},
                  ]
                 ]
-        result = self.Tool.getEventsForCalendar(month='5', year='2002')
+        result = caltool.getEventsForCalendar(month='5', year='2002')
         self.assertEqual(result, data)
 
     def test_eventCalendarRenderingIssue411(self):
         #  http://www.zope.org/Collectors/CMF/411
-        self.Site.Members.invokeFactory(type_name="Event",id='Event1')
-        event = self.app.restrictedTraverse('/CalendarTest/Members/Event1')
+        site = self.app.site
+        site.Members.invokeFactory(type_name="Event",id='Event1')
+        event = self.app.restrictedTraverse('/site/Members/Event1')
         event.edit( title='title'
                     , description='description'
                     , eventType=( 'eventType', )
@@ -313,13 +289,10 @@ class CalendarRequestTests(unittest.TestCase):
                     , stop_time="00:00"
                     , stopAMPM="AM"
                     )
-        self.Site.portal_workflow.doActionFor(
-                                              event,
-                                              'publish',
-                                              comment='testing')
+        site.portal_workflow.doActionFor(event, 'publish', comment='testing')
 
-        self.Site.Members.invokeFactory(type_name="Event",id='Event2')
-        event = self.app.restrictedTraverse('/CalendarTest/Members/Event2')
+        site.Members.invokeFactory(type_name="Event",id='Event2')
+        event = self.app.restrictedTraverse('/site/Members/Event2')
         event.edit( title='title'
                     , description='description'
                     , eventType=( 'eventType', )
@@ -334,19 +307,16 @@ class CalendarRequestTests(unittest.TestCase):
                     , stop_time="00:00"
                     , stopAMPM="AM"
                     )
-        self.Site.portal_workflow.doActionFor(
-                                              event,
-                                              'publish',
-                                              comment='testing')
+        site.portal_workflow.doActionFor(event, 'publish', comment='testing')
 
         # With the bug unfixed, this raises a TypeError
-        ignored = self.Site.portal_calendar.catalog_getevents(2006, 3)
-
+        ignored = site.portal_calendar.catalog_getevents(2006, 3)
 
     def test_spanningEventCalendarRendering(self):
-
-        self.Site.Members.invokeFactory(type_name="Event",id='Event1')
-        event = self.app.restrictedTraverse('/CalendarTest/Members/Event1')
+        site = self.app.site
+        caltool = self.app.site.portal_calendar
+        site.Members.invokeFactory(type_name="Event",id='Event1')
+        event = self.app.restrictedTraverse('/site/Members/Event1')
         event.edit( title='title'
                     , description='description'
                     , eventType=( 'eventType', )
@@ -361,10 +331,7 @@ class CalendarRequestTests(unittest.TestCase):
                     , stop_time="11:59"
                     , stopAMPM="PM"
                     )
-        self.Site.portal_workflow.doActionFor(
-                                              event,
-                                              'publish',
-                                              comment='testing')
+        site.portal_workflow.doActionFor(event, 'publish', comment='testing')
 
         data = [
                 [
@@ -413,31 +380,39 @@ class CalendarRequestTests(unittest.TestCase):
                  {'day': 0, 'event': 0, 'eventslist':[]},
                  ]
                 ]
-        result = self.Tool.getEventsForCalendar(month='5', year='2002')
+        result = caltool.getEventsForCalendar(month='5', year='2002')
         self.assertEqual(result, data)
 
     def test_getPreviousMonth(self):
-        self.assertEqual( self.Tool.getPreviousMonth(2,2002),
+        caltool = self.app.site.portal_calendar
+
+        self.assertEqual( caltool.getPreviousMonth(2,2002),
                           DateTime('2002/1/1') )
-        self.assertEqual( self.Tool.getPreviousMonth(1,2002),
+        self.assertEqual( caltool.getPreviousMonth(1,2002),
                           DateTime('2001/12/1') )
 
     def test_getNextMonth(self):
-        self.assertEqual( self.Tool.getNextMonth(12,2001),
+        caltool = self.app.site.portal_calendar
+
+        self.assertEqual( caltool.getNextMonth(12,2001),
                           DateTime('2002/1/1') )
-        self.assertEqual( self.Tool.getNextMonth(1,2002),
+        self.assertEqual( caltool.getNextMonth(1,2002),
                           DateTime('2002/2/1') )
 
     def test_getBeginAndEndTimes(self):
-        self.assertEqual( self.Tool.getBeginAndEndTimes(1,12,2001),
+        caltool = self.app.site.portal_calendar
+
+        self.assertEqual( caltool.getBeginAndEndTimes(1,12,2001),
                           ( DateTime('2001/12/1 12:00:00AM'),
                             DateTime('2001/12/1 11:59:59PM') ) )
 
     def test_singleDayRendering(self):
-        wftool = self.Site.portal_workflow
+        site = self.app.site
+        caltool = self.app.site.portal_calendar
+        wftool = self.app.site.portal_workflow
 
-        self.Site.Members.invokeFactory(type_name="Event",id='Event1')
-        event = self.Site.Members.Event1
+        site.Members.invokeFactory(type_name="Event",id='Event1')
+        event = site.Members.Event1
         event.edit( title='title'
                     , description='description'
                     , eventType=( 'eventType', )
@@ -453,11 +428,11 @@ class CalendarRequestTests(unittest.TestCase):
                     , stopAMPM="PM"
                     )
         wftool.doActionFor(event, 'publish', comment='testing')
-        events = self.Tool.getEventsForThisDay(thisDay=DateTime('2002/5/1'))
+        events = caltool.getEventsForThisDay(thisDay=DateTime('2002/5/1'))
         self.assertEqual( len(events), 1 )
 
-        self.Site.Members.invokeFactory(type_name="Event",id='Event2')
-        event = self.Site.Members.Event2
+        site.Members.invokeFactory(type_name="Event",id='Event2')
+        event = site.Members.Event2
         event.edit( title='title'
                     , description='description'
                     , eventType=( 'eventType', )
@@ -473,11 +448,11 @@ class CalendarRequestTests(unittest.TestCase):
                     , stopAMPM="PM"
                     )
         wftool.doActionFor(event, 'publish', comment='testing')
-        events = self.Tool.getEventsForThisDay(thisDay=DateTime('2002/5/1'))
+        events = caltool.getEventsForThisDay(thisDay=DateTime('2002/5/1'))
         self.assertEqual( len(events), 2 )
 
-        self.Site.Members.invokeFactory(type_name="Event",id='Event3')
-        event = self.Site.Members.Event3
+        site.Members.invokeFactory(type_name="Event",id='Event3')
+        event = site.Members.Event3
         event.edit( title='title'
                     , description='description'
                     , eventType=( 'eventType', )
@@ -493,11 +468,11 @@ class CalendarRequestTests(unittest.TestCase):
                     , stopAMPM="PM"
                     )
         wftool.doActionFor(event, 'publish', comment='testing')
-        events = self.Tool.getEventsForThisDay(thisDay=DateTime('2002/5/1'))
+        events = caltool.getEventsForThisDay(thisDay=DateTime('2002/5/1'))
         self.assertEqual( len(events), 3 )
 
-        self.Site.Members.invokeFactory(type_name="Event",id='Event4')
-        event = self.Site.Members.Event4
+        site.Members.invokeFactory(type_name="Event",id='Event4')
+        event = site.Members.Event4
         event.edit( title='title'
                     , description='description'
                     , eventType=( 'eventType', )
@@ -513,11 +488,11 @@ class CalendarRequestTests(unittest.TestCase):
                     , stopAMPM="PM"
                     )
         wftool.doActionFor(event, 'publish', comment='testing')
-        events = self.Tool.getEventsForThisDay(thisDay=DateTime('2002/5/1'))
+        events = caltool.getEventsForThisDay(thisDay=DateTime('2002/5/1'))
         self.assertEqual( len(events), 4 )
 
-        self.Site.Members.invokeFactory(type_name="Event",id='Event5')
-        event = self.Site.Members.Event5
+        site.Members.invokeFactory(type_name="Event",id='Event5')
+        event = site.Members.Event5
         event.edit( title='title'
                     , description='description'
                     , eventType=( 'eventType', )
@@ -533,24 +508,24 @@ class CalendarRequestTests(unittest.TestCase):
                     , stopAMPM="PM"
                     )
         wftool.doActionFor(event, 'publish', comment='testing')
-        events = self.Tool.getEventsForThisDay(thisDay=DateTime('2002/5/1'))
+        events = caltool.getEventsForThisDay(thisDay=DateTime('2002/5/1'))
         self.assertEqual( len(events), 4 )
-        events = self.Tool.getEventsForThisDay(thisDay=DateTime('2002/5/31'))
+        events = caltool.getEventsForThisDay(thisDay=DateTime('2002/5/31'))
         self.assertEqual( len(events), 3 )
 
     def test_lastDayRendering(self):
         # Bug in catalog_getevents included events starting at 00:00:00 on the next day
+        site = self.app.site
+        site.invokeFactory('Event', id='today', title='today',
+                           start_date='2002/05/31 23:50:00',
+                           end_date='2002/05/31 23:59:59')
 
-        self.Site.invokeFactory('Event', id='today', title='today',
-                                 start_date='2002/05/31 23:50:00',
-                                 end_date='2002/05/31 23:59:59')
+        site.invokeFactory('Event', id='tomorrow', title='tomorrow',
+                           start_date='2002/06/01 00:00:00',
+                           end_date='2002/06/01 00:10:00')
 
-        self.Site.invokeFactory('Event', id='tomorrow', title='tomorrow',
-                                 start_date='2002/06/01 00:00:00',
-                                 end_date='2002/06/01 00:10:00')
-
-        self.Site.portal_workflow.doActionFor(self.Site.today, 'publish')
-        self.Site.portal_workflow.doActionFor(self.Site.tomorrow, 'publish')
+        site.portal_workflow.doActionFor(site.today, 'publish')
+        site.portal_workflow.doActionFor(site.tomorrow, 'publish')
 
         # Last week of May 2002
         data = [
@@ -563,22 +538,22 @@ class CalendarRequestTests(unittest.TestCase):
                {'day': 31, 'event': 1, 'eventslist':[{'start': '23:50:00', 'end': '23:59:59', 'title': 'today'}]},
                ]
 
-        events = self.Site.portal_calendar.catalog_getevents(2002, 5)
+        events = site.portal_calendar.catalog_getevents(2002, 5)
         self.assertEqual([events[e] for e in range(25, 32)], data)
 
     def test_firstDayRendering(self):
         # Double check it works on the other boundary as well
+        site = self.app.site
+        site.invokeFactory('Event', id='yesterday', title='yesterday',
+                           start_date='2002/05/31 23:50:00',
+                           end_date='2002/05/31 23:59:59')
 
-        self.Site.invokeFactory('Event', id='yesterday', title='yesterday',
-                                 start_date='2002/05/31 23:50:00',
-                                 end_date='2002/05/31 23:59:59')
+        site.invokeFactory('Event', id='today', title='today',
+                           start_date='2002/06/01 00:00:00',
+                           end_date='2002/06/01 00:10:00')
 
-        self.Site.invokeFactory('Event', id='today', title='today',
-                                 start_date='2002/06/01 00:00:00',
-                                 end_date='2002/06/01 00:10:00')
-
-        self.Site.portal_workflow.doActionFor(self.Site.yesterday, 'publish')
-        self.Site.portal_workflow.doActionFor(self.Site.today, 'publish')
+        site.portal_workflow.doActionFor(site.yesterday, 'publish')
+        site.portal_workflow.doActionFor(site.today, 'publish')
 
         # First week of June 2002
         data = [
@@ -591,63 +566,63 @@ class CalendarRequestTests(unittest.TestCase):
                {'day': 7, 'event': 0, 'eventslist':[]},
                ]
 
-        events = self.Site.portal_calendar.catalog_getevents(2002, 6)
+        events = site.portal_calendar.catalog_getevents(2002, 6)
         self.assertEqual([events[e] for e in range(1, 8)], data)
 
     def test_workflowStateRendering(self):
         # Calendar should return events in all of the selected workflow states
+        site = self.app.site
+        caltool = self.app.site.portal_calendar
+        site.invokeFactory('Event', id='meeting',
+                           start_date='2002/05/01 11:00:00',
+                           end_date='2002/05/01 13:30:00')
 
-        self.Site.invokeFactory('Event', id='meeting',
-                                 start_date='2002/05/01 11:00:00',
-                                 end_date='2002/05/01 13:30:00')
+        site.invokeFactory('Event', id='dinner',
+                           start_date='2002/05/01 20:00:00',
+                           end_date='2002/05/01 22:00:00')
 
-        self.Site.invokeFactory('Event', id='dinner',
-                                 start_date='2002/05/01 20:00:00',
-                                 end_date='2002/05/01 22:00:00')
-
-        self.assertEqual(len(self.Site.portal_catalog(portal_type='Event')), 2)
+        self.assertEqual(len(site.portal_catalog(portal_type='Event')), 2)
 
         # No published events
-        self.assertEqual(len(self.Site.portal_calendar.getEventsForThisDay(DateTime('2002/05/01'))), 0)
+        self.assertEqual(len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 0)
 
         # One published event
-        self.Site.portal_workflow.doActionFor(self.Site.meeting, 'publish')
-        self.assertEqual(len(self.Site.portal_catalog(review_state='published')), 1)
+        site.portal_workflow.doActionFor(site.meeting, 'publish')
+        self.assertEqual(len(site.portal_catalog(review_state='published')), 1)
 
-        self.assertEqual(len(self.Site.portal_calendar.getEventsForThisDay(DateTime('2002/05/01'))), 1)
+        self.assertEqual(len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 1)
 
         # One pending event
-        self.Site.portal_workflow.doActionFor(self.Site.dinner, 'submit')
-        self.assertEqual(len(self.Site.portal_catalog(review_state='pending')), 1)
+        site.portal_workflow.doActionFor(site.dinner, 'submit')
+        self.assertEqual(len(site.portal_catalog(review_state='pending')), 1)
 
-        self.assertEqual(len(self.Site.portal_calendar.getEventsForThisDay(DateTime('2002/05/01'))), 1)
+        self.assertEqual(len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 1)
 
         # Make calendar return pending events
-        self.Site.portal_calendar.edit_configuration(show_types=('Event',),
-                                                     show_states=('pending', 'published'),
-                                                     use_session='')
+        caltool.edit_configuration(show_types=('Event',),
+                                   show_states=('pending', 'published'),
+                                   use_session='')
 
-        self.assertEqual(len(self.Site.portal_calendar.getEventsForThisDay(DateTime('2002/05/01'))), 2)
+        self.assertEqual(len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 2)
 
     def test_EventEndingMidnight(self):
         # Events ending exactly at midnight should not be shown for the day
         # after (see http://www.zope.org/Collectors/CMF/246)
-        cal = self.Site.portal_calendar
+        site = self.app.site
+        caltool = self.app.site.portal_calendar
         the_day = DateTime('2002/05/01')
         day_after = DateTime('2002/05/02')
 
-        self.Site.invokeFactory( 'Event'
-                               , id='party'
-                               , start_date=the_day
-                               , end_date=day_after
-                               )
-        self.Site.portal_workflow.doActionFor(self.Site.party, 'publish')
+        site.invokeFactory('Event', id='party',
+                           start_date=the_day,
+                           end_date=day_after)
+        site.portal_workflow.doActionFor(site.party, 'publish')
 
         # One entry should be present for the day of the event
-        self.assertEqual(len(cal.getEventsForThisDay(the_day)), 1)
+        self.assertEqual(len(caltool.getEventsForThisDay(the_day)), 1)
 
         # No entry should be present for the day after
-        self.assertEqual(len(cal.getEventsForThisDay(day_after)), 0)
+        self.assertEqual(len(caltool.getEventsForThisDay(day_after)), 0)
 
         # First week of May 2002
         data = [
@@ -660,7 +635,7 @@ class CalendarRequestTests(unittest.TestCase):
                {'day': 7, 'event': 0, 'eventslist':[]},
                ]
 
-        events = self.Site.portal_calendar.catalog_getevents(2002, 5)
+        events = caltool.catalog_getevents(2002, 5)
         self.assertEqual([events[e] for e in range(1, 8)], data)
 
 

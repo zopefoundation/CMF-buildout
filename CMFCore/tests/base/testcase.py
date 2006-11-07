@@ -81,52 +81,34 @@ class WarningInterceptor:
 
 class TransactionalTest(unittest.TestCase):
 
-    def setUp( self ):
+    def setUp(self):
         transaction.begin()
         self.app = self.root = ZopeTestCase.app()
-
-    def tearDown( self ):
-        transaction.abort()
-        ZopeTestCase.close(self.app)
-
-
-class RequestTest(TransactionalTest):
-
-    def setUp(self):
-        TransactionalTest.setUp(self)
-        self.app = self.root = ZopeTestCase.utils.makerequest(self.app)
         self.REQUEST  = self.app.REQUEST
         self.RESPONSE = self.app.REQUEST.RESPONSE
 
     def tearDown(self):
-        self.REQUEST.close()
-        TransactionalTest.tearDown(self)
-
-
-class SecurityTest(unittest.TestCase):
-
-    def setUp(self):
-        transaction.begin()
-        self._policy = PermissiveSecurityPolicy()
-        self._oldPolicy = setSecurityPolicy(self._policy)
-        self.app = self.root = ZopeTestCase.app()
-        newSecurityManager(None, AnonymousUser().__of__(self.app.acl_users))
-
-    def tearDown( self ):
         transaction.abort()
         ZopeTestCase.close(self.app)
-        noSecurityManager()
-        setSecurityPolicy(self._oldPolicy)
+
+RequestTest = TransactionalTest
 
 
-class SecurityRequestTest(SecurityTest):
+class SecurityTest(TransactionalTest):
 
     def setUp(self):
-        SecurityTest.setUp(self)
-        self.app = self.root = ZopeTestCase.utils.makerequest(self.app)
+        TransactionalTest.setUp(self)
+        self._policy = PermissiveSecurityPolicy()
+        self._oldPolicy = setSecurityPolicy(self._policy)
+        newSecurityManager(None, AnonymousUser().__of__(self.app.acl_users))
 
     def tearDown(self):
-        SecurityTest.tearDown(self)
+        noSecurityManager()
+        setSecurityPolicy(self._oldPolicy)
+        TransactionalTest.tearDown(self)
+
+SecurityRequestTest = SecurityTest
+
 
 try:
     __file__

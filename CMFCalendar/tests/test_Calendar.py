@@ -116,8 +116,7 @@ class CalendarRequestTests(unittest.TestCase):
     def setUp(self):
         self._oldSkindata = Skinnable.SKINDATA.copy()
         transaction.begin()
-
-        app = self.app = ZopeTestCase.utils.makerequest(ZopeTestCase.app())
+        app = self.app = ZopeTestCase.app()
         # Log in as a god :-)
         newSecurityManager( None, UnrestrictedUser('god', 'god', ['Manager'], '') )
 

@@ -16,11 +16,10 @@ $Id$
 """
 
 import unittest
-import Testing
-from zope.testing import doctest
+from Testing import ZopeTestCase
 
 from Products.CMFCore.tests.base.testcase import RequestTest
-from Products.CMFDefault.testing import FunctionalZCMLLayer
+from Products.CMFDefault.testing import FunctionalLayer
 
 
 class FauxMembershipTool:
@@ -83,9 +82,8 @@ Spam, spam, spam
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(RegistrationToolTests))
-    s = doctest.DocFileSuite('RegistrationTool.txt',
-                optionflags=(doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE))
-    s.layer = FunctionalZCMLLayer
+    s = ZopeTestCase.FunctionalDocFileSuite('RegistrationTool.txt')
+    s.layer = FunctionalLayer
     suite.addTest(s)
     return suite
 

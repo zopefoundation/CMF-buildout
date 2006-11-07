@@ -22,8 +22,8 @@ ZopeTestCase.installProduct('CMFCore', 1)
 import transaction
 from Products.Five import zcml
 
+from Products.CMFCore.testing import FunctionalZCMLLayer
 from Products.CMFDefault.factory import addConfiguredSite
-from Products.CMFDefault.testing import FunctionalZCMLLayer
 
 
 class FunctionalLayer(FunctionalZCMLLayer):
@@ -31,8 +31,14 @@ class FunctionalLayer(FunctionalZCMLLayer):
     @classmethod
     def setUp(cls):
         import Products.CMFCalendar
+        import Products.CMFDefault
+        import Products.CMFTopic
+        import Products.DCWorkflow
 
         zcml.load_config('configure.zcml', Products.CMFCalendar)
+        zcml.load_config('configure.zcml', Products.CMFDefault)
+        zcml.load_config('configure.zcml', Products.CMFTopic)
+        zcml.load_config('configure.zcml', Products.DCWorkflow)
 
         app = ZopeTestCase.app()
         addConfiguredSite(app, 'site', 'Products.CMFDefault:default',

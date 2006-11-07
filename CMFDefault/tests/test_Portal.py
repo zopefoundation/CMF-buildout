@@ -17,28 +17,20 @@ $Id$
 
 import unittest
 from Testing import ZopeTestCase
-ZopeTestCase.installProduct('ZCTextIndex', 1)
-ZopeTestCase.installProduct('CMFCore', 1)
 
+from AccessControl.SecurityManagement import newSecurityManager
+from AccessControl.User import UnrestrictedUser
 from Acquisition import aq_base
 
-from Products.CMFCore.tests.base.testcase import SecurityRequestTest
-from Products.CMFDefault.testing import FunctionalZCMLLayer
+from Products.CMFDefault.testing import FunctionalLayer
 
 
-class CMFSiteTests(SecurityRequestTest):
+class CMFSiteTests(ZopeTestCase.FunctionalTestCase):
 
-    layer = FunctionalZCMLLayer
-
-    def _makeSite( self, id='testsite' ):
-
-        from Products.CMFDefault.factory import addConfiguredSite
-
-        addConfiguredSite(self.root, id, 'Products.CMFDefault:default',
-                          snapshot=False)
-        return getattr( self.root, id )
+    layer = FunctionalLayer
 
     def _makeContent( self, site, portal_type, id='document', **kw ):
+        newSecurityManager(None, UnrestrictedUser('god', '', ['Manager'], ''))
 
         site.invokeFactory( type_name=portal_type, id=id )
         content = getattr( site, id )
@@ -49,13 +41,12 @@ class CMFSiteTests(SecurityRequestTest):
         return content
 
     def test_new( self ):
+        site = self.app.site
 
-        site = self._makeSite()
         self.assertEqual( len( site.portal_catalog ), 0 )
 
     def test_MetadataCataloguing( self ):
-
-        site = self._makeSite()
+        site = self.app.site
         catalog = site.portal_catalog
         site.portal_membership.memberareaCreationFlag = 0
         uid_handler = getattr(site, 'portal_uidhandler', None)
@@ -104,8 +95,7 @@ class CMFSiteTests(SecurityRequestTest):
             self.assertEqual( len( catalog ), 0 )
 
     def test_DocumentEditCataloguing( self ):
-
-        site = self._makeSite()
+        site = self.app.site
         catalog = site.portal_catalog
 
         doc = self._makeContent( site
@@ -123,8 +113,7 @@ class CMFSiteTests(SecurityRequestTest):
         self.assertEqual( _getMetadata( catalog, rid ), 'Bar' )
 
     def test_ImageEditCataloguing( self ):
-
-        site = self._makeSite()
+        site = self.app.site
         catalog = site.portal_catalog
 
         doc = self._makeContent( site
@@ -140,8 +129,7 @@ class CMFSiteTests(SecurityRequestTest):
         self.assertEqual( _getMetadata( catalog, rid ), 'Bar' )
 
     def test_FileEditCataloguing( self ):
-
-        site = self._makeSite()
+        site = self.app.site
         catalog = site.portal_catalog
 
         doc = self._makeContent( site
@@ -157,8 +145,7 @@ class CMFSiteTests(SecurityRequestTest):
         self.assertEqual( _getMetadata( catalog, rid ), 'Bar' )
 
     def test_LinkEditCataloguing( self ):
-
-        site = self._makeSite()
+        site = self.app.site
         catalog = site.portal_catalog
 
         doc = self._makeContent( site
@@ -174,8 +161,7 @@ class CMFSiteTests(SecurityRequestTest):
         self.assertEqual( _getMetadata( catalog, rid ), 'Bar' )
 
     def test_NewsItemEditCataloguing( self ):
-
-        site = self._makeSite()
+        site = self.app.site
         catalog = site.portal_catalog
 
         doc = self._makeContent( site

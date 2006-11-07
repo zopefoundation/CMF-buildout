@@ -17,26 +17,16 @@ $Id$
 
 import unittest
 from Testing import ZopeTestCase
-ZopeTestCase.installProduct('ZCTextIndex', 1)
-ZopeTestCase.installProduct('CMFCore', 1)
 
-from Products.CMFCore.tests.base.testcase import TransactionalTest
-from Products.CMFDefault.factory import addConfiguredSite
-from Products.CMFDefault.testing import FunctionalZCMLLayer
+from Products.CMFDefault.testing import FunctionalLayer
 
 
-class MembershipTests(TransactionalTest):
+class MembershipTests(ZopeTestCase.FunctionalTestCase):
 
-    layer = FunctionalZCMLLayer
-
-    def _makePortal(self):
-        # Create a portal instance suitable for testing
-        addConfiguredSite(self.root, 'site', 'Products.CMFDefault:default',
-                          snapshot=False)
-        return self.root.site
+    layer = FunctionalLayer
 
     def test_join( self ):
-        site = self._makePortal()
+        site = self.app.site
         member_id = 'test_user'
 
         site.portal_registration.addMember( member_id
@@ -51,7 +41,7 @@ class MembershipTests(TransactionalTest):
     def test_join_memberproperties(self):
         # Make sure the member data wrapper carries correct properties
         # after joining
-        site = self._makePortal()
+        site = self.app.site
         member_id = 'test_user'
 
         site.portal_registration.addMember( member_id
@@ -67,7 +57,7 @@ class MembershipTests(TransactionalTest):
         self.assertEqual(m.getRoles(), ('Member', 'Authenticated'))
 
     def test_join_without_email( self ):
-        site = self._makePortal()
+        site = self.app.site
 
         self.assertRaises(ValueError,
                           site.portal_registration.addMember,
@@ -77,7 +67,7 @@ class MembershipTests(TransactionalTest):
                           )
 
     def test_join_with_variable_id_policies( self ):
-        site = self._makePortal()
+        site = self.app.site
         member_id = 'test.user'
 
         # Test with the default policy: Names with "." should fail

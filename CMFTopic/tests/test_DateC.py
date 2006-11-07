@@ -17,15 +17,11 @@ $Id$
 
 import unittest
 from Testing import ZopeTestCase
-ZopeTestCase.installProduct('ZCTextIndex', 1)
-ZopeTestCase.installProduct('CMFCore', 1)
 
 from DateTime.DateTime import DateTime
 
-from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.dummy import DummyContent
-from Products.CMFDefault.factory import addConfiguredSite
-from Products.CMFDefault.testing import FunctionalZCMLLayer
+from Products.CMFDefault.testing import FunctionalLayer
 from Products.CMFTopic.Topic import Topic
 
 from common import CriterionTestCase
@@ -153,9 +149,9 @@ class FriendlyDateCriterionTests(CriterionTestCase):
         self.assertEqual( result[0][1]['range'], 'min:max' )
 
 
-class FriendlyDateCriterionFunctionalTests(RequestTest):
+class FriendlyDateCriterionFunctionalTests(ZopeTestCase.FunctionalTestCase):
 
-    layer = FunctionalZCMLLayer
+    layer = FunctionalLayer
 
     # Test the date criterion using a "real CMF" with catalog etc.
     selectable_diffs = [0, 1, 2, 5, 7, 14, 31, 93, 186, 365, 730]
@@ -163,12 +159,8 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
     day_diffs = [-730, -365, -186, -93, -31, -14, -7, -5, -2, -1]
     day_diffs.extend(selectable_diffs)
 
-    def setUp(self):
-        RequestTest.setUp(self)
-
-        addConfiguredSite(self.root, 'site', 'Products.CMFDefault:default',
-                          snapshot=False)
-        self.site = self.root.site
+    def afterSetUp(self):
+        self.site = self.app.site
         self.site._setObject( 'topic', Topic('topic') )
         self.topic = self.site.topic
         self.topic.addCriterion('modified', 'Friendly Date Criterion')

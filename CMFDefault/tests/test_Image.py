@@ -17,27 +17,22 @@ $Id$
 
 import unittest
 from Testing import ZopeTestCase
-ZopeTestCase.installProduct('ZCTextIndex', 1)
-ZopeTestCase.installProduct('CMFCore', 1)
 
 from os.path import join as path_join
 from cStringIO import StringIO
 
 import transaction
 from AccessControl.SecurityManagement import newSecurityManager
-from AccessControl.SecurityManagement import noSecurityManager
+from AccessControl.User import UnrestrictedUser
 
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
 from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
-from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.testcase import RequestTest
-from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFDefault import tests
-from Products.CMFDefault.factory import addConfiguredSite
-from Products.CMFDefault.testing import FunctionalZCMLLayer
+from Products.CMFDefault.testing import FunctionalLayer
 
 TESTS_HOME = tests.__path__[0]
 TEST_JPG = path_join(TESTS_HOME, 'TestImage.jpg')
@@ -104,35 +99,25 @@ class TestImageElement(ConformsToContent, unittest.TestCase):
         self.assertEqual(image.content_type, 'image/jpeg')
 
 
-class TestImageCopyPaste(SecurityRequestTest):
+class TestImageCopyPaste(ZopeTestCase.FunctionalTestCase):
 
     # Tests related to http://www.zope.org/Collectors/CMF/176
     # Copy/pasting an image (or file) should reset the object's workflow state.
 
-    layer = FunctionalZCMLLayer
+    layer = FunctionalLayer
 
-    def setUp(self):
-        SecurityRequestTest.setUp(self)
-        try:
-            addConfiguredSite(self.root, 'cmf', 'Products.CMFDefault:default',
-                              snapshot=False)
-            self.site = self.root.cmf
-            newSecurityManager(None, OmnipotentUser().__of__(self.site))
-            self.site.invokeFactory('File', id='file')
-            self.site.portal_workflow.doActionFor(self.site.file, 'publish')
-            self.site.invokeFactory('Image', id='image')
-            self.site.portal_workflow.doActionFor(self.site.image, 'publish')
-            self.site.invokeFactory('Folder', id='subfolder')
-            self.subfolder = self.site.subfolder
-            self.workflow = self.site.portal_workflow
-            transaction.savepoint(optimistic=True) # Make sure we have _p_jars
-        except:
-            self.tearDown()
-            raise
+    def afterSetUp(self):
+        newSecurityManager(None, UnrestrictedUser('god', '', ['Manager'], ''))
 
-    def tearDown(self):
-        noSecurityManager()
-        SecurityRequestTest.tearDown(self)
+        self.site = self.app.site
+        self.site.invokeFactory('File', id='file')
+        self.site.portal_workflow.doActionFor(self.site.file, 'publish')
+        self.site.invokeFactory('Image', id='image')
+        self.site.portal_workflow.doActionFor(self.site.image, 'publish')
+        self.site.invokeFactory('Folder', id='subfolder')
+        self.subfolder = self.site.subfolder
+        self.workflow = self.site.portal_workflow
+        transaction.commit() # Make sure we have _p_jars
 
     def test_File_CopyPasteResetsWorkflowState(self):
         # Copy/pasting a File should reset wf state to private
@@ -185,6 +170,7 @@ class TestImageCopyPaste(SecurityRequestTest):
         self.site.manage_renameObjects(['image'], ['image2'])
         review_state = self.workflow.getInfoFor(self.site.image2, 'review_state')
         self.assertEqual(review_state, 'published')
+
 
 class TestCaching(RequestTest):
 
@@ -274,7 +260,6 @@ class TestCaching(RequestTest):
 
         self.root.image = self._makeOne( 'test_image', 'test_image.gif' )
         image = self.root.image
-        import transaction
         transaction.savepoint(optimistic=True)
 
         mod_time = image.modified()

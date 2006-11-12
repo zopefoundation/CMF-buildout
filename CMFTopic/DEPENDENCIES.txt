@@ -1,4 +1,4 @@
-Zope >= 2.10.0
+Zope >= 2.10.1
 CMFCore
 CMFDefault
 GenericSetup

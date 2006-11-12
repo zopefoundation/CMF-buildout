@@ -27,10 +27,15 @@ CMF 2.1.0-beta (unreleased)
 
   Bug Fixes
 
+    - CMFCore.CachingPolicyManager: Prevent firing of caching policies
+      for templates (DTML or ZPT) that are rendered in-line (without a 
+      separate request) while rendering the requested content item's view.
+      (http://www.zope.org/Collectors/CMF/456)
+
     - CMFDefault RegistrationTool: Fixed too restrictive email checking.
       The new 'checkEmailAddress' function is now used.
 
-    - Fixed test breakage induced by use of Z3 pagetempalates in Zope 2.10+.
+    - Fixed test breakage induced by use of Z3 pagetemplates in Zope 2.10+.
 
     - CMFDefault skins: Fixed encoding issues in welcome and reminder emails.
       'password_email' and 'registered_email' now encode their return value
@@ -38,7 +43,7 @@ CMF 2.1.0-beta (unreleased)
 
   Others
 
-    - The CMF now depends on Zope 2.10.0.
+    - The CMF now depends on Zope 2.10.1
 
 
 CMF 2.1.0-alpha (2006/10/09)

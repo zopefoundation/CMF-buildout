@@ -51,6 +51,7 @@ from zope.i18nmessageid import MessageFactory
 from exceptions import AccessControl_Unauthorized
 from exceptions import NotFound
 
+SUBTEMPLATE = '__SUBTEMPLATE__'
 
 security = ModuleSecurityInfo( 'Products.CMFCore.utils' )
 
@@ -289,6 +290,12 @@ def _checkConditionalGET(obj, extra_context):
     if REQUEST is None:
         return False
 
+    # check whether we need to suppress subtemplates
+    call_count = getattr(REQUEST, SUBTEMPLATE, 0)
+    setattr(REQUEST, SUBTEMPLATE, call_count+1)
+    if call_count != 0:
+        return False
+
     if_modified_since = REQUEST.get_header('If-Modified-Since', None)
     if_none_match = REQUEST.get_header('If-None-Match', None)
 
@@ -357,9 +364,10 @@ def _checkConditionalGET(obj, extra_context):
     if content_etag:
         response.setHeader('ETag', content_etag, literal=1)
     response.setStatus(304)
+    delattr(REQUEST, SUBTEMPLATE)
             
     return True
-    
+   
 
 security.declarePrivate('_setCacheHeaders')
 def _setCacheHeaders(obj, extra_context):
@@ -367,6 +375,14 @@ def _setCacheHeaders(obj, extra_context):
     REQUEST = getattr(obj, 'REQUEST', None)
 
     if REQUEST is not None:
+        call_count = getattr(REQUEST, SUBTEMPLATE, 1) - 1
+        setattr(REQUEST, SUBTEMPLATE, call_count)
+        if call_count != 0:
+           return
+
+        # cleanup
+        delattr(REQUEST, SUBTEMPLATE)
+
         content = aq_parent(obj)
         manager = getToolByName(obj, 'caching_policy_manager', None)
         if manager is not None:

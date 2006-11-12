@@ -118,6 +118,7 @@ class DummyContent( PortalContent, Item ):
         self.reset()
         self.catalog = kw.get('catalog',0)
         self.url = kw.get('url',None)
+        self.view_id = kw.get('view_id',None)
 
     def manage_afterAdd(self, item, container):
         self.after_add_called = 1
@@ -161,6 +162,17 @@ class DummyContent( PortalContent, Item ):
 
     def Type( self ):
         return 'Dummy Content Title'
+
+    def __call__(self):
+        if self.view_id is None:
+           return DummyContent.inheritedAttribute('__call__')(self)
+        else:
+           # view_id control for testing
+           template = getattr(self, self.view_id)
+           if getattr(aq_base(template), 'isDocTemp', 0):
+               return template(self, self.REQUEST, self.REQUEST['RESPONSE'])
+           else:
+               return template()
 
 DummyFactory = Factory(DummyContent)
 

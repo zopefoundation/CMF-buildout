@@ -20,12 +20,14 @@ import Testing
 
 import base64
 import os
+from os.path import join as path_join
 
 from AccessControl.SecurityManagement import newSecurityManager
 from App.Common import rfc1123_date
 from DateTime.DateTime import DateTime
 
 from Products.CMFCore.FSPageTemplate import FSPageTemplate
+from Products.CMFCore.FSDTMLMethod import FSDTMLMethod
 from Products.CMFCore.testing import FunctionalZCMLLayer
 from Products.CMFCore.testing import TraversingZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
@@ -842,12 +844,341 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         self.assertEqual(response.getStatus(), 200)
         self._cleanup()
 
+class FSObjMaker(FSDVTest):
+
+    def _makeFSPageTemplate( self, id, filename ):
+        path = path_join(self.skin_path_name, filename)
+        return FSPageTemplate( id, path )
+
+    def _makeFSDTMLMethod( self, id, filename ):
+        path = path_join(self.skin_path_name, filename)
+        return FSDTMLMethod( id, path )
+
+class NestedTemplateTests( RequestTest, FSObjMaker ):
+
+    layer = TraversingZCMLLayer
+
+    def setUp(self):
+        FSObjMaker.setUp(self)
+        RequestTest.setUp(self)
+
+        # Create a fake portal and the tools we need
+        self.portal = DummySite(id='portal').__of__(self.root)
+        self.portal._setObject('portal_types', DummyTool())
+
+        from Products.CMFCore import CachingPolicyManager
+        CachingPolicyManager.manage_addCachingPolicyManager(self.portal)
+
+    def tearDown(self):
+        RequestTest.tearDown(self)
+        FSObjMaker.tearDown(self)
+
+    def test_subtemplate_cpm_1( self ):
+        # test that subtemplates dont call the cpm
+        # set up site
+        portal = self.portal
+        now = DateTime()
+        cpm = portal.caching_policy_manager
+        cpm.addPolicy(policy_id = 'policy_op2',
+                      predicate = 'python:view=="output_page_2"',
+                      mtime_func = '',
+                      max_age_secs = 100,
+                      no_cache = 0,
+                      no_store = 0,
+                      must_revalidate = 0,
+                      vary = 'doc1',
+                      etag_func = '',
+                      s_max_age_secs=100
+                      )
+
+        content = DummyContent(id='content', view_id='output_page_1')
+        content.modified_date = now
+        portal._setObject('content', content)
+
+        output_page_1 = self._makeFSPageTemplate('output_page_1', 'output_page_1.zpt')
+        output_page_2 = self._makeFSPageTemplate('output_page_2', 'output_page_2.zpt')
+        portal._setObject('output_page_1', output_page_1)
+        portal._setObject('output_page_2', output_page_2)
+
+        portal.content()
+
+        # no headers should be added by the CPM if all is well
+        headers = [x.lower() for x in self.RESPONSE.headers.keys()]
+        self.failIf('x-cache-headers-set-by' in headers)
+        self.failIf('vary' in headers)
+
+    def test_subtemplate_cpm_2( self ):
+        # test that calling content from a template doesnt call the cpm
+        # just calling an FSDTMLMethod directly from another template does
+        # not activate the bug because RESPONSE is not passed in
+        portal = self.portal
+        now = DateTime()
+        cpm = portal.caching_policy_manager
+        cpm.addPolicy(policy_id = 'policy_op4',
+                      predicate = 'python:view=="output_page_4"',
+                      mtime_func = '',
+                      max_age_secs = 100,
+                      no_cache = 0,
+                      no_store = 0,
+                      must_revalidate = 0,
+                      vary = 'doc1',
+                      etag_func = '',
+                      s_max_age_secs=100
+                      )
+
+        content = DummyContent(id='content', view_id='output_page_3')
+        content.modified_date = now
+        portal._setObject('content', content)
+        content2 = DummyContent(id='content2', view_id='output_page_4')
+        content2.modified_date = now
+        portal._setObject('content2', content2)
+
+        output_page_3 = self._makeFSDTMLMethod('output_page_3', 'output_page_3.dtml')
+        output_page_4 = self._makeFSDTMLMethod('output_page_4', 'output_page_4.dtml')
+        portal._setObject('output_page_4',output_page_4)
+        portal._setObject('output_page_3',output_page_3)
+
+        # call the content
+        portal.content()
+
+        # no headers should be added by the CPM if all is well
+        headers = [x.lower() for x in self.RESPONSE.headers.keys()]
+        self.failIf('x-cache-headers-set-by' in headers)
+        self.failIf('vary' in headers)
+
+    def test_subtemplate_cpm_3( self ):
+        # test a bigger mix of zpt templates
+        # set up site
+        portal = self.portal
+        now = DateTime()
+        cpm = portal.caching_policy_manager
+        cpm.addPolicy(policy_id = 'policy_nv1',
+                      predicate = 'python:view=="nested_view_1"',
+                      mtime_func = '',
+                      max_age_secs = 100,
+                      no_cache = 0,
+                      no_store = 0,
+                      must_revalidate = 0,
+                      vary = 'doc1',
+                      etag_func = '',
+                      s_max_age_secs=100
+                      )
+
+        doc1 = DummyContent(id='doc1', view_id='nested_view')
+        doc1.modified_date = now
+        portal._setObject('doc1',doc1)
+        doc2 = DummyContent(id='doc2', view_id='nested_view_1')
+        doc2.modified_date = now
+        portal._setObject('doc2',doc2)
+        doc3 = DummyContent(id='doc3', view_id='nested_view_2')
+        doc3.modified_date = now
+        portal._setObject('doc3',doc3)
+
+        nested_view = self._makeFSPageTemplate('nested_view', 'nested_view.zpt')
+        nested_view_1 = self._makeFSPageTemplate('nested_view_1', 'nested_view_1.zpt')
+        nested_view_2 = self._makeFSPageTemplate('nested_view_2', 'nested_view_2.zpt')
+        portal._setObject('nested_view', nested_view)
+        portal._setObject('nested_view_1', nested_view_1)
+        portal._setObject('nested_view_2', nested_view_2)
+
+        data = portal.doc1()
+
+        # no headers should be added by the CPM if all is well
+        headers = [x.lower() for x in self.RESPONSE.headers.keys()]
+        self.failIf('x-cache-headers-set-by' in headers)
+        self.failIf('vary' in headers)
+
+    def test_mixed_subtemplate_cpm( self ):
+        # test a mix of zpt and dtml templates
+        # set up site
+        now = DateTime()
+        portal = self.portal
+        cpm = portal.caching_policy_manager
+        cpm.addPolicy(policy_id = 'policy_nv1',
+                      predicate = 'python:view=="nested_view_1"',
+                      mtime_func = '',
+                      max_age_secs = 100,
+                      no_cache = 0,
+                      no_store = 0,
+                      must_revalidate = 0,
+                      vary = 'doc1',
+                      etag_func = '',
+                      s_max_age_secs=100
+                      )
+
+        doc1 = DummyContent(id='doc1', view_id='nested_view', modified_date=now)
+        portal._setObject('doc1', doc1)
+        doc2 = DummyContent(id='doc2', view_id='nested_view_1', modified_date=now)
+        portal._setObject('doc2', doc2)
+        doc3 = DummyContent(id='doc3', view_id='nested_view_2', modified_date=now)
+        portal._setObject('doc3', doc3)
+
+        nested_view = self._makeFSPageTemplate('nested_view', 'nested_view.zpt')
+        nested_view_1 = self._makeFSPageTemplate('nested_view_1', 'nested_view_1.zpt')
+        nested_view_2 = self._makeFSDTMLMethod('nested_view_2', 'nested_view_2.dtml')
+        portal._setObject('nested_view', nested_view)
+        portal._setObject('nested_view_1', nested_view_1)
+        portal._setObject('nested_view_2', nested_view_2)
+
+        portal.doc1()
+
+        # no headers should be added by the CPM if all is well
+        headers = [x.lower() for x in self.RESPONSE.headers.keys()]
+        self.failIf('x-cache-headers-set-by' in headers)
+        self.failIf('vary' in headers)
+
+    def test_fireForSubtemplates(self):
+        # This is a FSPageTemplate that will be used as the View for 
+        # our content objects. It doesn't matter what it returns.
+        dv = self._makeFSPageTemplate('dummy_view', 'testPT_CPM1.zpt')
+        self.portal._setObject('dummy_view', dv)
+
+        # These are the subtemplates we use
+        sv1 = self._makeFSPageTemplate('subview_1', 'testPT_CPM2.zpt')
+        sv2 = self._makeFSDTMLMethod('subview_2', 'testDTML_CPM3.dtml')
+        self.portal._setObject('subview_1', sv1)
+        self.portal._setObject( 'subview_2', sv2)
+
+        for i in (1,2,3):
+            id = 'doc%i' % i
+            title = 'Document %i' % i
+            description = 'This is document %i' % i
+            modified_date = DateTime()
+            doc = DummyContent(id)
+            doc.title = title
+            doc.description = description
+            doc.modified_date = modified_date
+            self.portal._setObject(id, doc)
+
+        cpm = self.portal.caching_policy_manager
+
+        # This policy only applies to doc2.
+        cpm.addPolicy(policy_id = 'policy_doc2',
+                      predicate = 'python:object.getId()=="doc2"',
+                      mtime_func = '',
+                      max_age_secs = 200,
+                      no_cache = 0,
+                      no_store = 0,
+                      must_revalidate = 0,
+                      vary = 'doc2',
+                      etag_func = '',
+                      pre_check=1
+                      )
+
+        # This policy only applies to doc3. 
+        cpm.addPolicy(policy_id = 'policy_doc3',
+                      predicate = 'python:object.getId()=="doc3"',
+                      mtime_func = '',
+                      max_age_secs = 300,
+                      no_cache = 0,
+                      no_store = 0,
+                      must_revalidate = 0,
+                      vary = 'doc3',
+                      etag_func = '',
+                      post_check=1
+                      )
+
+        # http://www.zope.org/Collectors/CMF/456
+        # In cases where one view (ZPT or DTML) is rendered from another
+        # view, we want to ensure only the view requested by the visitor
+        # will get caching rules applied.
+        self.portal.doc1.dummy_view()
+
+        # no headers should be added by the CPM if all is well
+        headers = [x.lower() for x in self.RESPONSE.headers.keys()]
+        self.failIf('x-cache-headers-set-by' in headers)
+        self.failIf('vary' in headers)
+        
+    def test_fireForSubtemplates2(self):
+        # This is a FSPageTemplate that will be used as the View for 
+        # our content objects. It doesn't matter what it returns.
+        dv = self._makeFSPageTemplate('dummy_view', 'testPT_CPM1.zpt')
+        self.portal._setObject('dummy_view', dv)
+
+        # These are the subtemplates we use
+        sv1 = self._makeFSPageTemplate('subview_1', 'testPT_CPM2.zpt')
+        sv2 = self._makeFSDTMLMethod('subview_2', 'testDTML_CPM3.dtml')
+        self.portal._setObject('subview_1', sv1)
+        self.portal._setObject( 'subview_2', sv2)
+
+        for i in (1,2,3):
+            id = 'doc%i' % i
+            title = 'Document %i' % i
+            description = 'This is document %i' % i
+            modified_date = DateTime()
+            doc = DummyContent(id)
+            doc.title = title
+            doc.description = description
+            doc.modified_date = modified_date
+            self.portal._setObject(id, doc)
+
+        cpm = self.portal.caching_policy_manager
+
+        # This policy only applies to doc1.
+        cpm.addPolicy(policy_id = 'policy_doc1',
+                      predicate = 'python:object.getId()=="doc1"',
+                      mtime_func = '',
+                      max_age_secs = 100,
+                      no_cache = 0,
+                      no_store = 0,
+                      must_revalidate = 0,
+                      vary = 'doc1',
+                      etag_func = '',
+                      s_max_age_secs=100
+                      )
+
+        # This policy only applies to doc2.
+        cpm.addPolicy(policy_id = 'policy_doc2',
+                      predicate = 'python:object.getId()=="doc2"',
+                      mtime_func = '',
+                      max_age_secs = 200,
+                      no_cache = 0,
+                      no_store = 0,
+                      must_revalidate = 0,
+                      vary = 'doc2',
+                      etag_func = '',
+                      pre_check=1
+                      )
+
+        # This policy only applies to doc3. 
+        cpm.addPolicy(policy_id = 'policy_doc3',
+                      predicate = 'python:object.getId()=="doc3"',
+                      mtime_func = '',
+                      max_age_secs = 300,
+                      no_cache = 0,
+                      no_store = 0,
+                      must_revalidate = 0,
+                      vary = 'doc3',
+                      etag_func = '',
+                      post_check=1
+                      )
+
+        # http://www.zope.org/Collectors/CMF/456
+        # In cases where one view (ZPT or DTML) is rendered from another
+        # view, we want to ensure only the view requested by the visitor
+        # will get caching rules applied.
+        self.portal.doc1.dummy_view()
+
+        # We want to make sure the correct policy (policy_doc1) has fired
+        # Just to be sure, change headers so they are definitely all 
+        # lower-cased
+        headers = {}
+        header_info = self.RESPONSE.headers.items()
+        [headers.__setitem__(x[0].lower(), x[1]) for x in header_info]
+
+        self.failUnless(headers.get('x-cache-headers-set-by'))
+        self.assertEquals(headers.get('vary'), 'doc1')
+        self.assertEquals( headers.get('cache-control')
+                         , 'max-age=100, s-maxage=100'
+                         )
+        
 
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(CachingPolicyTests),
         unittest.makeSuite(CachingPolicyManagerTests),
         unittest.makeSuite(CachingPolicyManager304Tests),
+        unittest.makeSuite(NestedTemplateTests),
         ))
 
 if __name__ == '__main__':

@@ -2,6 +2,12 @@ CMF 2.1.0-beta (unreleased)
 
   New Features
 
+    - CMFCore.CachingPolicyManager: Implemented the old OFS.Cache.CacheManager
+      API. Now objects other than CMF content or CMF templates can have their
+      caching headers set by the caching policy manager with the same 
+      fine-grained control.
+      (http://www.zope.org/Collectors/CMF/408)
+
     - testing: Added test layers for setting up ZCML.
 
     - CMFDefault formlib: Added zope.formlib support.

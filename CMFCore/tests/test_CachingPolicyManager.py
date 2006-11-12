@@ -23,8 +23,10 @@ import os
 from os.path import join as path_join
 
 from AccessControl.SecurityManagement import newSecurityManager
+from Acquisition import Implicit
 from App.Common import rfc1123_date
 from DateTime.DateTime import DateTime
+from OFS.Cache import Cacheable
 
 from Products.CMFCore.FSPageTemplate import FSPageTemplate
 from Products.CMFCore.FSDTMLMethod import FSDTMLMethod
@@ -54,6 +56,38 @@ class DummyContent2:
     def modified( self ):
         return self.modified
 
+class CacheableDummyContent(Implicit, Cacheable):
+
+    __allow_access_to_unprotected_subobjects__ = 1
+
+    def __init__(self, id):
+        self.id = id
+        self.modified = DateTime()
+
+    def getId(self):
+        """ """
+        return self.id
+
+    def modified( self ):
+        return self.modified
+
+    def __call__(self):
+        """ """
+        if self.ZCacheable_isCachingEnabled():
+            result = self.ZCacheable_get(default=None)
+            if result is not None:
+                # We will always get None from RAMCacheManager and HTTP
+                # Accelerated Cache Manager but we will get
+                # something implementing the IStreamIterator interface
+                # from a "FileCacheManager"
+                return result
+
+        self.ZCacheable_set(None) 
+
+class DummyView(CacheableDummyContent):
+
+    meta_type = 'DTML Method'
+    
 
 class CachingPolicyTests(unittest.TestCase):
 
@@ -1173,12 +1207,122 @@ class NestedTemplateTests( RequestTest, FSObjMaker ):
                          )
         
 
+class OFSCacheTests(RequestTest):
+
+    layer = FunctionalZCMLLayer
+
+    def setUp(self):
+        from Products.CMFCore import CachingPolicyManager
+
+        RequestTest.setUp(self)
+
+        # Create a fake portal and the tools we need
+        self.portal = DummySite(id='portal').__of__(self.root)
+        self.portal._setObject('doc1', CacheableDummyContent('doc1'))
+        self.portal._setObject('doc2', CacheableDummyContent('doc2'))
+        CachingPolicyManager.manage_addCachingPolicyManager(self.portal)
+        cpm = self.portal.caching_policy_manager
+
+        # This policy only applies to doc1. It will not emit any ETag header
+        # but it enables If-modified-since handling.
+        cpm.addPolicy(policy_id = 'policy_1',
+                      predicate = 'python:object.getId()=="doc1"',
+                      mtime_func = '',
+                      max_age_secs = 100,
+                      no_cache = 0,
+                      no_store = 0,
+                      must_revalidate = 0,
+                      vary = 'doc1',
+                      etag_func = '',
+                      enable_304s = 0)
+
+    def test_empty(self):
+        
+        from Products.CMFCore.CachingPolicyManager import CPMCache
+
+        cpm = self.portal.caching_policy_manager
+        doc1 = self.portal.doc1
+        self.failUnless(cpm._isCacheManager)
+        self.failUnless(isinstance(cpm.ZCacheManager_getCache(), CPMCache))
+        self.assertEquals( doc1.ZCacheable_getManagerIds()
+                         , ({'id':cpm.getId(), 'title':''},)
+                         )
+
+    def test_no_association(self):
+        # Render an item that would match the CPM policy, but don't 
+        # associate it with the CPM.
+        self.portal.doc1()
+
+        # no headers should be added by the CPM if all is well
+        headers = [x.lower() for x in self.RESPONSE.headers.keys()]
+        self.failIf('x-cache-headers-set-by' in headers)
+        self.failIf('vary' in headers)
+
+    def test_unsuitable_association(self):
+        # Render an item that is associated with the CPM, but that does not
+        # match any policy.
+        cpm = self.portal.caching_policy_manager
+        doc2 = self.portal.doc2
+        doc2.ZCacheable_setManagerId(cpm.getId())
+
+        doc2()
+
+        # no headers should be added by the CPM if all is well
+        headers = [x.lower() for x in self.RESPONSE.headers.keys()]
+        self.failIf('x-cache-headers-set-by' in headers)
+        self.failIf('vary' in headers)
+
+    def test_suitable_association(self):
+        # Render a content item that will trigger the CPM
+        cpm = self.portal.caching_policy_manager
+        doc1 = self.portal.doc1
+        doc1.ZCacheable_setManagerId(cpm.getId())
+
+        doc1()
+
+        # Policy "policy_1" should have triggered
+        # Just to be sure, change headers so they are definitely all 
+        # lower-cased
+        headers = {}
+        header_info = self.RESPONSE.headers.items()
+        [headers.__setitem__(x[0].lower(), x[1]) for x in header_info]
+
+        self.failUnless(headers.get('x-cache-headers-set-by'))
+        self.assertEquals(headers.get('vary'), 'doc1')
+        self.assertEquals( headers.get('cache-control')
+                         , 'max-age=100'
+                         )
+
+    def test_with_view(self):
+        # Render a view for a content item that will trigger the CPM
+        cpm = self.portal.caching_policy_manager
+        self.portal._setObject('a_view', DummyView(id='a_view'))
+        self.portal.a_view.ZCacheable_setManagerId(cpm.getId())
+        doc1 = self.portal.doc1
+
+        doc1.a_view()
+
+        # Policy "policy_1" should have triggered
+        # Just to be sure, change headers so they are definitely all 
+        # lower-cased
+        headers = {}
+        header_info = self.RESPONSE.headers.items()
+        [headers.__setitem__(x[0].lower(), x[1]) for x in header_info]
+
+        self.failUnless(headers.get('x-cache-headers-set-by'))
+        self.assertEquals(headers.get('vary'), 'doc1')
+        self.assertEquals( headers.get('cache-control')
+                         , 'max-age=100'
+                         )
+
+
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(CachingPolicyTests),
         unittest.makeSuite(CachingPolicyManagerTests),
         unittest.makeSuite(CachingPolicyManager304Tests),
         unittest.makeSuite(NestedTemplateTests),
+        unittest.makeSuite(OFSCacheTests),
         ))
 
 if __name__ == '__main__':

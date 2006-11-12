@@ -21,9 +21,15 @@ from DateTime.DateTime import DateTime
 from Globals import DTMLFile
 from Globals import InitializeClass
 from Globals import PersistentMapping
+from OFS.Cache import Cache
+from OFS.Cache import CacheManager
+from OFS.Cache import getVerifiedManagerIds
+from OFS.Cache import ZCM_MANAGERS
+from OFS.interfaces import IObjectWillBeMovedEvent
 from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
+from zope.app.container.interfaces import IObjectMovedEvent
 from zope.interface import implements
 
 from permissions import ManagePortal
@@ -34,7 +40,20 @@ from interfaces import ICachingPolicyManager
 from interfaces.CachingPolicyManager \
         import CachingPolicyManager as z2ICachingPolicyManager
 from utils import _dtmldir
+from utils import _setCacheHeaders
+from utils import _ViewEmulator
 from utils import getToolByName
+
+# This is lame :(
+# This listing is used to decide whether to wrap an object inside a "fake view"
+# for the OFS.Cache caching. If it is a view type, no fake view wrap is needed.
+VIEW_METATYPES = (
+    'Page Template',
+    'DTML Method',
+    'DTML Document',
+    'Filesystem DTML Method',
+    'Filesystem Page Template',
+    )
 
 
 def createCPContext( content, view_method, keywords, time=None ):
@@ -65,6 +84,41 @@ def createCPContext( content, view_method, keywords, time=None ):
            }
 
     return getEngine().getContext( data )
+
+class CPMCache(Cache):
+    """ Simple OFS.Cache-implementation
+    """
+    security = ClassSecurityInfo()
+
+    security.declarePrivate('ZCache_invalidate')
+    def ZCache_invalidate(self, ob):
+        """ An object is forced out of the cache
+
+        This implementation stores nothing and does not attempt to 
+        communicate with cache servers, so this is a no-op.
+        """
+        pass
+
+    security.declarePrivate('ZCache_get')
+    def ZCache_get(self, ob, view_name, keywords, mtime_func, default):
+        """ An object is retrieved from the cache
+
+        This implementation stores nothing - a no-op.
+        """
+        pass
+
+    security.declarePrivate('ZCache_set')
+    def ZCache_set(self, ob, data, view_name, keywords, mtime_func):
+        """ An object is pushed into the cache
+
+        Even though this cache implementation does not cache anything per se,
+        this method is used as a suitable hook to activate the real heavy
+        lifting done by the CachePolicyManager.
+        """
+        if ob.meta_type not in VIEW_METATYPES:
+            ob = _ViewEmulator().__of__(ob)
+
+        return _setCacheHeaders(ob, extra_context={})
 
 
 class CachingPolicy:
@@ -398,7 +452,7 @@ class CachingPolicy:
 
 
 
-class CachingPolicyManager( SimpleItem ):
+class CachingPolicyManager( SimpleItem, CacheManager ):
     """
         Manage the set of CachingPolicy objects for the site;  dispatch
         to them from skin methods.
@@ -409,6 +463,7 @@ class CachingPolicyManager( SimpleItem ):
 
     id = 'caching_policy_manager'
     meta_type = 'CMF Caching Policy Manager'
+    _isCacheManager = 1 # Dead chicken. Yum.
 
     security = ClassSecurityInfo()
 
@@ -425,6 +480,7 @@ class CachingPolicyManager( SimpleItem ):
                          }
                        ,
                        )
+                     + CacheManager.manage_options
                      + SimpleItem.manage_options
                      )
 
@@ -803,8 +859,45 @@ class CachingPolicyManager( SimpleItem ):
             
         return None
 
+    #
+    # OFS.CacheManager API
+    #
+    security.declarePrivate('ZCacheManager_getCache')
+    def ZCacheManager_getCache(self):
+        """ Retrieve a cache object
+        """
+        cache = getattr(self, '_cache', None)
+
+        if cache is None:
+            self._cache = CPMCache()
+            cache = self._cache
+
+        return cache
+
 
 InitializeClass( CachingPolicyManager )
+
+
+def handleCachingPolicyManagerEvent(ob, event):
+    """ Event subscriber for (un)registering a CPM as CacheManager
+    """
+    if not ICachingPolicyManager.providedBy(ob):
+        return
+
+    if IObjectMovedEvent.providedBy(event):
+        if event.newParent is not None:
+            ids = getVerifiedManagerIds(event.newParent)
+            id = ob.getId()
+            if id not in ids:
+                setattr(event.newParent, ZCM_MANAGERS, ids + (id,))
+
+    elif IObjectWillBeMovedEvent.providedBy(event):
+        if event.oldParent is not None:
+            ids = list(getVerifiedManagerIds(event.oldParent))
+            id = ob.getId()
+            if id in ids:
+                ids.remove(id)
+                setattr(event.oldParent, ZCM_MANAGERS, tuple(ids))
 
 
 def manage_addCachingPolicyManager( self, REQUEST=None ):

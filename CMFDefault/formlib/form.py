@@ -21,7 +21,7 @@ from sets import Set
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.Five.formlib.formbase import PageDisplayForm
 from Products.Five.formlib.formbase import PageForm
-from Products.PluginIndexes.DateIndex.DateIndex import Local
+from zope.datetime import parseDatetimetz
 from zope.formlib import form
 from zope.i18n.interfaces import IUserPreferredLanguages
 from zope.i18n.locales import LoadLocaleError
@@ -133,7 +133,7 @@ class ContentEditFormBase(EditFormBase):
             if isinstance(v, Set):
                 data[k] = set(v)
             elif isinstance(v, datetime) and v.tzname() is None:
-                data[k] = v.replace(tzinfo=Local)
+                data[k] = parseDatetimetz(str(v))
         if form.applyChanges(self.context, self.form_fields, data,
                              self.adapters):
             self.context.reindexObject()

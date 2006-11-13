@@ -18,7 +18,7 @@ $Id$
 from datetime import datetime
 
 from DateTime.DateTime import DateTime
-from Products.PluginIndexes.DateIndex.DateIndex import Local
+from zope.datetime import parseDatetimetz
 from zope.interface import implements
 from zope.schema import BytesLine
 from zope.schema.interfaces import IBytesLine
@@ -68,12 +68,16 @@ class ProxyFieldProperty(object):
         if isinstance(attribute, str) and inst.encoding:
             return attribute.decode(inst.encoding)
         elif isinstance(attribute, DateTime):
-            return datetime.fromtimestamp(attribute.timeTime(), Local)
+            return parseDatetimetz(attribute.ISO8601())
         elif isinstance(attribute, (tuple, list)):
             if inst.encoding:
                 attribute = [ isinstance(v, str)
                               and v.decode(inst.encoding) or v
                               for v in attribute ]
+            if self._field._type == list:
+                return attribute
+            if self._field._type == tuple:
+                return tuple(attribute)
             return set(attribute)
         return attribute
 
@@ -85,13 +89,14 @@ class ProxyFieldProperty(object):
         if isinstance(value, unicode) and inst.encoding:
             value = value.encode(inst.encoding)
         elif isinstance(value, datetime):
-            value = DateTime(*value.astimezone(Local).timetuple()[:6])
-        elif isinstance(value, set):
+            value = DateTime(value.isoformat())
+        elif isinstance(value, (set, tuple, list)):
             if inst.encoding:
                 value = [ isinstance(v, unicode)
                           and v.encode(inst.encoding) or v
                           for v in value ]
-            value = tuple(value)
+            if not self._field._type == list:
+                value = tuple(value)
         if self._set_name:
             getattr(inst.context, self._set_name)(value)
         elif inst.context.hasProperty(self._get_name):

@@ -27,6 +27,7 @@ from OFS.ObjectManager import IFAwareObjectManager
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
+from interfaces import IConfigurableWorkflowTool
 from interfaces import IWorkflowDefinition
 from interfaces import IWorkflowTool
 from interfaces.portal_workflow import portal_workflow as z2IWorkflowTool
@@ -49,7 +50,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
     """ Mediator tool, mapping workflow objects
     """
 
-    implements(IWorkflowTool)
+    implements(IConfigurableWorkflowTool, IWorkflowTool)
     __implements__ = (z2IWorkflowTool, ActionProviderBase.__implements__)
 
     id = 'portal_workflow'
@@ -149,31 +150,8 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
                             manage_tabs_message='Changed.')
 
     #
-    #   portal_workflow implementation.
+    #   'IActionProvider' interface methods
     #
-    security.declarePrivate('getCatalogVariablesFor')
-    def getCatalogVariablesFor(self, ob):
-
-        """ Returns a mapping of the catalog variables that apply to ob.
-
-        o Invoked by portal_catalog.
-
-        o Allows workflows to add variables to the catalog based on
-          workflow status, making it possible to implement queues.
-        """
-        wfs = self.getWorkflowsFor(ob)
-        if wfs is None:
-            return None
-        # Iterate through the workflows backwards so that
-        # earlier workflows can override later workflows.
-        wfs.reverse()
-        vars = {}
-        for wf in wfs:
-            v = wf.getCatalogVariablesFor(ob)
-            if v is not None:
-                vars.update(v)
-        return vars
-
     security.declarePrivate('listActions')
     def listActions(self, info=None, object=None):
 
@@ -215,16 +193,29 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
                         actions.extend(a)
         return actions
 
+    #
+    #   'IWorkflowTool' interface methods
+    #
+    security.declarePrivate('getCatalogVariablesFor')
+    def getCatalogVariablesFor(self, ob):
+        """ Get a mapping of "workflow-relevant" attributes.
+        """
+        wfs = self.getWorkflowsFor(ob)
+        if wfs is None:
+            return None
+        # Iterate through the workflows backwards so that
+        # earlier workflows can override later workflows.
+        wfs.reverse()
+        vars = {}
+        for wf in wfs:
+            v = wf.getCatalogVariablesFor(ob)
+            if v is not None:
+                vars.update(v)
+        return vars
+
     security.declarePublic('doActionFor')
     def doActionFor(self, ob, action, wf_id=None, *args, **kw):
-
-        """ Execute the given workflow action for the object.
-
-        o Invoked by user interface code.
-
-        o Allows the user to request a workflow action.
-
-        o The workflow object must perform its own security checks.
+        """ Perform the given workflow action on 'ob'.
         """
         wfs = self.getWorkflowsFor(ob)
         if wfs is None:
@@ -251,14 +242,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
     security.declarePublic('getInfoFor')
     def getInfoFor(self, ob, name, default=_marker, wf_id=None, *args, **kw):
-
-        """ Return a given workflow-specific property for an object.
-
-        o Invoked by user interface code.
-
-        o Allows the user to request information provided by the workflow.
-
-        o The workflow object must perform its own security checks.
+        """ Get the given bit of workflow information for the object.
         """
         if wf_id is None:
             wfs = self.getWorkflowsFor(ob)
@@ -295,9 +279,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
     security.declarePrivate('notifyCreated')
     def notifyCreated(self, ob):
-
-        """ Notify all applicable workflows that an object has been created
-            and put in its new place.
+        """ Notify all applicable workflows that an object has been created.
         """
         wfs = self.getWorkflowsFor(ob)
         for wf in wfs:
@@ -306,14 +288,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
     security.declarePrivate('notifyBefore')
     def notifyBefore(self, ob, action):
-
-        """ Notifies all applicable workflows of an action before it
-            happens, allowing veto by exception.
-
-        o Unless an exception is thrown, either a notifySuccess() or
-          notifyException() can be expected later on.
-
-        o The action usually corresponds to a method name.
+        """ Notify all applicable workflows of an action before it happens.
         """
         wfs = self.getWorkflowsFor(ob)
         for wf in wfs:
@@ -321,7 +296,6 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
     security.declarePrivate('notifySuccess')
     def notifySuccess(self, ob, action, result=None):
-
         """ Notify all applicable workflows that an action has taken place.
         """
         wfs = self.getWorkflowsFor(ob)
@@ -330,7 +304,6 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
     security.declarePrivate('notifyException')
     def notifyException(self, ob, action, exc):
-
         """ Notify all applicable workflows that an action failed.
         """
         wfs = self.getWorkflowsFor(ob)
@@ -339,10 +312,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
     security.declarePrivate('getHistoryOf')
     def getHistoryOf(self, wf_id, ob):
-
-        """ Return the history of an object.
-
-        o Invoked by workflow definitions.
+        """ Get the history of an object for a given workflow.
         """
         if hasattr(aq_base(ob), 'workflow_history'):
             wfh = ob.workflow_history
@@ -351,10 +321,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
     security.declarePrivate('getStatusOf')
     def getStatusOf(self, wf_id, ob):
-
-        """ Return the last entry of a workflow history.
-
-        o Invoked by workflow definitions.
+        """ Get the last element of a workflow history for a given workflow.
         """
         wfh = self.getHistoryOf(wf_id, ob)
         if wfh:
@@ -363,10 +330,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
     security.declarePrivate('setStatusOf')
     def setStatusOf(self, wf_id, ob, status):
-
-        """ Append an entry to the workflow history.
-
-        o Invoked by workflow definitions.
+        """ Append a record to the workflow history of a given workflow.
         """
         wfh = None
         has_history = 0
@@ -385,30 +349,35 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
         ob.workflow_history[wf_id] = tuple(wfh)
 
     #
-    #   Administration methods
+    #   'IConfigurableWorkflowTool' interface methods
     #
-    security.declareProtected( ManagePortal, 'setDefaultChain')
+    security.declareProtected(ManagePortal, 'setDefaultChain')
     def setDefaultChain(self, default_chain):
-
-        """ Set the default chain for this tool
+        """ Set the default chain for this tool.
         """
         default_chain = default_chain.replace(',', ' ')
         ids = []
         for wf_id in default_chain.split(' '):
             if wf_id:
                 if not self.getWorkflowById(wf_id):
-                    raise ValueError, ( '"%s" is not a workflow ID.' % wf_id)
+                    raise ValueError('"%s" is not a workflow ID.' % wf_id)
                 ids.append(wf_id)
 
         self._default_chain = tuple(ids)
 
-    security.declareProtected( ManagePortal, 'setChainForPortalTypes')
+    security.declareProtected(ManagePortal, 'setChainForPortalTypes')
     def setChainForPortalTypes(self, pt_names, chain, verify=True):
-        """ Set a chain for a specific portal type.
+        """ Set a chain for specific portal types.
         """
         cbt = self._chains_by_type
         if cbt is None:
             self._chains_by_type = cbt = PersistentMapping()
+
+        if chain is None:
+            for type_id in pt_names:
+                if cbt.has_key(type_id):
+                    del cbt[type_id]
+            return
 
         if isinstance(chain, basestring):
             chain = [ wf.strip() for wf in chain.split(',') if wf.strip() ]
@@ -420,9 +389,48 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
                 continue
             cbt[type_id] = tuple(chain)
 
-    security.declareProtected( ManagePortal, 'updateRoleMappings')
-    def updateRoleMappings(self, REQUEST=None):
+    security.declarePrivate('getDefaultChain')
+    def getDefaultChain(self):
+        """ Get the default chain for this tool.
+        """
+        return self._default_chain
 
+    security.declarePrivate('listChainOverrides')
+    def listChainOverrides(self):
+        """ List portal type specific chain overrides.
+        """
+        cbt = self._chains_by_type
+        return cbt and sorted(cbt.items()) or ()
+
+    security.declarePrivate('getChainFor')
+    def getChainFor(self, ob):
+        """ Get the chain that applies to the given object.
+        """
+        cbt = self._chains_by_type
+        if isinstance(ob, basestring):
+            pt = ob
+        elif hasattr(aq_base(ob), 'getPortalTypeName'):
+            pt = ob.getPortalTypeName()
+        else:
+            pt = None
+
+        if pt is None:
+            return ()
+
+        chain = None
+        if cbt is not None:
+            chain = cbt.get(pt, None)
+            # Note that if chain is not in cbt or has a value of
+            # None, we use a default chain.
+        if chain is None:
+            return self.getDefaultChain()
+        return chain
+
+    #
+    #   Other methods
+    #
+    security.declareProtected(ManagePortal, 'updateRoleMappings')
+    def updateRoleMappings(self, REQUEST=None):
         """ Allow workflows to update the role-permission mappings.
         """
         wfs = {}
@@ -451,8 +459,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
     security.declarePrivate('getDefaultChainFor')
     def getDefaultChainFor(self, ob):
-
-        """ Return the default chain, if applicable, for ob.
+        """ Get the default chain, if applicable, for ob.
         """
         types_tool = getToolByName( self, 'portal_types', None )
         if ( types_tool is not None
@@ -460,35 +467,6 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
             return self._default_chain
 
         return ()
-
-    security.declarePrivate('getChainFor')
-    def getChainFor(self, ob):
-
-        """ Returns the chain that applies to the given object.
-            If we get a string as the ob parameter, use it as
-            the portal_type.
-        """
-        cbt = self._chains_by_type
-        if isinstance(ob, basestring):
-            pt = ob
-        elif hasattr(aq_base(ob), 'getPortalTypeName'):
-            pt = ob.getPortalTypeName()
-        else:
-            pt = None
-
-        if pt is None:
-            return ()
-
-        chain = None
-        if cbt is not None:
-            chain = cbt.get(pt, None)
-            # Note that if chain is not in cbt or has a value of
-            # None, we use a default chain.
-        if chain is None:
-            chain = self.getDefaultChainFor(ob)
-            if chain is None:
-                return ()
-        return chain
 
     security.declarePrivate('getWorkflowIds')
     def getWorkflowIds(self):

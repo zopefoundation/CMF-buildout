@@ -2,6 +2,12 @@ CMF 2.1.0-beta (unreleased)
 
   New Features
 
+    - WorkflowTool: Added the IConfigurableWorkflowTool interface.
+      This change includes the new 'getDefaultChain' and 'listChainOverrides'
+      methods and an improved 'setChainForPortalTypes' method. The import
+      handler now supports the 'remove' attribute for removing overrides.
+      (http://www.zope.org/Collectors/CMF/457)
+
     - CMFCore.CachingPolicyManager: Implemented the old OFS.Cache.CacheManager
       API. Now objects other than CMF content or CMF templates can have their
       caching headers set by the caching policy manager with the same 

@@ -173,10 +173,12 @@ class WorkflowToolTests(unittest.TestCase):
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
         from Products.CMFCore.interfaces import IActionProvider
+        from Products.CMFCore.interfaces import IConfigurableWorkflowTool
         from Products.CMFCore.interfaces import IWorkflowTool
         from Products.CMFCore.WorkflowTool import WorkflowTool
 
         verifyClass(IActionProvider, WorkflowTool)
+        verifyClass(IConfigurableWorkflowTool, WorkflowTool)
         verifyClass(IWorkflowTool, WorkflowTool)
 
     def test_empty( self ):
@@ -215,6 +217,8 @@ class WorkflowToolTests(unittest.TestCase):
 
         tool = self._makeWithTypesAndChain()
         self.assertEquals( len( tool.getDefaultChainFor( None ) ), 0 )
+        self.assertEquals( len( tool.getDefaultChain() ), 1 )
+        self.assertEquals( len( tool.listChainOverrides() ), 1 )
         self.assertEquals( len( tool.getChainFor( None ) ), 0 )
         self.assertEquals( len( tool.getCatalogVariablesFor( None ) ), 0 )
 
@@ -223,6 +227,8 @@ class WorkflowToolTests(unittest.TestCase):
         tool = self._makeWithTypesAndChain()
         dummy = DummyNotReallyContent( 'doh' )
         self.assertEquals( len( tool.getDefaultChainFor( dummy ) ), 0 )
+        self.assertEquals( len( tool.getDefaultChain() ), 1 )
+        self.assertEquals( len( tool.listChainOverrides() ), 1 )
         self.assertEquals( len( tool.getChainFor( dummy ) ), 0 )
         self.assertEquals( len( tool.getCatalogVariablesFor( dummy ) ), 0 )
 
@@ -231,10 +237,11 @@ class WorkflowToolTests(unittest.TestCase):
         tool = self._makeWithTypes()
         dummy = DummyContent( 'dummy' )
         self.assertEquals( len( tool.getDefaultChainFor( dummy ) ), 1 )
+        self.assertEquals( len( tool.getDefaultChain() ), 1 )
+        self.assertEquals( len( tool.listChainOverrides() ), 0 )
         self.assertEquals( len( tool.getChainFor( dummy ) ), 1 )
         self.assertEquals( len( tool.getCatalogVariablesFor( dummy ) ), 0 )
-        self.assertEquals( tool.getDefaultChainFor( dummy )
-                         , tool.getChainFor( dummy ) )
+        self.assertEquals( tool.getDefaultChain(), tool.getChainFor( dummy ) )
 
     def test_content_own_chain( self ):
 
@@ -243,6 +250,8 @@ class WorkflowToolTests(unittest.TestCase):
         dummy = DummyContent( 'dummy' )
 
         self.assertEquals( len( tool.getDefaultChainFor( dummy ) ), 1 )
+        self.assertEquals( len( tool.getDefaultChain() ), 1 )
+        self.assertEquals( len( tool.listChainOverrides() ), 1 )
         chain = tool.getChainFor( dummy )
         self.assertEquals( len( chain ), 2 )
         self.failUnless( 'a' in chain )
@@ -256,6 +265,7 @@ class WorkflowToolTests(unittest.TestCase):
     def test_setChainForPortalTypes(self):
 
         tool = self._makeWithTypes()
+        tool.setDefaultChain('b, a')
         dummy = DummyContent('dummy')
 
         tool.setChainForPortalTypes( ('Dummy Content',), ('a', 'b') )
@@ -267,6 +277,9 @@ class WorkflowToolTests(unittest.TestCase):
         self.assertEquals( tool.getChainFor(dummy), () )
         tool.setChainForPortalTypes( ('Dummy Content',), '' )
         self.assertEquals( tool.getChainFor(dummy), () )
+
+        tool.setChainForPortalTypes( ('Dummy Content',), None )
+        self.assertEquals( tool.getChainFor(dummy), ('b', 'a') )
 
     def test_getCatalogVariablesFor( self ):
 

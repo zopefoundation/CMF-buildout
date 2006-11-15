@@ -24,7 +24,7 @@ from Products.GenericSetup.utils import ObjectManagerHelpers
 from Products.GenericSetup.utils import PropertyManagerHelpers
 from Products.GenericSetup.utils import XMLAdapterBase
 
-from Products.CMFCore.interfaces import IWorkflowTool
+from Products.CMFCore.interfaces import IConfigurableWorkflowTool
 from Products.CMFCore.utils import getToolByName
 
 
@@ -34,7 +34,7 @@ class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
     """XML im- and exporter for WorkflowTool.
     """
 
-    adapts(IWorkflowTool, ISetupEnviron)
+    adapts(IConfigurableWorkflowTool, ISetupEnviron)
 
     _LOGGER_ID = 'workflow'
 
@@ -69,31 +69,28 @@ class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
         fragment = self._doc.createDocumentFragment()
         node = self._doc.createElement('bindings')
         child = self._doc.createElement('default')
-        chain = self.context._default_chain
+        chain = self.context.getDefaultChain()
         for workflow_id in chain:
             sub = self._doc.createElement('bound-workflow')
             sub.setAttribute('workflow_id', workflow_id)
             child.appendChild(sub)
         node.appendChild(child)
-        cbt = self.context._chains_by_type
-        if cbt:
-            overrides = cbt.items()
-            overrides.sort()
-            for type_id, chain in overrides:
-                child = self._doc.createElement('type')
-                child.setAttribute('type_id', type_id)
-                for workflow_id in chain:
-                    sub = self._doc.createElement('bound-workflow')
-                    sub.setAttribute('workflow_id', workflow_id)
-                    child.appendChild(sub)
-                node.appendChild(child)
+        for type_id, chain in self.context.listChainOverrides():
+            child = self._doc.createElement('type')
+            child.setAttribute('type_id', type_id)
+            for workflow_id in chain:
+                sub = self._doc.createElement('bound-workflow')
+                sub.setAttribute('workflow_id', workflow_id)
+                child.appendChild(sub)
+            node.appendChild(child)
         fragment.appendChild(node)
         return fragment
 
     def _purgeChains(self):
         self.context.setDefaultChain('')
-        if self.context._chains_by_type is not None:
-            self.context._chains_by_type.clear()
+        for type_id, chain in self.context.listChainOverrides():
+            self.context.setChainForPortalTypes((type_id,), None,
+                                                verify=False)
 
     def _initChains(self, node):
         for child in node.childNodes:
@@ -104,8 +101,12 @@ class WorkflowToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
                     self.context.setDefaultChain(self._getChain(sub))
                 if sub.nodeName == 'type':
                     type_id = str(sub.getAttribute('type_id'))
-                    self.context.setChainForPortalTypes((type_id,),
-                                            self._getChain(sub), verify=False)
+                    if sub.hasAttribute('remove'):
+                        chain = None
+                    else:
+                        chain = self._getChain(sub)
+                    self.context.setChainForPortalTypes((type_id,), chain,
+                                                        verify=False)
 
     def _getChain(self, node):
         workflow_ids = []

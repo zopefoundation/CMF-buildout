@@ -1545,7 +1545,7 @@ class IWorkflowTool(Interface):
             )
 
     def getCatalogVariablesFor(ob):
-        """ Return a mapping of "workflow-relevant" attributes.
+        """ Get a mapping of "workflow-relevant" attributes.
 
         o Invoked by 'portal_catalog' when indexing content.
 
@@ -1575,7 +1575,7 @@ class IWorkflowTool(Interface):
         """
 
     def getInfoFor(ob, name, default=_marker, wf_id=None):
-        """ Return the given bit of workflow information for the object.
+        """ Get the given bit of workflow information for the object.
 
         o 'ob' is the target object.
 
@@ -1644,7 +1644,7 @@ class IWorkflowTool(Interface):
         """
 
     def getHistoryOf(wf_id, ob):
-        """ Returns the history of an object for a given workflow.
+        """ Get the history of an object for a given workflow.
 
         o 'wf_id' is the id of the selected workflow.
 
@@ -1656,7 +1656,7 @@ class IWorkflowTool(Interface):
         """
 
     def getStatusOf(wf_id, ob):
-        """ Return the last element of a workflow history for a given workflow.
+        """ Get the last element of a workflow history for a given workflow.
 
         o 'wf_id' is the id of the selected workflow.
 
@@ -1677,6 +1677,47 @@ class IWorkflowTool(Interface):
         o 'status' is a mapping defining the history item to append.
 
         o Invoked by workflow definitions.
+
+        o Permission:  Private (Python only)
+        """
+
+
+class IConfigurableWorkflowTool(IWorkflowTool):
+
+    """ Manage workflow tool settings.
+    """
+
+    def setDefaultChain(default_chain):
+        """ Set the default chain for this tool.
+
+        o Permission:  Manage portal
+        """
+
+    def setChainForPortalTypes(pt_names, chain, verify=True):
+        """ Set a chain for specific portal types.
+
+        o If chain is None, set the chain for the portal types to be the
+          default chain.
+
+        o Permission:  Manage portal
+        """
+
+    def getDefaultChain():
+        """ Get the default chain for this tool.
+
+        o Permission:  Private (Python only)
+        """
+
+    def listChainOverrides():
+        """ List portal type specific chain overrides.
+
+        o Permission:  Private (Python only)
+        """
+
+    def getChainFor(ob):
+        """ Get the chain that applies to the given object.
+
+        o If 'ob' is a string, it is used as portal type name.
 
         o Permission:  Private (Python only)
         """

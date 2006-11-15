@@ -32,7 +32,7 @@ from Products.GenericSetup.tests.common import DummyImportContext
 from Products.GenericSetup.utils import BodyAdapterBase
 
 from Products.CMFCore.interfaces import IWorkflowDefinition
-from Products.CMFCore.interfaces import IWorkflowTool
+from Products.CMFCore.interfaces import IConfigurableWorkflowTool
 
 _DUMMY_ZCML = """\
 <configure
@@ -109,10 +109,19 @@ _NORMAL_TOOL_EXPORT = """\
 </object>
 """
 
+_FRAGMENT_IMPORT = """\
+<?xml version="1.0"?>
+<object name="portal_workflow">
+ <bindings>
+  <type type_id="sometype" remove=""/>
+ </bindings>
+</object>
+"""
+
 
 class DummyWorkflowTool(Folder):
 
-    implements(IWorkflowTool)
+    implements(IConfigurableWorkflowTool)
 
     meta_type = 'Dummy Workflow Tool'
 
@@ -127,16 +136,25 @@ class DummyWorkflowTool(Folder):
     def getWorkflowById(self, workflow_id):
         return self._getOb(workflow_id)
 
+    def getDefaultChain(self):
+        return self._default_chain
+
     def setDefaultChain(self, chain):
         chain = chain.replace(',', ' ')
         self._default_chain = tuple(chain.split())
 
+    def listChainOverrides(self):
+        return sorted(self._chains_by_type.items())
+
     def setChainForPortalTypes(self, pt_names, chain, verify=True):
+        if chain is None:
+            for pt_name in pt_names:
+                if pt_name in self._chains_by_type:
+                    del self._chains_by_type[pt_name]
+            return
+
         chain = chain.replace(',', ' ')
         chain = tuple(chain.split())
-
-        if self._chains_by_type is None:
-            self._chains_by_type = {}
 
         for pt_name in pt_names:
             self._chains_by_type[pt_name] = chain
@@ -245,6 +263,7 @@ class importWorkflowToolTests(_WorkflowSetup):
 
     _BINDINGS_TOOL_EXPORT = _BINDINGS_TOOL_EXPORT
     _EMPTY_TOOL_EXPORT = _EMPTY_TOOL_EXPORT
+    _FRAGMENT_IMPORT = _FRAGMENT_IMPORT
 
     def test_empty_default_purge(self):
         from Products.CMFCore.exportimport.workflow import importWorkflowTool
@@ -358,6 +377,33 @@ class importWorkflowToolTests(_WorkflowSetup):
                          (WF_ID_NON % 2,))
         self.assertEqual(wf_tool._chains_by_type['anothertype'],
                          (WF_ID_NON % 3,))
+
+    def test_fragment_skip_purge(self):
+        from Products.CMFCore.exportimport.workflow import importWorkflowTool
+
+        WF_ID_NON = 'non_dcworkflow_%s'
+        WF_TITLE_NON = 'Non-DCWorkflow #%s'
+
+        site = self._initSite()
+        wf_tool = site.portal_workflow
+
+        for i in range(4):
+            nondcworkflow = DummyWorkflow(WF_TITLE_NON % i)
+            nondcworkflow.title = WF_TITLE_NON % i
+            wf_tool._setObject(WF_ID_NON % i, nondcworkflow)
+
+        wf_tool._default_chain = (WF_ID_NON % 1,)
+        wf_tool._chains_by_type['sometype'] = (WF_ID_NON % 2,)
+        self.assertEqual(len(wf_tool.objectIds()), 4)
+
+        context = DummyImportContext(site, False)
+        context._files['workflows.xml'] = self._FRAGMENT_IMPORT
+        importWorkflowTool(context)
+
+        self.assertEqual(len(wf_tool.objectIds()), 4)
+        self.assertEqual(len(wf_tool._default_chain), 1)
+        self.assertEqual(wf_tool._default_chain[0], WF_ID_NON % 1)
+        self.assertEqual(len(wf_tool._chains_by_type), 0)
 
 
 def test_suite():

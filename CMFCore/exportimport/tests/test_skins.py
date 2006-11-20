@@ -21,11 +21,8 @@ ZopeTestCase.installProduct('CMFCore', 1)
 
 import os
 
-import Products
 from OFS.Folder import Folder
-from Products.Five import zcml
 from zope.interface import implements
-from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.testing import NodeAdapterTestCase
@@ -35,6 +32,7 @@ from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
 from Products.CMFCore.interfaces import ISkinsTool
+from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _TESTS_PATH = os.path.split(__file__)[0]
 
@@ -192,6 +190,8 @@ class _DVRegistrySetup:
 
 class DirectoryViewAdapterTests(_DVRegistrySetup, NodeAdapterTestCase):
 
+    layer = ExportImportZCMLLayer
+
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.skins \
                 import DirectoryViewNodeAdapter
@@ -202,13 +202,10 @@ class DirectoryViewAdapterTests(_DVRegistrySetup, NodeAdapterTestCase):
         obj._dirpath = 'CMFCore/exportimport/tests/one'
 
     def setUp(self):
-        import Products.CMFCore.exportimport
         from Products.CMFCore.DirectoryView import DirectoryView
 
         NodeAdapterTestCase.setUp(self)
         _DVRegistrySetup.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-
         self._obj = DirectoryView('foo_directoryview').__of__(Folder())
         self._XML = _DIRECTORYVIEW_XML
 
@@ -218,6 +215,8 @@ class DirectoryViewAdapterTests(_DVRegistrySetup, NodeAdapterTestCase):
 
 
 class SkinsToolXMLAdapterTests(_DVRegistrySetup, BodyAdapterTestCase):
+
+    layer = ExportImportZCMLLayer
 
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.skins import SkinsToolXMLAdapter
@@ -236,14 +235,11 @@ class SkinsToolXMLAdapterTests(_DVRegistrySetup, BodyAdapterTestCase):
         pass
 
     def setUp(self):
-        import Products.CMFCore.exportimport
         from Products.CMFCore import DirectoryView
         from Products.CMFCore.SkinsTool import SkinsTool
 
         BodyAdapterTestCase.setUp(self)
         _DVRegistrySetup.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-
         self._obj = SkinsTool()
         self._BODY = _SKINSTOOL_BODY
 
@@ -267,16 +263,15 @@ class _SkinsSetup(_DVRegistrySetup, BaseRegistryTests):
     def setUp(self):
         BaseRegistryTests.setUp(self)
         _DVRegistrySetup.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
 
     def tearDown(self):
         _DVRegistrySetup.tearDown(self)
         BaseRegistryTests.tearDown(self)
-        cleanUp()
 
 
 class exportSkinsToolTests(_SkinsSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_empty(self):
         from Products.CMFCore.exportimport.skins import exportSkinsTool
@@ -315,6 +310,8 @@ class exportSkinsToolTests(_SkinsSetup):
 
 
 class importSkinsToolTests(_SkinsSetup):
+
+    layer = ExportImportZCMLLayer
 
     _EMPTY_EXPORT = _EMPTY_EXPORT
     _FRAGMENT1_IMPORT = _FRAGMENT1_IMPORT
@@ -545,4 +542,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

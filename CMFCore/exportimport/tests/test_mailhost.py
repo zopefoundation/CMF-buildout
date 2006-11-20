@@ -19,12 +19,12 @@ import unittest
 import Testing
 
 from OFS.Folder import Folder
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
+
+from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _DEFAULT_EXPORT = """\
 <?xml version="1.0"?>
@@ -56,19 +56,10 @@ class _MailHostSetup(BaseRegistryTests):
 
         return site
 
-    def setUp(self):
-        import Products.GenericSetup.MailHost
-
-        BaseRegistryTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.GenericSetup.MailHost)
-
-    def tearDown(self):
-        BaseRegistryTests.tearDown(self)
-        cleanUp()
-
 
 class exportMailHostTests(_MailHostSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_unchanged(self):
         from Products.CMFCore.exportimport.mailhost import exportMailHost
@@ -99,6 +90,8 @@ class exportMailHostTests(_MailHostSetup):
 
 class importMailHostTests(_MailHostSetup):
 
+    layer = ExportImportZCMLLayer
+
     def test_normal(self):
         from Products.CMFCore.exportimport.mailhost import importMailHost
 
@@ -122,4 +115,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

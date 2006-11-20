@@ -18,10 +18,7 @@ $Id$
 import unittest
 import Testing
 
-import Products
 from OFS.Folder import Folder
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
@@ -29,6 +26,7 @@ from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
 from Products.CMFCore.CookieCrumbler import CookieCrumbler
+from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _COOKIECRUMBLER_BODY = """\
 <?xml version="1.0"?>
@@ -81,6 +79,8 @@ _CHANGED_EXPORT = """\
 
 class CookieCrumblerXMLAdapterTests(BodyAdapterTestCase):
 
+    layer = ExportImportZCMLLayer
+
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.cookieauth \
                 import CookieCrumblerXMLAdapter
@@ -88,12 +88,9 @@ class CookieCrumblerXMLAdapterTests(BodyAdapterTestCase):
         return CookieCrumblerXMLAdapter
 
     def setUp(self):
-        import Products.CMFCore.exportimport
         from Products.CMFCore.CookieCrumbler import CookieCrumbler
 
         BodyAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-
         self._obj = CookieCrumbler('foo_cookiecrumbler')
         self._BODY = _COOKIECRUMBLER_BODY
 
@@ -119,17 +116,10 @@ class _CookieCrumblerSetup(BaseRegistryTests):
 
         return site
 
-    def setUp(self):
-        BaseRegistryTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-
-    def tearDown(self):
-        BaseRegistryTests.tearDown(self)
-        cleanUp()
-
 
 class exportCookieCrumblerTests(_CookieCrumblerSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_unchanged(self):
         from Products.CMFCore.exportimport.cookieauth \
@@ -162,6 +152,8 @@ class exportCookieCrumblerTests(_CookieCrumblerSetup):
 
 class importCookieCrumblerTests(_CookieCrumblerSetup):
 
+    layer = ExportImportZCMLLayer
+
     def test_normal(self):
         from Products.CMFCore.exportimport.cookieauth \
                 import importCookieCrumbler
@@ -193,4 +185,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

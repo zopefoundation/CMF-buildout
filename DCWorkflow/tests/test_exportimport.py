@@ -18,22 +18,20 @@ $Id$
 import unittest
 import Testing
 
-import Products
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
-from Products.Five import zcml
 
 from Products.CMFCore.exportimport.tests.test_workflow \
         import _BINDINGS_TOOL_EXPORT
-from Products.CMFCore.exportimport.tests.test_workflow import _DUMMY_ZCML
 from Products.CMFCore.exportimport.tests.test_workflow \
         import _EMPTY_TOOL_EXPORT
 from Products.CMFCore.exportimport.tests.test_workflow \
         import _WorkflowSetup as WorkflowSetupBase
-from Products.CMFCore.exportimport.tests.test_workflow import DummyWorkflow
 from Products.CMFCore.exportimport.tests.test_workflow \
         import DummyWorkflowTool
+from Products.CMFCore.testing import DummyWorkflow
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
+from Products.DCWorkflow.testing import ExportImportZCMLLayer
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from Products.DCWorkflow.Transitions import TRIGGER_AUTOMATIC
 from Products.GenericSetup.tests.common import DummyExportContext
@@ -74,13 +72,6 @@ class _GuardChecker:
 
 
 class _WorkflowSetup(WorkflowSetupBase):
-
-    def setUp(self):
-        WorkflowSetupBase.setUp(self)
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('meta.zcml', Products.GenericSetup)
-        zcml.load_config('configure.zcml', Products.GenericSetup)
-        zcml.load_config('configure.zcml', Products.DCWorkflow)
 
     def _initDCWorkflow( self, workflow_id ):
 
@@ -201,6 +192,8 @@ class _WorkflowSetup(WorkflowSetupBase):
 
 
 class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
+
+    layer = ExportImportZCMLLayer
 
     def _getTargetClass( self ):
         from Products.DCWorkflow.exportimport \
@@ -1750,9 +1743,10 @@ _NORMAL_WORKFLOW_EXPORT = """\
 </dc-workflow>
 """
 
-class Test_exportWorkflow( _WorkflowSetup
-                         , _GuardChecker
-                         ):
+
+class Test_exportWorkflow(_WorkflowSetup, _GuardChecker):
+
+    layer = ExportImportZCMLLayer
 
     def test_empty( self ):
         from Products.CMFCore.exportimport.workflow import exportWorkflowTool
@@ -1870,9 +1864,10 @@ class Test_exportWorkflow( _WorkflowSetup
         self.assertEqual( text, _AFTER_CLOSE_SCRIPT)
         self.assertEqual( content_type, 'text/plain' )
 
-class Test_importWorkflow( _WorkflowSetup
-                         , _GuardChecker
-                         ):
+
+class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
+
+    layer = ExportImportZCMLLayer
 
     def _importNormalWorkflow( self, wf_id, wf_title, wf_initial_state ):
         from Products.CMFCore.exportimport.workflow import importWorkflowTool
@@ -2378,4 +2373,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

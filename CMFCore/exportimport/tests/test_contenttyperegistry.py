@@ -18,15 +18,14 @@ $Id$
 import unittest
 import Testing
 
-import Products
 from OFS.Folder import Folder
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
+
+from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _TEST_PREDICATES = (
  ('plain_text', 'major_minor', ('text', 'plain,javascript'), 'File'),
@@ -61,6 +60,8 @@ _CTR_BODY = """\
 
 class ContentTypeRegistryXMLAdapterTests(BodyAdapterTestCase):
 
+    layer = ExportImportZCMLLayer
+
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.contenttyperegistry \
                 import ContentTypeRegistryXMLAdapter
@@ -82,12 +83,9 @@ class ContentTypeRegistryXMLAdapterTests(BodyAdapterTestCase):
         obj.assignTypeName('foobar_predicate', 'Foobar Type')
 
     def setUp(self):
-        import Products.CMFCore.exportimport
         from Products.CMFCore.ContentTypeRegistry import ContentTypeRegistry
 
         BodyAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-
         self._obj = ContentTypeRegistry()
         self._BODY = _CTR_BODY
 
@@ -167,17 +165,10 @@ class _ContentTypeRegistrySetup(BaseRegistryTests):
 
         return site
 
-    def setUp(self):
-        BaseRegistryTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-
-    def tearDown(self):
-        BaseRegistryTests.tearDown(self)
-        cleanUp()
-
 
 class exportContentTypeRegistryTests(_ContentTypeRegistrySetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_empty(self):
         from Products.CMFCore.exportimport.contenttyperegistry \
@@ -209,6 +200,8 @@ class exportContentTypeRegistryTests(_ContentTypeRegistrySetup):
 
 
 class importContentTypeRegistryTests(_ContentTypeRegistrySetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_normal(self):
         from Products.CMFCore.exportimport.contenttyperegistry \
@@ -254,4 +247,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

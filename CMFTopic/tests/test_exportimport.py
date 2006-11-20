@@ -14,10 +14,12 @@
 
 $Id$
 """
+
 import unittest
 
 from DateTime.DateTime import DateTime
 
+from Products.GenericSetup.testing import ExportImportZCMLLayer
 from Products.GenericSetup.tests.conformance \
         import ConformsToIFilesystemExporter
 from Products.GenericSetup.tests.conformance \
@@ -39,11 +41,14 @@ _CRITERIA_DATA = (
     ('e', 'Sort Criterion', {'reversed': 0}),
 )
 
+
 class TopicExportImportTests(SecurityRequestTest,
                              DOMComparator,
                              ConformsToIFilesystemExporter,
                              ConformsToIFilesystemImporter,
                             ):
+
+    layer = ExportImportZCMLLayer
 
     def _getTargetClass(self):
         from Products.CMFTopic.exportimport import TopicExportImport
@@ -508,11 +513,12 @@ _MIXED_TOPIC_CRITERIA = """\
 </criteria>
 """ % int(DateTime(_DATE_STR))
 
+
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(TopicExportImportTests),
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
-
+    from Products.GenericSetup.testing import run
+    run(test_suite())

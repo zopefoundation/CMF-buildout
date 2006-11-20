@@ -18,43 +18,17 @@ $Id$
 import unittest
 import Testing
 
-import Products
 from OFS.Folder import Folder
-from OFS.SimpleItem import SimpleItem
-from Products.Five import zcml
 from zope.interface import implements
-from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
-from Products.GenericSetup.utils import BodyAdapterBase
 
-from Products.CMFCore.interfaces import IWorkflowDefinition
 from Products.CMFCore.interfaces import IConfigurableWorkflowTool
-
-_DUMMY_ZCML = """\
-<configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five"
-    i18n_domain="dummy">
-  <permission id="dummy.add" title="Add Dummy Workflow"/>
-  <five:registerClass
-      class="Products.CMFCore.exportimport.tests.test_workflow.DummyWorkflow"
-      meta_type="Dummy Workflow"
-      permission="dummy.add"
-      addview="addDummyWorkflow.html"
-      global="false"
-      />
-  <adapter
-      factory="Products.CMFCore.exportimport.tests.test_workflow.DummyWorkflowBodyAdapter"
-      provides="Products.GenericSetup.interfaces.IBody"
-      for="Products.CMFCore.interfaces.IWorkflowDefinition
-           Products.GenericSetup.interfaces.ISetupEnviron"
-      />
-</configure>
-"""
+from Products.CMFCore.testing import DummyWorkflow
+from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _WORKFLOWTOOL_BODY = """\
 <?xml version="1.0"?>
@@ -160,25 +134,9 @@ class DummyWorkflowTool(Folder):
             self._chains_by_type[pt_name] = chain
 
 
-class DummyWorkflow(SimpleItem):
-
-    implements(IWorkflowDefinition)
-
-    meta_type = 'Dummy Workflow'
-
-    def __init__(self, id):
-        self._id = id
-
-    def getId(self):
-        return self._id
-
-
-class DummyWorkflowBodyAdapter(BodyAdapterBase):
-
-    body = property(BodyAdapterBase._exportBody, BodyAdapterBase._importBody)
-
-
 class WorkflowToolXMLAdapterTests(BodyAdapterTestCase):
+
+    layer = ExportImportZCMLLayer
 
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.workflow \
@@ -192,13 +150,9 @@ class WorkflowToolXMLAdapterTests(BodyAdapterTestCase):
         obj.setChainForPortalTypes(('Foo Type',), '', verify=False)
 
     def setUp(self):
-        import Products.CMFCore.exportimport
         from Products.CMFCore.WorkflowTool import WorkflowTool
 
         BodyAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-        zcml.load_string(_DUMMY_ZCML)
-
         self._obj = WorkflowTool()
         self._BODY = _WORKFLOWTOOL_BODY
 
@@ -211,18 +165,10 @@ class _WorkflowSetup(BaseRegistryTests):
         self.root.site.portal_workflow = DummyWorkflowTool()
         return site
 
-    def setUp(self):
-        BaseRegistryTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-        zcml.load_string(_DUMMY_ZCML)
-
-    def tearDown(self):
-        BaseRegistryTests.tearDown(self)
-        cleanUp()
-
 
 class exportWorkflowToolTests(_WorkflowSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_empty(self):
         from Products.CMFCore.exportimport.workflow import exportWorkflowTool
@@ -260,6 +206,8 @@ class exportWorkflowToolTests(_WorkflowSetup):
 
 
 class importWorkflowToolTests(_WorkflowSetup):
+
+    layer = ExportImportZCMLLayer
 
     _BINDINGS_TOOL_EXPORT = _BINDINGS_TOOL_EXPORT
     _EMPTY_TOOL_EXPORT = _EMPTY_TOOL_EXPORT
@@ -414,4 +362,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

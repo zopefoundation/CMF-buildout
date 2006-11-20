@@ -16,6 +16,7 @@ $Id$
 """
 
 from Acquisition import aq_acquire
+from OFS.SimpleItem import SimpleItem
 from Products.Five import i18n
 from Products.Five import zcml
 from zope.component import adapts
@@ -25,6 +26,9 @@ from zope.interface import implements
 from zope.publisher.interfaces.http import IHTTPRequest
 from zope.testing import testrunner
 from zope.testing.cleanup import cleanUp
+
+from Products.CMFCore.interfaces import IWorkflowDefinition
+from Products.GenericSetup.utils import BodyAdapterBase
 
 
 class ConformsToFolder:
@@ -162,6 +166,68 @@ class FunctionalZCMLLayer:
         # BBB: for Five < 1.5.2
         i18n._fallback_translation_service = cls._fallback_translation_service
 
+        cleanUp()
+
+
+_DUMMY_ZCML = """\
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="dummy">
+  <permission id="dummy.add" title="Add Dummy Workflow"/>
+  <five:registerClass
+      class="Products.CMFCore.testing.DummyWorkflow"
+      meta_type="Dummy Workflow"
+      permission="dummy.add"
+      addview="addDummyWorkflow.html"
+      global="false"
+      />
+  <adapter
+      factory="Products.CMFCore.testing.DummyWorkflowBodyAdapter"
+      provides="Products.GenericSetup.interfaces.IBody"
+      for="Products.CMFCore.interfaces.IWorkflowDefinition
+           Products.GenericSetup.interfaces.ISetupEnviron"
+      />
+</configure>
+"""
+
+
+class DummyWorkflow(SimpleItem):
+
+    implements(IWorkflowDefinition)
+
+    meta_type = 'Dummy Workflow'
+
+    def __init__(self, id):
+        self._id = id
+
+    def getId(self):
+        return self._id
+
+
+class DummyWorkflowBodyAdapter(BodyAdapterBase):
+
+    body = property(BodyAdapterBase._exportBody, BodyAdapterBase._importBody)
+
+
+class ExportImportZCMLLayer:
+
+    @classmethod
+    def setUp(cls):
+        import Products.Five
+        import Products.GenericSetup
+        import Products.CMFCore
+        import Products.CMFCore.exportimport
+
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('permissions.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.GenericSetup)
+        zcml.load_config('tool.zcml', Products.CMFCore)
+        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
+        zcml.load_string(_DUMMY_ZCML)
+
+    @classmethod
+    def tearDown(cls):
         cleanUp()
 
 

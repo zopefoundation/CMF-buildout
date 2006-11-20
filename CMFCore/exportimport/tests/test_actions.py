@@ -18,14 +18,11 @@ $Id$
 import unittest
 import Testing
 
-import Products
 from Acquisition import Implicit
 from Acquisition import aq_parent
 from OFS.Folder import Folder
 from OFS.OrderedFolder import OrderedFolder
-from Products.Five import zcml
 from zope.interface import implements
-from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces import IActionsTool
@@ -37,6 +34,8 @@ from Products.GenericSetup.testing import NodeAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
+
+from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _ACTION_XML = """\
 <object name="foo_action" meta_type="CMF Action">
@@ -242,6 +241,8 @@ class DummyActionsTool(DummyTool):
 
 class ActionNodeAdapterTests(NodeAdapterTestCase):
 
+    layer = ExportImportZCMLLayer
+
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.actions import ActionNodeAdapter
 
@@ -269,17 +270,16 @@ class ActionNodeAdapterTests(NodeAdapterTestCase):
         self.assertEqual(obj.visible, True)
 
     def setUp(self):
-        import Products.CMFCore
         from Products.CMFCore.ActionInformation import Action
 
         NodeAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
         self._obj = Action('foo_action')
         self._XML = _ACTION_XML
 
 
 class ActionCategoryNodeAdapterTests(NodeAdapterTestCase):
+
+    layer = ExportImportZCMLLayer
 
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.actions \
@@ -297,17 +297,16 @@ class ActionCategoryNodeAdapterTests(NodeAdapterTestCase):
         self.assertEqual(obj.title, '')
 
     def setUp(self):
-        import Products.CMFCore
         from Products.CMFCore.ActionInformation import ActionCategory
 
         NodeAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
         self._obj = ActionCategory('foo_category')
         self._XML = _ACTIONCATEGORY_XML
 
 
 class ActionsToolXMLAdapterTests(BodyAdapterTestCase):
+
+    layer = ExportImportZCMLLayer
 
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.actions \
@@ -331,12 +330,9 @@ class ActionsToolXMLAdapterTests(BodyAdapterTestCase):
         self.assertEqual(obj.action_providers[0], 'portal_actions')
 
     def setUp(self):
-        import Products.CMFCore
         from Products.CMFCore.ActionsTool import ActionsTool
 
         BodyAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
         site = DummySite('site')
         site._setObject('portal_actions', ActionsTool('portal_actions'))
         self._obj = site.portal_actions
@@ -381,18 +377,10 @@ class _ActionSetup(BaseRegistryTests):
 
         return site
 
-    def setUp(self):
-        BaseRegistryTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
-    def tearDown(self):
-        BaseRegistryTests.tearDown(self)
-        cleanUp()
-
 
 class exportActionProvidersTests(_ActionSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_unchanged(self):
         from Products.CMFCore.exportimport.actions \
@@ -424,6 +412,8 @@ class exportActionProvidersTests(_ActionSetup):
 
 
 class importActionProvidersTests(_ActionSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_empty_default_purge(self):
         from Products.CMFCore.exportimport.actions \
@@ -608,4 +598,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

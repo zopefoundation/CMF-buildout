@@ -19,20 +19,18 @@ import unittest
 from Testing import ZopeTestCase
 ZopeTestCase.installProduct('ZCTextIndex', 1)
 
-import Products
 from OFS.Folder import Folder
-from Products.Five import zcml
 from Products.ZCTextIndex.Lexicon import CaseNormalizer
 from Products.ZCTextIndex.Lexicon import Splitter
 from Products.ZCTextIndex.Lexicon import StopWordRemover
 from Products.ZCTextIndex.ZCTextIndex import PLexicon
-from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
 from Products.CMFCore.CatalogTool import CatalogTool
+from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _EMPTY_EXPORT = """\
 <?xml version="1.0"?>
@@ -102,24 +100,10 @@ class _CatalogToolSetup(BaseRegistryTests):
 
         return site
 
-    def setUp(self):
-        import Products.GenericSetup.PluginIndexes
-        import Products.GenericSetup.ZCatalog
-        import Products.GenericSetup.ZCTextIndex
-
-        BaseRegistryTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml',
-                         Products.GenericSetup.PluginIndexes)
-        zcml.load_config('configure.zcml', Products.GenericSetup.ZCatalog)
-        zcml.load_config('configure.zcml', Products.GenericSetup.ZCTextIndex)
-
-    def tearDown(self):
-        BaseRegistryTests.tearDown(self)
-        cleanUp()
-
 
 class exportCatalogToolTests(_CatalogToolSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_unchanged(self):
         from Products.CMFCore.exportimport.catalog import exportCatalogTool
@@ -149,6 +133,8 @@ class exportCatalogToolTests(_CatalogToolSetup):
 
 
 class importCatalogToolTests(_CatalogToolSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_empty_purge(self):
         from Products.CMFCore.exportimport.catalog import importCatalogTool
@@ -241,4 +227,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

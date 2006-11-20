@@ -18,13 +18,12 @@ $Id$
 import unittest
 import Testing
 
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
-
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
+
+from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _PROPERTIES_BODY = """\
 <?xml version="1.0"?>
@@ -59,6 +58,8 @@ _NORMAL_EXPORT = """\
 
 class PropertiesXMLAdapterTests(BodyAdapterTestCase):
 
+    layer = ExportImportZCMLLayer
+
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.properties \
                 import PropertiesXMLAdapter
@@ -71,12 +72,9 @@ class PropertiesXMLAdapterTests(BodyAdapterTestCase):
         obj._setProperty('foo_boolean', False, 'boolean')
 
     def setUp(self):
-        import Products.CMFCore.exportimport
         from Products.CMFCore.PortalObject import PortalObjectBase
 
         BodyAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-
         self._obj = PortalObjectBase('foo_site')
         self._BODY = _PROPERTIES_BODY
 
@@ -103,19 +101,10 @@ class _SitePropertiesSetup(BaseRegistryTests):
 
         return site
 
-    def setUp(self):
-        import Products.CMFCore.exportimport
-
-        BaseRegistryTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-
-    def tearDown(self):
-        BaseRegistryTests.tearDown(self)
-        cleanUp()
-
 
 class exportSitePropertiesTests(_SitePropertiesSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_empty(self):
         from Products.CMFCore.exportimport.properties \
@@ -147,6 +136,8 @@ class exportSitePropertiesTests(_SitePropertiesSetup):
 
 
 class importSitePropertiesTests(_SitePropertiesSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_empty_default_purge(self):
         from Products.CMFCore.exportimport.properties \
@@ -233,4 +224,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

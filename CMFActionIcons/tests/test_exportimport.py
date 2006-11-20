@@ -18,6 +18,7 @@ $Id$
 import unittest
 import Testing
 
+from Products.GenericSetup.testing import ExportImportZCMLLayer
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
@@ -73,7 +74,10 @@ class _ActionIconsToolSetup(BaseRegistryTests):
                               )
         return site
 
+
 class ActionIconsToolExportConfiguratorTests(_ActionIconsToolSetup):
+
+    layer = ExportImportZCMLLayer
 
     def _getTargetClass(self):
         from Products.CMFActionIcons.exportimport \
@@ -95,6 +99,8 @@ class ActionIconsToolExportConfiguratorTests(_ActionIconsToolSetup):
 
 
 class ActionIconsToolImportConfiguratorTests(_ActionIconsToolSetup):
+
+    layer = ExportImportZCMLLayer
 
     def _getTargetClass(self):
         from Products.CMFActionIcons.exportimport \
@@ -123,7 +129,10 @@ class ActionIconsToolImportConfiguratorTests(_ActionIconsToolSetup):
         self.assertEqual(info['priority'], self.PRIORITY)
         self.assertEqual(info['icon_expr'], self.ICON_EXPR)
 
+
 class Test_exportActionIconsTool(_ActionIconsToolSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_empty(self):
         from Products.CMFActionIcons.exportimport \
@@ -155,6 +164,8 @@ class Test_exportActionIconsTool(_ActionIconsToolSetup):
 
 
 class Test_importActionIconsTool(_ActionIconsToolSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_normal(self):
         from Products.CMFActionIcons.exportimport \
@@ -210,5 +221,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
-
+    from Products.GenericSetup.testing import run
+    run(test_suite())

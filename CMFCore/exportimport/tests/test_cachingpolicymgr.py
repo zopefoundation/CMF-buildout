@@ -18,16 +18,15 @@ $Id$
 import unittest
 import Testing
 
-import Products
 from OFS.Folder import Folder
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.testing import NodeAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
+
+from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _CP_XML = """\
 <caching-policy name="foo_policy" enable_304s="False" etag_func=""
@@ -52,6 +51,8 @@ _CPM_BODY = """\
 
 class CachingPolicyNodeAdapterTests(NodeAdapterTestCase):
 
+    layer = ExportImportZCMLLayer
+
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.cachingpolicymgr \
                 import CachingPolicyNodeAdapter
@@ -59,17 +60,16 @@ class CachingPolicyNodeAdapterTests(NodeAdapterTestCase):
         return CachingPolicyNodeAdapter
 
     def setUp(self):
-        import Products.CMFCore.exportimport
         from Products.CMFCore.CachingPolicyManager import CachingPolicy
 
         NodeAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-
         self._obj = CachingPolicy('foo_policy', max_age_secs=0)
         self._XML = _CP_XML
 
 
 class CachingPolicyManagerXMLAdapterTests(BodyAdapterTestCase):
+
+    layer = ExportImportZCMLLayer
 
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.cachingpolicymgr \
@@ -83,12 +83,9 @@ class CachingPolicyManagerXMLAdapterTests(BodyAdapterTestCase):
                       'object/modified', 600, 0, 0, 0, '', '')
 
     def setUp(self):
-        import Products.CMFCore.exportimport
         from Products.CMFCore.CachingPolicyManager import CachingPolicyManager
 
         BodyAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-
         self._obj = CachingPolicyManager()
         self._BODY = _CPM_BODY
 
@@ -154,17 +151,10 @@ class _CachingPolicyManagerSetup(BaseRegistryTests):
 
         return site
 
-    def setUp(self):
-        BaseRegistryTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
-
-    def tearDown(self):
-        BaseRegistryTests.tearDown(self)
-        cleanUp()
-
 
 class exportCachingPolicyManagerTests(_CachingPolicyManagerSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_empty(self):
         from Products.CMFCore.exportimport.cachingpolicymgr \
@@ -196,6 +186,8 @@ class exportCachingPolicyManagerTests(_CachingPolicyManagerSetup):
 
 
 class importCachingPolicyManagerTests(_CachingPolicyManagerSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_normal(self):
         from Products.CMFCore.exportimport.cachingpolicymgr \
@@ -240,4 +232,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

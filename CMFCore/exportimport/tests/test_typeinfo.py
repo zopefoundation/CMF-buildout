@@ -18,10 +18,7 @@ $Id$
 import unittest
 import Testing
 
-import Products
 from OFS.Folder import Folder
-from Products.Five import zcml
-from zope.testing.cleanup import cleanUp
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
@@ -31,6 +28,7 @@ from Products.GenericSetup.tests.common import DummyImportContext
 from Products.CMFCore.permissions import View
 from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.permissions import ModifyPortalContent
+from Products.CMFCore.testing import ExportImportZCMLLayer
 from Products.CMFCore.TypesTool import FactoryTypeInformation
 from Products.CMFCore.TypesTool import ScriptableTypeInformation
 from Products.CMFCore.TypesTool import TypesTool
@@ -259,6 +257,8 @@ _UPDATE_FOO_IMPORT = """\
 
 class TypeInformationXMLAdapterTests(BodyAdapterTestCase):
 
+    layer = ExportImportZCMLLayer
+
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.typeinfo \
                 import TypeInformationXMLAdapter
@@ -288,17 +288,16 @@ class TypeInformationXMLAdapterTests(BodyAdapterTestCase):
         self.assertEqual(obj._actions[0].condition.text, 'python:1')
 
     def setUp(self):
-        import Products.CMFCore
         from Products.CMFCore.TypesTool import FactoryTypeInformation
 
         BodyAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
         self._obj = FactoryTypeInformation('foo_fti')
         self._BODY = _FTI_BODY
 
 
 class TypesToolXMLAdapterTests(BodyAdapterTestCase):
+
+    layer = ExportImportZCMLLayer
 
     def _getTargetClass(self):
         from Products.CMFCore.exportimport.typeinfo \
@@ -312,12 +311,9 @@ class TypesToolXMLAdapterTests(BodyAdapterTestCase):
         obj._setObject('foo_type', FactoryTypeInformation('foo_type'))
 
     def setUp(self):
-        import Products.CMFCore
         from Products.CMFCore.TypesTool import TypesTool
 
         BodyAdapterTestCase.setUp(self)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
         self._obj = TypesTool()
         self._BODY = _TYPESTOOL_BODY
 
@@ -342,18 +338,10 @@ class _TypeInfoSetup(BaseRegistryTests):
 
         return site
 
-    def setUp(self):
-        BaseRegistryTests.setUp(self)
-        zcml.load_config('meta.zcml', Products.Five)
-        zcml.load_config('permissions.zcml', Products.Five)
-        zcml.load_config('configure.zcml', Products.CMFCore)
-
-    def tearDown(self):
-        BaseRegistryTests.tearDown(self)
-        cleanUp()
-
 
 class exportTypesToolTests(_TypeInfoSetup):
+
+    layer = ExportImportZCMLLayer
 
     def test_empty(self):
         from Products.CMFCore.exportimport.typeinfo import exportTypesTool
@@ -414,6 +402,8 @@ class exportTypesToolTests(_TypeInfoSetup):
 
 
 class importTypesToolTests(_TypeInfoSetup):
+
+    layer = ExportImportZCMLLayer
 
     _EMPTY_TOOL_EXPORT = _EMPTY_TOOL_EXPORT
     _FILENAME_EXPORT = _FILENAME_EXPORT
@@ -538,4 +528,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

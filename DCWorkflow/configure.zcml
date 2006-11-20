@@ -6,13 +6,9 @@
 
   <include package=".browser"/>
 
-  <five:registerClass
-      class=".DCWorkflow.DCWorkflowDefinition"
-      meta_type="Workflow"
-      addview="addDCWorkflowDefinition.html"
-      permission="cmf.ManagePortal"
-      global="False"
-      />
+  <include file="exportimport.zcml"/>
+
+  <include file="tool.zcml"/>
 
   <!-- profiles -->
 
@@ -23,9 +19,5 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       for="Products.CMFCore.interfaces.ISiteRoot"
       />
-
-  <!-- exportimport -->
-
-  <adapter factory=".exportimport.DCWorkflowDefinitionBodyAdapter"/>
 
 </configure>

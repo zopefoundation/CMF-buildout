@@ -24,8 +24,7 @@ from Products.GenericSetup.tests.conformance \
         import ConformsToIFilesystemExporter
 from Products.GenericSetup.tests.conformance \
         import ConformsToIFilesystemImporter
-from Products.GenericSetup.tests.common import SecurityRequestTest
-from Products.GenericSetup.tests.common import DOMComparator
+from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
@@ -42,8 +41,7 @@ _CRITERIA_DATA = (
 )
 
 
-class TopicExportImportTests(SecurityRequestTest,
-                             DOMComparator,
+class TopicExportImportTests(BaseRegistryTests,
                              ConformsToIFilesystemExporter,
                              ConformsToIFilesystemImporter,
                             ):

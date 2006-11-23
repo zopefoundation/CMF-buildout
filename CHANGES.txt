@@ -1,5 +1,8 @@
 CMF 2.1.0-beta (unreleased)
 
+
+CMF 2.1.0-alpha2 (2006/11/23)
+
   New Features
 
     - WorkflowTool: Added the IConfigurableWorkflowTool interface.

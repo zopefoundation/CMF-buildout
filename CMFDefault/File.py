@@ -22,6 +22,7 @@ from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from zope.component.factory import Factory
 from zope.interface import implements
+from OFS.Cache import Cacheable
 
 from Products.CMFCore.PortalContent import PortalContent
 from Products.CMFCore.utils import _OldCacheHeaders
@@ -87,6 +88,10 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
     effective_date = expiration_date = None
     _isDiscussable = 1
     icon = PortalContent.icon
+
+    manage_options = ( PortalContent.manage_options
+                     + Cacheable.manage_options
+                     )
 
     security = ClassSecurityInfo()
 

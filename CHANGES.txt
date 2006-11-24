@@ -1,5 +1,10 @@
 CMF 2.1.0-beta (unreleased)
 
+  Bug Fixes
+
+    - CMFDefault.File and CMFDefault.Image: Restored ZMI Cache tab which was
+      lost in CMF 1.6.
+
 
 CMF 2.1.0-alpha2 (2006/11/23)
 

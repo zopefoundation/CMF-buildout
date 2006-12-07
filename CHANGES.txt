@@ -5,6 +5,11 @@ CMF 2.1.0-beta (unreleased)
     - CMFDefault.File and CMFDefault.Image: Restored ZMI Cache tab which was
       lost in CMF 1.6.
 
+    - CMFCore.DynamicType: Fixed behaviour regarding default view.
+      DynamicType was making it impossible to use a Zope3-style
+      default view for CMF content types.
+      (http://www.zope.org/Collectors/CMF/459)
+
 
 CMF 2.1.0-alpha2 (2006/11/23)
 

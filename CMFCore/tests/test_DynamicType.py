@@ -31,6 +31,16 @@ from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
 from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 from Products.CMFCore.TypesTool import TypesTool
 
+import zope.component
+from zope.testing.cleanup import CleanUp
+from zope.component.interfaces import IDefaultViewName
+from zope.publisher.interfaces.browser import IBrowserRequest, IBrowserView
+from Products.Five.browser import BrowserView
+
+def defineDefaultViewName(name, for_=None):
+    zope.component.provideAdapter(name, (for_, BaseRequest),
+                                  IDefaultViewName, '')
+
 
 class DummyContent(DynamicType, Implicit):
     """ Basic dynamic content class.
@@ -39,14 +49,11 @@ class DummyContent(DynamicType, Implicit):
     portal_type = 'Dummy Content 15'
 
 
-class DynamicTypeTests(unittest.TestCase):
+class DummyView(BrowserView):
+    """This is a view"""
 
-    def setUp(self):
-        self.site = DummySite('site')
-        self.site._setObject( 'portal_types', TypesTool() )
-        fti = FTIDATA_CMF15[0].copy()
-        self.site.portal_types._setObject( 'Dummy Content 15', FTI(**fti) )
-        self.site._setObject( 'foo', DummyContent() )
+
+class DynamicTypeTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -58,11 +65,19 @@ class DynamicTypeTests(unittest.TestCase):
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
         from Products.CMFCore.interfaces import IDynamicType
-
         verifyClass(IDynamicType, DynamicType)
 
-    def test___before_publishing_traverse__(self):
+class DynamicTypeDefaultTraversalTests(CleanUp, unittest.TestCase):
+
+    def setUp(self):
+        self.site = DummySite('site')
+        self.site._setObject( 'portal_types', TypesTool() )
+        fti = FTIDATA_CMF15[0].copy()
+        self.site.portal_types._setObject( 'Dummy Content 15', FTI(**fti) )
+        self.site._setObject( 'foo', DummyContent() )
         dummy_view = self.site._setObject( 'dummy_view', DummyObject() )
+
+    def test_default_view_from_fti(self):
         response = HTTPResponse()
         environment = { 'URL': '',
                         'PARENTS': [self.site],
@@ -77,6 +92,49 @@ class DynamicTypeTests(unittest.TestCase):
         self.assertEqual( r.response.base, '/foo/',
                           'CMF Collector issue #192 (wrong base): %s'
                           % (r.response.base or 'empty',) )
+
+    def test_default_viewname_but_no_view_doesnt_override_fti(self):
+        response = HTTPResponse()
+        environment = { 'URL': '',
+                        'PARENTS': [self.site],
+                        'REQUEST_METHOD': 'GET',
+                        'steps': [],
+                        '_hacked_path': 0,
+                        'response': response }
+        r = BaseRequest(environment)
+
+        # we define a Zope3-style default view name, but no
+        # corresponding view, no change in behaviour expected
+        defineDefaultViewName('index.html', DummyContent)
+        r.traverse('foo')
+        self.assertEqual( r.URL, '/foo/dummy_view' )
+        self.assertEqual( r.response.base, '/foo/' )
+
+    def test_default_viewname_overrides_fti(self):
+        response = HTTPResponse()
+        environment = { 'URL': '',
+                        'PARENTS': [self.site],
+                        'REQUEST_METHOD': 'GET',
+                        'steps': [],
+                        '_hacked_path': 0,
+                        'response': response }
+        r = BaseRequest(environment)
+
+        # we define a Zope3-style default view name for which a view
+        # actually exists (double registration needed because we test
+        # with BaseRequest, but Five checks for IBrowserRequest as
+        # well)
+        defineDefaultViewName('index.html', DummyContent)
+        zope.component.provideAdapter(
+            DummyView, (DummyContent, BaseRequest), IBrowserView,
+            'index.html')
+        zope.component.provideAdapter(
+            DummyView, (DummyContent, IBrowserRequest), IBrowserView,
+            'index.html')
+
+        r.traverse('foo')
+        self.assertEqual( r.URL, '/foo/index.html' )
+        self.assertEqual( r.response.base, '/foo/' )
 
 
 class DynamicTypeSecurityTests(SecurityRequestTest):
@@ -113,6 +171,7 @@ class DynamicTypeSecurityTests(SecurityRequestTest):
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(DynamicTypeTests),
+        unittest.makeSuite(DynamicTypeDefaultTraversalTests),
         unittest.makeSuite(DynamicTypeSecurityTests),
         ))
 

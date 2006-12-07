@@ -35,6 +35,11 @@ CMF 2.0.1-beta (unreleased)
     - standard_error_message.pt was out of sync with Zope.
       (http://www.zope.org/Collectors/Zope/2133)
 
+    - CMFCore.DynamicType: Fixed behaviour regarding default view.
+      DynamicType was making it impossible to use a Zope3-style
+      default view for CMF content types.
+      (http://www.zope.org/Collectors/CMF/459)
+
 
 CMF 2.0.0 (2006/04/16)
 

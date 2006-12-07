@@ -25,6 +25,8 @@ from interfaces import IDynamicType
 from interfaces.Dynamic import DynamicType as z2IDynamicType
 from utils import getToolByName
 
+from zope.component import queryMultiAdapter
+from zope.app.publisher.browser import queryDefaultViewName
 
 class DynamicType:
 
@@ -121,6 +123,18 @@ class DynamicType:
 
         stack = REQUEST['TraversalRequestNameStack']
         key = stack and stack[-1] or '(Default)'
+
+        # if there's a Zope3-style default view name set and the
+        # corresponding view exists, take that in favour of the FTI's
+        # default view
+        if key == '(Default)':
+            viewname = queryDefaultViewName(self, REQUEST)
+            if (viewname and
+                queryMultiAdapter((self, REQUEST), name=viewname) is not None):
+                stack.append(viewname)
+                REQUEST._hacked_path = 1
+                return
+
         ti = self.getTypeInfo()
         method_id = ti and ti.queryMethodID(key, context=self)
         if method_id:

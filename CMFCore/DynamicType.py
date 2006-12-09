@@ -23,8 +23,14 @@ from Globals import InitializeClass
 from interfaces.Dynamic import DynamicType as IDynamicType
 from utils import getToolByName
 
-from zope.component import queryMultiAdapter
-from zope.app.publisher.browser import queryDefaultViewName
+try:
+    from zope.app.publisher.browser import queryDefaultViewName
+    from zope.component import queryMultiAdapter
+    def queryView(obj, name, request):
+        return queryMultiAdapter((obj, request), name=name)
+except ImportError:
+    # BBB for Zope 2.8
+    from zope.component import queryDefaultViewName, queryView
 
 class DynamicType:
     """
@@ -126,7 +132,7 @@ class DynamicType:
         if key == '(Default)':
             viewname = queryDefaultViewName(self, REQUEST)
             if (viewname and
-                queryMultiAdapter((self, REQUEST), name=viewname) is not None):
+                queryView(self, viewname, REQUEST) is not None):
                 stack.append(viewname)
                 REQUEST._hacked_path = 1
                 return

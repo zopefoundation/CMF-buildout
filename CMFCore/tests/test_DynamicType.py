@@ -20,8 +20,10 @@ import Testing
 import Zope2
 Zope2.startup()
 
+from StringIO import StringIO
+
 from Acquisition import Implicit
-from ZPublisher.BaseRequest import BaseRequest
+from ZPublisher.HTTPRequest import HTTPRequest
 from ZPublisher.HTTPResponse import HTTPResponse
 
 from Products.CMFCore.DynamicType import DynamicType
@@ -46,7 +48,7 @@ from zope.app.traversing.adapters import Traverser
 from zope.app.traversing.interfaces import ITraverser, ITraversable
 
 def defineDefaultViewName(name, for_=None):
-    zope.component.provideAdapter(name, (for_, BaseRequest),
+    zope.component.provideAdapter(name, (for_, IBrowserRequest),
                                   IDefaultViewName, '')
 
 
@@ -93,10 +95,13 @@ class DynamicTypeDefaultTraversalTests(CleanUp, TestCase):
         environment = { 'URL': '',
                         'PARENTS': [self.site],
                         'REQUEST_METHOD': 'GET',
+                        'SERVER_PORT': '80',
+                        'REQUEST_METHOD': 'GET',
                         'steps': [],
-                        '_hacked_path': 0,
-                        'response': response }
-        r = BaseRequest(environment)
+                        'SERVER_NAME': 'localhost',
+                        '_hacked_path': 0 }
+        r = HTTPRequest(StringIO(), environment, response)
+        r.other.update(environment)
 
         r.traverse('foo')
         self.assertEqual( r.URL, '/foo/dummy_view' )
@@ -109,10 +114,13 @@ class DynamicTypeDefaultTraversalTests(CleanUp, TestCase):
         environment = { 'URL': '',
                         'PARENTS': [self.site],
                         'REQUEST_METHOD': 'GET',
+                        'SERVER_PORT': '80',
+                        'REQUEST_METHOD': 'GET',
                         'steps': [],
-                        '_hacked_path': 0,
-                        'response': response }
-        r = BaseRequest(environment)
+                        'SERVER_NAME': 'localhost',
+                        '_hacked_path': 0 }
+        r = HTTPRequest(StringIO(), environment, response)
+        r.other.update(environment)
 
         # we define a Zope3-style default view name, but no
         # corresponding view, no change in behaviour expected
@@ -126,19 +134,17 @@ class DynamicTypeDefaultTraversalTests(CleanUp, TestCase):
         environment = { 'URL': '',
                         'PARENTS': [self.site],
                         'REQUEST_METHOD': 'GET',
+                        'SERVER_PORT': '80',
+                        'REQUEST_METHOD': 'GET',
                         'steps': [],
-                        '_hacked_path': 0,
-                        'response': response }
-        r = BaseRequest(environment)
+                        'SERVER_NAME': 'localhost',
+                        '_hacked_path': 0 }
+        r = HTTPRequest(StringIO(), environment, response)
+        r.other.update(environment)
 
         # we define a Zope3-style default view name for which a view
-        # actually exists (double registration needed because we test
-        # with BaseRequest, but Five checks for IBrowserRequest as
-        # well)
+        # actually exists
         defineDefaultViewName('index.html', DummyContent)
-        zope.component.provideAdapter(
-            DummyView, (DummyContent, BaseRequest), IBrowserView,
-            'index.html')
         zope.component.provideAdapter(
             DummyView, (DummyContent, IBrowserRequest), IBrowserView,
             'index.html')

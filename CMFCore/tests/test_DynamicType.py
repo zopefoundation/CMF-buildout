@@ -17,10 +17,7 @@ $Id$
 
 from unittest import TestCase, TestSuite, makeSuite, main
 import Testing
-try:
-    import Zope2
-except ImportError: # BBB: for Zope 2.7
-    import Zope as Zope2
+import Zope2
 Zope2.startup()
 
 from StringIO import StringIO

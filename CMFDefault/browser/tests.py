@@ -16,15 +16,21 @@ $Id$
 """
 
 import unittest
-import Testing
+from Testing import ZopeTestCase
 from zope.testing import doctest
+
+from Products.CMFDefault.testing import FunctionalLayer
 
 
 def test_suite():
-    return unittest.TestSuite((
-        doctest.DocFileSuite('folder.txt',
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        ))
+    suite = unittest.TestSuite()
+    suite.addTest(doctest.DocFileSuite('folder.txt',
+                                    optionflags=doctest.NORMALIZE_WHITESPACE))
+    s = ZopeTestCase.FunctionalDocFileSuite('metadata.txt')
+    s.layer = FunctionalLayer
+    suite.addTest(s)
+    return suite
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

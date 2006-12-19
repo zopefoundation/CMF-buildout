@@ -37,15 +37,15 @@ Converting skins to views:
 
   [x] IMutableMinimalDublinCore @@properties.html:
 
-      folder_edit_form.py -> MetadataMinimalEditView
-      folder_edit_template.pt -> templates/metadata_minimal_edit.pt
-      folder_edit_control.py -> MetadataMinimalEditView.edit_control
+      folder_edit_form.py -> MinimalMetadataEditView
+      folder_edit_template.pt -> formlib based
+      folder_edit_control.py -> formlib based
 
   [x] IMutableDublinCore @@properties.html:
 
       metadata_edit_form.py -> MetadataEditView
-      metadata_edit_template.pt -> templates/metadata_edit.pt
-      metadata_edit_control.py -> MetadataEditView.edit_control
+      metadata_edit_template.pt -> formlib based
+      metadata_edit_control.py -> formlib based
 
   [x] IDocument @@view.html:
 

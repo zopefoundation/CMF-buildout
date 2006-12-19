@@ -16,194 +16,252 @@ $Id$
 """
 
 from Acquisition import aq_self
+from zope.app.form.browser import DatetimeI18nWidget
+from zope.component import adapts
+from zope.formlib import form
+from zope.interface import implements
+from zope.interface import Interface
+from zope.schema import Choice
+from zope.schema import Datetime
+from zope.schema import Set
+from zope.schema import Text
+from zope.schema import TextLine
+from zope.schema import Tuple
+from zope.schema import URI
 
-from Products.CMFDefault.exceptions import ResourceLockedError
+from Products.CMFCore.interfaces import IMutableDublinCore
+from Products.CMFCore.interfaces import IMutableMinimalDublinCore
+from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.formlib.form import ContentEditFormBase
+from Products.CMFDefault.formlib.schema import ProxyFieldProperty
+from Products.CMFDefault.formlib.schema import SchemaAdapterBase
+from Products.CMFDefault.formlib.vocabulary import SimpleVocabulary
+from Products.CMFDefault.formlib.widgets import SubjectInputWidget
+from Products.CMFDefault.formlib.widgets import TupleTextAreaWidget
 from Products.CMFDefault.utils import Message as _
 
-from utils import decode
-from utils import FormViewBase
-from utils import memoize
+available_settings = [
+        ('off', False, _(u'Off')),
+        ('on', True, _(u'On')) ]
 
 
-class MetadataMinimalEditView(FormViewBase):
+class IMinimalMetadataSchema(Interface):
+
+    """Schema for minimal metadata views.
+    """
+
+    title = TextLine(
+        title=_(u'Title'),
+        required=False,
+        missing_value=u'')
+
+    description = Text(
+        title=_(u'Description'),
+        required=False,
+        missing_value=u'')
+
+
+class IMetadataSchema(Interface):
+
+    """Schema for metadata views.
+    """
+
+    allow_discussion = Choice(
+        title=_(u'Enable Discussion?'),
+        required=False,
+        vocabulary=SimpleVocabulary.fromTitleItems(available_settings))
+
+    identifier = URI(
+        title=_(u'Identifier'),
+        readonly=True)
+
+    title = TextLine(
+        title=_(u'Title'),
+        required=False,
+        missing_value=u'')
+
+    description = Text(
+        title=_(u'Description'),
+        required=False,
+        missing_value=u'')
+
+    subject = Set(
+        title=_(u'Subject'),
+        required=False,
+        missing_value=set(),
+        value_type=TextLine())
+
+    contributors = Tuple(
+        title=_(u'Contributors'),
+        required=False,
+        missing_value=(),
+        value_type=TextLine())
+
+    created = Datetime(
+        title=_(u'Creation Date'),
+        readonly=True)
+
+    modified = Datetime(
+        title=_(u'Last Modified Date'),
+        readonly=True)
+
+    effective = Datetime(
+        title=_(u'Effective Date'),
+        required=False
+        )
+
+    expires = Datetime(
+        title=_(u'Expiration Date'),
+        required=False
+        )
+
+    format = TextLine(
+        title=_(u'Format'),
+        required=False,
+        missing_value=u'')
+
+    language = TextLine(
+        title=_(u'Language'),
+        required=False,
+        missing_value=u'')
+
+    rights = TextLine(
+        title=_(u'Rights'),
+        required=False,
+        missing_value=u'')
+
+
+class MinimalMetadataSchemaAdapter(SchemaAdapterBase):
+
+    """Adapter for IMutableMinimalDublinCore.
+    """
+
+    adapts(IMutableMinimalDublinCore)
+    implements(IMinimalMetadataSchema)
+
+    title = ProxyFieldProperty(IMetadataSchema['title'], 'Title', 'setTitle')
+    description = ProxyFieldProperty(IMetadataSchema['description'],
+                                     'Description', 'setDescription')
+
+
+class MetadataSchemaAdapter(SchemaAdapterBase):
+
+    """Adapter for IMutableDublinCore.
+    """
+
+    adapts(IMutableDublinCore)
+    implements(IMetadataSchema)
+
+    _effective = ProxyFieldProperty(IMetadataSchema['effective'],
+                                    'effective', 'setEffectiveDate')
+    _expires = ProxyFieldProperty(IMetadataSchema['expires'],
+                                  'expires', 'setExpirationDate')
+
+    def _getEffective(self):
+        if self.context.EffectiveDate() == 'None':
+            return None
+        return self._effective
+
+    def _getExpires(self):
+        if self.context.ExpirationDate() == 'None':
+            return None
+        return self._expires
+
+    def _getAllowDiscussion(self):
+        context = aq_self(self.context)
+        return getattr(context, 'allow_discussion', None)
+
+    def _setAllowDiscussion(self, value):
+        dtool = getToolByName(self.context, 'portal_discussion')
+        dtool.overrideDiscussionFor(self.context, value)
+
+    allow_discussion = property(_getAllowDiscussion, _setAllowDiscussion)
+    identifier = ProxyFieldProperty(IMetadataSchema['identifier'],
+                                    'Identifier')
+    title = ProxyFieldProperty(IMetadataSchema['title'], 'Title', 'setTitle')
+    description = ProxyFieldProperty(IMetadataSchema['description'],
+                                     'Description', 'setDescription')
+    subject = ProxyFieldProperty(IMetadataSchema['subject'],
+                                 'Subject', 'setSubject')
+    contributors = ProxyFieldProperty(IMetadataSchema['contributors'],
+                                      'listContributors', 'setContributors')
+    created = ProxyFieldProperty(IMetadataSchema['created'])
+    modified = ProxyFieldProperty(IMetadataSchema['modified'])
+    effective = property(_getEffective, _effective.__set__)
+    expires = property(_getExpires, _expires.__set__)
+    format = ProxyFieldProperty(IMetadataSchema['format'],
+                                     'Format', 'setFormat')
+    language = ProxyFieldProperty(IMetadataSchema['language'],
+                                     'Language', 'setLanguage')
+    rights = ProxyFieldProperty(IMetadataSchema['rights'],
+                                     'Rights', 'setRights')
+
+
+class MinimalMetadataEditView(ContentEditFormBase):
 
     """Edit view for IMutableMinimalDublinCore.
     """
 
-    _BUTTONS = ({'id': 'change',
-                 'title': _(u'Change'),
-                 'transform': ('edit_control',),
-                 'redirect': ('portal_types', 'object/edit')},
-                {'id': 'change_and_view',
-                 'title': _(u'Change and View'),
-                 'transform': ('edit_control',),
-                 'redirect': ('portal_types', 'object/view')})
+    form_fields = form.FormFields(IMinimalMetadataSchema)
 
-    # interface
+    label = _(u'Properties')
 
-    @memoize
-    @decode
-    def title(self):
-        return self.request.form.get('title', self.context.Title())
-
-    @memoize
-    @decode
-    def description(self):
-        return self.request.form.get('description',
-                                     self.context.Description())
-
-    # controllers
-
-    def edit_control(self, title, description, **kw):
-        context = self.context
-        if title!=context.Title() or description != context.Description():
-            context.edit(title=title, description=description)
-            return True, _(u'Metadata changed.')
-        else:
-            return False, _(u'Nothing to change.')
+    def setUpWidgets(self, ignore_request=False):
+        super(MinimalMetadataEditView,
+              self).setUpWidgets(ignore_request=ignore_request)
+        self.widgets['description'].height = 4
 
 
-class MetadataEditView(MetadataMinimalEditView):
+class MetadataEditView(ContentEditFormBase):
 
     """Edit view for IMutableDublinCore.
     """
 
-    _BUTTONS = ({'id': 'change',
-                 'title': _(u'Change'),
-                 'transform': ('edit_control',),
-                 'redirect': ('portal_types', 'object/metadata')},
-                {'id': 'change_and_edit',
-                 'title': _(u'Change and Edit'),
-                 'transform': ('edit_control',),
-                 'redirect': ('portal_types', 'object/edit')},
-                {'id': 'change_and_view',
-                 'title': _(u'Change and View'),
-                 'transform': ('edit_control',),
-                 'redirect': ('portal_types', 'object/view')})
+    actions = form.Actions(
+        form.Action(
+            name='change',
+            label=_(u'Change'),
+            validator='handle_validate',
+            success='handle_change_success',
+            failure='handle_failure'),
+        form.Action(
+            name='change_and_edit',
+            label=_(u'Change and Edit'),
+            validator='handle_validate',
+            success='handle_change_and_edit_success',
+            failure='handle_failure'),
+        form.Action(
+            name='change_and_view',
+            label=_(u'Change and View'),
+            validator='handle_validate',
+            success='handle_change_and_view_success',
+            failure='handle_failure'))
 
-    #helpers
+    form_fields = form.FormFields(IMetadataSchema)
+    form_fields['subject'].custom_widget = SubjectInputWidget
+    form_fields['contributors'].custom_widget = TupleTextAreaWidget
+    form_fields['effective'].custom_widget = DatetimeI18nWidget
+    form_fields['expires'].custom_widget = DatetimeI18nWidget
 
-    def _tuplify(self, value):
-        if isinstance(value, basestring):
-            value = (value,)
-        return tuple([ i for i in value if i ])
+    label = _(u'Properties')
 
-    # interface
+    def setUpWidgets(self, ignore_request=False):
+        super(MetadataEditView,
+              self).setUpWidgets(ignore_request=ignore_request)
+        self.widgets['allow_discussion']._messageNoValue = _(u'Default')
+        self.widgets['description'].height = 4
+        self.widgets['subject'].split = True
+        self.widgets['contributors'].height = 6
+        self.widgets['contributors'].split = True
+        self.widgets['created'].split = True
+        self.widgets['modified'].split = True
+        self.widgets['effective'].split = True
+        self.widgets['expires'].split = True
 
-    @memoize
-    @decode
-    def allow_discussion(self):
-        context = aq_self(self.context)
-        allow_discussion = getattr(context, 'allow_discussion', None)
-        if allow_discussion is not None:
-            allow_discussion = bool(allow_discussion)
-        return allow_discussion
+    def handle_change_success(self, action, data):
+        self._handle_success(action, data)
+        return self._setRedirect('portal_types', 'object/metadata')
 
-    @memoize
-    @decode
-    def identifier(self):
-        return self.context.Identifier()
-
-    @memoize
-    @decode
-    def subject(self):
-        subjects = self.request.form.get('subject', self.context.Subject())
-        return tuple(subjects)
-
-    @memoize
-    @decode
-    def allowed_subjects(self):
-        mdtool = self._getTool('portal_metadata')
-        subjects = mdtool.listAllowedSubjects(self.context)
-        return tuple(subjects)
-
-    @memoize
-    @decode
-    def extra_subjects(self):
-        subjects = [ s for s
-                     in self.subject() if not s in self.allowed_subjects() ]
-        return tuple(subjects)
-
-    @memoize
-    @decode
-    def format(self):
-        return self.request.form.get('format', self.context.Format())
-
-    @memoize
-    @decode
-    def contributors(self):
-        return self.request.form.get('contributors',
-                                     self.context.Contributors())
-
-    @memoize
-    @decode
-    def language(self):
-        return self.request.form.get('language', self.context.Language())
-
-    @memoize
-    @decode
-    def rights(self):
-        return self.request.form.get('rights', self.context.Rights())
-
-    # controllers
-
-    def edit_control(self, allow_discussion, title=None, subject=None,
-                     description=None, contributors=None, effective_date=None,
-                     expiration_date=None, format=None, language=None,
-                     rights=None, **kw):
-        context = self.context
-        dtool = self._getTool('portal_discussion')
-
-        if title is None:
-            title = context.Title()
-
-        if subject is None:
-            subject = context.Subject()
-        else:
-            subject = self._tuplify(subject)
-
-        if description is None:
-            description = context.Description()
-
-        if contributors is None:
-            contributors = context.Contributors()
-        else:
-            contributors = self._tuplify(contributors)
-
-        if effective_date is None:
-            effective_date = context.EffectiveDate()
-
-        if expiration_date is None:
-            expiration_date = context.expires()
-
-        if format is None:
-            format = context.Format()
-
-        if language is None:
-            language = context.Language()
-
-        if rights is None:
-            rights = context.Rights()
-
-        if allow_discussion == 'default':
-            allow_discussion = None
-        elif allow_discussion == 'off':
-            allow_discussion = False
-        elif allow_discussion == 'on':
-            allow_discussion = True
-        dtool.overrideDiscussionFor(context, allow_discussion)
-
-        try:
-            context.editMetadata( title=title
-                                , description=description
-                                , subject=subject
-                                , contributors=contributors
-                                , effective_date=effective_date
-                                , expiration_date=expiration_date
-                                , format=format
-                                , language=language
-                                , rights=rights
-                                )
-            return True, _(u'Metadata changed.')
-        except ResourceLockedError, errmsg:
-            return False, errmsg
+    def handle_change_and_edit_success(self, action, data):
+        self._handle_success(action, data)
+        return self._setRedirect('portal_types', 'object/edit')

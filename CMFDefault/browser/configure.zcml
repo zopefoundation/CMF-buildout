@@ -20,21 +20,23 @@
       permission="cmf.ListFolderContents"
       />
 
+  <adapter factory=".metadata.MinimalMetadataSchemaAdapter"/>
+
   <browser:page
       for="Products.CMFCore.interfaces.IMutableMinimalDublinCore"
       layer="..interfaces.ICMFDefaultSkin"
       name="properties.html"
-      class=".metadata.MetadataMinimalEditView"
-      template="templates/metadata_minimal_edit.pt"
+      class=".metadata.MinimalMetadataEditView"
       permission="zope2.ManageProperties"
       />
+
+  <adapter factory=".metadata.MetadataSchemaAdapter"/>
 
   <browser:page
       for="Products.CMFCore.interfaces.IMutableDublinCore"
       layer="..interfaces.ICMFDefaultSkin"
       name="properties.html"
       class=".metadata.MetadataEditView"
-      template="templates/metadata_edit.pt"
       permission="cmf.ModifyPortalContent"
       />
 

@@ -21,10 +21,12 @@ from zope.testing import doctest
 
 
 def test_suite():
-    return unittest.TestSuite((
-        doctest.DocFileSuite('schema.txt',
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        ))
+    suite = unittest.TestSuite()
+    suite.addTest(doctest.DocFileSuite('schema.txt',
+                                    optionflags=doctest.NORMALIZE_WHITESPACE))
+    suite.addTest(doctest.DocFileSuite('widgets.txt',
+                                    optionflags=doctest.NORMALIZE_WHITESPACE))
+    return suite
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

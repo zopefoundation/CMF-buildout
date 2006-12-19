@@ -24,27 +24,27 @@ msgstr ""
 msgid "The login name you selected is already in use or is not valid. Please choose another."
 msgstr ""
 
-#: CMFCore/WorkflowTool.py:234
-#: CMFCore/WorkflowTool.py:267
+#: CMFCore/WorkflowTool.py:225
+#: CMFCore/WorkflowTool.py:251
 msgid "No workflows found."
 msgstr ""
 
-#: CMFCore/WorkflowTool.py:241
+#: CMFCore/WorkflowTool.py:232
 #. Default: ""
 msgid "No workflow provides the '${action_id}' action."
 msgstr ""
 
-#: CMFCore/WorkflowTool.py:248
-#: CMFCore/WorkflowTool.py:287
+#: CMFCore/WorkflowTool.py:239
+#: CMFCore/WorkflowTool.py:271
 msgid "Requested workflow definition not found."
 msgstr ""
 
-#: CMFCore/WorkflowTool.py:277
+#: CMFCore/WorkflowTool.py:261
 #. Default: ""
 msgid "No workflow provides '${name}' information."
 msgstr ""
 
-#: CMFCore/WorkflowTool.py:292
+#: CMFCore/WorkflowTool.py:276
 #. Default: ""
 msgid "Could not get info: ${name}"
 msgstr ""
@@ -99,7 +99,6 @@ msgstr ""
 #: CMFDefault/browser/folder.py:374
 #: CMFDefault/browser/folder.py:389
 #: CMFDefault/browser/folder.py:404
-#: CMFDefault/browser/metadata.py:63
 #: CMFDefault/browser/newsitem.py:53
 #: CMFDefault/formlib/form.py:144
 #: CMFDefault/skins/zpt_content/document_edit_control.py:14
@@ -116,8 +115,7 @@ msgid "Nothing to change."
 msgstr ""
 
 #: CMFDefault/browser/document.py:49
-#: CMFDefault/browser/metadata.py:34
-#: CMFDefault/browser/metadata.py:72
+#: CMFDefault/browser/metadata.py:223
 #: CMFDefault/formlib/form.py:100
 #: CMFDefault/skins/zpt_content/document_edit_form.py:34
 #: CMFDefault/skins/zpt_content/file_edit_form.py:25
@@ -134,8 +132,7 @@ msgid "Change"
 msgstr ""
 
 #: CMFDefault/browser/document.py:54
-#: CMFDefault/browser/metadata.py:38
-#: CMFDefault/browser/metadata.py:80
+#: CMFDefault/browser/metadata.py:235
 #: CMFDefault/formlib/form.py:106
 #: CMFDefault/skins/zpt_content/document_edit_form.py:35
 #: CMFDefault/skins/zpt_content/file_edit_form.py:26
@@ -152,9 +149,9 @@ msgstr ""
 #: CMFDefault/browser/favorite.py:40
 #: CMFDefault/browser/link.py:42
 #: CMFDefault/browser/link.py:43
+#: CMFDefault/browser/metadata.py:54
+#: CMFDefault/browser/metadata.py:79
 #: CMFDefault/browser/templates/document_edit.pt:13
-#: CMFDefault/browser/templates/metadata_edit.pt:34
-#: CMFDefault/browser/templates/metadata_minimal_edit.pt:12
 #: CMFDefault/browser/templates/newsitem_edit.pt:12
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:16
 #: CMFDefault/skins/zpt_content/file_edit_template.pt:15
@@ -371,16 +368,108 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: CMFDefault/browser/metadata.py:61
-#: CMFDefault/browser/metadata.py:207
-#: CMFDefault/skins/zpt_content/folder_edit_control.py:7
-#: CMFDefault/skins/zpt_content/metadata_edit_control.py:67
-msgid "Metadata changed."
+#: CMFDefault/browser/metadata.py:101
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:72
+msgid "Creation Date"
 msgstr ""
 
-#: CMFDefault/browser/metadata.py:76
+#: CMFDefault/browser/metadata.py:105
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:74
+msgid "Last Modified Date"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:109
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:78
+msgid "Effective Date"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:114
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:83
+msgid "Expiration Date"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:119
+#: CMFDefault/browser/templates/document_edit.pt:21
+#: CMFDefault/browser/templates/newsitem_edit.pt:16
+#: CMFDefault/skins/zpt_content/document_edit_template.pt:24
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:90
+#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:19
+#: CMFDefault/skins/zpt_generic/metadata_help.pt:124
+msgid "Format"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:124
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:97
+#: CMFDefault/skins/zpt_generic/metadata_help.pt:149
+msgid "Language"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:129
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:104
+#: CMFDefault/skins/zpt_generic/metadata_help.pt:199
+msgid "Rights"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:207
+#: CMFDefault/browser/metadata.py:246
+msgid "Properties"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:229
 #: CMFDefault/skins/zpt_content/metadata_edit_form.py:50
 msgid "Change and Edit"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:251
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:18
+msgid "Default"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:44
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:21
+msgid "Off"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:45
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:24
+msgid "On"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:59
+#: CMFDefault/browser/metadata.py:84
+#: CMFDefault/browser/templates/document_edit.pt:17
+#: CMFDefault/skins/zpt_content/document_edit_template.pt:20
+#: CMFDefault/skins/zpt_content/file_edit_template.pt:19
+#: CMFDefault/skins/zpt_content/folder_edit_template.pt:22
+#: CMFDefault/skins/zpt_content/image_edit_template.pt:19
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:44
+#: CMFDefault/skins/zpt_generic/metadata_help.pt:52
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:67
+#: CMFTopic/skins/zpt_topic/topic_edit_template.pt:22
+msgid "Description"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:70
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:15
+msgid "Enable Discussion?"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:75
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:31
+#: CMFDefault/skins/zpt_generic/metadata_help.pt:136
+msgid "Identifier"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:89
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:51
+#: CMFDefault/skins/zpt_generic/metadata_help.pt:39
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:55
+msgid "Subject"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:95
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:65
+msgid "Contributors"
 msgstr ""
 
 #: CMFDefault/browser/newsitem.py:49
@@ -402,30 +491,6 @@ msgstr ""
 #: CMFDefault/browser/templates/batch_widgets.pt:41
 #: CMFDefault/browser/templates/batch_widgets.pt:47
 msgid "${DYNAMIC_CONTENT}"
-msgstr ""
-
-#: CMFDefault/browser/templates/document_edit.pt:17
-#: CMFDefault/browser/templates/metadata_edit.pt:41
-#: CMFDefault/browser/templates/metadata_minimal_edit.pt:19
-#: CMFDefault/skins/zpt_content/document_edit_template.pt:20
-#: CMFDefault/skins/zpt_content/file_edit_template.pt:19
-#: CMFDefault/skins/zpt_content/folder_edit_template.pt:22
-#: CMFDefault/skins/zpt_content/image_edit_template.pt:19
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:44
-#: CMFDefault/skins/zpt_generic/metadata_help.pt:52
-#: CMFDefault/skins/zpt_generic/search_form_template.pt:67
-#: CMFTopic/skins/zpt_topic/topic_edit_template.pt:22
-msgid "Description"
-msgstr ""
-
-#: CMFDefault/browser/templates/document_edit.pt:21
-#: CMFDefault/browser/templates/metadata_edit.pt:87
-#: CMFDefault/browser/templates/newsitem_edit.pt:16
-#: CMFDefault/skins/zpt_content/document_edit_template.pt:24
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:90
-#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:19
-#: CMFDefault/skins/zpt_generic/metadata_help.pt:124
-msgid "Format"
 msgstr ""
 
 #: CMFDefault/browser/templates/document_edit.pt:25
@@ -455,7 +520,6 @@ msgid "Upload"
 msgstr ""
 
 #: CMFDefault/browser/templates/document_edit.pt:5
-#: CMFDefault/browser/templates/metadata_minimal_edit.pt:5
 #: CMFDefault/browser/templates/newsitem_edit.pt:5
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:5
 #: CMFDefault/skins/zpt_content/file_edit_template.pt:5
@@ -517,81 +581,6 @@ msgstr ""
 msgid "Link: ${link}"
 msgstr ""
 
-#: CMFDefault/browser/templates/metadata_edit.pt:101
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:104
-#: CMFDefault/skins/zpt_generic/metadata_help.pt:199
-msgid "Rights"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:12
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:15
-msgid "Enable Discussion?"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:15
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:18
-msgid "Default"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:18
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:21
-msgid "Off"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:21
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:24
-msgid "On"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:28
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:31
-#: CMFDefault/skins/zpt_generic/metadata_help.pt:136
-msgid "Identifier"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:48
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:51
-#: CMFDefault/skins/zpt_generic/metadata_help.pt:39
-#: CMFDefault/skins/zpt_generic/search_form_template.pt:55
-msgid "Subject"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:5
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:5
-msgid "Resource Metadata: ${obj_title}"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:62
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:65
-msgid "Contributors"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:69
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:72
-msgid "Creation Date"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:71
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:74
-msgid "Last Modified Date"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:75
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:78
-msgid "Effective Date"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:80
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:83
-msgid "Expiration Date"
-msgstr ""
-
-#: CMFDefault/browser/templates/metadata_edit.pt:94
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:97
-#: CMFDefault/skins/zpt_generic/metadata_help.pt:149
-msgid "Language"
-msgstr ""
-
 #: CMFDefault/browser/templates/newsitem_edit.pt:30
 #: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:33
 msgid "Lead-in"
@@ -631,7 +620,7 @@ msgid "items"
 msgstr ""
 
 #: CMFDefault/exceptions.py:68
-#: CMFDefault/formlib/widgets.py:41
+#: CMFDefault/formlib/widgets.py:52
 msgid "Invalid email address."
 msgstr ""
 
@@ -987,6 +976,11 @@ msgstr ""
 msgid "Download File"
 msgstr ""
 
+#: CMFDefault/skins/zpt_content/folder_edit_control.py:7
+#: CMFDefault/skins/zpt_content/metadata_edit_control.py:67
+msgid "Metadata changed."
+msgstr ""
+
 #: CMFDefault/skins/zpt_content/image_edit_control.py:8
 msgid "Image changed."
 msgstr ""
@@ -997,6 +991,10 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_content/link_edit_control.py:9
 msgid "Link changed."
+msgstr ""
+
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:5
+msgid "Resource Metadata: ${obj_title}"
 msgstr ""
 
 #: CMFDefault/skins/zpt_content/transition_form.pt:11

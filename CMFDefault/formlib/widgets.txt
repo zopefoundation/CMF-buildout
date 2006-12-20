@@ -53,12 +53,10 @@ Widgets
       >>> print widget()
       <textarea cols="60" id="PREFIX.NAME" name="PREFIX.NAME" rows="15" >FOO
       BAR</textarea>
-      >>> print widget.hidden()
-      <input class="hiddenType" id="PREFIX.NAME" name="PREFIX.NAME"
-      type="hidden" value="FOO BAR" />
+      >>> #print widget.hidden()
       >>> print widget.error()
 
-    Missing input:
+    Missing input::
 
       >>> request.form['PREFIX.NAME'] = u' \n '
       >>> print widget.getInputValue()
@@ -117,9 +115,11 @@ Widgets
 
       >>> print widget()
       <div>
+      <div class="value">
       <select id="PREFIX.NAME.1" multiple="multiple" name="PREFIX.NAME.1:list"
       size="3" ><option selected="selected" value="SPAM">SPAM</option>
       <option selected="selected" value="EGGS">EGGS</option></select>
+      </div>
       <input name="PREFIX.NAME.1-empty-marker" type="hidden" value="1" />
       </div>
       <textarea cols="60" id="PREFIX.NAME" name="PREFIX.NAME"

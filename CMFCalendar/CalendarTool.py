@@ -43,11 +43,9 @@ class CalendarTool (UniqueObject, SimpleItem):
     use_session = False
     firstweekday = 6 # 6 is Sunday
 
-    manage_options = ( ({ 'label' : 'Overview', 'action' : 'manage_overview' }
-                     ,  { 'label' : 'Configure', 'action' : 'manage_configure' }
-                     ,
-                     ) + SimpleItem.manage_options
-                     )
+    manage_options = (({'label' : 'Overview', 'action' : 'manage_overview'},
+                       {'label' : 'Configure', 'action' : 'manage_configure'},
+                      ) + SimpleItem.manage_options)
 
     #
     #   ZMI methods
@@ -193,7 +191,9 @@ class CalendarTool (UniqueObject, SimpleItem):
         # compile a list of the days that have events
         eventDays={}
         for daynumber in range(1, 32): # 1 to 31
-            eventDays[daynumber] = {'eventslist':[], 'event':0, 'day':daynumber}
+            eventDays[daynumber] = {'eventslist': [],
+                                    'event': 0,
+                                    'day': daynumber}
         includedevents = []
         for result in query:
             if result.getRID() in includedevents:
@@ -222,13 +222,17 @@ class CalendarTool (UniqueObject, SimpleItem):
 
             if eventStartDay != eventEndDay:
                 allEventDays = range(eventStartDay, eventEndDay+1)
-                eventDays[eventStartDay]['eventslist'].append( {'end': None,
-                        'start': result.start.Time(), 'title': event['title']} )
+                eventDays[eventStartDay]['eventslist'].append(
+                        {'end': None,
+                         'start': result.start.Time(),
+                         'title': event['title']} )
                 eventDays[eventStartDay]['event'] = 1
 
                 for eventday in allEventDays[1:-1]:
-                    eventDays[eventday]['eventslist'].append( {'end': None,
-                                       'start': None, 'title': event['title']} )
+                    eventDays[eventday]['eventslist'].append(
+                        {'end': None,
+                         'start': None,
+                         'title': event['title']} )
                     eventDays[eventday]['event'] = 1
 
                 if result.end == result.end.earliestTime():

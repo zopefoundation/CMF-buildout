@@ -225,7 +225,9 @@ class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
                  {'day': 0, 'event': 0, 'eventslist':[]},
                  {'day': 0, 'event': 0, 'eventslist':[]},
                  {'day': 0, 'event': 0, 'eventslist':[]},
-                 {'day': 1, 'event': 1, 'eventslist':[{'title': 'title', 'end': '23:59:00', 'start': '00:00:00'}]},
+                 {'day': 1, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': '23:59:00',
+                                                       'start': '00:00:00'}]},
                  {'day': 2, 'event': 0, 'eventslist':[]},
                  {'day': 3, 'event': 0, 'eventslist':[]},
                  {'day': 4, 'event': 0, 'eventslist':[]},
@@ -338,48 +340,110 @@ class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
                  {'day': 0, 'event': 0, 'eventslist':[]},
                  {'day': 0, 'event': 0, 'eventslist':[]},
                  {'day': 0, 'event': 0, 'eventslist':[]},
-                 {'day': 1, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': '00:00:00'}]},
-                 {'day': 2, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day': 3, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day': 4, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
+                 {'day': 1, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': '00:00:00'}]},
+                 {'day': 2, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day': 3, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day': 4, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                ],
+                [
+                 {'day': 5, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day': 6, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day': 7, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day': 8, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day': 9, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':10, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':11, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                ],
+                [
+                 {'day':12, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':13, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':14, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':15, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':16, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':17, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':18, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                ],
+                [
+                 {'day':19, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':20, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':21, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':22, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':23, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':24, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':25, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
                  ],
                 [
-                 {'day': 5, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day': 6, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day': 7, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day': 8, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day': 9, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':10, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':11, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 ],
-                [
-                 {'day':12, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':13, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':14, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':15, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':16, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':17, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':18, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 ],
-                [
-                 {'day':19, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':20, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':21, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':22, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':23, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':24, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':25, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 ],
-                [
-                 {'day':26, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':27, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':28, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':29, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':30, 'event': 1, 'eventslist':[{'title': 'title', 'end': None, 'start': None}]},
-                 {'day':31, 'event': 1, 'eventslist':[{'title': 'title', 'end': '23:59:00', 'start': None}]},
+                 {'day':26, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':27, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':28, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':29, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':30, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': None,
+                                                       'start': None}]},
+                 {'day':31, 'event': 1, 'eventslist':[{'title': 'title',
+                                                       'end': '2:59:00',
+                                                       'start': None}]},
                  {'day': 0, 'event': 0, 'eventslist':[]},
-                 ]
                 ]
+               ]
         result = caltool.getEventsForCalendar(month='5', year='2002')
         self.assertEqual(result, data)
 
@@ -514,7 +578,8 @@ class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
         self.assertEqual( len(events), 3 )
 
     def test_lastDayRendering(self):
-        # Bug in catalog_getevents included events starting at 00:00:00 on the next day
+        # Bug in catalog_getevents included events starting at 00:00:00
+        # on the next day
         site = self.app.site
         site.invokeFactory('Event', id='today', title='today',
                            start_date='2002/05/31 23:50:00',
@@ -535,7 +600,9 @@ class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
                {'day': 28, 'event': 0, 'eventslist':[]},
                {'day': 29, 'event': 0, 'eventslist':[]},
                {'day': 30, 'event': 0, 'eventslist':[]},
-               {'day': 31, 'event': 1, 'eventslist':[{'start': '23:50:00', 'end': '23:59:59', 'title': 'today'}]},
+               {'day': 31, 'event': 1, 'eventslist':[{'start': '23:50:00',
+                                                      'end': '23:59:59',
+                                                      'title': 'today'}]},
                ]
 
         events = site.portal_calendar.catalog_getevents(2002, 5)
@@ -557,7 +624,9 @@ class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
 
         # First week of June 2002
         data = [
-               {'day': 1, 'event': 1, 'eventslist':[{'start': '00:00:00', 'end': '00:10:00', 'title': 'today'}]},
+               {'day': 1, 'event': 1, 'eventslist':[{'start': '00:00:00',
+                                                     'end': '00:10:00',
+                                                     'title': 'today'}]},
                {'day': 2, 'event': 0, 'eventslist':[]},
                {'day': 3, 'event': 0, 'eventslist':[]},
                {'day': 4, 'event': 0, 'eventslist':[]},
@@ -584,26 +653,30 @@ class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
         self.assertEqual(len(site.portal_catalog(portal_type='Event')), 2)
 
         # No published events
-        self.assertEqual(len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 0)
+        self.assertEqual(
+            len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 0)
 
         # One published event
         site.portal_workflow.doActionFor(site.meeting, 'publish')
         self.assertEqual(len(site.portal_catalog(review_state='published')), 1)
 
-        self.assertEqual(len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 1)
+        self.assertEqual(
+            len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 1)
 
         # One pending event
         site.portal_workflow.doActionFor(site.dinner, 'submit')
         self.assertEqual(len(site.portal_catalog(review_state='pending')), 1)
 
-        self.assertEqual(len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 1)
+        self.assertEqual(
+            len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 1)
 
         # Make calendar return pending events
         caltool.edit_configuration(show_types=('Event',),
                                    show_states=('pending', 'published'),
                                    use_session='')
 
-        self.assertEqual(len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 2)
+        self.assertEqual(
+            len(caltool.getEventsForThisDay(DateTime('2002/05/01'))), 2)
 
     def test_EventEndingMidnight(self):
         # Events ending exactly at midnight should not be shown for the day
@@ -626,7 +699,9 @@ class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
 
         # First week of May 2002
         data = [
-               {'day': 1, 'event': 1, 'eventslist':[{'start': '00:00:00', 'end': '23:59:59', 'title': 'party'}]},
+               {'day': 1, 'event': 1, 'eventslist':[{'start': '00:00:00',
+                                                     'end': '23:59:59',
+                                                     'title': 'party'}]},
                {'day': 2, 'event': 0, 'eventslist':[]},
                {'day': 3, 'event': 0, 'eventslist':[]},
                {'day': 4, 'event': 0, 'eventslist':[]},

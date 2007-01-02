@@ -347,8 +347,8 @@ class CalendarTool (UniqueObject, SimpleItem):
         month = int(month)
         year = int(year)
 
-        begin = DateTime('%d-%02d-%02d 00:00:00' % (year, month, day))
-        end = DateTime('%d-%02d-%02d 23:59:59' % (year, month, day))
+        begin = DateTime('%d/%02d/%02d 00:00:00' % (year, month, day))
+        end = DateTime('%d/%02d/%02d 23:59:59' % (year, month, day))
 
         return (begin, end)
 

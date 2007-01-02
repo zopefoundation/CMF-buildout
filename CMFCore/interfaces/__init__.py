@@ -17,6 +17,7 @@ $Id$
 
 from _content import *
 from _tools import *
+from _events import *
 
 import CachingPolicyManager
 import Contentish

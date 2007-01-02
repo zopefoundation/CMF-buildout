@@ -15,11 +15,19 @@
 $Id$
 """
 
+from zope.interface import implements
+from zope.component.interfaces import ObjectEvent
+
+from Products.CMFCore.interfaces import IWorkflowActionEvent
+from Products.CMFCore.interfaces import IActionWillBeInvokedEvent
+from Products.CMFCore.interfaces import IActionRaisedExceptionEvent
+from Products.CMFCore.interfaces import IActionSucceededEvent
+
 class WorkflowException( Exception ):
 
     """ Exception while invoking workflow.
     """
-
+    
 
 class ObjectDeleted( Exception ):
 
@@ -49,3 +57,32 @@ class ObjectMoved( Exception ):
 
     def getNewObject(self):
         return self._ob
+
+# Events
+
+class WorkflowActionEvent(ObjectEvent):
+    implements(IWorkflowActionEvent)
+    
+    def __init__(self, object, workflow, action):
+        ObjectEvent.__init__(self, object)
+        self.workflow = workflow
+        self.action = action
+    
+class ActionWillBeInvokedEvent(WorkflowActionEvent):
+    implements(IActionWillBeInvokedEvent)
+
+            
+class ActionRaisedExceptionEvent(WorkflowActionEvent):
+    implements(IActionRaisedExceptionEvent)
+    
+    def __init__(self, object, workflow, action, exc):
+        WorkflowActionEvent.__init__(self, object, workflow, action)
+        self.exc = exc
+    
+class ActionSucceededEvent(WorkflowActionEvent):
+    implements(IActionSucceededEvent)
+    
+    def __init__(self, object, workflow, action, result):
+        WorkflowActionEvent.__init__(self, object, workflow, action)
+        self.result = result
+

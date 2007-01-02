@@ -20,6 +20,10 @@ import Testing
 
 from OFS.SimpleItem import SimpleItem
 
+from zope.component import adapter, provideHandler
+from Products.CMFCore.interfaces import IActionWillBeInvokedEvent
+from Products.CMFCore.interfaces import IActionRaisedExceptionEvent
+from Products.CMFCore.interfaces import IActionSucceededEvent
 
 class Dummy( SimpleItem ):
 
@@ -98,6 +102,19 @@ class DummyWorkflow( Dummy ):
     def notifyException( self, ob, action, exc ):
         self.notified( 'exception' ).append( ( ob, action, exc ) )
 
+@adapter(IActionWillBeInvokedEvent)
+def notifyBeforeHandler(evt):
+    evt.workflow.notified( 'before-evt' ).append( (evt.object, evt.action) )
+    
+@adapter(IActionSucceededEvent)
+def notifySuccessHandler(evt):
+    evt.workflow.notified( 'success-evt' ).append( (evt.object, evt.action,
+                                                    evt.result ) )
+
+@adapter(IActionRaisedExceptionEvent)
+def notifyExceptionHandler(evt):
+    evt.workflow.notified( 'exception-evt' ).append( (evt.object, evt.action,
+                                                      evt.exc) )
 
 class DummyContent( Dummy ):
 
@@ -328,6 +345,8 @@ class WorkflowToolTests(unittest.TestCase):
 
     def test_notifyBefore( self ):
 
+        provideHandler(notifyBeforeHandler)
+
         tool = self._makeWithTypesAndChain()
 
         ob = DummyContent( 'dummy' )
@@ -337,8 +356,14 @@ class WorkflowToolTests(unittest.TestCase):
             notified = wf.notified( 'before' )
             self.assertEqual( len( notified ), 1 )
             self.assertEqual( notified[0], ( ob, 'action' ) )
+            
+            notified = wf.notified( 'before-evt' )
+            self.assertEqual( len( notified ), 1 )
+            self.assertEqual( notified[0], ( ob, 'action' ) )
 
     def test_notifySuccess( self ):
+
+        provideHandler(notifySuccessHandler)
 
         tool = self._makeWithTypesAndChain()
 
@@ -349,8 +374,14 @@ class WorkflowToolTests(unittest.TestCase):
             notified = wf.notified( 'success' )
             self.assertEqual( len( notified ), 1 )
             self.assertEqual( notified[0], ( ob, 'action', None ) )
+            
+            notified = wf.notified( 'success-evt' )
+            self.assertEqual( len( notified ), 1 )
+            self.assertEqual( notified[0], ( ob, 'action', None ) )
 
     def test_notifyException( self ):
+
+        provideHandler(notifyExceptionHandler)
 
         tool = self._makeWithTypesAndChain()
 
@@ -359,6 +390,10 @@ class WorkflowToolTests(unittest.TestCase):
 
         for wf in tool.a, tool.b:
             notified = wf.notified( 'exception' )
+            self.assertEqual( len( notified ), 1 )
+            self.assertEqual( notified[0], ( ob, 'action', 'exception' ) )
+            
+            notified = wf.notified( 'exception-evt' )
             self.assertEqual( len( notified ), 1 )
             self.assertEqual( notified[0], ( ob, 'action', 'exception' ) )
 

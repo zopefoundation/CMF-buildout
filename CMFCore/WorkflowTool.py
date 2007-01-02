@@ -25,6 +25,7 @@ from Globals import PersistentMapping
 from OFS.Folder import Folder
 from OFS.ObjectManager import IFAwareObjectManager
 from zope.interface import implements
+from zope.event import notify
 
 from ActionProviderBase import ActionProviderBase
 from interfaces import IConfigurableWorkflowTool
@@ -39,7 +40,9 @@ from utils import UniqueObject
 from WorkflowCore import ObjectDeleted
 from WorkflowCore import ObjectMoved
 from WorkflowCore import WorkflowException
-
+from WorkflowCore import ActionWillBeInvokedEvent
+from WorkflowCore import ActionRaisedExceptionEvent
+from WorkflowCore import ActionSucceededEvent
 
 _marker = []  # Create a new marker object.
 
@@ -293,6 +296,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
         wfs = self.getWorkflowsFor(ob)
         for wf in wfs:
             wf.notifyBefore(ob, action)
+            notify(ActionWillBeInvokedEvent(ob, wf, action))
 
     security.declarePrivate('notifySuccess')
     def notifySuccess(self, ob, action, result=None):
@@ -301,6 +305,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
         wfs = self.getWorkflowsFor(ob)
         for wf in wfs:
             wf.notifySuccess(ob, action, result)
+            notify(ActionSucceededEvent(ob, wf, action, result))
 
     security.declarePrivate('notifyException')
     def notifyException(self, ob, action, exc):
@@ -309,6 +314,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
         wfs = self.getWorkflowsFor(ob)
         for wf in wfs:
             wf.notifyException(ob, action, exc)
+            notify(ActionRaisedExceptionEvent(ob, wf, action, exc))
 
     security.declarePrivate('getHistoryOf')
     def getHistoryOf(self, wf_id, ob):
@@ -516,6 +522,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
         reindex = 1
         for w in wfs:
             w.notifyBefore(ob, action)
+            notify(ActionWillBeInvokedEvent(ob, w, action))
         try:
             res = func(*args, **kw)
         except ObjectDeleted, ex:
@@ -529,11 +536,13 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
             try:
                 for w in wfs:
                     w.notifyException(ob, action, exc)
+                    notify(ActionRaisedExceptionEvent(ob, w, action, exc))
                 raise exc[0], exc[1], exc[2]
             finally:
                 exc = None
         for w in wfs:
             w.notifySuccess(ob, action, res)
+            notify(ActionSucceededEvent(ob, w, action, res))
         if reindex:
             self._reindexWorkflowVariables(ob)
         return res

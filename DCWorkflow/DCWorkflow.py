@@ -26,6 +26,7 @@ from Globals import InitializeClass
 from OFS.Folder import Folder
 from OFS.ObjectManager import bad_id
 from zope.interface import implements
+from zope.event import notify
 
 # CMFCore
 from Products.CMFCore.interfaces import IWorkflowDefinition
@@ -47,7 +48,7 @@ from Transitions import TRIGGER_AUTOMATIC
 from Transitions import TRIGGER_USER_ACTION
 from Expression import StateChangeInfo
 from Expression import createExprContext
-
+from events import BeforeTransitionEvent, AfterTransitionEvent
 
 def checkId(id):
     res = bad_id(id)
@@ -468,6 +469,9 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
             msg = _(u'Destination state undefined: ${state_id}',
                     mapping={'state_id': new_state})
             raise WorkflowException(msg)
+        
+        # Fire "before" event
+        notify(BeforeTransitionEvent(ob, self, old_sdef, new_sdef, tdef, former_status, kwargs))
 
         # Execute the "before" script.
         if tdef is not None and tdef.script_name:
@@ -531,6 +535,9 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
             sci = StateChangeInfo(
                 ob, self, status, tdef, old_sdef, new_sdef, kwargs)
             script(sci)  # May throw an exception.
+
+        # Fire "after" event
+        notify(AfterTransitionEvent(ob, self, old_sdef, new_sdef, tdef, former_status, kwargs))
 
         # Return the new state object.
         if moved_exc is not None:

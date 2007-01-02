@@ -439,7 +439,7 @@ class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
                                                        'end': None,
                                                        'start': None}]},
                  {'day':31, 'event': 1, 'eventslist':[{'title': 'title',
-                                                       'end': '2:59:00',
+                                                       'end': '23:59:00',
                                                        'start': None}]},
                  {'day': 0, 'event': 0, 'eventslist':[]},
                 ]

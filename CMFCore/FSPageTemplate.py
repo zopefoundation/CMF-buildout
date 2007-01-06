@@ -35,6 +35,9 @@ from utils import _checkConditionalGET
 from utils import _dtmldir
 from utils import _setCacheHeaders
 
+
+from Products.PageTemplates.utils import encodingFromXMLPreamble, charsetFromMetaEquiv
+
 xml_detect_re = re.compile('^\s*<\?xml\s+(?:[^>]*?encoding=["\']([^"\'>]+))?')
 _marker = object()
 
@@ -94,6 +97,7 @@ class FSPageTemplate(FSObject, Script, PageTemplate):
             # attempt further detection if the default is encountered.
             # One previous misbehavior remains: It is not possible to
             # force a text./html type if parsing detects it as XML.
+            encoding = None
             if getattr(self, 'content_type', 'text/html') == 'text/html':
                 xml_info = xml_detect_re.match(data)
                 if xml_info:
@@ -102,7 +106,25 @@ class FSPageTemplate(FSObject, Script, PageTemplate):
                     encoding = xml_info.group(1) or 'utf-8'
                     self.content_type = 'text/xml; charset=%s' % encoding
 
+
+            if encoding is None:
+                charset = getattr(self, 'charset', None)
+                if charset is None:
+                    if self.content_type.startswith('text/html'):
+                        charset = charsetFromMetaEquiv(data) or 'iso-8859-15'
+                    elif self.content_type.startswith('text/xml'):
+                        charset = encodingFromXMLPreamble(data)
+                    else:
+                        raise ValueError('Unsupported content-type: %s' % self.content_type)
+
+                if not isinstance(data, unicode):
+                    data = unicode(data, charset)
+            else:
+                if not isinstance(data, unicode):
+                    data = unicode(data, encoding)
+
             self.write(data)
+
 
     security.declarePrivate('read')
     def read(self):

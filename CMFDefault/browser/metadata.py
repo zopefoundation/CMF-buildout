@@ -37,7 +37,7 @@ from Products.CMFDefault.formlib.schema import ProxyFieldProperty
 from Products.CMFDefault.formlib.schema import SchemaAdapterBase
 from Products.CMFDefault.formlib.vocabulary import SimpleVocabulary
 from Products.CMFDefault.formlib.widgets import SubjectInputWidget
-from Products.CMFDefault.formlib.widgets import TupleTextAreaWidget
+from Products.CMFDefault.formlib.widgets import TupleInputWidget
 from Products.CMFDefault.utils import Message as _
 
 available_settings = [
@@ -239,7 +239,7 @@ class MetadataEditView(ContentEditFormBase):
 
     form_fields = form.FormFields(IMetadataSchema)
     form_fields['subject'].custom_widget = SubjectInputWidget
-    form_fields['contributors'].custom_widget = TupleTextAreaWidget
+    form_fields['contributors'].custom_widget = TupleInputWidget
     form_fields['effective'].custom_widget = DatetimeI18nWidget
     form_fields['expires'].custom_widget = DatetimeI18nWidget
 

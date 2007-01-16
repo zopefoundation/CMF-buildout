@@ -57,6 +57,9 @@ class TupleTextAreaWidget(TextAreaWidget):
     implementsOnly(IInputWidget)
     adapts(ITuple, IBrowserRequest)
 
+    def __init__(self, context, field, request):
+        super(TupleTextAreaWidget, self).__init__(context, request)
+
     def _toFieldValue(self, input):
         input = super(TupleTextAreaWidget, self)._toFieldValue(input)
         if isinstance(input, basestring):
@@ -72,6 +75,10 @@ class TupleTextAreaWidget(TextAreaWidget):
         if value is not None:
             value = u'\n'.join(value)
         return super(TupleTextAreaWidget, self)._toFormValue(value)
+
+
+def TupleInputWidget(field, request):
+    return TupleTextAreaWidget(field, field.value_type, request)
 
 
 class SubjectInputWidget(InputWidget, BrowserWidget):
@@ -106,7 +113,7 @@ class SubjectInputWidget(InputWidget, BrowserWidget):
                 self._widgets[0] = widget
             elif i == 1:
                 field = Tuple(__name__='', required=False).bind(self.context)
-                widget = TupleTextAreaWidget(field, self.request)
+                widget = TupleInputWidget(field, self.request)
                 widget.name = self.name
                 widget.height = self.vocabulary and 2 or 6
                 self._widgets[1] = widget

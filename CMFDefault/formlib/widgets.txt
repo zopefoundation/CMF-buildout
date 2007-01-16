@@ -13,12 +13,12 @@ Widgets
       >>> request = DummyRequest()
       >>> request.form['PREFIX.NAME'] = u'FOO \n BAR'
 
-      >>> from Products.CMFDefault.formlib.widgets import TupleTextAreaWidget
+      >>> from Products.CMFDefault.formlib.widgets import TupleInputWidget
       >>> from zope.schema import Tuple
       >>> tuple_field = Tuple(__name__='NAME', title=u'FIELD TITLE',
       ...                     required=False)
 
-      >>> widget = TupleTextAreaWidget(tuple_field, request)
+      >>> widget = TupleInputWidget(tuple_field, request)
 
     IWidget::
 

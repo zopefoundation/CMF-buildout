@@ -1,3 +1,4 @@
+# -*- coding: iso-8859-1 -*-
 ##############################################################################
 #
 # Copyright (c) 2005 Zope Corporation and Contributors. All Rights Reserved.
@@ -25,14 +26,16 @@ from Products.GenericSetup.tests.common import DummyImportContext
 
 from Products.CMFCore.testing import ExportImportZCMLLayer
 
-_PROPERTIES_BODY = """\
+_PROPERTIES_BODY = u"""\
 <?xml version="1.0"?>
 <site>
  <property name="title">Foo</property>
+ <property name="default_charset" type="string">iso-8859-1</property>
  <property name="foo_string" type="string">foo</property>
+ <property name="bar_string" type="string">Bär</property>
  <property name="foo_boolean" type="boolean">False</property>
 </site>
-"""
+""".encode('utf-8')
 
 _EMPTY_EXPORT = """\
 <?xml version="1.0" ?>
@@ -68,8 +71,20 @@ class PropertiesXMLAdapterTests(BodyAdapterTestCase):
 
     def _populate(self, obj):
         obj._setPropValue('title', 'Foo')
+        obj._setProperty('default_charset', 'iso-8859-1', 'string')
         obj._setProperty('foo_string', 'foo', 'string')
+        obj._setProperty('bar_string', 'Bär', 'string')
         obj._setProperty('foo_boolean', False, 'boolean')
+
+    def _verifyImport(self, obj):
+        self.assertEqual(type(obj.title), str)
+        self.assertEqual(obj.title, 'Foo')
+        self.assertEqual(type(obj.foo_string), str)
+        self.assertEqual(obj.foo_string, 'foo')
+        self.assertEqual(type(obj.bar_string), str)
+        self.assertEqual(obj.bar_string, 'Bär')
+        self.assertEqual(type(obj.foo_boolean), bool)
+        self.assertEqual(obj.foo_boolean, False)
 
     def setUp(self):
         from Products.CMFCore.PortalObject import PortalObjectBase

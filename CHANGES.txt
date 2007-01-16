@@ -2,6 +2,9 @@ CMF 2.1.0-beta (unreleased)
 
   New Features
 
+    - setup handlers: Improved properties handler.
+      It now works with properties using a default_charset other than UTF-8.
+
     - Merged patches from Martin Aspeli to enable generating events before
       and after DCWorkflow transitions, and in the 'notify' methods of the
       workflow tool (http://www.zope.org/Collectors/CMF/461).

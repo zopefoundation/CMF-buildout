@@ -1,4 +1,4 @@
-CMF 1.6.3-beta (unreleased)
+CMF 1.6.3-beta (2007/01/17)
 
   Bug Fixes
 

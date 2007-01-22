@@ -360,7 +360,6 @@ class Event(PortalContent, DefaultDublinCoreImpl):
                 headers[key] = value
         self._editMetadata(title=headers['Title'],
                           subject=headers['Subject'],
-                          description=headers['Description'],
                           contributors=headers['Contributors'],
                           effective_date=headers['Effective_date'],
                           expiration_date=headers['Expiration_date'],
@@ -372,14 +371,16 @@ class Event(PortalContent, DefaultDublinCoreImpl):
     security.declarePublic( 'getMetadataHeaders' )
     def getMetadataHeaders(self):
         """Return RFC-822-style header spec."""
-        hdrlist = DefaultDublinCoreImpl.getMetadataHeaders(self)
-        hdrlist.append( ('StartDate', self.start().strftime("%Y-%m-%d %H:%M:%S") ) )
-        hdrlist.append( ('EndDate',  self.end().strftime("%Y-%m-%d %H:%M:%S") ) )
-        hdrlist.append( ('Location', self.location) )
-        hdrlist.append( ('ContactName', self.contact_name) )
-        hdrlist.append( ('ContactEmail', self.contact_email) )
-        hdrlist.append( ('ContactPhone', self.contact_phone) )
-        hdrlist.append( ('EventURL', self.event_url) )
+        fmt = '%Y-%m-%d %H:%M:%S'
+        hdrlist = [x for x in DefaultDublinCoreImpl.getMetadataHeaders(self)
+                         if x[0] != 'Description']
+        hdrlist.append(('Startdate', self.start().strftime(fmt)))
+        hdrlist.append(('Enddate',  self.end().strftime(fmt)))
+        hdrlist.append(('Location', self.location))
+        hdrlist.append(('Contactname', self.contact_name))
+        hdrlist.append(('Contactemail', self.contact_email))
+        hdrlist.append(('Contactphone', self.contact_phone))
+        hdrlist.append(('Eventurl', self.event_url))
 
         return hdrlist
 
@@ -400,13 +401,14 @@ class Event(PortalContent, DefaultDublinCoreImpl):
         try:
             headers, body, format = self.handleText(text=body)
             self.setMetadata(headers)
-            self.setStartDate(headers['StartDate'])
-            self.setEndDate(headers['EndDate'])
+            self.setStartDate(headers['Startdate'])
+            self.setEndDate(headers['Enddate'])
             self.edit( location=headers['Location']
-             , contact_name=headers['ContactName']
-             , contact_email=headers['ContactEmail']
-             , contact_phone=headers['ContactPhone']
-             , event_url=headers['EventURL']
+             , contact_name=headers['Contactname']
+             , contact_email=headers['Contactemail']
+             , contact_phone=headers['Contactphone']
+             , event_url=headers['Eventurl']
+             , description=body
              )
 
         except ResourceLockedError, msg:

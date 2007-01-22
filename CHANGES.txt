@@ -2,6 +2,9 @@ After CMF 1.5.7
 
   Bug Fixes
 
+    - Fixed broken PUT handling for CMFCalendar Events
+      (http://www.zope.org/Collectors/CMF/458)
+
     - CMFSetup.workflow: Split out subdirectory when exporting workflow
       scripts.
       (http://www.zope.org/Collectors/CMF/373)

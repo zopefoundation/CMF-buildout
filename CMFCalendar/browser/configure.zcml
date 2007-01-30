@@ -6,7 +6,7 @@
 
   <utility
       component=".event.EventTypeVocabularyFactory"
-      name="AvailableEventTypes"
+      name="cmf.calendar.AvailableEventTypes"
       />
 
   <browser:page

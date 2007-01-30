@@ -90,7 +90,7 @@ class IEventSchema(Interface):
         title=_(u'Category'),
         required=False,
         missing_value=set(),
-        value_type=Choice(vocabulary="AvailableEventTypes"))
+        value_type=Choice(vocabulary="cmf.calendar.AvailableEventTypes"))
 
     contact_phone = TextLine(
         title=_(u'Contact Phone'),

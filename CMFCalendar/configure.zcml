@@ -19,7 +19,7 @@
 
   <utility
       component=".Event.EventFactory"
-      name="cmf.event"
+      name="cmf.calendar.event"
       />
 
   <!-- profiles -->

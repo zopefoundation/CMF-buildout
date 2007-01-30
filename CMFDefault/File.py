@@ -32,6 +32,8 @@ from Products.CMFCore.utils import _checkConditionalGET
 from Products.GenericSetup.interfaces import IDAVAware
 
 from DublinCore import DefaultDublinCoreImpl
+from interfaces import IFile
+from interfaces import IMutableFile
 from permissions import ModifyPortalContent
 from permissions import View
 
@@ -80,11 +82,11 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
     """A Portal-managed File.
     """
 
-    implements(IDAVAware)
+    implements(IMutableFile, IFile, IDAVAware)
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )
-    
+
     effective_date = expiration_date = None
     _isDiscussable = 1
     icon = PortalContent.icon

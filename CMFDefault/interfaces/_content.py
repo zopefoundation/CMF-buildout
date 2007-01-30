@@ -102,3 +102,27 @@ class IMutableFavorite(IFavorite, IMutableLink):
 
     """ Updatable form of IFavorite.
     """
+
+
+class IFile(Interface):
+
+    """ Binary content.
+    """
+
+    def get_size():
+        """ Get the byte size of the file data.
+        """
+
+    def getContentType():
+        """ Get the MIME type of the file data.
+        """
+
+    def __str__():
+        """ Get the file data.
+        """
+
+
+class IMutableFile(IFile):
+
+    """ Updatable form of IFile.
+    """

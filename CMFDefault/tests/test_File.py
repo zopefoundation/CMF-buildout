@@ -41,6 +41,14 @@ class FileTests(ConformsToContent, unittest.TestCase):
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
 
+    def test_z3interfaces(self):
+        from zope.interface.verify import verifyClass
+        from Products.CMFDefault.interfaces import IFile
+        from Products.CMFDefault.interfaces import IMutableFile
+
+        verifyClass(IFile, self._getTargetClass())
+        verifyClass(IMutableFile, self._getTargetClass())
+
     def test_getId_on_old_File_instance(self):
         file = self._makeOne('testfile')
         self.assertEqual(file.getId(), 'testfile')
@@ -159,4 +167,3 @@ def test_suite():
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')
-

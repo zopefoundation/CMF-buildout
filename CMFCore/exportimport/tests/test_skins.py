@@ -125,6 +125,19 @@ _FRAGMENT4_IMPORT = """\
 </object>
 """
 
+_FRAGMENT5_IMPORT = """\
+<?xml version="1.0"?>
+<object name="portal_skins" meta_type="Dummy Skins Tool">
+ <skin-path name="existing" based-on="basic">
+ </skin-path>
+ <skin-path name="new" based-on="basic">
+  <layer name="two" insert-before="three"/>
+ </skin-path>
+ <skin-path name="wrongbase" based-on="invalid_base_id">
+  <layer name="two" insert-before="three"/>
+ </skin-path>
+</object>"""
+
 
 class DummySite(Folder):
 
@@ -317,6 +330,7 @@ class importSkinsToolTests(_SkinsSetup):
     _FRAGMENT2_IMPORT = _FRAGMENT2_IMPORT
     _FRAGMENT3_IMPORT = _FRAGMENT3_IMPORT
     _FRAGMENT4_IMPORT = _FRAGMENT4_IMPORT
+    _FRAGMENT5_IMPORT = _FRAGMENT5_IMPORT
     _NORMAL_EXPORT = _NORMAL_EXPORT
 
     def test_empty_default_purge(self):
@@ -529,6 +543,35 @@ class importSkinsToolTests(_SkinsSetup):
         self.assertEqual(len(skin_paths), 2)
         self.assertEqual(skin_paths[0], ('basic', 'one,four'))
         self.assertEqual(skin_paths[1], ('fancy', 'two,one,four'))
+        self.assertEqual(len(skins_tool.objectItems()), 4)
+
+    def test_fragment5_based_skin(self):
+        from Products.CMFCore.exportimport.skins import importSkinsTool
+
+        _IDS = ('one', 'two', 'three', 'four')
+        _PATHS = {'basic': 'one,three,four', 'existing': 'one,two,four'}
+
+        site = self._initSite(selections=_PATHS, ids=_IDS)
+        skins_tool = site.portal_skins
+
+        skin_paths = skins_tool.getSkinPaths()
+        self.assertEqual(len(skin_paths), 2)
+        self.assertEqual(skin_paths[0], ('basic', 'one,three,four'))
+        self.assertEqual(skin_paths[1], ('existing', 'one,two,four'))
+        self.assertEqual(len(skins_tool.objectItems()), 4)
+
+        context = DummyImportContext(site, False)
+        context._files['skins.xml'] = self._FRAGMENT5_IMPORT
+
+        importSkinsTool(context)
+
+        self.failUnless(site._skin_setup_called)
+        skin_paths = skins_tool.getSkinPaths()
+        self.assertEqual(len(skin_paths), 4)
+        self.assertEqual(skin_paths[0], ('basic', 'one,three,four'))
+        self.assertEqual(skin_paths[1], ('existing', 'one,two,three,four'))
+        self.assertEqual(skin_paths[2], ('new', 'one,two,three,four'))
+        self.assertEqual(skin_paths[3], ('wrongbase', 'two'))
         self.assertEqual(len(skins_tool.objectItems()), 4)
 
 

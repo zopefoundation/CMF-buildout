@@ -132,10 +132,25 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
                     path = self._updatePath(path, child)
                     self.context.addSkinSelection(path_id, path)
             else:
+                path = ''
+                if child.hasAttribute('based-on'):
+                    try:
+                        basename = child.getAttribute('based-on')
+                        path = self.context._getSelections()[basename]
+                    except KeyError:
+                        pass
                 if path_id in self.context._getSelections():
-                    path = self.context._getSelections()[path_id]
-                else:
-                    path = ''
+                    oldpath = self.context._getSelections()[path_id].split(',')
+                    for layer in oldpath:
+                        if layer not in path:
+                            layernode = self._doc.createElement('layer')
+                            layernode.setAttribute('name', layer)
+                            if oldpath.index(layer) == 0:
+                                layernode.setAttribute('insert-before', '*')
+                            else:
+                                pos = oldpath[oldpath.index(layer)-1]
+                                layernode.setAttribute('insert-after', pos)
+                            child.appendChild(layernode)
                 path = self._updatePath(path, child)
                 self.context.addSkinSelection(path_id, path)
         #

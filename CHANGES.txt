@@ -19,6 +19,10 @@ CMF 2.1.0-beta (unreleased)
       default view for CMF content types.
       (http://www.zope.org/Collectors/CMF/459)
 
+  Others
+
+    - The CMF now depends on Zope 2.10.2 or higher.
+
 
 CMF 2.1.0-alpha2 (2006/11/23)
 

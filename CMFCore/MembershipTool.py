@@ -255,9 +255,9 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
             member_id = user_id
         else:
             if _checkPermission(ManageUsers, self):
-                member = self.acl_users.getUserById(member_id, None)
-                if member:
-                    member = member.__of__(self.acl_users)
+                uf = self._huntUserFolder(member_id, self)
+                if uf:
+                    member = uf.getUserById(member_id).__of__(uf)
                 else:
                     raise ValueError('Member %s does not exist' % member_id)
             else:
@@ -351,18 +351,27 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
             user = self.wrapUser(user)
         return user
 
-    def _huntUser(self, username, context):
-        """Find user in the hierarchy starting from bottom level 'start'.
+    def _huntUserFolder(self, username, context):
+        """Find userfolder containing user in the hierarchy
+           starting from context
         """
         uf = context.acl_users
         while uf is not None:
             user = uf.getUserById(username)
             if user is not None:
-                return user
+                return uf
             container = aq_parent(aq_inner(uf))
             parent = aq_parent(aq_inner(container))
             uf = getattr(parent, 'acl_users', None)
         return None
+
+    def _huntUser(self, username, context):
+        """Find user in the hierarchy of userfolders
+           starting from context
+        """
+        uf = self._huntUserFolder(username, context)
+        if uf is not None:
+            return uf.getUserById(username)
 
     def __getPUS(self):
         # Gets something we can call getUsers() and getUserNames() on.

@@ -109,6 +109,30 @@ class MembershipToolSecurityTests(SecurityTest):
                           'CMF Collector issue #162 (LocalRoles broken): %s'
                           % str( f.get_local_roles() ) )
 
+    def test_createMemberArea_chained(self):
+        LOCAL_USER_ID = 'user_foo'
+        NONLOCAL_USER_ID = 'user_bar'
+
+        self.root._setObject( 'folder', Folder('folder') )
+        site = self._makeSite( self.root.folder )
+        mtool = site.portal_membership
+        members = site._setObject( 'Members', PortalFolder('Members') )
+        wtool = site._setObject( 'portal_workflow', DummyTool() )
+
+        local_uf = DummyUserFolder()
+        delattr( local_uf, NONLOCAL_USER_ID )
+        acl_users = site._setObject('acl_users', local_uf)
+
+        nonlocal_uf = DummyUserFolder()
+        delattr( nonlocal_uf, LOCAL_USER_ID )
+        self.root.folder._setObject('acl_users', nonlocal_uf)
+
+        newSecurityManager(None, acl_users.all_powerful_Oz)
+        mtool.createMemberArea( NONLOCAL_USER_ID )
+        self.failUnless( hasattr(members.aq_self, NONLOCAL_USER_ID ) )
+        mtool.createMemberArea( LOCAL_USER_ID )
+        self.failUnless( hasattr(members.aq_self, LOCAL_USER_ID ) )
+
     def test_deleteMembers(self):
         site = self._makeSite()
         mtool = site.portal_membership

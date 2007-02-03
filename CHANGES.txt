@@ -11,6 +11,10 @@ CMF 2.1.0-beta (unreleased)
 
   Bug Fixes
 
+    - CMFCore.MembershipTool: Fixed inconsistent behavior where member lookup
+      would take all user folders up to the Zope root into account whereas
+      member area creation would not.
+
     - CMFDefault.File and CMFDefault.Image: Restored ZMI Cache tab which was
       lost in CMF 1.6.
 

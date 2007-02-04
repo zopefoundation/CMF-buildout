@@ -40,6 +40,13 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <adapter factory=".document.DocumentSchemaAdapter"/>
+
+  <utility
+      component=".document.TextFormatVocabularyFactory"
+      name="cmf.AvailableTextFormats"
+      />
+
   <browser:page
       for="..interfaces.IDocument"
       layer="..interfaces.ICMFDefaultSkin"
@@ -54,16 +61,16 @@
       layer="..interfaces.ICMFDefaultSkin"
       name="edit.html"
       class=".document.DocumentEditView"
-      template="templates/document_edit.pt"
       permission="cmf.ModifyPortalContent"
       />
+
+  <adapter factory=".newsitem.NewsItemSchemaAdapter"/>
 
   <browser:page
       for="..interfaces.IMutableNewsItem"
       layer="..interfaces.ICMFDefaultSkin"
       name="edit.html"
       class=".newsitem.NewsItemEditView"
-      template="templates/newsitem_edit.pt"
       permission="cmf.ModifyPortalContent"
       />
 

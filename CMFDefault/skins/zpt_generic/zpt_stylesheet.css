@@ -448,6 +448,8 @@ p.NewsHeadline {
 .widget label    { width: 108px; float: left; padding: 0 4px;
                    min-height: 17px; height: auto !important; height: 17px;
                    text-align: right; font-size: 80%; font-weight: bold; }
+.widget .data label { width: auto; float: none;
+                      font-size: inherit; font-weight: normal; }
 .widget .field   { width: 604px; float: left;
                    font-family: inherit; font-size: inherit; }
 .widget.split .field { width: 244px; }
@@ -455,13 +457,16 @@ p.NewsHeadline {
                    min-height: 30px; height: auto !important; height: 30px;
                    background-color: #ffffff; }
 .widget.split .data { width: 240px; }
-.widget input.textType, .widget select, .widget textarea {
-                   width: 596px; margin: 0 -2px; padding: 0 2px;
+.widget input.fileType,
+.widget input.textType,
+.widget select,
+.widget textarea { width: 596px; margin: 0 -2px; padding: 0 2px;
                    font-family: inherit; font-size: inherit; }
 .widget select   { padding: 0 }
 .widget input.textType {
                    min-height: 30px; height: auto !important; height: 24px; }
-.widget.split input.textType, .widget.split textarea { width: 236px; }
+.widget.split input.textType,
+.widget.split textarea { width: 236px; }
 .widget.split select { width: 244px; }
 .widget ul       { margin: 0 0 0 10px; padding: 0 0 0 10px;
                    list-style-type: disc; }

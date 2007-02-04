@@ -15,16 +15,83 @@
 $Id$
 """
 
-from Products.CMFDefault.exceptions import EditingConflict
-from Products.CMFDefault.exceptions import IllegalHTML
-from Products.CMFDefault.exceptions import ResourceLockedError
+from zope.component import adapts
+from zope.formlib import form
+from zope.interface import implements
+from zope.interface import Interface
+from zope.schema import ASCIILine
+from zope.schema import Bytes
+from zope.schema import Choice
+from zope.schema import Text
+from zope.schema import TextLine
+
+from Products.CMFDefault.formlib.form import ContentEditFormBase
+from Products.CMFDefault.formlib.schema import ProxyFieldProperty
+from Products.CMFDefault.formlib.schema import SchemaAdapterBase
+from Products.CMFDefault.formlib.vocabulary import StaticVocabulary
+from Products.CMFDefault.formlib.widgets import ChoiceRadioWidget
+from Products.CMFDefault.formlib.widgets import TextInputWidget
+from Products.CMFDefault.interfaces import IMutableDocument
 from Products.CMFDefault.utils import Message as _
-from Products.CMFDefault.utils import scrubHTML
 
 from utils import decode
-from utils import FormViewBase
 from utils import memoize
 from utils import ViewBase
+
+available_text_formats = (
+        (u'structured-text', 'structured-text', _(u'structured-text')),
+        (u'plain', 'plain', _(u'plain text')),
+        (u'html', 'html', _(u'html')))
+
+TextFormatVocabularyFactory = StaticVocabulary(available_text_formats)
+
+
+class IDocumentSchema(Interface):
+
+    """Schema for document views.
+    """
+
+    safety_belt = ASCIILine()
+
+    title = TextLine(
+        title=_(u'Title'),
+        readonly=True)
+
+    description = Text(
+        title=_(u'Description'),
+        readonly=True)
+
+    text_format = Choice(
+        title=_(u'Format'),
+        vocabulary='cmf.AvailableTextFormats')
+
+    upload = Bytes(
+        title=_(u'Upload'),
+        required=False)
+
+    text = Text(
+        title=_(u'Body'),
+        required=False,
+        missing_value=u'')
+
+
+class DocumentSchemaAdapter(SchemaAdapterBase):
+
+    """Adapter for IMutableDocument.
+    """
+
+    adapts(IMutableDocument)
+    implements(IDocumentSchema)
+
+    safety_belt = ProxyFieldProperty(IDocumentSchema['safety_belt'],
+                                     'SafetyBelt')
+    title = ProxyFieldProperty(IDocumentSchema['title'], 'Title')
+    description = ProxyFieldProperty(IDocumentSchema['description'],
+                                     'Description')
+    text_format = ProxyFieldProperty(IDocumentSchema['text_format'])
+    upload = None
+    text = ProxyFieldProperty(IDocumentSchema['text'],
+                              'EditableBody', '_edit')
 
 
 class DocumentView(ViewBase):
@@ -40,72 +107,37 @@ class DocumentView(ViewBase):
         return self.context.CookedBody()
 
 
-class DocumentEditView(FormViewBase):
+class DocumentEditView(ContentEditFormBase):
 
     """Edit view for IMutableDocument.
     """
 
-    _BUTTONS = ({'id': 'change',
-                 'title': _(u'Change'),
-                 'transform': ('validateTextFile', 'validateHTML',
-                               'edit_control'),
-                 'redirect': ('portal_types', 'object/edit')},
-                {'id': 'change_and_view',
-                 'title': _(u'Change and View'),
-                 'transform': ('validateTextFile', 'validateHTML',
-                               'edit_control'),
-                 'redirect': ('portal_types', 'object/view')})
+    form_fields = form.FormFields(IDocumentSchema)
+    form_fields['text_format'].custom_widget = ChoiceRadioWidget
+    form_fields['text'].custom_widget = TextInputWidget
 
-    #helpers
+    def setUpWidgets(self, ignore_request=False):
+        super(DocumentEditView,
+              self).setUpWidgets(ignore_request=ignore_request)
+        self.widgets['safety_belt'].hide = True
+        self.widgets['description'].height = 3
+        self.widgets['text_format'].orientation = 'horizontal'
+        self.widgets['upload'].displayWidth = 60
+        self.widgets['text'].height = 20
 
-    @memoize
-    def _getHiddenVars(self):
-        belt = self.request.form.get('SafetyBelt', self.context.SafetyBelt())
-        return {'SafetyBelt': belt}
+    def _handle_success(self, action, data):
+        body = data.get('upload')
+        if body:
+            data['text'] = body.decode(self._getDefaultCharset())
+        super(DocumentEditView, self)._handle_success(action, data)
 
-    # interface
-
-    @memoize
-    def text_format(self):
-        return self.request.form.get('text_format', self.context.text_format)
-
-    @memoize
-    @decode
-    def text(self):
-        return self.request.form.get('text', self.context.EditableBody())
-
-    # validators
-
-    def validateHTML(self, text, description='', **kw):
-        try:
-            self.request.form['description'] = scrubHTML(description)
-            self.request.form['text'] = scrubHTML(text)
-            return True
-        except IllegalHTML, errmsg:
-            return False, errmsg
-
-    def validateTextFile(self, file='', **kw):
-        try:
-            upload = file.read()
-        except AttributeError:
-            return True
-        else:
-            if upload:
-                self.request.form['text'] = upload
-                return True
-            else:
-                return True
-
-    # controllers
-
-    def edit_control(self, text_format, text, SafetyBelt='', **kw):
-        context = self.context
-        if text_format != context.text_format or \
-                text != context.EditableBody():
-            try:
-                context.edit(text_format, text, safety_belt=SafetyBelt)
-                return True, _(u'Document changed.')
-            except (ResourceLockedError, EditingConflict), errmsg:
-                return False, errmsg
-        else:
-            return False, _(u'Nothing to change.')
+    def handle_validate(self, action, data):
+        errors = super(DocumentEditView, self).handle_validate(action, data)
+        if errors:
+            return errors
+        safety_belt = self.request.form['form.safety_belt']
+        if not self.context._safety_belt_update(safety_belt):
+            return (_(u'Intervening changes from elsewhere detected. Please '
+                      u'refetch the document and reapply your changes.'),)
+        self.request.form['form.safety_belt'] = self.context.SafetyBelt()
+        return None

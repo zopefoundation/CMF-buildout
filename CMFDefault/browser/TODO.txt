@@ -55,18 +55,18 @@ Converting skins to views:
   [x] IMutableDocument @@edit.html:
 
       document_edit_form.py -> DocumentEditView
-      document_edit_template.pt -> templates/document_edit.pt
-      validateHTML.py -> DocumentEditView.validateHTML
-      validateTextFile.py -> DocumentEditView.validateTextFile
-      document_edit_control.py -> DocumentEditView.edit_control
+      document_edit_template.pt -> formlib based
+      validateHTML.py -> formlib based
+      validateTextFile.py -> formlib based
+      document_edit_control.py -> formlib based
 
   [x] IMutableNewsItem @@edit.html:
 
       newsitem_edit_form.py -> NewsItemEditView
-      newsitem_edit_template.pt -> templates/newsitem_edit.pt
-      validateHTML.py -> DocumentEditView.validateHTML
-      validateTextFile.py -> DocumentEditView.validateTextFile
-      newsitem_edit_control.py -> NewsItemEditView.edit_control
+      newsitem_edit_template.pt -> formlib based
+      validateHTML.py -> formlib based
+      validateTextFile.py -> formlib based
+      newsitem_edit_control.py -> formlib based
 
   [x] ILink @@view.html:
 

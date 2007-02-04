@@ -19,32 +19,37 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: CMFCore/PortalContent.py:79
+#: CMFDefault/formlib/form.py:127
+msgid "This resource is locked via webDAV."
+msgstr ""
+
 #: CMFCore/RegistrationTool.py:144
 #: CMFDefault/RegistrationTool.py:94
 msgid "The login name you selected is already in use or is not valid. Please choose another."
 msgstr ""
 
-#: CMFCore/WorkflowTool.py:225
-#: CMFCore/WorkflowTool.py:251
+#: CMFCore/WorkflowTool.py:228
+#: CMFCore/WorkflowTool.py:254
 msgid "No workflows found."
 msgstr ""
 
-#: CMFCore/WorkflowTool.py:232
+#: CMFCore/WorkflowTool.py:235
 #. Default: ""
 msgid "No workflow provides the '${action_id}' action."
 msgstr ""
 
-#: CMFCore/WorkflowTool.py:239
-#: CMFCore/WorkflowTool.py:271
+#: CMFCore/WorkflowTool.py:242
+#: CMFCore/WorkflowTool.py:274
 msgid "Requested workflow definition not found."
 msgstr ""
 
-#: CMFCore/WorkflowTool.py:261
+#: CMFCore/WorkflowTool.py:264
 #. Default: ""
 msgid "No workflow provides '${name}' information."
 msgstr ""
 
-#: CMFCore/WorkflowTool.py:276
+#: CMFCore/WorkflowTool.py:279
 #. Default: ""
 msgid "Could not get info: ${name}"
 msgstr ""
@@ -89,70 +94,36 @@ msgstr ""
 msgid "You must enter an email address."
 msgstr ""
 
-#: CMFDefault/browser/document.py:107
-#: CMFDefault/skins/zpt_content/document_edit_control.py:10
-msgid "Document changed."
+#: CMFDefault/browser/document.py:140
+msgid "Intervening changes from elsewhere detected. Please refetch the document and reapply your changes."
 msgstr ""
 
-#: CMFDefault/browser/document.py:111
-#: CMFDefault/browser/folder.py:359
-#: CMFDefault/browser/folder.py:374
-#: CMFDefault/browser/folder.py:389
-#: CMFDefault/browser/folder.py:404
-#: CMFDefault/browser/newsitem.py:53
-#: CMFDefault/formlib/form.py:144
-#: CMFDefault/skins/zpt_content/document_edit_control.py:14
-#: CMFDefault/skins/zpt_content/folder_edit_control.py:9
-#: CMFDefault/skins/zpt_content/link_edit_control.py:13
-#: CMFDefault/skins/zpt_content/newsitem_edit_control.py:15
-#: CMFDefault/skins/zpt_control/folder_bottom_control.py:13
-#: CMFDefault/skins/zpt_control/folder_down_control.py:13
-#: CMFDefault/skins/zpt_control/folder_rename_control.py:17
-#: CMFDefault/skins/zpt_control/folder_top_control.py:13
-#: CMFDefault/skins/zpt_control/folder_up_control.py:13
-#: CMFTopic/skins/zpt_topic/topic_edit_control.py:11
-msgid "Nothing to change."
+#: CMFDefault/browser/document.py:42
+#: CMFDefault/skins/zpt_content/document_edit_template.pt:28
+#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:23
+msgid "structured-text"
 msgstr ""
 
-#: CMFDefault/browser/document.py:49
-#: CMFDefault/browser/metadata.py:223
-#: CMFDefault/formlib/form.py:100
-#: CMFDefault/skins/zpt_content/document_edit_form.py:34
-#: CMFDefault/skins/zpt_content/file_edit_form.py:25
-#: CMFDefault/skins/zpt_content/folder_edit_form.py:24
-#: CMFDefault/skins/zpt_content/image_edit_form.py:25
-#: CMFDefault/skins/zpt_content/link_edit_form.py:24
-#: CMFDefault/skins/zpt_content/metadata_edit_form.py:49
-#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:28
-#: CMFDefault/skins/zpt_generic/password_form.py:37
-#: CMFDefault/skins/zpt_generic/reconfig_form.py:22
-#: CMFTopic/skins/zpt_topic/topic_edit_form.py:26
-#: CMFDefault/skins/zpt_generic/personalize_form.pt:83
-msgid "Change"
+#: CMFDefault/browser/document.py:43
+#: CMFDefault/skins/zpt_content/document_edit_template.pt:31
+#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:26
+msgid "plain text"
 msgstr ""
 
-#: CMFDefault/browser/document.py:54
-#: CMFDefault/browser/metadata.py:235
-#: CMFDefault/formlib/form.py:106
-#: CMFDefault/skins/zpt_content/document_edit_form.py:35
-#: CMFDefault/skins/zpt_content/file_edit_form.py:26
-#: CMFDefault/skins/zpt_content/folder_edit_form.py:25
-#: CMFDefault/skins/zpt_content/image_edit_form.py:26
-#: CMFDefault/skins/zpt_content/link_edit_form.py:25
-#: CMFDefault/skins/zpt_content/metadata_edit_form.py:51
-#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:29
-#: CMFTopic/skins/zpt_topic/topic_edit_form.py:27
-msgid "Change and View"
+#: CMFDefault/browser/document.py:44
+#: CMFDefault/skins/zpt_content/document_edit_template.pt:34
+#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:29
+msgid "html"
 msgstr ""
 
+#: CMFDefault/browser/document.py:57
 #: CMFDefault/browser/favorite.py:39
 #: CMFDefault/browser/favorite.py:40
 #: CMFDefault/browser/link.py:42
 #: CMFDefault/browser/link.py:43
 #: CMFDefault/browser/metadata.py:54
 #: CMFDefault/browser/metadata.py:79
-#: CMFDefault/browser/templates/document_edit.pt:13
-#: CMFDefault/browser/templates/newsitem_edit.pt:12
+#: CMFDefault/browser/newsitem.py:41
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:16
 #: CMFDefault/skins/zpt_content/file_edit_template.pt:15
 #: CMFDefault/skins/zpt_content/folder_edit_template.pt:15
@@ -166,6 +137,41 @@ msgstr ""
 #: CMFDefault/skins/zpt_generic/search_results_template.pt:15
 #: CMFTopic/skins/zpt_topic/topic_edit_template.pt:15
 msgid "Title"
+msgstr ""
+
+#: CMFDefault/browser/document.py:61
+#: CMFDefault/browser/metadata.py:59
+#: CMFDefault/browser/metadata.py:84
+#: CMFDefault/skins/zpt_content/document_edit_template.pt:20
+#: CMFDefault/skins/zpt_content/file_edit_template.pt:19
+#: CMFDefault/skins/zpt_content/folder_edit_template.pt:22
+#: CMFDefault/skins/zpt_content/image_edit_template.pt:19
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:44
+#: CMFDefault/skins/zpt_generic/metadata_help.pt:52
+#: CMFDefault/skins/zpt_generic/search_form_template.pt:67
+#: CMFTopic/skins/zpt_topic/topic_edit_template.pt:22
+msgid "Description"
+msgstr ""
+
+#: CMFDefault/browser/document.py:65
+#: CMFDefault/browser/metadata.py:119
+#: CMFDefault/browser/newsitem.py:45
+#: CMFDefault/skins/zpt_content/document_edit_template.pt:24
+#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:90
+#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:19
+#: CMFDefault/skins/zpt_generic/metadata_help.pt:124
+msgid "Format"
+msgstr ""
+
+#: CMFDefault/browser/document.py:69
+#: CMFDefault/skins/zpt_content/document_edit_template.pt:38
+msgid "Upload"
+msgstr ""
+
+#: CMFDefault/browser/document.py:73
+#: CMFDefault/browser/newsitem.py:54
+#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:40
+msgid "Body"
 msgstr ""
 
 #: CMFDefault/browser/favorite.py:44
@@ -286,6 +292,24 @@ msgstr ""
 msgid "Items moved up."
 msgstr ""
 
+#: CMFDefault/browser/folder.py:359
+#: CMFDefault/browser/folder.py:374
+#: CMFDefault/browser/folder.py:389
+#: CMFDefault/browser/folder.py:404
+#: CMFDefault/formlib/form.py:144
+#: CMFDefault/skins/zpt_content/document_edit_control.py:14
+#: CMFDefault/skins/zpt_content/folder_edit_control.py:9
+#: CMFDefault/skins/zpt_content/link_edit_control.py:13
+#: CMFDefault/skins/zpt_content/newsitem_edit_control.py:15
+#: CMFDefault/skins/zpt_control/folder_bottom_control.py:13
+#: CMFDefault/skins/zpt_control/folder_down_control.py:13
+#: CMFDefault/skins/zpt_control/folder_rename_control.py:17
+#: CMFDefault/skins/zpt_control/folder_top_control.py:13
+#: CMFDefault/skins/zpt_control/folder_up_control.py:13
+#: CMFTopic/skins/zpt_topic/topic_edit_control.py:11
+msgid "Nothing to change."
+msgstr ""
+
 #: CMFDefault/browser/folder.py:361
 #: CMFDefault/browser/folder.py:376
 #: CMFDefault/browser/folder.py:391
@@ -388,16 +412,6 @@ msgstr ""
 msgid "Expiration Date"
 msgstr ""
 
-#: CMFDefault/browser/metadata.py:119
-#: CMFDefault/browser/templates/document_edit.pt:21
-#: CMFDefault/browser/templates/newsitem_edit.pt:16
-#: CMFDefault/skins/zpt_content/document_edit_template.pt:24
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:90
-#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:19
-#: CMFDefault/skins/zpt_generic/metadata_help.pt:124
-msgid "Format"
-msgstr ""
-
 #: CMFDefault/browser/metadata.py:124
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:97
 #: CMFDefault/skins/zpt_generic/metadata_help.pt:149
@@ -415,9 +429,38 @@ msgstr ""
 msgid "Properties"
 msgstr ""
 
+#: CMFDefault/browser/metadata.py:223
+#: CMFDefault/formlib/form.py:100
+#: CMFDefault/skins/zpt_content/document_edit_form.py:34
+#: CMFDefault/skins/zpt_content/file_edit_form.py:25
+#: CMFDefault/skins/zpt_content/folder_edit_form.py:24
+#: CMFDefault/skins/zpt_content/image_edit_form.py:25
+#: CMFDefault/skins/zpt_content/link_edit_form.py:24
+#: CMFDefault/skins/zpt_content/metadata_edit_form.py:49
+#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:28
+#: CMFDefault/skins/zpt_generic/password_form.py:37
+#: CMFDefault/skins/zpt_generic/reconfig_form.py:22
+#: CMFTopic/skins/zpt_topic/topic_edit_form.py:26
+#: CMFDefault/skins/zpt_generic/personalize_form.pt:83
+msgid "Change"
+msgstr ""
+
 #: CMFDefault/browser/metadata.py:229
 #: CMFDefault/skins/zpt_content/metadata_edit_form.py:50
 msgid "Change and Edit"
+msgstr ""
+
+#: CMFDefault/browser/metadata.py:235
+#: CMFDefault/formlib/form.py:106
+#: CMFDefault/skins/zpt_content/document_edit_form.py:35
+#: CMFDefault/skins/zpt_content/file_edit_form.py:26
+#: CMFDefault/skins/zpt_content/folder_edit_form.py:25
+#: CMFDefault/skins/zpt_content/image_edit_form.py:26
+#: CMFDefault/skins/zpt_content/link_edit_form.py:25
+#: CMFDefault/skins/zpt_content/metadata_edit_form.py:51
+#: CMFDefault/skins/zpt_content/newsitem_edit_form.py:29
+#: CMFTopic/skins/zpt_topic/topic_edit_form.py:27
+msgid "Change and View"
 msgstr ""
 
 #: CMFDefault/browser/metadata.py:251
@@ -433,20 +476,6 @@ msgstr ""
 #: CMFDefault/browser/metadata.py:45
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:24
 msgid "On"
-msgstr ""
-
-#: CMFDefault/browser/metadata.py:59
-#: CMFDefault/browser/metadata.py:84
-#: CMFDefault/browser/templates/document_edit.pt:17
-#: CMFDefault/skins/zpt_content/document_edit_template.pt:20
-#: CMFDefault/skins/zpt_content/file_edit_template.pt:19
-#: CMFDefault/skins/zpt_content/folder_edit_template.pt:22
-#: CMFDefault/skins/zpt_content/image_edit_template.pt:19
-#: CMFDefault/skins/zpt_content/metadata_edit_template.pt:44
-#: CMFDefault/skins/zpt_generic/metadata_help.pt:52
-#: CMFDefault/skins/zpt_generic/search_form_template.pt:67
-#: CMFTopic/skins/zpt_topic/topic_edit_template.pt:22
-msgid "Description"
 msgstr ""
 
 #: CMFDefault/browser/metadata.py:70
@@ -473,8 +502,8 @@ msgid "Contributors"
 msgstr ""
 
 #: CMFDefault/browser/newsitem.py:49
-#: CMFDefault/skins/zpt_content/newsitem_edit_control.py:11
-msgid "News Item changed."
+#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:33
+msgid "Lead-in"
 msgstr ""
 
 #: CMFDefault/browser/templates/batch_widgets.pt:10
@@ -491,44 +520,6 @@ msgstr ""
 #: CMFDefault/browser/templates/batch_widgets.pt:41
 #: CMFDefault/browser/templates/batch_widgets.pt:47
 msgid "${DYNAMIC_CONTENT}"
-msgstr ""
-
-#: CMFDefault/browser/templates/document_edit.pt:25
-#: CMFDefault/browser/templates/newsitem_edit.pt:20
-#: CMFDefault/skins/zpt_content/document_edit_template.pt:28
-#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:23
-msgid "structured-text"
-msgstr ""
-
-#: CMFDefault/browser/templates/document_edit.pt:28
-#: CMFDefault/browser/templates/newsitem_edit.pt:23
-#: CMFDefault/skins/zpt_content/document_edit_template.pt:31
-#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:26
-msgid "plain text"
-msgstr ""
-
-#: CMFDefault/browser/templates/document_edit.pt:31
-#: CMFDefault/browser/templates/newsitem_edit.pt:26
-#: CMFDefault/skins/zpt_content/document_edit_template.pt:34
-#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:29
-msgid "html"
-msgstr ""
-
-#: CMFDefault/browser/templates/document_edit.pt:35
-#: CMFDefault/skins/zpt_content/document_edit_template.pt:38
-msgid "Upload"
-msgstr ""
-
-#: CMFDefault/browser/templates/document_edit.pt:5
-#: CMFDefault/browser/templates/newsitem_edit.pt:5
-#: CMFDefault/skins/zpt_content/document_edit_template.pt:5
-#: CMFDefault/skins/zpt_content/file_edit_template.pt:5
-#: CMFDefault/skins/zpt_content/folder_edit_template.pt:5
-#: CMFDefault/skins/zpt_content/image_edit_template.pt:5
-#: CMFDefault/skins/zpt_content/link_edit_template.pt:5
-#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:5
-#: CMFTopic/skins/zpt_topic/topic_edit_template.pt:5
-msgid "Edit: ${obj_title}"
 msgstr ""
 
 #: CMFDefault/browser/templates/folder_contents.pt:11
@@ -581,16 +572,6 @@ msgstr ""
 msgid "Link: ${link}"
 msgstr ""
 
-#: CMFDefault/browser/templates/newsitem_edit.pt:30
-#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:33
-msgid "Lead-in"
-msgstr ""
-
-#: CMFDefault/browser/templates/newsitem_edit.pt:37
-#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:40
-msgid "Body"
-msgstr ""
-
 #: CMFDefault/browser/utils.py:273
 msgid "Previous item"
 msgstr ""
@@ -620,17 +601,13 @@ msgid "items"
 msgstr ""
 
 #: CMFDefault/exceptions.py:68
-#: CMFDefault/formlib/widgets.py:52
+#: CMFDefault/formlib/widgets.py:62
 msgid "Invalid email address."
 msgstr ""
 
 #: CMFDefault/formlib/form.py:123
 #. Default: ""
 msgid "Edit ${obj_type}"
-msgstr ""
-
-#: CMFDefault/formlib/form.py:127
-msgid "This resource is locked via webDAV."
 msgstr ""
 
 #: CMFDefault/formlib/form.py:141
@@ -943,6 +920,20 @@ msgstr ""
 msgid "Submit ${objectid} for Review."
 msgstr ""
 
+#: CMFDefault/skins/zpt_content/document_edit_control.py:10
+msgid "Document changed."
+msgstr ""
+
+#: CMFDefault/skins/zpt_content/document_edit_template.pt:5
+#: CMFDefault/skins/zpt_content/file_edit_template.pt:5
+#: CMFDefault/skins/zpt_content/folder_edit_template.pt:5
+#: CMFDefault/skins/zpt_content/image_edit_template.pt:5
+#: CMFDefault/skins/zpt_content/link_edit_template.pt:5
+#: CMFDefault/skins/zpt_content/newsitem_edit_template.pt:5
+#: CMFTopic/skins/zpt_topic/topic_edit_template.pt:5
+msgid "Edit: ${obj_title}"
+msgstr ""
+
 #: CMFDefault/skins/zpt_content/file_edit_control.py:8
 msgid "File changed."
 msgstr ""
@@ -995,6 +986,10 @@ msgstr ""
 
 #: CMFDefault/skins/zpt_content/metadata_edit_template.pt:5
 msgid "Resource Metadata: ${obj_title}"
+msgstr ""
+
+#: CMFDefault/skins/zpt_content/newsitem_edit_control.py:11
+msgid "News Item changed."
 msgstr ""
 
 #: CMFDefault/skins/zpt_content/transition_form.pt:11
@@ -1136,7 +1131,6 @@ msgid "Add"
 msgstr ""
 
 #: CMFDefault/skins/zpt_generic/discussion_reply_form.py:41
-#: CMFDefault/browser/templates/document_edit.pt:41
 #: CMFDefault/skins/zpt_content/document_edit_template.pt:44
 msgid "Edit"
 msgstr ""
@@ -2102,16 +2096,16 @@ msgstr ""
 msgid "Query Parameters:"
 msgstr ""
 
-#: DCWorkflow/DCWorkflow.py:280
+#: DCWorkflow/DCWorkflow.py:281
 msgid "Object is in an undefined state."
 msgstr ""
 
-#: DCWorkflow/DCWorkflow.py:285
+#: DCWorkflow/DCWorkflow.py:286
 #. Default: ""
 msgid "Transition '${action_id}' is not triggered by a user action."
 msgstr ""
 
-#: DCWorkflow/DCWorkflow.py:468
+#: DCWorkflow/DCWorkflow.py:469
 #. Default: ""
 msgid "Destination state undefined: ${state_id}"
 msgstr ""

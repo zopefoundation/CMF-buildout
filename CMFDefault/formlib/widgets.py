@@ -18,10 +18,12 @@ $Id$
 from zope.app.form import InputWidget
 from zope.app.form.browser import BrowserWidget
 from zope.app.form.browser import MultiSelectSetWidget
+from zope.app.form.browser import RadioWidget
 from zope.app.form.browser import TextWidget
 from zope.app.form.browser import TextAreaWidget
 from zope.app.form.interfaces import ConversionError
 from zope.app.form.interfaces import IInputWidget
+from zope.app.form.interfaces import WidgetInputError
 from zope.component import adapts
 from zope.interface import implementsOnly
 from zope.publisher.interfaces.browser import IBrowserRequest
@@ -32,9 +34,17 @@ from zope.schema.interfaces import ITuple
 from zope.schema.interfaces import ITextLine
 
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.formlib.schema import IEmailLine
-from Products.CMFDefault.formlib.vocabulary import SimpleVocabulary
+from Products.CMFDefault.exceptions import IllegalHTML
+from Products.CMFDefault.utils import scrubHTML
 from Products.CMFDefault.utils import Message as _
+from schema import IEmailLine
+from vocabulary import SimpleVocabulary
+
+
+# generic widgets
+
+def ChoiceRadioWidget(field, request):
+    return RadioWidget(field, field.vocabulary, request)
 
 
 class EmailInputWidget(TextWidget):
@@ -50,6 +60,20 @@ class EmailInputWidget(TextWidget):
             return str(input.strip())
         except (AttributeError, UnicodeEncodeError), err:
             raise ConversionError(_(u'Invalid email address.'), err)
+
+
+class TextInputWidget(TextAreaWidget):
+
+    def getInputValue(self):
+        value = super(TextInputWidget, self).getInputValue()
+        if value:
+            try:
+                value = scrubHTML(value)
+            except IllegalHTML, err:
+                self._error = WidgetInputError(self.context.__name__,
+                                               self.label, err.args[0])
+                raise self._error
+        return value
 
 
 class TupleTextAreaWidget(TextAreaWidget):
@@ -80,6 +104,8 @@ class TupleTextAreaWidget(TextAreaWidget):
 def TupleInputWidget(field, request):
     return TupleTextAreaWidget(field, field.value_type, request)
 
+
+# special widgets
 
 class SubjectInputWidget(InputWidget, BrowserWidget):
 

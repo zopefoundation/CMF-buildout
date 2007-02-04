@@ -15,6 +15,8 @@
 $Id$
 """
 
+from zope.interface import implements
+from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
 
@@ -28,3 +30,17 @@ class SimpleVocabulary(SimpleVocabulary):
         return cls(terms, *interfaces)
 
     fromTitleItems = classmethod(fromTitleItems)
+
+
+class StaticVocabulary(object):
+
+    """Vocabulary factory for static items.
+    """
+
+    implements(IVocabularyFactory)
+
+    def __init__(self, items):
+        self._vocabulary = SimpleVocabulary.fromTitleItems(items)
+
+    def __call__(self, context):
+        return self._vocabulary

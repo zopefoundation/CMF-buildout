@@ -13,7 +13,7 @@
    tal:attributes="action request/ACTUAL_URL">
 <div class="widgets">
  <tal:loop tal:repeat="widget view/widgets"
-><div class="widget"
+><div class="widget" tal:condition="not: widget/hide|nothing"
     tal:define="split widget/split|nothing; hint widget/hint|nothing"
     tal:attributes="class python: split and 'widget split' or 'widget'">
   <label tal:attributes="for widget/name; title python: hint or None"
@@ -23,7 +23,9 @@
    <div class="data"><tal:span tal:replace="structure widget" /></div
   ><tal:case tal:condition="widget/error"
       tal:replace="structure widget/error" /></div>
- </div></tal:loop>
+ </div
+><tal:span tal:condition="widget/hide|nothing"
+    tal:replace="structure widget/hidden" /></tal:loop>
 </div>
 <div class="clear"></div>
 

@@ -124,8 +124,8 @@ class ContentEditFormBase(EditFormBase):
 
     def handle_validate(self, action, data):
         if self.context.wl_isLocked():
-            self.status = _(u'This resource is locked via webDAV.')
-            return ()
+            return (_(u'This resource is locked via webDAV.'),)
+        return None
 
     def _handle_success(self, action, data):
         # normalize set and datetime

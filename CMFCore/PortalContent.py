@@ -30,6 +30,7 @@ from interfaces import IContentish
 from interfaces.Contentish import Contentish as z2IContentish
 from permissions import FTPAccess
 from permissions import View
+from utils import Message as _
 
 
 class PortalContent(DynamicType, CMFCatalogAware, SimpleItem):
@@ -72,11 +73,11 @@ class PortalContent(DynamicType, CMFCatalogAware, SimpleItem):
     security.declareProtected(FTPAccess, 'manage_FTPlist')
 
     def failIfLocked(self):
-        """
-        Check if isLocked via webDav
+        """ Check if isLocked via webDav.
         """
         if self.wl_isLocked():
-            raise ResourceLockedError('This resource is locked via webDAV.')
+            raise ResourceLockedError(_(u'This resource is locked via '
+                                        u'webDAV.'))
         return 0
 
     #

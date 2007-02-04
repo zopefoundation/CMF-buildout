@@ -15,13 +15,10 @@
 $Id$
 """
 
-from Acquisition import aq_acquire
 from OFS.SimpleItem import SimpleItem
-from Products.Five import i18n
 from Products.Five import zcml
 from zope.component import adapts
 from zope.i18n.interfaces import IUserPreferredLanguages
-from zope.i18n.testmessagecatalog import TestMessageFallbackDomain
 from zope.interface import implements
 from zope.publisher.interfaces.http import IHTTPRequest
 from zope.testing import testrunner
@@ -108,18 +105,6 @@ class BrowserLanguages(object):
         return ('test',)
 
 
-# BBB: for Five < 1.5.2
-class _FallbackTranslationService(object):
-
-    def translate(self, domain, msgid, mapping, context, target_language,
-                  default):
-        util = TestMessageFallbackDomain(domain)
-        if context is not None:
-            context = aq_acquire(context, 'REQUEST', None)
-        return util.translate(msgid, mapping, context, target_language,
-                              default)
-
-
 class EventZCMLLayer:
 
     @classmethod
@@ -155,17 +140,10 @@ class FunctionalZCMLLayer:
     def setUp(cls):
         import Products
 
-        # BBB: for Five < 1.5.2
-        cls._fallback_translation_service = i18n._fallback_translation_service
-        i18n._fallback_translation_service = _FallbackTranslationService()
-
         zcml.load_config('testing.zcml', Products.CMFCore)
 
     @classmethod
     def tearDown(cls):
-        # BBB: for Five < 1.5.2
-        i18n._fallback_translation_service = cls._fallback_translation_service
-
         cleanUp()
 
 

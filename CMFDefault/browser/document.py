@@ -51,7 +51,8 @@ class IDocumentSchema(Interface):
     """Schema for document views.
     """
 
-    safety_belt = ASCIILine()
+    safety_belt = ASCIILine(
+        required=False)
 
     title = TextLine(
         title=_(u'Title'),
@@ -84,7 +85,7 @@ class DocumentSchemaAdapter(SchemaAdapterBase):
     implements(IDocumentSchema)
 
     safety_belt = ProxyFieldProperty(IDocumentSchema['safety_belt'],
-                                     'SafetyBelt')
+                                     '_safety_belt')
     title = ProxyFieldProperty(IDocumentSchema['title'], 'Title')
     description = ProxyFieldProperty(IDocumentSchema['description'],
                                      'Description')
@@ -129,15 +130,19 @@ class DocumentEditView(ContentEditFormBase):
         body = data.get('upload')
         if body:
             data['text'] = body.decode(self._getDefaultCharset())
-        super(DocumentEditView, self)._handle_success(action, data)
+        changed = super(DocumentEditView, self)._handle_success(action, data)
+        if changed:
+            self.context.updateSafetyBelt(data.get('safety_belt'))
+        return changed
 
     def handle_validate(self, action, data):
         errors = super(DocumentEditView, self).handle_validate(action, data)
         if errors:
             return errors
         safety_belt = self.request.form['form.safety_belt']
-        if not self.context._safety_belt_update(safety_belt):
+        if not self.context.isValidSafetyBelt(safety_belt):
             return (_(u'Intervening changes from elsewhere detected. Please '
                       u'refetch the document and reapply your changes.'),)
-        self.request.form['form.safety_belt'] = self.context.SafetyBelt()
+        # make sure applyChanges doesn't try to update safety_belt
+        self.request.form['form.safety_belt'] = self.context._safety_belt
         return None

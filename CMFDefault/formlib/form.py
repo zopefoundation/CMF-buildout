@@ -134,14 +134,16 @@ class ContentEditFormBase(EditFormBase):
                 data[k] = set(v)
             elif isinstance(v, datetime) and v.tzname() is None:
                 data[k] = parseDatetimetz(str(v))
-        if form.applyChanges(self.context, self.form_fields, data,
-                             self.adapters):
+        changed = form.applyChanges(self.context, self.form_fields, data,
+                                    self.adapters)
+        if changed:
             self.context.reindexObject()
             obj_type = translate(self.context.Type(), self.context)
             self.status = _(u'${obj_type} changed.',
                             mapping={'obj_type': obj_type})
         else:
             self.status = _(u'Nothing to change.')
+        return changed
 
     def handle_change_success(self, action, data):
         self._handle_success(action, data)

@@ -101,17 +101,9 @@ class Document(PortalContent, DefaultDublinCoreImpl):
                 + '?manage_tabs_message=Document+updated'
                 )
 
-    def _edit(self, text, text_format='', safety_belt=''):
+    def _edit(self, text, text_format=''):
         """ Edit the Document and cook the body.
         """
-        if not self._safety_belt_update(safety_belt=safety_belt):
-            msg = _(u'Intervening changes from elsewhere detected. '
-                    u'Please refetch the document and reapply your changes. '
-                    u'(You may be able to recover your version using the '
-                    u"browser 'back' button, but will have to apply them to "
-                    u'a freshly fetched copy.)')
-            raise EditingConflict(msg)
-
         self.text = text
         self._size = len(text)
 
@@ -139,6 +131,13 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         disables header processing
         """
         self.failIfLocked()
+        if not self._safety_belt_update(safety_belt=safety_belt):
+            msg = _(u'Intervening changes from elsewhere detected. '
+                    u'Please refetch the document and reapply your changes. '
+                    u'(You may be able to recover your version using the '
+                    u"browser 'back' button, but will have to apply them to "
+                    u'a freshly fetched copy.)')
+            raise EditingConflict(msg)
         if file and (type(file) is not type('')):
             contents=file.read()
             if contents:
@@ -146,7 +145,7 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         if html_headcheck(text) and text_format.lower() != 'plain':
             text = bodyfinder(text)
         self.setFormat(text_format)
-        self._edit(text=text, text_format=text_format, safety_belt=safety_belt)
+        self._edit(text=text, text_format=text_format)
         self.reindexObject()
 
     security.declareProtected(ModifyPortalContent, 'setMetadata')
@@ -209,6 +208,35 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         For web form hidden button."""
         return self._safety_belt
 
+    security.declarePrivate('isValidSafetyBelt')
+    def isValidSafetyBelt(self, safety_belt):
+        """Check validity of safety belt.
+        """
+        if not safety_belt:
+            # we have no safety belt value
+            return True
+        if self._safety_belt is None:
+            # the current object has no safety belt (ie - freshly made)
+            return True
+        if safety_belt == self._safety_belt:
+            # the safety belt does match the current one
+            return True
+        this_user = getSecurityManager().getUser().getId()
+        if ((safety_belt == self._last_safety_belt)
+                and (this_user == self._last_safety_belt_editor)):
+            # safety belt and user match last safety belt and user
+            return True
+        return False
+
+    security.declarePrivate('updateSafetyBelt')
+    def updateSafetyBelt(self, safety_belt):
+        """Update safety belt tracking.
+        """
+        this_user = getSecurityManager().getUser().getId()
+        self._last_safety_belt_editor = this_user
+        self._last_safety_belt = safety_belt
+        self._safety_belt = str(self._p_mtime)
+
     def _safety_belt_update(self, safety_belt=''):
         """Check validity of safety belt and update tracking if valid.
 
@@ -222,31 +250,9 @@ class Document(PortalContent, DefaultDublinCoreImpl):
          - ... is the same as the last one given out, and the person doing the
            edit is the same as the last editor."""
 
-        this_belt = safety_belt
-        this_user = getSecurityManager().getUser().getId()
-
-        if (# we have a safety belt value:
-            this_belt
-            # and the current object has a safety belt (ie - not freshly made)
-            and (self._safety_belt is not None)
-            # and the safety belt doesn't match the current one:
-            and (this_belt != self._safety_belt)
-            # and safety belt and user don't match last safety belt and user:
-            and not ((this_belt == self._last_safety_belt)
-                     and (this_user == self._last_safety_belt_editor))):
-            # Fail.
+        if not self.isValidSafetyBelt(safety_belt):
             return 0
-
-        # We qualified - either:
-        #  - the edit was submitted with safety belt stripped, or
-        #  - the current safety belt was used, or
-        #  - the last one was reused by the last person who did the last edit.
-        # In any case, update the tracking.
-
-        self._last_safety_belt_editor = this_user
-        self._last_safety_belt = this_belt
-        self._safety_belt = str(self._p_mtime)
-
+        self.updateSafetyBelt(safety_belt)
         return 1
 
     ### Content accessor methods
@@ -341,7 +347,6 @@ class Document(PortalContent, DefaultDublinCoreImpl):
 
             self._edit( self.text
                       , text_format=self.text_format
-                      , safety_belt=self._safety_belt
                       )
 
     ## FTP handlers
@@ -350,30 +355,33 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         """ Handle HTTP (and presumably FTP?) PUT requests """
         self.dav__init(REQUEST, RESPONSE)
         self.dav__simpleifhandler(REQUEST, RESPONSE, refresh=1)
+
+        try:
+            self.failIfLocked()
+        except ResourceLockedError, msg:
+            transaction.abort()
+            RESPONSE.setStatus(423)
+            return RESPONSE
+
         body = REQUEST.get('BODY', '')
         headers, body, format = self.handleText(text=body)
-        safety_belt = headers.get('SafetyBelt', '')
         if REQUEST.get_header('Content-Type', '') == 'text/html':
             text_format = 'html'
         else:
             text_format = format
 
-        try:
-            self.setFormat(text_format)
-            self.setMetadata(headers)
-            self._edit(text=body, safety_belt=safety_belt)
-        except EditingConflict, msg:
+        safety_belt = headers.get('SafetyBelt', '')
+        if not self._safety_belt_update(safety_belt):
             # XXX Can we get an error msg through?  Should we be raising an
             #     exception, to be handled in the FTP mechanism?  Inquiring
             #     minds...
             transaction.abort()
             RESPONSE.setStatus(450)
             return RESPONSE
-        except ResourceLockedError, msg:
-            transaction.abort()
-            RESPONSE.setStatus(423)
-            return RESPONSE
 
+        self.setFormat(text_format)
+        self.setMetadata(headers)
+        self._edit(body)
         RESPONSE.setStatus(204)
         self.reindexObject()
         return RESPONSE

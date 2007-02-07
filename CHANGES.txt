@@ -2,6 +2,8 @@ CMF 2.1.0-beta (unreleased)
 
   New Features
 
+    - Document: Added two new methods for safety belt handling.
+
     - setup handlers: Improved properties handler.
       It now works with properties using a default_charset other than UTF-8.
 

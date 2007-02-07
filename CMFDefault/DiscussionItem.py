@@ -283,7 +283,8 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
         self._container[id] = item
         item = item.__of__(self)
 
-        item._edit( text_format=text_format, text=text )
+        item.setFormat(text_format)
+        item._edit(text)
         item.addCreator(Creator)
         item.indexObject()
 

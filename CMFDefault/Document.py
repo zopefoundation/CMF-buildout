@@ -84,8 +84,8 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         self.id = id
         self.title = title
         self.description = description
-        self._edit( text=text, text_format=text_format )
-        self.setFormat( text_format )
+        self.setFormat(text_format)
+        self._edit(text)
 
     security.declareProtected(ModifyPortalContent, 'manage_edit')
     manage_edit = DTMLFile('zmi_editDocument', _dtmldir)
@@ -101,14 +101,13 @@ class Document(PortalContent, DefaultDublinCoreImpl):
                 + '?manage_tabs_message=Document+updated'
                 )
 
-    def _edit(self, text, text_format=''):
+    def _edit(self, text):
         """ Edit the Document and cook the body.
         """
         self.text = text
         self._size = len(text)
 
-        if not text_format:
-            text_format = self.text_format
+        text_format = self.text_format
         if text_format == 'html':
             self.cooked_text = text
         elif text_format == 'plain':
@@ -145,7 +144,7 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         if html_headcheck(text) and text_format.lower() != 'plain':
             text = bodyfinder(text)
         self.setFormat(text_format)
-        self._edit(text=text, text_format=text_format)
+        self._edit(text)
         self.reindexObject()
 
     security.declareProtected(ModifyPortalContent, 'setMetadata')
@@ -155,9 +154,8 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         headers['Subject'] = new_subject or self.Subject()
         new_contrib = contributorsplitter(headers)
         headers['Contributors'] = new_contrib or self.Contributors()
-        haveheader = headers.has_key
         for key, value in self.getMetadataHeaders():
-            if not haveheader(key):
+            if not key in headers:
                 headers[key] = value
         self._editMetadata(title=headers['Title'],
                           subject=headers['Subject'],
@@ -345,9 +343,7 @@ class Document(PortalContent, DefaultDublinCoreImpl):
             if html_headcheck(self.text) and value != 'plain':
                 self.text = bodyfinder(self.text)
 
-            self._edit( self.text
-                      , text_format=self.text_format
-                      )
+            self._edit(self.text)
 
     ## FTP handlers
     security.declareProtected(ModifyPortalContent, 'PUT')
@@ -364,11 +360,11 @@ class Document(PortalContent, DefaultDublinCoreImpl):
             return RESPONSE
 
         body = REQUEST.get('BODY', '')
-        headers, body, format = self.handleText(text=body)
         if REQUEST.get_header('Content-Type', '') == 'text/html':
-            text_format = 'html'
+            format = 'html'
         else:
-            text_format = format
+            format = None
+        headers, body, format = self.handleText(body, format)
 
         safety_belt = headers.get('SafetyBelt', '')
         if not self._safety_belt_update(safety_belt):
@@ -379,7 +375,7 @@ class Document(PortalContent, DefaultDublinCoreImpl):
             RESPONSE.setStatus(450)
             return RESPONSE
 
-        self.setFormat(text_format)
+        self.setFormat(format)
         self.setMetadata(headers)
         self._edit(body)
         RESPONSE.setStatus(204)

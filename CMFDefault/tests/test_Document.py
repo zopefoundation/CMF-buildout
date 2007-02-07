@@ -146,7 +146,7 @@ class DocumentTests(ConformsToContent, RequestTestBase):
         d = self._makeOne('foo')
         d.edit('structured-text', FAUX_HTML_LEADING_TEXT)
         fully_edited = d.cooked_text
-        d._edit(FAUX_HTML_LEADING_TEXT, 'structured-text')
+        d._edit(FAUX_HTML_LEADING_TEXT)
         partly_edited = d.cooked_text
         self.assertEquals(fully_edited, partly_edited)
 

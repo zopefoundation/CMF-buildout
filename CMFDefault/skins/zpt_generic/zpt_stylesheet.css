@@ -472,8 +472,9 @@ p.NewsHeadline {
                    list-style-type: disc; }
 .widget .error   { display: block;
                    font-size: 80%; font-weight: bold; color: red; }
-.errors          { font-family: sans-serif;
-                   font-size: 72%; font-weight: bold; color: red; }
+.errors          { font-size: 90%; font-weight: bold; color: red; }
+.errors li       { font-family: sans-serif;
+                   font-size: 80%; font-weight: bold; color: red; }
 .clear           { clear: both; padding-top: 6px; }
 .buttons         { min-width: 604px; margin: 0 0 0 116px; }
 .button          { margin-bottom: 6px; }

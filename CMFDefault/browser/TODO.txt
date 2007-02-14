@@ -84,21 +84,15 @@ Converting skins to views:
       file_view.py -> FileView
       file_view_template.pt -> templates/file.pt
 
-  [ ] IMutableFile @@edit.html:
+  [x] IMutableFile @@edit.html:
 
-      file_edit_form.py -> FileEditView
-      file_edit_template.pt -> formlib based
-      file_edit_control.py -> formlib based
+      file_edit_form.py, image_edit_form.py -> FileEditView
+      file_edit_template.pt, image_edit_template.pt -> formlib based
+      file_edit_control.py, image_edit_control.py -> formlib based
 
   [ ] IImage @@view.html:
 
       image_view.py -> ImageView
       image_view_template.pt -> templates/image.pt
-
-  [ ] IMutableImage @@edit.html:
-
-      image_edit_form.py -> ImageEditView
-      image_edit_template.pt -> formlib based
-      image_edit_control.py -> formlib based
 
   [ ] complete this todo list

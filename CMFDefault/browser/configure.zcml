@@ -103,6 +103,16 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <adapter factory=".file.FileSchemaAdapter"/>
+
+  <browser:page
+      for="..interfaces.IMutableFile"
+      layer="..interfaces.ICMFDefaultSkin"
+      name="edit.html"
+      class=".file.FileEditView"
+      permission="cmf.ModifyPortalContent"
+      />
+
   <browser:page
       for="*"
       layer="..interfaces.ICMFDefaultSkin"

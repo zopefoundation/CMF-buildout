@@ -18,6 +18,7 @@ $Id$
 from datetime import datetime
 
 from DateTime.DateTime import DateTime
+from OFS.Image import Pdata
 from zope.datetime import parseDatetimetz
 from zope.interface import implements
 from zope.schema import BytesLine
@@ -62,14 +63,18 @@ class ProxyFieldProperty(object):
             attribute = getattr(field, 'default', _marker)
             if attribute is _marker:
                 raise AttributeError(self._field.__name__)
+        elif isinstance(attribute, Pdata):
+            attribute = str(attribute)
         elif callable(attribute):
             attribute = attribute()
 
+        if self._field._type == str:
+            return attribute
         if isinstance(attribute, str) and inst.encoding:
             return attribute.decode(inst.encoding)
-        elif isinstance(attribute, DateTime):
+        if isinstance(attribute, DateTime):
             return parseDatetimetz(attribute.ISO8601())
-        elif isinstance(attribute, (tuple, list)):
+        if isinstance(attribute, (tuple, list)):
             if inst.encoding:
                 attribute = [ isinstance(v, str)
                               and v.decode(inst.encoding) or v

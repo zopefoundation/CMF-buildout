@@ -9,6 +9,7 @@ Utilities
       >>> class FooContent(PropertyManager):
       ...     _properties=({'id':'foo_prop', 'type': 'string'},)
       ...     foo_text = ''
+      ...     foo_bytes = ''
       ...     foo_datetime = None
       ...     foo_set = ()
       ...     foo_list = []
@@ -19,6 +20,7 @@ Utilities
       >>> from zope import schema
       >>> class IFooContentView(Interface):
       ...     foo_text = schema.Text()
+      ...     foo_bytes = schema.Bytes()
       ...     foo_datetime = schema.Datetime()
       ...     foo_set = schema.Set()
       ...     foo_list = schema.List()
@@ -29,6 +31,7 @@ Utilities
       >>> class FooContentAdapter(object):
       ... 
       ...     foo_text = ProxyFieldProperty(IFooContentView['foo_text'])
+      ...     foo_bytes = ProxyFieldProperty(IFooContentView['foo_bytes'])
       ...     foo_datetime = ProxyFieldProperty(IFooContentView['foo_datetime'])
       ...     foo_set = ProxyFieldProperty(IFooContentView['foo_set'])
       ...     foo_list = ProxyFieldProperty(IFooContentView['foo_list'])
@@ -49,6 +52,18 @@ Utilities
       >>> content.foo_text
       'foo'
       >>> adapter.foo_text == foo_text
+      True
+
+    Pdata is read as str::
+
+      >>> from OFS.Image import Pdata
+      >>> foo_bytes = 'foo'
+      >>> content.foo_bytes = Pdata(foo_bytes)
+      >>> isinstance(content.foo_bytes, Pdata)
+      True
+      >>> isinstance(adapter.foo_bytes, Pdata)
+      False
+      >>> adapter.foo_bytes == foo_bytes
       True
 
     datetime is mapped to DateTime::

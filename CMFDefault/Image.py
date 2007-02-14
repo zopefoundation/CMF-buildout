@@ -31,6 +31,8 @@ from Products.CMFCore.utils import _checkConditionalGET
 from Products.GenericSetup.interfaces import IDAVAware
 
 from DublinCore import DefaultDublinCoreImpl
+from interfaces import IImage
+from interfaces import IMutableImage
 from permissions import ModifyPortalContent
 from permissions import View
 
@@ -78,7 +80,7 @@ class Image(PortalContent, OFS.Image.Image, DefaultDublinCoreImpl):
     """A Portal-managed Image.
     """
 
-    implements(IDAVAware)
+    implements(IMutableImage, IImage, IDAVAware)
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )

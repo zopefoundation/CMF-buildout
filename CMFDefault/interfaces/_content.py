@@ -126,3 +126,23 @@ class IMutableFile(IFile):
 
     """ Updatable form of IFile.
     """
+
+    def manage_upload(file='', REQUEST=None):
+        """ Replaces the current data of the object with file.
+        """
+
+
+class IImage(IFile):
+
+    """ Image content.
+    """
+
+    def __str__():
+        """ Get the default HTML 'img' tag for this image.
+        """
+
+
+class IMutableImage(IImage, IMutableFile):
+
+    """ Updatable form of IImage.
+    """

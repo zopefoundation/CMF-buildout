@@ -52,6 +52,18 @@ class TestImageElement(ConformsToContent, unittest.TestCase):
         self.site = DummySite('site')
         self.site._setObject( 'portal_membership', DummyTool() )
 
+    def test_z3interfaces(self):
+        from zope.interface.verify import verifyClass
+        from Products.CMFDefault.interfaces import IFile
+        from Products.CMFDefault.interfaces import IImage
+        from Products.CMFDefault.interfaces import IMutableFile
+        from Products.CMFDefault.interfaces import IMutableImage
+
+        verifyClass(IFile, self._getTargetClass())
+        verifyClass(IImage, self._getTargetClass())
+        verifyClass(IMutableFile, self._getTargetClass())
+        verifyClass(IMutableImage, self._getTargetClass())
+
     def test_getId_on_old_Image_instance(self):
         image = self.site._setObject('testimage', self._makeOne('testimage'))
         self.assertEqual(image.getId(), 'testimage')

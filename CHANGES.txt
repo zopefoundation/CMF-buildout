@@ -17,6 +17,13 @@ CMF 2.1.0-beta (unreleased)
       would take all user folders up to the Zope root into account whereas
       member area creation would not.
 
+    - CMFCore.MembershipTool/CMFDefault.MembershipTool: when using an
+      object without a __nonzero__ but with a __len__ (ala
+      CMFBTreeFolder) as a member folder, the createMemberArea method
+      would believe there was no members folder if the folder was
+      empty, and so would fail (change "not membersfolder" to
+      "membersfolder is not None") .
+
     - CMFDefault.File and CMFDefault.Image: Restored ZMI Cache tab which was
       lost in CMF 1.6.
 

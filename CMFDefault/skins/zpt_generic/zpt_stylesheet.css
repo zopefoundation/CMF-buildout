@@ -470,6 +470,8 @@ p.NewsHeadline {
 .widget.split select { width: 244px; }
 .widget ul       { margin: 0 0 0 10px; padding: 0 0 0 10px;
                    list-style-type: disc; }
+.widget li,
+.widget pre      { margin: 0; }
 .widget .error   { display: block;
                    font-size: 80%; font-weight: bold; color: red; }
 .errors          { font-size: 90%; font-weight: bold; color: red; }

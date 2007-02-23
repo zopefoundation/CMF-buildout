@@ -18,6 +18,7 @@ from AccessControl.SecurityManager import setSecurityPolicy
 from dummy import DummyFolder
 from security import AnonymousUser
 from security import PermissiveSecurityPolicy
+from Products.CMFCore.utils import getPackageLocation
 
 
 class LogInterceptor:
@@ -208,7 +209,7 @@ class WritableFSDVTest(FSDVTest):
 
     def setUp(self):
         # store the place where the skin copy will be created
-        self.tempname = mktemp()
+        self.tempname = mktemp(dir=getPackageLocation('Products.CMFCore.tests'))
         # create the temporary folder
         mkdir(self.tempname)
         # copy the source fake skin to the new location

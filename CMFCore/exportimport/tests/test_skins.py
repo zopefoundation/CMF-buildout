@@ -45,7 +45,7 @@ _SKINSTOOL_BODY = """\
 <object name="portal_skins" meta_type="CMF Skins Tool" allow_any="False"
    cookie_persistence="False" default_skin="" request_varname="portal_skin">
  <object name="foo_directoryview" meta_type="Filesystem Directory View"
-    directory="CMFCore/exportimport/tests/one"/>
+    directory="Products.CMFCore.exportimport.tests:one"/>
  <skin-path name="foo_path">
   <layer name="one"/>
  </skin-path>
@@ -64,11 +64,11 @@ _NORMAL_EXPORT = """\
 <object name="portal_skins" meta_type="Dummy Skins Tool" allow_any="True"
    cookie_persistence="True" default_skin="basic" request_varname="skin_var">
  <object name="one" meta_type="Filesystem Directory View"
-    directory="CMFCore/exportimport/tests/one"/>
+    directory="Products.CMFCore.exportimport.tests:one"/>
  <object name="three" meta_type="Filesystem Directory View"
-    directory="CMFCore/exportimport/tests/three"/>
+    directory="Products.CMFCore.exportimport.tests:three"/>
  <object name="two" meta_type="Filesystem Directory View"
-    directory="CMFCore/exportimport/tests/two"/>
+    directory="Products.CMFCore.exportimport.tests:two"/>
  <skin-path name="basic">
   <layer name="one"/>
  </skin-path>
@@ -84,7 +84,7 @@ _FRAGMENT1_IMPORT = """\
 <?xml version="1.0"?>
 <object name="portal_skins" meta_type="Dummy Skins Tool">
  <object name="three" meta_type="Filesystem Directory View"
-    directory="CMFCore/exportimport/tests/three"/>
+    package="Products.CMFCore" path="exportimport/tests/three"/>
  <skin-path name="*">
   <layer name="three" insert-before="two"/>
  </skin-path>
@@ -95,7 +95,7 @@ _FRAGMENT2_IMPORT = """\
 <?xml version="1.0"?>
 <object name="portal_skins" meta_type="Dummy Skins Tool">
  <object name="four" meta_type="Filesystem Directory View"
-    directory="CMFCore/exportimport/tests/four"/>
+    directory="Products.CMFCore.exportimport.tests:four"/>
  <skin-path name="*">
   <layer name="four" insert-after="three"/>
  </skin-path>
@@ -189,10 +189,10 @@ class _DVRegistrySetup:
         self._olddirreg = DirectoryView._dirreg
         DirectoryView._dirreg = DirectoryView.DirectoryRegistry()
         self._dirreg = DirectoryView._dirreg
-        self._dirreg.registerDirectory('one', _TESTS_PATH)
-        self._dirreg.registerDirectory('two', _TESTS_PATH)
-        self._dirreg.registerDirectory('three', _TESTS_PATH)
-        self._dirreg.registerDirectory('four', _TESTS_PATH)
+        self._dirreg.registerDirectory('one', globals())
+        self._dirreg.registerDirectory('two', globals())
+        self._dirreg.registerDirectory('three', globals())
+        self._dirreg.registerDirectory('four', globals())
 
     def tearDown(self):
         from Products.CMFCore import DirectoryView
@@ -576,6 +576,16 @@ class importSkinsToolTests(_SkinsSetup):
 
 
 def test_suite():
+    # reimport to make sure tests are run from Products
+    from Products.CMFCore.exportimport.tests.test_skins \
+            import DirectoryViewAdapterTests
+    from Products.CMFCore.exportimport.tests.test_skins \
+            import exportSkinsToolTests
+    from Products.CMFCore.exportimport.tests.test_skins \
+            import importSkinsToolTests
+    from Products.CMFCore.exportimport.tests.test_skins \
+            import SkinsToolXMLAdapterTests
+
     return unittest.TestSuite((
         unittest.makeSuite(DirectoryViewAdapterTests),
         unittest.makeSuite(SkinsToolXMLAdapterTests),

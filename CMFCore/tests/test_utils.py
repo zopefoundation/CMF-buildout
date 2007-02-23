@@ -61,6 +61,23 @@ class CoreUtilsTests(unittest.TestCase):
             self.assertEqual( contributorsplitter({'Contributors': x}), 
                               ['foo', 'bar', 'baz'] )
 
+    def test_getPackageName(self):
+        from Products.CMFCore.utils import getPackageName
+        from Products.CMFCore.utils import _globals
+
+        self.assertEqual(getPackageName(globals()), 'Products.CMFCore.tests')
+        self.assertEqual(getPackageName(_globals), 'Products.CMFCore')
+
+    def test_getContainingPackage(self):
+        from Products.CMFCore.utils import getContainingPackage
+
+        self.assertEqual(getContainingPackage('Products.CMFCore.exceptions'),
+                'Products.CMFCore')
+        self.assertEqual(getContainingPackage('Products.CMFCore'),
+                'Products.CMFCore')
+        self.assertEqual(getContainingPackage('zope.interface.verify'),
+                'zope.interface')
+
 
 class CoreUtilsSecurityTests(SecurityTest):
 
@@ -130,6 +147,9 @@ class CoreUtilsSecurityTests(SecurityTest):
 
 
 def test_suite():
+    # reimport to make sure tests are run from Products
+    from Products.CMFCore.tests.test_utils import CoreUtilsTests
+
     return unittest.TestSuite((
         unittest.makeSuite(CoreUtilsTests),
         unittest.makeSuite(CoreUtilsSecurityTests),

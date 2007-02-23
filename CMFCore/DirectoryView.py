@@ -18,6 +18,7 @@ $Id$
 import logging
 import re
 from os import path, listdir, stat
+from os.path import abspath
 from sys import platform
 from warnings import warn
 
@@ -27,7 +28,6 @@ from Globals import DevelopmentMode
 from Globals import DTMLFile
 from Globals import HTMLFile
 from Globals import InitializeClass
-from Globals import package_home
 from Globals import Persistent
 from OFS.Folder import Folder
 from OFS.ObjectManager import bad_id
@@ -39,8 +39,10 @@ from interfaces import IDirectoryView
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from utils import _dtmldir
-from utils import minimalpath
 from utils import normalize
+from utils import getPackageName
+from utils import getPackageLocation
+from utils import ProductsPath
 
 logger = logging.getLogger('CMFCore.DirectoryView')
 
@@ -76,14 +78,40 @@ class _walker:
                     for name in names ]
         listdir.extend(results)
 
+
+def _generateKey(package, subdir):
+    """Generate a key for a path inside a package.
+
+    The key has the quality that keys for subdirectories can be derived by
+    simply appending to the key.
+    """
+    return ':'.join((package, subdir.replace('\\', '/')))
+
+def _findProductForPath(path, subdir=None):
+    # like minimalpath, but raises an error if path is not inside a product
+    p = abspath(path)
+    for ppath in ProductsPath:
+        if p.startswith(ppath):
+            dirpath = p[len(ppath)+1:]
+            parts = dirpath.replace('\\', '/').split('/', 1)
+            parts.append('')
+            if subdir:
+                subdir = '/'.join((parts[1], subdir))
+            else:
+                subdir = parts[1]
+            return ('Products.' + parts[0], subdir)
+
+    raise ValueError('Path is not inside a product')
+
+
 class DirectoryInformation:
     data = None
     _v_last_read = 0
     _v_last_filelist = [] # Only used on Win32
 
-    def __init__(self, filepath, minimal_fp, ignore=ignore):
+    def __init__(self, filepath, reg_key, ignore=ignore):
         self._filepath = filepath
-        self._minimal_fp = minimal_fp
+        self._reg_key = reg_key
         self.ignore=base_ignore + tuple(ignore)
         if platform == 'win32':
             self._walker = _walker(self.ignore)
@@ -182,12 +210,13 @@ class DirectoryInformation:
             if path.isdir(entry_filepath):
                 # Add a subdirectory only if it was previously registered,
                 # unless register_subdirs is set.
-                entry_minimal_fp = '/'.join( (self._minimal_fp, entry) )
-                info = registry.getDirectoryInfo(entry_minimal_fp)
+                entry_reg_key = '/'.join((self._reg_key, entry))
+                info = registry.getDirectoryInfo(entry_reg_key)
                 if info is None and register_subdirs:
                     # Register unknown subdirs
-                    registry.registerDirectoryByPath(entry_filepath)
-                    info = registry.getDirectoryInfo(entry_minimal_fp)
+                    registry.registerDirectoryByKey(entry_filepath,
+                                                    entry_reg_key)
+                    info = registry.getDirectoryInfo(entry_reg_key)
                 if info is not None:
                     # Folders on the file system have no extension or
                     # meta_type, as a crutch to enable customizing what gets
@@ -203,7 +232,7 @@ class DirectoryInformation:
                     metadata = FSMetadata(entry_filepath)
                     metadata.read()
                     ob = t( entry
-                          , entry_minimal_fp
+                          , entry_reg_key
                           , properties=metadata.getProperties()
                           )
                     ob_id = ob.getId()
@@ -303,42 +332,89 @@ class DirectoryRegistry:
         # This what is actually called to register a
         # file system directory to become a FSDV.
         if not isinstance(_prefix, basestring):
-            _prefix = package_home(_prefix)
-        filepath = path.join(_prefix, name)
-        self.registerDirectoryByPath(filepath, subdirs, ignore=ignore)
+            package = getPackageName(_prefix)
+            filepath = path.join(getPackageLocation(package), name)
+        else:
+            warn('registerDirectory() called with a path; should be called '
+                 'with globals', DeprecationWarning, stacklevel=2)
+            filepath = path.join(_prefix, name)
+            (package, name) = _findProductForPath(_prefix, name)
+        reg_key = _generateKey(package, name)
+        self.registerDirectoryByKey(filepath, reg_key, subdirs, ignore)
 
-    def registerDirectoryByPath(self, filepath, subdirs=1, ignore=ignore):
-        # This is indirectly called during registration of
-        # a directory. As you can see, minimalpath is called
-        # on the supplied path at this point.
-        # The idea is that the registry will only contain
-        # small paths that are likely to work across platforms
-        # and SOFTWARE_HOME, INSTANCE_HOME and PRODUCTS_PATH setups
-        minimal_fp = minimalpath(filepath)
-        info = DirectoryInformation(filepath, minimal_fp, ignore=ignore)
-        self._directories[minimal_fp] = info
+    def registerDirectoryByKey(self, filepath, reg_key, subdirs=1,
+                               ignore=ignore):
+        info = DirectoryInformation(filepath, reg_key, ignore)
+        self._directories[reg_key] = info
         if subdirs:
             for entry in info.getSubdirs():
                 entry_filepath = path.join(filepath, entry)
-                self.registerDirectoryByPath( entry_filepath
-                                            , subdirs
-                                            , ignore=ignore
-                                            )
+                entry_reg_key = '/'.join((reg_key, entry))
+                self.registerDirectoryByKey(entry_filepath, entry_reg_key,
+                                            subdirs, ignore)
 
-    def reloadDirectory(self, minimal_fp):
-        info = self.getDirectoryInfo(minimal_fp)
+    def registerDirectoryByPath(self, filepath, subdirs=1, ignore=ignore):
+        warn('registerDirectoryByPath() is deprecated and will be removed in '
+             'CMF 2.3. Please use registerDirectoryByKey() instead.',
+             DeprecationWarning, stacklevel=2)
+        (package, subdir) = _findProductForPath(filepath)
+        reg_key = _generateKey(package, subdir)
+        self.registerDirectoryByKey(filepath, reg_key, subdirs, ignore)
+
+    def reloadDirectory(self, reg_key):
+        info = self.getDirectoryInfo(reg_key)
         if info is not None:
             info.reload()
 
-    def getDirectoryInfo(self, minimal_fp):
+    def getDirectoryInfo(self, reg_key):
         # This is called when we need to get hold of the information
         # for a minimal path. Can return None.
-        return self._directories.get(minimal_fp, None)
+        return self._directories.get(reg_key, None)
 
     def listDirectories(self):
         dirs = self._directories.keys()
         dirs.sort()
         return dirs
+
+    def getCurrentKeyFormat(self, reg_key):
+        # BBB: method will be removed in CMF 2.3
+
+        if reg_key in self._directories:
+            return reg_key
+
+        # for DirectoryViews created with CMF versions before 2.1
+        # a path relative to Products/ was used
+        dirpath = reg_key.replace('\\', '/')
+        if dirpath.startswith('Products/'):
+            dirpath = dirpath[9:]
+        product = ['Products']
+        dirparts = dirpath.split('/')
+        while dirparts:
+            product.append(dirparts[0])
+            dirparts = dirparts[1:]
+            possible_key = _generateKey('.'.join(product), '/'.join(dirparts))
+            if possible_key in self._directories:
+                return possible_key
+
+        # for DirectoryViews created with CMF versions before 1.5
+        # this is basically the old minimalpath() code
+        dirpath = normalize(reg_key)
+        index = dirpath.rfind('Products')
+        if index == -1:
+            index = dirpath.rfind('products')
+        if index != -1:
+            dirpath = dirpath[index+len('products/'):]
+            product = ['Products']
+            dirparts = dirpath.split('/')
+            while dirparts:
+                product.append(dirparts[0])
+                dirparts = dirparts[1:]
+                possible_key = _generateKey('.'.join(product),
+                                            '/'.join(dirparts))
+                if possible_key in self._directories:
+                    return possible_key
+
+        raise ValueError('Unsupported key given: %s' % reg_key)
 
 
 _dirreg = DirectoryRegistry()
@@ -393,35 +469,29 @@ class DirectoryView(Persistent):
     _properties = None
     _objects = ()
 
-    def __init__(self, id, dirpath='', fullname=None, properties=None):
+    def __init__(self, id, reg_key='', fullname=None, properties=None):
         if properties:
             # Since props come from the filesystem, this should be
             # safe.
             self.__dict__.update(properties)
 
         self.id = id
-        self._dirpath = dirpath
+        self._dirpath = reg_key
         self._properties = properties
 
     def __of__(self, parent):
-        dirpath = self._dirpath
-        info = _dirreg.getDirectoryInfo(dirpath)
+        reg_key = self._dirpath
+        info = _dirreg.getDirectoryInfo(reg_key)
         if info is None:
-            # for DirectoryViews created with CMF versions before 1.5
-            # this is basically the old minimalpath() code
-            dirpath = normalize(dirpath)
-            index = dirpath.rfind('Products')
-            if index == -1:
-                index = dirpath.rfind('products')
-            if index != -1:
-                dirpath = dirpath[index+len('products/'):]
-            info = _dirreg.getDirectoryInfo(dirpath)
-            if info is not None:
-                # update the directory view with a corrected path
-                self._dirpath = dirpath
-            elif self._dirpath:
-                warn('DirectoryView %s refers to a non-existing path %s'
-                     % (self.id, dirpath), UserWarning)
+            try:
+                reg_key = self._dirpath = _dirreg.getCurrentKeyFormat(reg_key)
+                info = _dirreg.getDirectoryInfo(reg_key)
+            except ValueError:
+                # During GenericSetup a view will be created with an empty
+                # reg_key. This is expected behaviour, so do not warn about it.
+                if reg_key:
+                    warn('DirectoryView %s refers to a non-existing path %r' %
+                          (self.id, reg_key), UserWarning)
         if info is None:
             data = {}
             objects = ()
@@ -471,10 +541,10 @@ class DirectoryViewSurrogate(Folder):
     manage_propertiesForm = DTMLFile( 'dirview_properties', _dtmldir )
 
     security.declareProtected(ManagePortal, 'manage_properties')
-    def manage_properties( self, dirpath, REQUEST=None ):
+    def manage_properties(self, reg_key, REQUEST=None):
         """ Update the directory path of the DirectoryView.
         """
-        self.__dict__['_real']._dirpath = dirpath
+        self.__dict__['_real']._dirpath = reg_key
         if REQUEST is not None:
             REQUEST['RESPONSE'].redirect( '%s/manage_propertiesForm'
                                         % self.absolute_url() )
@@ -509,17 +579,17 @@ InitializeClass(DirectoryViewSurrogate)
 
 manage_addDirectoryViewForm = HTMLFile('dtml/addFSDirView', globals())
 
-def createDirectoryView(parent, minimal_fp, id=None):
+def createDirectoryView(parent, reg_key, id=None):
     """ Add either a DirectoryView or a derivative object.
     """
-    info = _dirreg.getDirectoryInfo(minimal_fp)
+    info = _dirreg.getDirectoryInfo(reg_key)
     if info is None:
-        raise ValueError('Not a registered directory: %s' % minimal_fp)
+        raise ValueError('Not a registered directory: %s' % reg_key)
     if not id:
-        id = minimal_fp.split('/')[-1]
+        id = reg_key.split('/')[-1]
     else:
         id = str(id)
-    ob = DirectoryView(id, minimal_fp)
+    ob = DirectoryView(id, reg_key)
     parent._setObject(id, ob)
 
 def addDirectoryViews(ob, name, _prefix):
@@ -530,20 +600,23 @@ def addDirectoryViews(ob, name, _prefix):
     persistence demands.
     """
     if not isinstance(_prefix, basestring):
-        _prefix = package_home(_prefix)
-    filepath = path.join(_prefix, name)
-    minimal_fp = minimalpath(filepath)
-    info = _dirreg.getDirectoryInfo(minimal_fp)
+        package = getPackageName(_prefix)
+    else:
+        warn('addDirectoryViews() called with a path; should be called with '
+             'globals', DeprecationWarning, stacklevel=2)
+        (package, name) = _findProductForPath(_prefix, name)
+    reg_key = _generateKey(package, name)
+    info = _dirreg.getDirectoryInfo(reg_key)
     if info is None:
-        raise ValueError('Not a registered directory: %s' % minimal_fp)
+        raise ValueError('Not a registered directory: %s' % reg_key)
     for entry in info.getSubdirs():
-        entry_minimal_fp = '/'.join( (minimal_fp, entry) )
-        createDirectoryView(ob, entry_minimal_fp, entry)
+        entry_reg_key = '/'.join((reg_key, entry))
+        createDirectoryView(ob, entry_reg_key, entry)
 
-def manage_addDirectoryView(self, dirpath, id=None, REQUEST=None):
+def manage_addDirectoryView(self, reg_key, id=None, REQUEST=None):
     """ Add either a DirectoryView or a derivative object.
     """
-    createDirectoryView(self, dirpath, id)
+    createDirectoryView(self, reg_key, id)
     if REQUEST is not None:
         return self.manage_main(self, REQUEST)
 

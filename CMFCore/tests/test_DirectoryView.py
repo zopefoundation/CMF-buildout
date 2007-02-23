@@ -1,14 +1,15 @@
 import unittest
 import Testing
 
+import sys
 from os import remove, mkdir, rmdir
 from os.path import join
 from tempfile import mktemp
 
 from Globals import DevelopmentMode
 
+from Products.CMFCore.tests import _globals
 from Products.CMFCore.tests.base.dummy import DummyFolder
-from Products.CMFCore.tests.base.testcase import _prefix
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.tests.base.testcase import WritableFSDVTest
@@ -36,16 +37,36 @@ class DirectoryViewPathTests(unittest.TestCase, WarningInterceptor):
         self._trap_warning_output()
         from Products.CMFCore.DirectoryView import registerDirectory
         from Products.CMFCore.DirectoryView import addDirectoryViews
-        registerDirectory('fake_skins', _prefix)
+        registerDirectory('fake_skins', _globals)
         self.ob = DummyFolder()
-        addDirectoryViews(self.ob, 'fake_skins', _prefix)
+        addDirectoryViews(self.ob, 'fake_skins', _globals)
 
     def tearDown(self):
         self._free_warning_output()
 
+    def test__generateKey(self):
+        from Products.CMFCore.DirectoryView import _generateKey
+
+        key = _generateKey('Products.CMFCore', 'tests')
+        self.assertEqual(key.split(':')[0], 'Products.CMFCore')
+
+        subkey = _generateKey('Products.CMFCore', 'tests\foo')
+        self.failUnless(subkey.startswith(key))
+
+    def test__findProductForPath(self):
+        from Products.CMFCore.DirectoryView import _findProductForPath
+
+        cmfpath = sys.modules['Products.CMFCore'].__path__[0]
+        self.assertEqual(_findProductForPath(cmfpath),
+                         ('Products.CMFCore', ''))
+
+        cmfpath = join(cmfpath, 'tests')
+        self.assertEqual(_findProductForPath(cmfpath),
+                ('Products.CMFCore', 'tests'))
+
     def test_getDirectoryInfo(self):
         skin = self.ob.fake_skin
-        skin.manage_properties('CMFCore/tests/fake_skins/fake_skin')
+        skin.manage_properties('Products.CMFCore.tests:fake_skins/fake_skin')
         self.failUnless( hasattr(self.ob.fake_skin, 'test1'),
                          self.ob.fake_skin.getDirPath() )
 
@@ -106,6 +127,14 @@ class DirectoryViewPathTests(unittest.TestCase, WarningInterceptor):
         self.failUnless( hasattr(self.ob.fake_skin, 'test1'),
                          self.ob.fake_skin.getDirPath() )
 
+    # Test pre CMF 2.1 backwards compatibility code in DirectoryView's __of__
+    # method.
+    def test_getDirectoryInfo8(self):
+        skin = self.ob.fake_skin
+        skin.manage_properties('CMFCore/tests/fake_skins/fake_skin')
+        self.failUnless( hasattr(self.ob.fake_skin, 'test1'),
+                         self.ob.fake_skin.getDirPath() )
+
     # Test we do nothing if given a really wacky path
     def test_UnhandleableExpandPath( self ):
         from tempfile import mktemp
@@ -116,8 +145,7 @@ class DirectoryViewPathTests(unittest.TestCase, WarningInterceptor):
         # Check that a warning was raised.
         from Products.CMFCore import DirectoryView
         warnings = [t[0] for t in DirectoryView.__warningregistry__]
-        text = 'DirectoryView fake_skin refers to a non-existing path %s' % file
-        text = text.replace('\\','/')
+        text = 'DirectoryView fake_skin refers to a non-existing path %r' % file
         self.assert_(text in warnings)
         self.failUnless(text in self._our_stderr_stream.getvalue())
 
@@ -129,16 +157,14 @@ class DirectoryViewPathTests(unittest.TestCase, WarningInterceptor):
         # normalize in this unit test.
         self.assertEqual( normalize(weirdpath), minimalpath(weirdpath) )
 
-    # this test tests that registerDirectory calls minimalpath correctly
-    # the only way to test this works under SOFTWARE_HOME,INSTANCE_HOME and
-    # PRODUCTS_PATH setups is to run the test in those environments
-    def test_registerDirectoryMinimalPath(self):
+    # this test tests that registerDirectory creates keys in the right format.
+    def test_registerDirectoryKeys(self):
         from Products.CMFCore.DirectoryView import _dirreg
         dirs = _dirreg._directories
-        self.failUnless( dirs.has_key('CMFCore/tests/fake_skins/fake_skin'),
+        self.failUnless( dirs.has_key('Products.CMFCore.tests:fake_skins/fake_skin'),
                          dirs.keys() )
         self.assertEqual( self.ob.fake_skin.getDirPath(),
-                          'CMFCore/tests/fake_skins/fake_skin' )
+                          'Products.CMFCore.tests:fake_skins/fake_skin' )
 
 
 class DirectoryViewTests( FSDVTest ):

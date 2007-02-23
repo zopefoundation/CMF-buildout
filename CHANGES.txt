@@ -2,6 +2,11 @@ CMF 2.1.0-beta (unreleased)
 
   New Features
 
+    - DirectoryView: Added support for non-product packages.
+      This introduces new registry keys. Old registry keys stored in
+      persistent DirectoryView objects are updated on the fly.
+      (http://www.zope.org/Collectors/CMF/467)
+
     - Document: Added two new methods for safety belt handling.
 
     - setup handlers: Improved properties handler.
@@ -33,6 +38,8 @@ CMF 2.1.0-beta (unreleased)
       (http://www.zope.org/Collectors/CMF/459)
 
   Others
+
+    - CMFCore utils: Marked 'minimalpath' and 'expandpath' as deprecated.
 
     - The CMF now depends on Zope 2.10.2 or higher.
 

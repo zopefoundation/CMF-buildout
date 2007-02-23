@@ -20,6 +20,7 @@ from copy import deepcopy
 from os import path as os_path
 from os.path import abspath
 from warnings import warn
+import sys
 
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
@@ -55,6 +56,7 @@ SUBTEMPLATE = '__SUBTEMPLATE__'
 
 security = ModuleSecurityInfo( 'Products.CMFCore.utils' )
 
+_globals = globals()
 _dtmldir = os_path.join( package_home( globals() ), 'dtml' )
 _wwwdir = os_path.join( package_home( globals() ), 'www' )
 
@@ -263,7 +265,6 @@ def parse_etags( text
         result.append(value)
     return apply(parse_etags,(text[l:],result))
 
-
 def _checkConditionalGET(obj, extra_context):
     """A conditional GET is done using one or both of the request
        headers:
@@ -272,7 +273,7 @@ def _checkConditionalGET(obj, extra_context):
        If-None-Match: list ETags (comma delimited, sometimes quoted)
 
        If both conditions are present, both must be satisfied.
-       
+
        This method checks the caching policy manager to see if
        a content object's Last-modified date and ETag satisfy
        the conditional GET headers.
@@ -310,14 +311,14 @@ def _checkConditionalGET(obj, extra_context):
     ret = manager.getModTimeAndETag(aq_parent(obj), obj.getId(), extra_context)
     if ret is None:
         # no appropriate policy or 304s not enabled
-        return  False 
+        return False
 
     (content_mod_time, content_etag, set_last_modified_header) = ret
     if content_mod_time:
         mod_time_secs = long(content_mod_time.timeTime())
     else:
         mod_time_secs = None
-    
+
     if if_modified_since:
         # from CMFCore/FSFile.py:
         if_modified_since = if_modified_since.split(';')[0]
@@ -331,7 +332,7 @@ def _checkConditionalGET(obj, extra_context):
             if_modified_since=long(DateTime(if_modified_since).timeTime())
         except:
             if_mod_since=None
-                
+
     client_etags = None
     if if_none_match:
         client_etags = parse_etags(if_none_match)
@@ -345,7 +346,7 @@ def _checkConditionalGET(obj, extra_context):
              mod_time_secs < 0 or 
              mod_time_secs > if_modified_since ):
             return False
-        
+
     if client_etags:
         if ( not content_etag or 
              (content_etag not in client_etags and '*' not in client_etags) ):
@@ -365,9 +366,8 @@ def _checkConditionalGET(obj, extra_context):
         response.setHeader('ETag', content_etag, literal=1)
     response.setStatus(304)
     delattr(REQUEST, SUBTEMPLATE)
-            
+
     return True
-   
 
 security.declarePrivate('_setCacheHeaders')
 def _setCacheHeaders(obj, extra_context):
@@ -728,6 +728,9 @@ def expandpath(p):
     The (expanded) filepath is the valid absolute path on the current platform
     and setup.
     """
+    warn('expandpath() is deprecated and will be removed in CMF 2.3.',
+         DeprecationWarning, stacklevel=2)
+
     p = os_path.normpath(p)
     if os_path.isabs(p):
         return p
@@ -751,12 +754,42 @@ def minimalpath(p):
     Returns a slash-separated path relative to the Products path. If it can't
     be found, a normalized path is returned.
     """
+    warn('minimalpath() is deprecated and will be removed in CMF 2.3.',
+         DeprecationWarning, stacklevel=2)
+
     p = abspath(p)
     for ppath in ProductsPath:
         if p.startswith(ppath):
             p = p[len(ppath)+1:]
             break
     return p.replace('\\','/')
+
+security.declarePrivate('getContainingPackage')
+def getContainingPackage(module):
+    parts = module.split('.')
+    while parts:
+        name = '.'.join(parts)
+        mod = sys.modules[name]
+        if '__init__' in mod.__file__:
+            return name
+        parts = parts[:-1]
+
+    raise ValueError('Unable to find package for module %s' % module)
+
+security.declarePrivate('getPackageLocation')
+def getPackageLocation(module):
+    """ Return the filesystem location of a module.
+
+    This is a simple wrapper around the global package_home method which
+    tricks it into working with just a module name.
+    """
+    package = getContainingPackage(module)
+    return package_home({'__name__' : package})
+
+security.declarePrivate('getPackageName')
+def getPackageName(globals_):
+    module = globals_['__name__']
+    return getContainingPackage(module)
 
 def _OldCacheHeaders(obj):
     # Old-style checking of modified headers
@@ -782,7 +815,7 @@ def _OldCacheHeaders(obj):
             mod_since=long(mod_since.timeTime())
         except TypeError:
             mod_since=None
-               
+
         if mod_since is not None:
             if last_mod > 0 and last_mod <= mod_since:
                 RESPONSE.setStatus(304)
@@ -816,7 +849,7 @@ def _FSCacheHeaders(obj):
             mod_since=long(mod_since.timeTime())
         except TypeError:
             mod_since=None
-               
+
         if mod_since is not None:
             if last_mod > 0 and last_mod <= mod_since:
                 RESPONSE.setStatus(304)

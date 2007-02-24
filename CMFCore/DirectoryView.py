@@ -51,19 +51,19 @@ __reload_module__ = 0
 # Ignore filesystem artifacts
 base_ignore = ('.', '..')
 # Ignore version control subdirectories
-ignore = ('CVS', 'SVN', '.', '..', '.svn')
+ignore = ('CVS', '.svn')
 # Ignore suspected backups and hidden files
 ignore_re = re.compile(r'\.|(.*~$)|#')
 
 # and special names.
-def _filtered_listdir(path, ignore=ignore):
+def _filtered_listdir(path, ignore):
     return [ name
              for name
              in listdir(path)
              if name not in ignore and not ignore_re.match(name) ]
 
 class _walker:
-    def __init__(self, ignore=ignore):
+    def __init__(self, ignore):
         # make a dict for faster lookup
         self.ignore = dict([(x, None) for x in ignore])
 
@@ -112,7 +112,7 @@ class DirectoryInformation:
     def __init__(self, filepath, reg_key, ignore=ignore):
         self._filepath = filepath
         self._reg_key = reg_key
-        self.ignore=base_ignore + tuple(ignore)
+        self.ignore = base_ignore + tuple(ignore)
         if platform == 'win32':
             self._walker = _walker(self.ignore)
         subdirs = []
@@ -335,8 +335,9 @@ class DirectoryRegistry:
             package = getPackageName(_prefix)
             filepath = path.join(getPackageLocation(package), name)
         else:
-            warn('registerDirectory() called with a path; should be called '
-                 'with globals', DeprecationWarning, stacklevel=2)
+            warn('registerDirectory() called with deprecated _prefix type. '
+                 'Support for paths will be removed in CMF 2.3. Please use '
+                 'globals instead.', DeprecationWarning, stacklevel=2)
             filepath = path.join(_prefix, name)
             (package, name) = _findProductForPath(_prefix, name)
         reg_key = _generateKey(package, name)
@@ -584,7 +585,12 @@ def createDirectoryView(parent, reg_key, id=None):
     """
     info = _dirreg.getDirectoryInfo(reg_key)
     if info is None:
-        raise ValueError('Not a registered directory: %s' % reg_key)
+        reg_key = _dirreg.getCurrentKeyFormat(reg_key)
+        info = _dirreg.getDirectoryInfo(reg_key)
+        warn('createDirectoryView() called with deprecated reg_key format. '
+             'Support for old key formats will be removed in CMF 2.3. Please '
+             'use the new key format <product>:<subdir> instead.',
+             DeprecationWarning, stacklevel=2)
     if not id:
         id = reg_key.split('/')[-1]
     else:
@@ -602,8 +608,9 @@ def addDirectoryViews(ob, name, _prefix):
     if not isinstance(_prefix, basestring):
         package = getPackageName(_prefix)
     else:
-        warn('addDirectoryViews() called with a path; should be called with '
-             'globals', DeprecationWarning, stacklevel=2)
+        warn('addDirectoryViews() called with deprecated _prefix type. '
+             'Support for paths will be removed in CMF 2.3. Please use '
+             'globals instead.', DeprecationWarning, stacklevel=2)
         (package, name) = _findProductForPath(_prefix, name)
     reg_key = _generateKey(package, name)
     info = _dirreg.getDirectoryInfo(reg_key)

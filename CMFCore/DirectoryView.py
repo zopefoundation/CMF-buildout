@@ -97,6 +97,8 @@ def _findProductForPath(path, subdir=None):
             parts.append('')
             if subdir:
                 subdir = '/'.join((parts[1], subdir))
+                if subdir.startswith('/'):
+                    subdir=subdir[1:]
             else:
                 subdir = parts[1]
             return ('Products.' + parts[0], subdir)

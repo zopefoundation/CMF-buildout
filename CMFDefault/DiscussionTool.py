@@ -41,6 +41,8 @@ from permissions import ReplyToItem
 from utils import _dtmldir
 
 
+_marker = []
+
 class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
 
     """ Links content to discussions.
@@ -78,7 +80,7 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
             raise AccessControl_Unauthorized
 
         if allowDiscussion is None or allowDiscussion == 'None':
-            if hasattr( aq_base(content), 'allow_discussion'):
+            if getattr( aq_base(content), 'allow_discussion', _marker) is not _marker:
                 del content.allow_discussion
         else:
             content.allow_discussion = bool(allowDiscussion)

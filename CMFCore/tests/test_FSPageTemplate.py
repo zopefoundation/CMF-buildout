@@ -1,3 +1,4 @@
+# -*- coding: iso-8859-1 -*-
 ##############################################################################
 #
 # Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.
@@ -96,7 +97,7 @@ class FSPageTemplateTests( RequestTest, FSPTMaker ):
         script = self._makeOne('testPT3', 'testPT3.pt')
         script = script.__of__(self.root)
         data = script.read()
-        self.assertEqual(unicode('123üצהß', 'iso-8859-15') in data, True)
+        self.failUnless(u'123üצהß' in data)
         self.assertEqual(script.content_type, 'text/html')
 
     def test_CharsetFrom2FSMetadata(self):
@@ -105,7 +106,7 @@ class FSPageTemplateTests( RequestTest, FSPTMaker ):
         script = self._makeOne('testPT4', 'testPT4.pt')
         script = script.__of__(self.root)
         data = script.read()
-        self.assertEqual(unicode('123üצהß', 'iso-8859-15') in data, True)
+        self.failUnless(u'123üצהß' in data)
         self.assertEqual(script.content_type, 'text/html')
 
     def test_BadCall( self ):

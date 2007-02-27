@@ -17,7 +17,7 @@
    <div class="form-label">Directory<div>
   </td>
   <td align="left" valign="top">
-   <select name="dirpath" size="5">
+   <select name="reg_key" size="5">
     <dtml-in manage_listAvailableDirectories>
       <option value="&dtml-sequence-item;">&dtml-sequence-item;</option>
     </dtml-in>

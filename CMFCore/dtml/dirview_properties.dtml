@@ -12,9 +12,9 @@
  </tr>
 
  <tr>
-  <th> Filesystem path: </th>
+  <th> Directory: </th>
   <td>
-   <input type="text" name="dirpath" size="40" value="&dtml-getDirPath;">
+   <input type="text" name="reg_key" size="40" value="&dtml-getDirPath;">
   </td>
  </tr>
 

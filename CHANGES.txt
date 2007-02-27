@@ -2,6 +2,10 @@ CMF 2.1.0-beta (unreleased)
 
   New Features
 
+    - DirectoryView: Added 'registerDirectory' ZCML directive.
+      Using the old registerDirectory method in __init__.py is now deprecated.
+      See zcml.IRegisterDirectoryDirective for details.
+
     - DirectoryView: Added support for non-product packages.
       This introduces new registry keys. Old registry keys stored in
       persistent DirectoryView objects are updated on the fly.

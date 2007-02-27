@@ -17,7 +17,6 @@ $Id$
 
 from Products.CMFCore.utils import ContentInit
 from Products.CMFCore.utils import ToolInit
-from Products.CMFCore.DirectoryView import registerDirectory
 
 import Event
 import CalendarTool
@@ -26,9 +25,6 @@ from permissions import AddPortalContent
 
 # Make sure security is initialized
 import utils
-
-# Make the skins available as DirectoryViews
-registerDirectory('skins', globals())
 
 def initialize(context):
 

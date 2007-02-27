@@ -12,6 +12,11 @@
       file="meta.zcml"
       />
 
+  <include
+      package="Products.CMFCore"
+      file="meta.zcml"
+      />
+
   <include package="Products.Five"/>
 
   <include package="Products.GenericSetup"/>

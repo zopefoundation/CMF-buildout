@@ -1,5 +1,6 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:cmf="http://namespaces.zope.org/cmf"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="cmf_default">
@@ -21,6 +22,10 @@
       component=".Topic.TopicFactory"
       name="cmf.topic"
       />
+
+  <!-- directories -->
+
+  <cmf:registerDirectory name="zpt_topic"/>
 
   <!-- profiles -->
 

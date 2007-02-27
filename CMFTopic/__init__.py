@@ -16,7 +16,6 @@ $Id$
 """
 
 from Products.CMFCore.utils import ContentInit
-from Products.CMFCore.DirectoryView import registerDirectory
 
 import Topic
 from permissions import AddTopics
@@ -28,9 +27,6 @@ import ListCriterion
 import SimpleIntCriterion
 import SimpleStringCriterion
 import SortCriterion
-
-# Make the skins available as DirectoryViews
-registerDirectory( 'skins', globals() )
 
 def initialize(context):
 

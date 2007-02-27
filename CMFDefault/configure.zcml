@@ -11,4 +11,6 @@
 
   <include file="profiles.zcml"/>
 
+  <include file="directories.zcml"/>
+
 </configure>

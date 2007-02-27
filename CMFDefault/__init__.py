@@ -15,7 +15,6 @@
 $Id$
 """
 
-from Products.CMFCore.DirectoryView import registerDirectory
 from Products.CMFCore.utils import ToolInit
 from Products.CMFCore.utils import ContentInit
 from Products.CMFCore.utils import registerIcon
@@ -60,10 +59,6 @@ tools = ( DiscussionTool.DiscussionTool
         , MetadataTool.MetadataTool
         , SyndicationTool.SyndicationTool
         )
-
-# Make the skins available as DirectoryViews.
-registerDirectory('skins', globals())
-registerDirectory('help', globals())
 
 def initialize(context):
 

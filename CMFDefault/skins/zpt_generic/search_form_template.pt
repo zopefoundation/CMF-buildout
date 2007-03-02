@@ -14,8 +14,8 @@
  <tr tal:condition="options/is_review_allowed">
   <th i18n:translate="">Review Status</th>
   <td>
-   <select name="review_state" size="3" multiple>
-    <option value="" selected i18n:translate="">-- any --</option>
+   <select name="review_state" size="3" multiple="multiple">
+    <option value="" selected="selected" i18n:translate="">-- any --</option>
     <option value="private" i18n:translate="">private</option>
     <option value="pending" i18n:translate="">pending</option>
     <option value="published" i18n:translate="">published</option>
@@ -54,8 +54,8 @@
  <tr valign="top">
   <th i18n:translate="">Subject</th>
   <td>
-   <select name="Subject:list" multiple size="5">
-    <option value="" selected i18n:translate="">-- any --</option>
+   <select name="Subject:list" multiple="multiple" size="5">
+    <option value="" selected="selected" i18n:translate="">-- any --</option>
     <option value="" tal:repeat="item options/listAvailableSubjects"
        tal:attributes="value item"
        tal:content="item">Subject</option>
@@ -96,7 +96,7 @@
  <tr>
   <th i18n:translate="">Item type</th>
   <td>
-   <select name="portal_type:list" multiple size="5">
+   <select name="portal_type:list" multiple="multiple" size="5">
     <option value="" selected="selected" i18n:translate="">-- any --</option>
     <option value="" tal:repeat="typeinfo options/listTypeInfos"
        tal:attributes="value typeinfo/getId"

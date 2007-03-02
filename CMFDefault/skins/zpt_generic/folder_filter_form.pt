@@ -46,7 +46,7 @@
     <td align="left" valign="top" width="*"
         i18n:translate="">Content Type:</td>
     <td align="left" valign="top">
-        <select name="filter_by_portal_type:list" multiple size="3"
+        <select name="filter_by_portal_type:list" multiple="multiple" size="3"
             tal:define="typeinfos here/portal_types/listTypeInfo">
             <option value="type"
                 tal:repeat="typeinfo typeinfos"

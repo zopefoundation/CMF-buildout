@@ -53,7 +53,7 @@
    <textarea name="subject:lines" rows="3" cols="31"
       tal:content="subj_lines"></textarea>
    <br />
-   <select name="subject:list" multiple>
+   <select name="subject:list" multiple="multiple">
     <option value=""
        tal:repeat="subject options/allowed_subjects"
        tal:attributes="value subject;

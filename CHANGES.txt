@@ -22,6 +22,11 @@ CMF 2.1.0-beta (unreleased)
 
   Bug Fixes
 
+    - CMFUid.UniqueIdHandlerTool: Touching the internal UID value on a
+      content item will not cause reindexing all indices anymore, only the
+      specific UID index will be touched.
+      (http://www.zope.org/Collectors/CMF/469)
+
     - CMFCore.MembershipTool: Fixed inconsistent behavior where member lookup
       would take all user folders up to the Zope root into account whereas
       member area creation would not.

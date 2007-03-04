@@ -86,7 +86,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
             catalog.addColumn(UID_ATTRIBUTE_NAME)
 
         # reindex
-        catalog.reindexObject(obj)
+        catalog.reindexObject(obj, idxs=[UID_ATTRIBUTE_NAME])
 
     def _setUid(self, obj, uid):
         """Attaches a unique id to the object and does reindexing.

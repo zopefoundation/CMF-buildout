@@ -21,10 +21,16 @@ import Testing
 from StringIO import StringIO
 
 from Acquisition import Implicit
+from Products.Five.browser import BrowserView
+from zope.component import getSiteManager
+from zope.component import provideAdapter
+from zope.component.interfaces import IDefaultViewName
+from zope.interface import alsoProvides
+from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.publisher.interfaces.browser import IBrowserView
+from zope.testing.cleanup import cleanUp
 from ZPublisher.HTTPRequest import HTTPRequest
 from ZPublisher.HTTPResponse import HTTPResponse
-
-from zope.component import getSiteManager
 
 from Products.CMFCore.DynamicType import DynamicType
 from Products.CMFCore.interfaces import IMembershipTool
@@ -38,16 +44,9 @@ from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
 from Products.CMFCore.TypesTool import FactoryTypeInformation as FTI
 from Products.CMFCore.TypesTool import TypesTool
 
-import zope.component
-from zope.testing.cleanup import CleanUp
-from zope.interface import alsoProvides
-from zope.component.interfaces import IDefaultViewName
-from zope.publisher.interfaces.browser import IBrowserRequest, IBrowserView
-from Products.Five.browser import BrowserView
 
 def defineDefaultViewName(name, for_=None):
-    zope.component.provideAdapter(name, (for_, IBrowserRequest),
-                                  IDefaultViewName, '')
+    provideAdapter(name, (for_, IBrowserRequest), IDefaultViewName, '')
 
 
 class DummyContent(DynamicType, Implicit):
@@ -63,15 +62,6 @@ class DummyView(BrowserView):
 
 class DynamicTypeTests(unittest.TestCase):
 
-    def setUp(self):
-        sm = getSiteManager()
-        self.site = DummySite('site')
-        self.site._setObject( 'portal_types', TypesTool() )
-        sm.registerUtility(self.site.portal_types, ITypesTool)
-        fti = FTIDATA_CMF15[0].copy()
-        self.site.portal_types._setObject( 'Dummy Content 15', FTI(**fti) )
-        self.site._setObject( 'foo', DummyContent() )
-
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
         from Products.CMFCore.interfaces.Dynamic \
@@ -84,15 +74,21 @@ class DynamicTypeTests(unittest.TestCase):
         from Products.CMFCore.interfaces import IDynamicType
         verifyClass(IDynamicType, DynamicType)
 
-class DynamicTypeDefaultTraversalTests(CleanUp, unittest.TestCase):
+
+class DynamicTypeDefaultTraversalTests(unittest.TestCase):
 
     def setUp(self):
+        sm = getSiteManager()
         self.site = DummySite('site')
         self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(self.site.portal_types, ITypesTool)
         fti = FTIDATA_CMF15[0].copy()
         self.site.portal_types._setObject( 'Dummy Content 15', FTI(**fti) )
         self.site._setObject( 'foo', DummyContent() )
         dummy_view = self.site._setObject( 'dummy_view', DummyObject() )
+
+    def tearDown(self):
+        cleanUp()
 
     def test_default_view_from_fti(self):
         response = HTTPResponse()
@@ -152,7 +148,7 @@ class DynamicTypeDefaultTraversalTests(CleanUp, unittest.TestCase):
         # we define a Zope3-style default view name for which a view
         # actually exists
         defineDefaultViewName('index.html', DummyContent)
-        zope.component.provideAdapter(
+        provideAdapter(
             DummyView, (DummyContent, IBrowserRequest), IBrowserView,
             'index.html')
 
@@ -176,6 +172,10 @@ class DynamicTypeSecurityTests(SecurityRequestTest):
         fti = FTIDATA_CMF15[0].copy()
         self.site.portal_types._setObject( 'Dummy Content 15', FTI(**fti) )
         self.site._setObject( 'foo', DummyContent() )
+
+    def tearDown(self):
+        cleanUp()
+        SecurityRequestTest.tearDown(self)
 
     def test_getTypeInfo(self):
         foo = self.site.foo

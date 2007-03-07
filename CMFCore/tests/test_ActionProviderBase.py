@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from zope.component import getSiteManager
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import IURLTool
@@ -63,14 +64,17 @@ class DummyAction:
 
 class ActionProviderBaseTests(SecurityRequestTest):
 
-    def setUp( self ):
+    def setUp(self):
         SecurityRequestTest.setUp(self)
         self.site = DummySite('site').__of__(self.root)
         sm = getSiteManager()
         utool = self.site._setObject( 'portal_url', DummyTool() )
         sm.registerUtility(self.site.portal_url, IURLTool)
-        mtool = self.site._setObject( 'portal_membership', DummyTool() )
-        sm.registerUtility(self.site.portal_membership, IMembershipTool)
+        sm.registerUtility(DummyTool(), IMembershipTool)
+
+    def tearDown(self):
+        cleanUp()
+        SecurityRequestTest.tearDown(self)
 
     def _makeProvider( self, dummy=0 ):
 

@@ -22,7 +22,7 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 
-from zope.component import getUtility
+from zope.component import queryUtility
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
@@ -77,7 +77,11 @@ class URLTool(UniqueObject, SimpleItem, ActionProviderBase):
     def getPortalObject(self):
         """ Get the portal object itself.
         """
-        return getUtility(ISiteRoot)
+        site = queryUtility(ISiteRoot, None)
+        if site is None:
+            # fallback
+            return aq_parent(aq_inner(self))
+        return site
 
     security.declarePublic('getRelativeContentPath')
     def getRelativeContentPath(self, content):

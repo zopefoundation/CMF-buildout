@@ -20,8 +20,8 @@ from Acquisition import aq_inner, aq_parent
 from Globals import InitializeClass, DTMLFile
 from OFS.SimpleItem import SimpleItem
 from Products.MailHost.interfaces import IMailHost
-from zope.app.component.hooks import getSite
 from zope.component import getUtility
+from zope.component import queryUtility
 from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
@@ -73,7 +73,11 @@ class PropertiesTool(UniqueObject, SimpleItem, ActionProviderBase):
                 ps.props.manage_changeProperties(props)
 
     def title(self):
-        return getUtility(ISiteRoot).title
+        site = queryUtility(ISiteRoot)
+        if site is None:
+            # fallback
+            return aq_parent(aq_inner(self)).title
+        return site.title
 
     def smtp_server(self):
         return getUtility(IMailHost).smtp_host

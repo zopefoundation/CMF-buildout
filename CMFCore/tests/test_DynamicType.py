@@ -24,7 +24,12 @@ from Acquisition import Implicit
 from ZPublisher.HTTPRequest import HTTPRequest
 from ZPublisher.HTTPResponse import HTTPResponse
 
+from zope.component import getSiteManager
+
 from Products.CMFCore.DynamicType import DynamicType
+from Products.CMFCore.interfaces import IMembershipTool
+from Products.CMFCore.interfaces import ITypesTool
+from Products.CMFCore.interfaces import IURLTool
 from Products.CMFCore.tests.base.dummy import DummyObject
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
@@ -57,6 +62,15 @@ class DummyView(BrowserView):
 
 
 class DynamicTypeTests(unittest.TestCase):
+
+    def setUp(self):
+        sm = getSiteManager()
+        self.site = DummySite('site')
+        self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(self.site.portal_types, ITypesTool)
+        fti = FTIDATA_CMF15[0].copy()
+        self.site.portal_types._setObject( 'Dummy Content 15', FTI(**fti) )
+        self.site._setObject( 'foo', DummyContent() )
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -152,9 +166,13 @@ class DynamicTypeSecurityTests(SecurityRequestTest):
     def setUp(self):
         SecurityRequestTest.setUp(self)
         self.site = DummySite('site').__of__(self.root)
+        sm = getSiteManager()
         self.site._setObject( 'portal_membership', DummyTool() )
+        sm.registerUtility(self.site.portal_membership, IMembershipTool)
         self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(self.site.portal_types, ITypesTool)
         self.site._setObject( 'portal_url', DummyTool() )
+        sm.registerUtility(self.site.portal_url, IURLTool)
         fti = FTIDATA_CMF15[0].copy()
         self.site.portal_types._setObject( 'Dummy Content 15', FTI(**fti) )
         self.site._setObject( 'foo', DummyContent() )

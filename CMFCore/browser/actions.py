@@ -18,12 +18,13 @@ $Id$
 from xml.dom.minidom import parseString
 
 from zope.component import queryMultiAdapter
+from zope.component import queryUtility
 
 from Products.CMFCore.ActionInformation import Action
 from Products.CMFCore.ActionInformation import ActionCategory
-from Products.CMFCore.utils import getToolByName
 from Products.GenericSetup.browser.utils import AddWithPresettingsViewBase
 from Products.GenericSetup.interfaces import INode
+from Products.GenericSetup.interfaces import ISetupTool
 
 
 class ActionAddView(AddWithPresettingsViewBase):
@@ -37,7 +38,7 @@ class ActionAddView(AddWithPresettingsViewBase):
 
     def getProfileInfos(self):
         profiles = []
-        stool = getToolByName(self, 'portal_setup', None)
+        stool = queryUtility(ISetupTool)
         if stool:
             for info in stool.listContextInfos():
                 obj_ids = []
@@ -70,7 +71,7 @@ class ActionAddView(AddWithPresettingsViewBase):
         return [ ('%s/%s' % (category_id, path)) for path in action_paths ]
 
     def _initSettings(self, obj, profile_id, obj_path):
-        stool = getToolByName(self, 'portal_setup', None)
+        stool = queryUtility(ISetupTool)
         if stool is None:
             return
 

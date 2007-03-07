@@ -15,7 +15,9 @@
 $Id$
 """
 
-from Products.CMFCore.utils import getToolByName
+from zope.component import getUtility
+
+from Products.CMFCore.interfaces import IMetadataTool
 
 from exceptions import MetadataError
 
@@ -27,7 +29,7 @@ def importVarious(context):
     are implemented for these steps.
     """
     site = context.getSite()
-    mdtool = getToolByName(site, 'portal_metadata')
+    mdtool = getUtility(IMetadataTool)
 
     # Set up a MetadataTool element policy for events
     try:

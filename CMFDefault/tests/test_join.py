@@ -18,12 +18,17 @@ $Id$
 import unittest
 from Testing import ZopeTestCase
 
+from zope.app.component.hooks import setSite
+
 from Products.CMFDefault.testing import FunctionalLayer
 
 
 class MembershipTests(ZopeTestCase.FunctionalTestCase):
 
     layer = FunctionalLayer
+
+    def afterSetUp(self):
+        setSite(self.app.site)
 
     def test_join( self ):
         site = self.app.site

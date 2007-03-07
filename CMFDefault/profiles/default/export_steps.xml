@@ -15,6 +15,11 @@
               title="Catalog Tool">
   Export catalog tool's sub-objects, indexes and columns.
  </export-step>
+ <export-step id="componentregistry"
+              handler="Products.GenericSetup.components.exportComponentRegistry"
+    title="Local Component Registry">
+    Export local component registry configuration.
+ </export-step>
  <export-step id="content_type_registry"
               handler="Products.CMFCore.exportimport.contenttyperegistry.exportContentTypeRegistry"
               title="Content Type Registry">

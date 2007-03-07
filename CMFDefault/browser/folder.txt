@@ -9,10 +9,20 @@ Browser Views for IFolderish
       >>> site = DummySite('site')
 
       >>> from Products.CMFCore.tests.base.dummy import DummyTool
+      >>> from zope.component import getSiteManager
+      >>> from Products.CMFCore.interfaces import IMembershipTool
+      >>> from Products.CMFCore.interfaces import IPropertiesTool
+      >>> from Products.CMFCore.interfaces import ITypesTool
+      >>> from Products.CMFCore.interfaces import IURLTool
+      >>> sm = getSiteManager()
       >>> mtool = site._setObject('portal_membership', DummyTool())
+      >>> sm.registerUtility(mtool, IMembershipTool)
       >>> ptool = site._setObject('portal_properties', DummyTool())
+      >>> sm.registerUtility(ptool, IPropertiesTool)
       >>> ttool = site._setObject('portal_types', DummyTool())
+      >>> sm.registerUtility(ttool, ITypesTool)
       >>> utool = site._setObject('portal_url', DummyTool())
+      >>> sm.registerUtility(utool, IURLTool)
 
 
   Basic functionality without security setup:
@@ -98,3 +108,8 @@ Browser Views for IFolderish
 
       >>> view.validateClipboardData()
       (False, u'Please copy or cut one or more items to paste first.')
+
+    Finally we have to clean up::
+
+      >>> from zope.testing.cleanup import cleanUp
+      >>> cleanUp()

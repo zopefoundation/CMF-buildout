@@ -29,6 +29,7 @@ from zope.event import notify
 from zope.interface import implements
 
 from Products.CMFCore.interfaces import IContentish
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.PortalContent import PortalContent
 
@@ -269,6 +270,7 @@ class DummySite(DummyFolder):
     _domain = 'http://www.foobar.com'
     _path = 'bar'
     _isPortalRoot = 1
+    implements(ISiteRoot)
 
     def absolute_url(self, relative=0):
         return '/'.join( (self._domain, self._path, self._id) )
@@ -290,6 +292,9 @@ class DummySite(DummyFolder):
 
     def userdefined_roles(self):
         return ('Member', 'Reviewer')
+
+    def getProperty(self, id, default=None):
+        return getattr(self, id, default)
 
 
 class DummyUser(Implicit):
@@ -400,6 +405,9 @@ class DummyTool(Implicit,ActionProviderBase):
 
     def notifyCreated(self, ob):
         self.test_notified = ob
+
+    def getCatalogVariablesFor(self, obj):
+        return {}
 
 
 class DummyCachingManager:

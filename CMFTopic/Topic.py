@@ -18,11 +18,14 @@ $Id$
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_parent, aq_inner
 from Globals import InitializeClass
+
+from zope.component import getUtility
 from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFDefault.SkinnedFolder import SkinnedFolder
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.interfaces import ICatalogTool
+from Products.CMFCore.interfaces import ISyndicationTool
 
 from interfaces import IMutableTopic
 from interfaces import ITopic
@@ -80,7 +83,7 @@ class Topic(SkinnedFolder):
     def listAvailableFields(self):
         """ Return a list of available fields for new criteria.
         """
-        portal_catalog = getToolByName( self, 'portal_catalog' )
+        portal_catalog = getUtility(ICatalogTool)
         currentfields = map( lambda x: x.Field(), self.listCriteria() )
         availfields = filter(
             lambda field, cf=currentfields: field not in cf,
@@ -140,7 +143,7 @@ class Topic(SkinnedFolder):
         o Built-in criteria update any criteria passed in 'kw'.
         """
         kw.update( self.buildQuery() )
-        portal_catalog = getToolByName( self, 'portal_catalog' )
+        portal_catalog = getUtility(ICatalogTool)
         return portal_catalog.searchResults(REQUEST, **kw)
 
     security.declareProtected(View, 'synContentValues')
@@ -150,7 +153,7 @@ class Topic(SkinnedFolder):
         o Return no more brain objects than the limit set by the
           syndication tool.
         """
-        syn_tool = getToolByName( self, 'portal_syndication' )
+        syn_tool = getUtility(ISyndicationTool)
         limit = syn_tool.getMaxItems( self )
         brains = self.queryCatalog( sort_limit=limit )[ :limit ]
         return [ brain.getObject() for brain in brains ]

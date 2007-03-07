@@ -67,11 +67,14 @@ Widgets
 
     Set one up::
 
+      >>> from zope.component import getSiteManager
+      >>> from Products.CMFCore.interfaces import IMetadataTool
       >>> class DummyTool:
       ...     def listAllowedSubjects(self, context): return ('SPAM', 'EGGS')
       >>> class DummyView: pass
       >>> view = DummyView()
       >>> view.portal_metadata = DummyTool()
+      >>> getSiteManager().registerUtility(view.portal_metadata, IMetadataTool)
 
       >>> request = DummyRequest()
       >>> request.form['PREFIX.NAME.1'] = ['EGGS']

@@ -18,6 +18,7 @@ $Id$
 import unittest
 import Testing
 
+from Products.CMFCore.testing import TraversingZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
@@ -29,6 +30,8 @@ from Products.DCWorkflow.interfaces import IBeforeTransitionEvent
 from Products.DCWorkflow.interfaces import IAfterTransitionEvent
 
 class DCWorkflowDefinitionTests(unittest.TestCase):
+
+    layer = TraversingZCMLLayer
 
     def setUp(self):
         self.site = DummySite('site')

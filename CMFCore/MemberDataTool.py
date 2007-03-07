@@ -23,12 +23,17 @@ from Globals import InitializeClass
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
 from ZPublisher.Converters import type_converters
+
+from zope.component import getUtility
+from zope.component import queryUtility
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
 from exceptions import BadRequest
 from interfaces import IMemberData
 from interfaces import IMemberDataTool
+from interfaces import IMembershipTool
+from interfaces import IRegistrationTool
 from interfaces.portal_memberdata import MemberData as z2IMemberData
 from interfaces.portal_memberdata \
         import portal_memberdata as z2IMemberDataTool
@@ -36,7 +41,7 @@ from permissions import ManagePortal
 from permissions import SetOwnProperties
 from permissions import ViewManagementScreens
 from utils import _dtmldir
-from utils import getToolByName
+from utils import registerToolInterface
 from utils import UniqueObject
 
 
@@ -99,7 +104,7 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
         Return the number of members stored in the _members
         BTree and some other useful info
         '''
-        membertool   = getToolByName(self, 'portal_membership')
+        membertool   = getUtility(IMembershipTool)
         members      = self._members
         user_list    = membertool.listMemberIds()
         member_list  = members.keys()
@@ -121,7 +126,7 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
         if not search_param:
             return res
 
-        membership = getToolByName(self, 'portal_membership')
+        membership = getUtility(IMembershipTool)
 
         if len(attributes) == 0:
             attributes = ('id', 'email')
@@ -157,7 +162,7 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
         if search_param == 'username':
             search_param = 'id'
 
-        mtool   = getToolByName(self, 'portal_membership')
+        mtool   = getUtility(IMembershipTool)
 
         for member_id in self._members.keys():
 
@@ -179,7 +184,7 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
     def pruneMemberDataContents(self):
         """ Delete data contents of all members not listet in acl_users.
         """
-        membertool= getToolByName(self, 'portal_membership')
+        membertool= getUtility(IMembershipTool)
         members = self._members
         user_list = membertool.listMemberIds()
 
@@ -235,6 +240,7 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
             return 0
 
 InitializeClass(MemberDataTool)
+registerToolInterface('portal_memberdata', IMemberDataTool)
 
 
 class CleanupTemp:
@@ -301,8 +307,8 @@ class MemberData(SimpleItem):
         '''
         if properties is None:
             properties = kw
-        membership = getToolByName(self, 'portal_membership')
-        registration = getToolByName(self, 'portal_registration', None)
+        membership = getUtility(IMembershipTool)
+        registration = queryUtility(IRegistrationTool)
         if not membership.isAnonymousUser():
             member = membership.getAuthenticatedMember()
             if registration:

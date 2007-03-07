@@ -21,6 +21,7 @@ from Testing import ZopeTestCase
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.User import UnrestrictedUser
 from Acquisition import aq_base
+from zope.app.component.hooks import setSite
 
 from Products.CMFDefault.testing import FunctionalLayer
 
@@ -39,6 +40,9 @@ class CMFSiteTests(ZopeTestCase.FunctionalTestCase):
             content.editMetadata( **kw )
 
         return content
+
+    def afterSetUp(self):
+        setSite(self.app.site)
 
     def test_new( self ):
         site = self.app.site

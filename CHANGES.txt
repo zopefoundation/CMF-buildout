@@ -1,5 +1,10 @@
 CMF 2.1.0-beta (unreleased)
 
+  IMPORTANT NOTE:
+
+    If you upgrade an existing CMF instance to CMF 2.1, please see
+    INSTALL.txt for instructions on how to run a separate upgrade script.
+
   New Features
 
     - DirectoryView: Added 'registerDirectory' ZCML directive.
@@ -47,6 +52,9 @@ CMF 2.1.0-beta (unreleased)
       (http://www.zope.org/Collectors/CMF/459)
 
   Others
+
+    - Tool lookup and registration is now done "the Zope 3 way" as utilities.
+      Please see docs/ToolsAreUtilities.txt for some developer notes.
 
     - CMFCore utils: Marked 'minimalpath' and 'expandpath' as deprecated.
 

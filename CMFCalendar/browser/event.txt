@@ -1,13 +1,15 @@
 Event Views
 -----------
 
-Set up Event and user.
+Set up site, user and Event.
 
-    >>> from Products.CMFCalendar.Event import Event 
-    >>> id = app.site._setObject('myEvent', Event('myEvent'))
-
+    >>> from zope.app.component.hooks import setSite
+    >>> setSite(app.site)
     >>> uf = app.site.acl_users
     >>> uf._doAddUser('mgr', 'mgrpw', ['Manager'], [])
+    >>> from AccessControl.SecurityManagement import newSecurityManager
+    >>> newSecurityManager(None, uf.getUser('mgr').__of__(uf))
+    >>> id = app.site.invokeFactory(type_name='Event', id='myEvent')
 
 Create the browser object we'll be using.
 

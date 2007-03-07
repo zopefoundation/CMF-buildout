@@ -53,3 +53,4 @@ class FunctionalLayer(FunctionalZCMLLayer):
         app._delObject('site')
         transaction.commit()
         ZopeTestCase.close(app)
+

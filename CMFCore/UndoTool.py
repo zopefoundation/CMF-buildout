@@ -30,6 +30,7 @@ from permissions import ManagePortal
 from utils import _checkPermission
 from utils import _dtmldir
 from utils import _getAuthenticatedUser
+from utils import registerToolInterface
 from utils import UniqueObject
 
 
@@ -112,3 +113,5 @@ class UndoTool(UniqueObject, SimpleItem, ActionProviderBase):
         object.manage_undo_transactions(transaction_info)
 
 InitializeClass(UndoTool)
+registerToolInterface('portal_undo', IUndoTool)
+

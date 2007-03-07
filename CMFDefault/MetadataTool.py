@@ -28,6 +28,7 @@ from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces import IMetadataTool
 from Products.CMFCore.interfaces.portal_metadata \
         import portal_metadata as z2IMetadataTool
+from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
 from exceptions import MetadataError
@@ -620,3 +621,5 @@ class MetadataTool( UniqueObject, Folder, ActionProviderBase ):
                             'metadata element %s.' % ( value, element )
 
 InitializeClass( MetadataTool )
+registerToolInterface('portal_metadata', IMetadataTool)
+

@@ -1,13 +1,13 @@
 ##parameters=b_start=0, ids=(), members_new='', members_delete=''
 ##
 from ZTUtils import Batch
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import getToolByInterfaceName
 from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import html_marshal
 from Products.CMFDefault.utils import Message as _
 
-atool = getToolByName(script, 'portal_actions')
-mtool = getToolByName(script, 'portal_membership')
+atool = getToolByInterfaceName('Products.CMFCore.interfaces.IActionsTool')
+mtool = getToolByInterfaceName('Products.CMFCore.interfaces.IMembershipTool')
 
 
 form = context.REQUEST.form

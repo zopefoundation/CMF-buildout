@@ -24,9 +24,13 @@ from Globals import HTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 
+from zope.interface import implements
+
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
+from Products.CMFCore.interfaces import ISyndicationTool
 from Products.CMFCore.PortalFolder import PortalFolderBase
 from Products.CMFCore.utils import _checkPermission
+from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
 from exceptions import AccessControl_Unauthorized
@@ -43,6 +47,7 @@ class SyndicationTool(UniqueObject, SimpleItem, ActionProviderBase):
         syndication of folder content as RSS.
     """
 
+    implements(ISyndicationTool)
     __implements__ = ActionProviderBase.__implements__
 
     id = 'portal_syndication'
@@ -348,7 +353,7 @@ class SyndicationTool(UniqueObject, SimpleItem, ActionProviderBase):
             return 'Syndication is not Allowed'
 
     security.declarePublic('getHTML4UpdateBase')
-    def getHTML4UpdateBase(self, obj):
+    def getHTML4UpdateBase(self, obj=None):
         """
         Return HTML4 formated UpdateBase DateTime
         """
@@ -385,3 +390,5 @@ class SyndicationTool(UniqueObject, SimpleItem, ActionProviderBase):
             return 'Syndication is not Allowed'
 
 InitializeClass(SyndicationTool)
+registerToolInterface('portal_syndication', ISyndicationTool)
+

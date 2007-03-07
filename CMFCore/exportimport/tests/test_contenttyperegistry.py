@@ -20,6 +20,9 @@ import Testing
 
 from OFS.Folder import Folder
 
+from zope.component import getSiteManager
+
+from Products.CMFCore.interfaces import IContentTypeRegistry
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
@@ -154,6 +157,9 @@ class _ContentTypeRegistrySetup(BaseRegistryTests):
         site = self.root.site
         ctr = ContentTypeRegistry()
         site._setObject( ctr.getId(), ctr )
+
+        sm = getSiteManager(site)
+        sm.registerUtility(site.content_type_registry, IContentTypeRegistry)
 
         if mit_predikat:
             for (predicate_id, predicate_type, edit_args, content_type_name

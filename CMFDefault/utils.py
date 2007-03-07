@@ -28,11 +28,13 @@ from Globals import package_home
 from Products.PageTemplates.GlobalTranslationService \
         import getGlobalTranslationService
 from ZTUtils.Zope import complex_marshal
+
 from zope import i18n
+from zope.component import getUtility
 from zope.i18n.interfaces import IUserPreferredCharsets
 from zope.i18nmessageid import MessageFactory
 
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.interfaces import IPropertiesTool
 
 from exceptions import EmailAddressInvalid
 from exceptions import IllegalHTML
@@ -446,7 +448,7 @@ security.declarePublic('decode')
 def decode(value, context):
     """ Decode value using default_charset.
     """
-    ptool = getToolByName(context, 'portal_properties')
+    ptool = getUtility(IPropertiesTool)
     default_charset = ptool.getProperty('default_charset', None)
     return toUnicode(value, default_charset)
 
@@ -474,7 +476,7 @@ security.declarePublic('makeEmail')
 def makeEmail(mtext, context, headers={}):
     """ Make email message.
     """
-    ptool = getToolByName(context, 'portal_properties')
+    ptool = getUtility(IPropertiesTool)
     email_charset = ptool.getProperty('email_charset', None) or 'utf-8'
     try:
         msg = MIMEText(mtext.encode(), 'plain')

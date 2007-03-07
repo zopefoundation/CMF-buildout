@@ -25,14 +25,16 @@ from DocumentTemplate.DT_Util import TemplateDict
 from Globals import InitializeClass
 from OFS.Folder import Folder
 from OFS.ObjectManager import bad_id
+
+from zope.component import getUtility
 from zope.interface import implements
 from zope.event import notify
 
 # CMFCore
+from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.interfaces import IWorkflowDefinition
 from Products.CMFCore.interfaces.portal_workflow \
         import WorkflowDefinition as z2IWorkflowDefinition
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import ObjectDeleted
 from Products.CMFCore.WorkflowCore import ObjectMoved
 from Products.CMFCore.WorkflowCore import WorkflowException
@@ -231,7 +233,7 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
                     var_match_keys = qdef.getVarMatchKeys()
                     if var_match_keys:
                         # Check the catalog for items in the worklist.
-                        catalog = getToolByName(self, 'portal_catalog')
+                        catalog = getUtility(ICatalogTool)
                         kw = {}
                         for k in var_match_keys:
                             v = qdef.getVarMatch(k)

@@ -27,14 +27,19 @@ from Globals import InitializeClass
 from Globals import package_home
 from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+
+from zope.component import getUtility
 from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
+from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.permissions import ManagePortal
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
+from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
 from Products.CMFUid.interfaces import IUniqueIdBrainQuery
+from Products.CMFUid.interfaces import IUniqueIdGenerator
 from Products.CMFUid.interfaces import IUniqueIdHandler
 from Products.CMFUid.interfaces import IUniqueIdUnrestrictedQuery
 from Products.CMFUid.interfaces import UniqueIdError
@@ -80,7 +85,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
     def _reindexObject(self, obj):
         # add uid index and colums to catalog if not yet done
         UID_ATTRIBUTE_NAME = self.UID_ATTRIBUTE_NAME
-        catalog = getToolByName(self, 'portal_catalog')
+        catalog = getUtility(ICatalogTool)
         if UID_ATTRIBUTE_NAME not in catalog.indexes():
             catalog.addIndex(UID_ATTRIBUTE_NAME, 'FieldIndex')
             catalog.addColumn(UID_ATTRIBUTE_NAME)
@@ -92,7 +97,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         """Attaches a unique id to the object and does reindexing.
         """
         # attach a unique id annotation to the object
-        anno_tool = getToolByName(self, 'portal_uidannotation')
+        anno_tool = getUtility(IUniqueIdAnnotationManagement)
         annotation = anno_tool(obj, self.UID_ATTRIBUTE_NAME)
         annotation.setUid(uid)
 
@@ -106,7 +111,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         uid = self.queryUid(obj, default=None)
         if uid is None:
             # generate a new unique id and set it
-            generator = getToolByName(self, 'portal_uidgenerator')
+            generator = getUtility(IUniqueIdGenerator)
             uid = generator()
             self._setUid(obj, uid)
 
@@ -176,10 +181,10 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
             return default
 
         # convert the uid to the right format
-        generator = getToolByName(self, 'portal_uidgenerator')
+        generator = getUtility(IUniqueIdGenerator)
         uid = generator.convert(uid)
 
-        catalog = getToolByName(self, 'portal_catalog')
+        catalog = getUtility(ICatalogTool)
         searchMethod = getattr(catalog, searchMethodName)
         result = searchMethod({self.UID_ATTRIBUTE_NAME: uid})
         len_result = len(result)
@@ -260,3 +265,5 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
     manage_queryObject = PageTemplateFile('queryUID.pt', _wwwdir)
 
 InitializeClass(UniqueIdHandlerTool)
+registerToolInterface('portal_uidhandler', IUniqueIdHandler)
+

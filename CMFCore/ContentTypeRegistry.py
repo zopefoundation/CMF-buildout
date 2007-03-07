@@ -23,17 +23,20 @@ from Globals import InitializeClass
 from Globals import PersistentMapping
 from OFS.SimpleItem import SimpleItem
 from ZPublisher.mapply import mapply
+
+from zope.component import getUtility
 from zope.interface import implements
 
 from interfaces import IContentTypeRegistry
 from interfaces import IContentTypeRegistryPredicate
+from interfaces import ITypesTool
 from interfaces.ContentTypeRegistry \
         import ContentTypeRegistry as z2IContentTypeRegistry
 from interfaces.ContentTypeRegistry \
         import ContentTypeRegistryPredicate as z2IContentTypeRegistryPredicate
 from permissions import ManagePortal
 from utils import _dtmldir
-from utils import getToolByName
+from utils import registerToolInterface
 
 
 class MajorMinorPredicate( SimpleItem ):
@@ -436,7 +439,7 @@ class ContentTypeRegistry( SimpleItem ):
         if typeName is None:
             typeName = '<unknown>'
         else:
-            types_tool = getToolByName(self, 'portal_types')
+            types_tool = getUtility(ITypesTool)
             typeName = types_tool.getTypeInfo(typeName).Title()
         REQUEST[ 'RESPONSE' ].redirect( self.absolute_url()
                                + '/manage_testRegistry'
@@ -549,6 +552,7 @@ class ContentTypeRegistry( SimpleItem ):
         return None
 
 InitializeClass( ContentTypeRegistry )
+registerToolInterface('content_type_registry', IContentTypeRegistry)
 
 def manage_addRegistry( self, REQUEST=None ):
     """

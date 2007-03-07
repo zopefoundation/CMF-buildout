@@ -22,9 +22,12 @@ from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
+
+from zope.component import getUtility
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
+from interfaces import IMembershipTool
 from interfaces import IRegistrationTool
 from interfaces.portal_registration \
         import portal_registration as z2IRegistrationTool
@@ -34,7 +37,6 @@ from permissions import ManagePortal
 from utils import _checkPermission
 from utils import _dtmldir
 from utils import _limitGrantedRoles
-from utils import getToolByName
 from utils import Message as _
 from utils import UniqueObject
 
@@ -157,7 +159,7 @@ class RegistrationTool(UniqueObject, SimpleItem, ActionProviderBase):
         # Anyone is always allowed to grant the 'Member' role.
         _limitGrantedRoles(roles, self, ('Member',))
 
-        membership = getToolByName(self, 'portal_membership')
+        membership = getUtility(IMembershipTool)
         membership.addMember(id, password, roles, domains, properties)
 
         member = membership.getMemberById(id)
@@ -172,7 +174,7 @@ class RegistrationTool(UniqueObject, SimpleItem, ActionProviderBase):
             return 0
         if not self._ALLOWED_MEMBER_ID_PATTERN.match( id ):
             return 0
-        membership = getToolByName(self, 'portal_membership')
+        membership = getUtility(IMembershipTool)
         if membership.getMemberById(id) is not None:
             return 0
         return 1

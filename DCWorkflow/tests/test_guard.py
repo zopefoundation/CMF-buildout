@@ -206,7 +206,8 @@ class TestGuard(unittest.TestCase):
 
         # Create compulsory context elements
         sm = getSecurityManager()
-        ob = DummyContent('dummy')
+        self.site._setObject('dummy', DummyContent('dummy'))
+        ob = self.site.dummy
         wf_def = self._getDummyWorkflow()
 
         # Initialize the guard with an ok guard
@@ -238,7 +239,8 @@ class TestGuard(unittest.TestCase):
 
         # Create compulsory context elements
         sm = getSecurityManager()
-        ob = DummyContent('dummy')
+        self.site._setObject('dummy', DummyContent('dummy'))
+        ob = self.site.dummy
         wf_def = self._getDummyWorkflow()
 
         # Initialize the guard with an ok guard

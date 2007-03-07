@@ -47,10 +47,15 @@ from OFS.PropertySheets import PropertySheets
 from OFS.SimpleItem import SimpleItem
 from thread import allocate_lock
 from webdav.common import rfc1123_date
+from zope.component import getUtility
+from zope.component import queryUtility
+from zope.component.interfaces import ComponentLookupError
+from zope.dottedname.resolve import resolve as resolve_dotted_name
 from zope.i18nmessageid import MessageFactory
 
 from exceptions import AccessControl_Unauthorized
 from exceptions import NotFound
+from interfaces import ICachingPolicyManager
 
 SUBTEMPLATE = '__SUBTEMPLATE__'
 
@@ -65,6 +70,24 @@ _wwwdir = os_path.join( package_home( globals() ), 'www' )
 #
 _marker = []  # Create a new marker object.
 
+_tool_interface_registry = {}
+
+security.declarePrivate('registerToolInterface')
+def registerToolInterface(tool_id, tool_interface):
+    """ Register a tool ID for an interface
+
+    This method can go away when getToolByName is going away (CMF 2.3).
+    """
+    global  _tool_interface_registry
+    _tool_interface_registry[tool_id] = tool_interface
+
+security.declarePrivate('getToolInterface')
+def getToolInterface(tool_id):
+    """ Get the interface registered for a tool ID
+    """
+    global  _tool_interface_registry
+    return _tool_interface_registry.get(tool_id, None)
+
 security.declarePublic('getToolByName')
 def getToolByName(obj, name, default=_marker):
 
@@ -74,6 +97,20 @@ def getToolByName(obj, name, default=_marker):
       acquiring the tool by name, to ease forward migration (e.g.,
       to Zope3).
     """
+    tool_interface = _tool_interface_registry.get(name)
+
+    if tool_interface is not None:
+        warn('getToolByName is deprecated and will be removed in '
+             'CMF 2.3, please use "getUtility(%s)"' % (
+               tool_interface.__name__), DeprecationWarning, stacklevel=2) 
+
+        try:
+            return getUtility(tool_interface)
+        except ComponentLookupError:
+            # behave in backwards-compatible way
+            # fall through to old implementation
+            pass
+    
     try:
         tool = aq_get(obj, name, default, 1)
     except AttributeError:
@@ -84,6 +121,27 @@ def getToolByName(obj, name, default=_marker):
         if tool is _marker:
             raise AttributeError, name
         return tool
+
+security.declarePublic('getToolByInterfaceName')
+def getToolByInterfaceName(dotted_name, default=_marker):
+    """ Get a tool by its fully-qualified dotted interface path
+
+    This method replaces getToolByName for use in untrusted code.
+    Trusted code should use zope.component.getUtility instead.
+    """
+    try:
+        iface = resolve_dotted_name(dotted_name)
+    except ImportError:
+        if default is _marker:
+            raise ComponentLookupError, dotted_name
+        return default
+
+    try:
+        return getUtility(iface)
+    except ComponentLookupError:
+        if default is _marker:
+            raise
+        return default
 
 security.declarePublic('cookString')
 def cookString(text):
@@ -304,7 +362,7 @@ def _checkConditionalGET(obj, extra_context):
         # not a conditional GET
         return False
 
-    manager = getToolByName(obj, 'caching_policy_manager', None)
+    manager = queryUtility(ICachingPolicyManager)
     if manager is None:
         return False
 
@@ -384,22 +442,24 @@ def _setCacheHeaders(obj, extra_context):
         delattr(REQUEST, SUBTEMPLATE)
 
         content = aq_parent(obj)
-        manager = getToolByName(obj, 'caching_policy_manager', None)
-        if manager is not None:
-            view_name = obj.getId()
-            headers = manager.getHTTPCachingHeaders(
-                              content, view_name, extra_context
-                              )
-            RESPONSE = REQUEST['RESPONSE']
-            for key, value in headers:
-                if key == 'ETag':
-                    RESPONSE.setHeader(key, value, literal=1)
-                else:
-                    RESPONSE.setHeader(key, value)
-            if headers:
-                RESPONSE.setHeader('X-Cache-Headers-Set-By',
-                                   'CachingPolicyManager: %s' %
-                                   '/'.join(manager.getPhysicalPath()))
+        manager = queryUtility(ICachingPolicyManager)
+        if manager is None:
+            return
+
+        view_name = obj.getId()
+        headers = manager.getHTTPCachingHeaders(
+                          content, view_name, extra_context
+                          )
+        RESPONSE = REQUEST['RESPONSE']
+        for key, value in headers:
+            if key == 'ETag':
+                RESPONSE.setHeader(key, value, literal=1)
+            else:
+                RESPONSE.setHeader(key, value)
+        if headers:
+            RESPONSE.setHeader('X-Cache-Headers-Set-By',
+                               'CachingPolicyManager: %s' %
+                               '/'.join(manager.getPhysicalPath()))
 
 class _ViewEmulator(Implicit):
     """Auxiliary class used to adapt FSFile and FSImage

@@ -24,18 +24,21 @@ from Globals import InitializeClass
 from Globals import PersistentMapping
 from OFS.Folder import Folder
 from OFS.ObjectManager import IFAwareObjectManager
+
+from zope.component import queryUtility
 from zope.interface import implements
 from zope.event import notify
 
 from ActionProviderBase import ActionProviderBase
 from interfaces import IConfigurableWorkflowTool
+from interfaces import ITypesTool
 from interfaces import IWorkflowDefinition
 from interfaces import IWorkflowTool
 from interfaces.portal_workflow import portal_workflow as z2IWorkflowTool
 from permissions import ManagePortal
 from utils import _dtmldir
-from utils import getToolByName
 from utils import Message as _
+from utils import registerToolInterface
 from utils import UniqueObject
 from WorkflowCore import ObjectDeleted
 from WorkflowCore import ObjectMoved
@@ -467,7 +470,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
     def getDefaultChainFor(self, ob):
         """ Get the default chain, if applicable, for ob.
         """
-        types_tool = getToolByName( self, 'portal_types', None )
+        types_tool = queryUtility(ITypesTool)
         if ( types_tool is not None
             and types_tool.getTypeInfo( ob ) is not None ):
             return self._default_chain
@@ -507,7 +510,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
         """ List the portal types which are available.
         """
-        pt = getToolByName(self, 'portal_types', None)
+        pt = queryUtility(ITypesTool)
         if pt is None:
             return ()
         else:
@@ -614,3 +617,5 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
             ob.reindexObjectSecurity()
 
 InitializeClass(WorkflowTool)
+registerToolInterface('portal_workflow', IWorkflowTool)
+

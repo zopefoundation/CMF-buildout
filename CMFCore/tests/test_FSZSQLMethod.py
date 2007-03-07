@@ -6,8 +6,11 @@ from os.path import join
 
 from OFS.Folder import Folder
 
+from zope.component import getSiteManager
+
 from Products.CMFCore.FSMetadata import FSMetadata
 from Products.CMFCore.FSZSQLMethod import FSZSQLMethod
+from Products.CMFCore.interfaces import ISkinsTool
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
@@ -49,6 +52,8 @@ class FSZSQLMethodCustomizationTests(SecurityTest, FSZSQLMaker):
 
         self.root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
         self.skins = self.root.portal_skins
+        sm = getSiteManager()
+        sm.registerUtility(self.skins, ISkinsTool)
 
         self.skins._setObject( 'custom', Folder( 'custom' ) )
         self.custom = self.skins.custom

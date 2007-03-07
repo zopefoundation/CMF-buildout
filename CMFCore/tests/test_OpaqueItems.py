@@ -18,17 +18,19 @@ $Id$
 import unittest
 import Testing
 
+from zope.component import getSiteManager
 from zope.interface import implements
 
 from Products.CMFCore.interfaces import ICallableOpaqueItem
 from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
 from Products.CMFCore.interfaces import IContentish
+from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.interfaces.IOpaqueItems \
         import ICallableOpaqueItem as z2ICallableOpaqueItem
 from Products.CMFCore.interfaces.IOpaqueItems \
         import ICallableOpaqueItemEvents as z2ICallableOpaqueItemEvents
 from Products.CMFCore.PortalFolder import PortalFolder
-from Products.CMFCore.testing import EventZCMLLayer
+from Products.CMFCore.testing import TraversingEventZCMLLayer
 from Products.CMFCore.tests.base.dummy \
     import DummyContent as OriginalDummyContent
 from Products.CMFCore.tests.base.testcase import SecurityTest
@@ -140,15 +142,17 @@ class MarkerAndHooks(Marker, Hooks):
 
 class ManageBeforeAfterTests(SecurityTest):
 
-    layer = EventZCMLLayer
+    layer = TraversingEventZCMLLayer
 
     def setUp(self):
         SecurityTest.setUp(self)
 
         root = self.root
+        sm = getSiteManager()
 
         # setting up types tool
         root._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(root.portal_types, ITypesTool)
 
         # setup portal
         try:

@@ -18,6 +18,9 @@ $Id$
 import unittest
 import Testing
 
+from zope.component import getSiteManager
+
+from Products.CMFCore.interfaces import ISkinsTool
 
 class SkinsContainerTests(unittest.TestCase):
 
@@ -97,12 +100,11 @@ class SkinnableTests(unittest.TestCase):
 
         class TestSkinnableObjectManager(SkinnableObjectManager):
             tool = SkinsTool()
+            sm = getSiteManager()
+            sm.registerUtility(tool, ISkinsTool)
             # This is needed otherwise REQUEST is the string
             # '<Special Object Used to Force Acquisition>'
             REQUEST = None 
-            def getSkinsFolderName(self):
-                '''tool'''
-                return 'tool'
         
         return TestSkinnableObjectManager()
     

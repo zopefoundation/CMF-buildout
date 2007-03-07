@@ -7,10 +7,15 @@
 ##parameters=items, comment=''
 ##title=
 ##
-wf_tool = context.portal_workflow # XXX getToolByName
+
+from Products.CMFCore.utils import getToolByInterfaceName
+
+wtool_iface = 'Products.CMFCore.interfaces.IConfigurableWorkflowTool'
+wtool = getToolByInterfaceName(wtool_iface)
+
 for path in items:
     object = context.restrictedTraverse( path )
-    wf_tool.doActionFor( object, 'reject', comment=comment )
+    wtool.doActionFor( object, 'reject', comment=comment )
 
 context.REQUEST[ 'RESPONSE' ].redirect( '%s/review?%s'
                    % ( context.portal_url()

@@ -15,7 +15,13 @@
 $Id$
 """
 
+from warnings import warn
+
+from five.localsitemanager import find_next_sitemanager
+from five.localsitemanager.registry import PersistentComponents
 from Globals import InitializeClass
+from Products.Five.component.interfaces import IObjectManagerSite
+from zope.component.globalregistry import base
 from zope.interface import implements
 
 from interfaces import ISiteRoot
@@ -33,7 +39,7 @@ PORTAL_SKINS_TOOL_ID = 'portal_skins'
 
 class PortalObjectBase(PortalFolder, SkinnableObjectManager):
 
-    implements(ISiteRoot)
+    implements(ISiteRoot, IObjectManagerSite)
     meta_type = 'Portal Site'
     _isPortalRoot = 1
 
@@ -53,6 +59,18 @@ class PortalObjectBase(PortalFolder, SkinnableObjectManager):
         )
 
     def getSkinsFolderName(self):
+        warn('getSkinsFolderName is deprecated and will be removed in '
+             'CMF 2.3, please use "getUtility(ISkinsTool)" to retrieve '
+             'the skins tool object.', DeprecationWarning, stacklevel=2)
         return PORTAL_SKINS_TOOL_ID
+
+    def getSiteManager(self):
+        if self._components is None:
+            next = find_next_sitemanager(self)
+            if next is None:
+                next = base
+            name = '/'.join(self.getPhysicalPath())
+            self._components = PersistentComponents(name, (next,))
+        return self._components
 
 InitializeClass(PortalObjectBase)

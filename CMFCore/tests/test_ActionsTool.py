@@ -18,13 +18,19 @@ $Id$
 import unittest
 import Testing
 
+from zope.component import getSiteManager
+from zope.testing.cleanup import cleanUp
+
 from Products.CMFCore.ActionInformation import Action
 from Products.CMFCore.ActionInformation import ActionCategory
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.Expression import Expression
 from Products.CMFCore.MembershipTool import MembershipTool
+from Products.CMFCore.interfaces import IURLTool
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.URLTool import URLTool
+from Products.CMFCore.interfaces import IMembershipTool
+from Products.CMFCore.interfaces import ISiteRoot
 
 
 class ActionsToolTests(unittest.TestCase):
@@ -107,10 +113,14 @@ class ActionsToolSecurityRequestTests(SecurityRequestTest):
         SecurityRequestTest.setUp(self)
 
         root = self.root
+        sm = getSiteManager()
+        sm.registerUtility(root, ISiteRoot)
         root._setObject( 'portal_actions', self._makeOne() )
         root._setObject( 'portal_url', URLTool() )
+        sm.registerUtility(root.portal_url, IURLTool)
         root._setObject( 'foo', URLTool() )
         root._setObject('portal_membership', MembershipTool())
+        sm.registerUtility(root.portal_membership, IMembershipTool)
         self.tool = root.portal_actions
         self.tool.action_providers = ('portal_actions',)
 
@@ -144,6 +154,10 @@ class ActionsToolSecurityRequestTests(SecurityRequestTest):
                                       'allowed': True,
                                       'category': 'folder'}],
                           'global': []})
+
+    def tearDown(self):
+        cleanUp()
+        SecurityRequestTest.tearDown(self)
 
 
 def test_suite():

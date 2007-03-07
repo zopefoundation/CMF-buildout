@@ -1,9 +1,9 @@
 ##parameters=**kw
 ##
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import getToolByInterfaceName
 from Products.CMFDefault.utils import Message as _
 
-ptool = getToolByName(script, 'portal_properties')
+ptool = getToolByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
 
 if not ptool.hasProperty('default_charset'):
     ptool.manage_addProperty('default_charset', '', 'string')

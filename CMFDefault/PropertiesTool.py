@@ -19,12 +19,17 @@ from AccessControl import ClassSecurityInfo
 from Acquisition import aq_inner, aq_parent
 from Globals import InitializeClass, DTMLFile
 from OFS.SimpleItem import SimpleItem
+from Products.MailHost.interfaces import IMailHost
+from zope.app.component.hooks import getSite
+from zope.component import getUtility
 from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces import IPropertiesTool
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces.portal_properties \
         import portal_properties as z2IPropertiesTool
+from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
 from permissions import ManagePortal
@@ -59,17 +64,19 @@ class PropertiesTool(UniqueObject, SimpleItem, ActionProviderBase):
     security.declareProtected(ManagePortal, 'editProperties')
     def editProperties(self, props):
         '''Change portal settings'''
-        aq_parent(aq_inner(self)).manage_changeProperties(props)
-        self.MailHost.smtp_host = props['smtp_server']
+        site = getUtility(ISiteRoot)
+        site.manage_changeProperties(props)
+        getUtility(IMailHost).smtp_host = props['smtp_server']
         if hasattr(self, 'propertysheets'):
             ps = self.propertysheets
             if hasattr(ps, 'props'):
                 ps.props.manage_changeProperties(props)
 
     def title(self):
-        return self.aq_inner.aq_parent.title
+        return getUtility(ISiteRoot).title
 
     def smtp_server(self):
-        return self.MailHost.smtp_host
+        return getUtility(IMailHost).smtp_host
 
 InitializeClass(PropertiesTool)
+registerToolInterface('portal_properties', IPropertiesTool)

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<componentregistry>
+ <adapters/>
+ <utilities>
+  <utility
+     interface="Products.CMFCalendar.interfaces.ICalendarTool"
+     object="/portal_calendar"/>
+ </utilities>
+</componentregistry>

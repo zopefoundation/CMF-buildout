@@ -21,14 +21,14 @@ from csv import writer
 from ConfigParser import ConfigParser
 from StringIO import StringIO
 
+from zope.component import getUtility
 from zope.interface import implements
 from zope.interface import directlyProvides
 
 from Products.GenericSetup.interfaces import IFilesystemExporter
 from Products.GenericSetup.interfaces import IFilesystemImporter
 from Products.GenericSetup.content import _globtest
-from Products.CMFCore.utils import getToolByName
-
+from Products.CMFCore.interfaces import ITypesTool
 #
 #   setup_tool handlers
 #
@@ -181,7 +181,7 @@ class StructureFolderWalkingAdapter(object):
         context = self.context
         properties = import_context.readDataFile('.properties',
                                                  '%s/%s' % (subdir, id))
-        tool = getToolByName(context, 'portal_types')
+        tool = getUtility(ITypesTool)
 
         try:
             tool.constructContent(portal_type, context, id)

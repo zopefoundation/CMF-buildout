@@ -62,8 +62,8 @@ class EditFormBase(PageForm, ViewBase):
         self.request = request
         self.request.locale = getLocale(request)
 
-    def _setRedirect(self, provider_id, action_path, keys=''):
-        provider = self._getTool(provider_id)
+    def _setRedirect(self, provider_iface, action_path, keys=''):
+        provider = self._getToolByInterfaceName(provider_iface)
         try:
             target = provider.getActionInfo(action_path, self.context)['url']
         except ValueError:
@@ -147,11 +147,15 @@ class ContentEditFormBase(EditFormBase):
 
     def handle_change_success(self, action, data):
         self._handle_success(action, data)
-        return self._setRedirect('portal_types', 'object/edit')
+        return self._setRedirect( 'Products.CMFCore.interfaces.ITypesTool'
+                                , 'object/edit'
+                                )
 
     def handle_change_and_view_success(self, action, data):
         self._handle_success(action, data)
-        return self._setRedirect('portal_types', 'object/view')
+        return self._setRedirect( 'Products.CMFCore.interfaces.ITypesTool'
+                                , 'object/view'
+                                )
 
 
 class DisplayFormBase(PageDisplayForm, ViewBase):

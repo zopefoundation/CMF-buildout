@@ -28,8 +28,12 @@ from App.Common import rfc1123_date
 from DateTime.DateTime import DateTime
 from OFS.Cache import Cacheable
 
+from zope.app.component.hooks import setHooks
+from zope.component import getSiteManager
+
 from Products.CMFCore.FSPageTemplate import FSPageTemplate
 from Products.CMFCore.FSDTMLMethod import FSDTMLMethod
+from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.testing import FunctionalZCMLLayer
 from Products.CMFCore.testing import TraversingZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
@@ -38,6 +42,7 @@ from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
+from Products.CMFCore.interfaces import ICachingPolicyManager
 
 ACCLARK = DateTime( '2001/01/01' )
 portal_owner = 'portal_owner'
@@ -652,8 +657,10 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         now = DateTime()
 
         # Create a fake portal and the tools we need
+        sm = getSiteManager()
         self.portal = DummySite(id='portal').__of__(self.root)
         self.portal._setObject('portal_types', DummyTool())
+        sm.registerUtility(self.portal.portal_types, ITypesTool)
 
         # This is a FSPageTemplate that will be used as the View for
         # our content objects. It doesn't matter what it returns.
@@ -679,6 +686,9 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
 
         CachingPolicyManager.manage_addCachingPolicyManager(self.portal)
         cpm = self.portal.caching_policy_manager
+
+        sm = getSiteManager(self.portal)
+        sm.registerUtility(cpm, ICachingPolicyManager)
 
         # This policy only applies to doc1. It will not emit any ETag header
         # but it enables If-modified-since handling.
@@ -902,6 +912,11 @@ class NestedTemplateTests( RequestTest, FSObjMaker ):
 
         from Products.CMFCore import CachingPolicyManager
         CachingPolicyManager.manage_addCachingPolicyManager(self.portal)
+
+        sm = getSiteManager(self.portal)
+        sm.registerUtility( self.portal.caching_policy_manager
+                          , ICachingPolicyManager
+                          )
 
     def tearDown(self):
         RequestTest.tearDown(self)
@@ -1222,6 +1237,9 @@ class OFSCacheTests(RequestTest):
         self.portal._setObject('doc2', CacheableDummyContent('doc2'))
         CachingPolicyManager.manage_addCachingPolicyManager(self.portal)
         cpm = self.portal.caching_policy_manager
+
+        sm = getSiteManager(self.portal)
+        sm.registerUtility(cpm, ICachingPolicyManager)
 
         # This policy only applies to doc1. It will not emit any ETag header
         # but it enables If-modified-since handling.

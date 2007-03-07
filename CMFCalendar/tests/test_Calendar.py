@@ -24,6 +24,7 @@ import locale
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.User import UnrestrictedUser
 from DateTime import DateTime
+from zope.app.component.hooks import setSite
 
 from Products.CMFCalendar.testing import FunctionalLayer
 
@@ -107,6 +108,7 @@ class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
     layer = FunctionalLayer
 
     def afterSetUp(self):
+        setSite(self.app.site)
         newSecurityManager(None, UnrestrictedUser('god', '', ['Manager'], ''))
 
         # sessioning setup

@@ -32,6 +32,7 @@ from zope.app.container.interfaces import IObjectMovedEvent
 from OFS.interfaces import IObjectWillBeMovedEvent
 
 from interfaces import ICookieCrumbler
+from utils import registerToolInterface
 
 
 # Constants.
@@ -382,6 +383,7 @@ class CookieCrumbler(Folder):
         return id
 
 Globals.InitializeClass(CookieCrumbler)
+registerToolInterface('cookie_authentication', ICookieCrumbler)
 
 def handleCookieCrumblerEvent(ob, event):
     """ Event subscriber for (un)registering a CC as a before traverse hook.

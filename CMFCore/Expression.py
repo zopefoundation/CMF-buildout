@@ -19,10 +19,14 @@ from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base, aq_inner, aq_parent
 from Globals import InitializeClass
 from Globals import Persistent
+
+from zope.component import getUtility
+
 from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
 
-from utils import getToolByName
+from interfaces import IMembershipTool
+from interfaces import IURLTool
 
 
 class Expression(Persistent):
@@ -63,7 +67,7 @@ def getExprContext(context, object=None):
     else:
         ec = None
     if ec is None:
-        utool = getToolByName(context, 'portal_url')
+        utool = getUtility(IURLTool)
         portal = utool.getPortalObject()
         if object is None or not hasattr(object, 'aq_base'):
             folder = portal
@@ -87,7 +91,7 @@ def createExprContext(folder, portal, object):
     '''
     An expression context provides names for TALES expressions.
     '''
-    pm = getToolByName(portal, 'portal_membership')
+    pm = getUtility(IMembershipTool)
     if object is None:
         object_url = ''
     else:

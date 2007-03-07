@@ -20,11 +20,14 @@ import Testing
 
 from OFS.Folder import Folder
 
+from zope.component import getSiteManager
+
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
+from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.permissions import View
 from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.permissions import ModifyPortalContent
@@ -324,6 +327,9 @@ class _TypeInfoSetup(BaseRegistryTests):
         self.root.site = Folder(id='site')
         site = self.root.site
         ttool = site.portal_types = TypesTool()
+
+        sm = getSiteManager()
+        sm.registerUtility(ttool, ITypesTool)
 
         if foo == 1:
             fti = _TI_LIST[0].copy()

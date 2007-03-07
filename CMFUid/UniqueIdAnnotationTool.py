@@ -24,9 +24,12 @@ from Globals import InitializeClass
 from Globals import Persistent
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
+
+from zope.component import getUtility
 from zope.interface import implements
 
-from Products.CMFCore.utils import getToolByName, UniqueObject
+from Products.CMFCore.utils import UniqueObject
+from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 
 from Products.CMFUid.interfaces import IUniqueIdAnnotation
@@ -69,7 +72,7 @@ class UniqueIdAnnotation(Persistent, Implicit):
         # the uid object may already be removed by the 'manage_afterAdd'.
         # To be independent of the implementation of 'manage_afterAdd'
         # the unique id object probably gets removed another time.
-        anno_tool = getToolByName(item, 'portal_uidannotation')
+        anno_tool = getUtility(IUniqueIdAnnotationManagement)
         if anno_tool.remove_on_clone:
             try:
                 delattr( aq_parent( aq_inner(self) ), self.id )
@@ -81,7 +84,7 @@ class UniqueIdAnnotation(Persistent, Implicit):
         """
         # This helps in distinguishing renaming from copying/adding and
         # importing in 'manage_afterAdd' (see below)
-        anno_tool = getToolByName(item, 'portal_uidannotation')
+        anno_tool = getUtility(IUniqueIdAnnotationManagement)
         if anno_tool.remove_on_add:
             self._cmf_uid_is_rename = True
 
@@ -93,7 +96,7 @@ class UniqueIdAnnotation(Persistent, Implicit):
         # a rename operation.
         # This way I the unique id gets deleted on imports.
         _is_rename = getattr(aq_base(self), '_cmf_uid_is_rename', None)
-        anno_tool = getToolByName(item, 'portal_uidannotation')
+        anno_tool = getUtility(IUniqueIdAnnotationManagement)
         if anno_tool.remove_on_add and anno_tool.remove_on_clone \
            and not _is_rename:
             try:
@@ -145,3 +148,5 @@ class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager,
         return UniqueIdAnnotation(obj, id)
 
 InitializeClass(UniqueIdAnnotationTool)
+registerToolInterface('portal_uidannotation', IUniqueIdAnnotationManagement)
+

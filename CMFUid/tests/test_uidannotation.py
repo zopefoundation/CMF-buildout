@@ -19,13 +19,16 @@ import unittest
 import Testing
 
 from OFS.event import ObjectClonedEvent
+
 from zope.app.container.contained import ObjectAddedEvent
+from zope.component import getSiteManager
 from zope.event import notify
 
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.testing import EventZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
 
 UID_ATTRNAME = 'cmf_uid'
 
@@ -44,6 +47,11 @@ class UniqueIdAnnotationToolTests(SecurityTest):
         SecurityTest.setUp(self)
         self.root._setObject('portal_uidannotation', self._getTargetClass()())
         self.root._setObject('dummy', DummyContent(id='dummy'))
+
+        sm = getSiteManager()
+        sm.registerUtility( self.root.portal_uidannotation
+                          , IUniqueIdAnnotationManagement
+                          )
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass

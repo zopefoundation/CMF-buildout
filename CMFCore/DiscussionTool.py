@@ -19,6 +19,8 @@ from OFS.SimpleItem import SimpleItem
 from Globals import InitializeClass, DTMLFile
 from Acquisition import Implicit
 from AccessControl import ClassSecurityInfo
+
+from zope.component import getUtility
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
@@ -26,13 +28,15 @@ from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from permissions import ReplyToItem
 from permissions import View
+from interfaces import ICatalogTool
+from interfaces import IMembershipTool
 from interfaces import IOldstyleDiscussable
 from interfaces import IOldstyleDiscussionTool
+from interfaces import ITypesTool
 from interfaces.Discussions import OldDiscussable as z2IOldstyleDiscussable
 from interfaces.portal_discussion \
         import oldstyle_portal_discussion as z2IOldstyleDiscussionTool
 from utils import _dtmldir
-from utils import getToolByName
 from utils import UniqueObject
 
 
@@ -68,7 +72,7 @@ class OldDiscussable(Implicit):
         # It is not yet clear to me what the correct location for this hook is
 
         # Find the folder designated for replies, creating if missing
-        membershiptool = getToolByName(self.content, 'portal_membership')
+        membershiptool = getUtility(IMembershipTool)
         home = membershiptool.getHomeFolder()
         if not hasattr(home, 'Correspondence'):
             home.manage_addPortalFolder('Correspondence')
@@ -91,7 +95,7 @@ class OldDiscussable(Implicit):
             Often, the actual objects are not needed.  This is less expensive
             than fetching the objects.
         """
-        catalog = getToolByName(self.content, 'portal_catalog')
+        catalog = getUtility(ICatalogTool)
         return catalog.searchResults(in_reply_to=
                                       urllib.unquote('/'+self.absolute_url(1)))
 
@@ -101,7 +105,7 @@ class OldDiscussable(Implicit):
             Return a sequence of the DiscussionResponse objects which are
             associated with this Discussable
         """
-        catalog = getToolByName(self.content, 'portal_catalog')
+        catalog = getUtility(ICatalogTool)
         results = self.getReplyResults()
         rids    = map(lambda x: x.data_record_id_, results)
         objects = map(catalog.getobject, rids)
@@ -155,7 +159,7 @@ class DiscussionTool(UniqueObject, SimpleItem, ActionProviderBase):
         '''
         if hasattr( content, 'allow_discussion' ):
             return content.allow_discussion
-        typeInfo = getToolByName(self, 'portal_types').getTypeInfo( content )
+        typeInfo = getUtility(ITypesTool).getTypeInfo( content )
         if typeInfo:
             return typeInfo.allowDiscussion()
         return 0

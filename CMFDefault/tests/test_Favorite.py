@@ -18,6 +18,11 @@ $Id$
 import unittest
 import Testing
 
+from zope.component import getSiteManager
+from zope.testing.cleanup import cleanUp
+
+from Products.CMFCore.interfaces import IMembershipTool
+from Products.CMFCore.interfaces import IURLTool
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
@@ -34,9 +39,15 @@ class FavoriteTests(ConformsToContent, unittest.TestCase):
         return self._getTargetClass()(*args, **kw)
 
     def setUp(self):
+        sm = getSiteManager()
         self.site = DummySite('site')
         self.site._setObject( 'portal_membership', DummyTool() )
+        sm.registerUtility(self.site.portal_membership, IMembershipTool)
         self.site._setObject( 'portal_url', DummyTool() )
+        sm.registerUtility(self.site.portal_url, IURLTool)
+
+    def tearDown(self):
+        cleanUp()
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass

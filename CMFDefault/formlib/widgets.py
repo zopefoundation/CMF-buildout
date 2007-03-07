@@ -25,6 +25,7 @@ from zope.app.form.interfaces import ConversionError
 from zope.app.form.interfaces import IInputWidget
 from zope.app.form.interfaces import WidgetInputError
 from zope.component import adapts
+from zope.component import getUtility
 from zope.interface import implementsOnly
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.schema import Set
@@ -33,7 +34,7 @@ from zope.schema.interfaces import ISet
 from zope.schema.interfaces import ITuple
 from zope.schema.interfaces import ITextLine
 
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.interfaces import IMetadataTool
 from Products.CMFDefault.exceptions import IllegalHTML
 from Products.CMFDefault.utils import scrubHTML
 from Products.CMFDefault.utils import Message as _
@@ -119,7 +120,7 @@ class SubjectInputWidget(InputWidget, BrowserWidget):
         self.vocabulary = ()
         context = getattr(self.context.context, 'context',
                           self.context.context)
-        mdtool = getToolByName(context, 'portal_metadata')
+        mdtool = getUtility(IMetadataTool)
         allowed_subjects = mdtool.listAllowedSubjects(context)
         if allowed_subjects:
             items = [ (str(v), unicode(v), unicode(v))

@@ -18,11 +18,16 @@ $Id$
 import unittest
 from Testing import ZopeTestCase
 
+from Acquisition import Implicit
+from zope.component import getSiteManager
+from zope.testing.cleanup import cleanUp
+
+from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFDefault.testing import FunctionalLayer
 
 
-class FauxMembershipTool:
+class FauxMembershipTool(Implicit):
 
     def getMemberById( self, username ):
         return None
@@ -37,6 +42,10 @@ class RegistrationToolTests(RequestTest):
 
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
+
+    def tearDown(self):
+        cleanUp()
+        RequestTest.tearDown(self)
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -67,14 +76,16 @@ Subject:Hosed by Spam Cannon!
 Spam, spam, spam
 """
 
-        tool = self._makeOne().__of__( self.root )
-        self.root.portal_membership = FauxMembershipTool()
+        rtool = self._makeOne()
+        mtool = FauxMembershipTool()
+        sm = getSiteManager()
+        sm.registerUtility(mtool, IMembershipTool)
 
         props = { 'email' : INJECTED_HEADERS
                 , 'username' : 'username'
                 }
 
-        result = tool.testPropertiesValidity( props, None )
+        result = rtool.testPropertiesValidity(props, None)
 
         self.failIf( result is None, 'Invalid e-mail passed inspection' )
 

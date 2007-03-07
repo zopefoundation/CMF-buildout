@@ -1243,6 +1243,102 @@ class ISkinsTool(ISkinsContainer):
         o Permission:  Public
         """
 
+#
+# Syndication tool interface
+#
+class ISyndicationTool(Interface):
+
+    """ An object that provides content syndication facilities
+    """
+
+    id = Attribute('id',
+            """ The ID of the tool.
+
+            o BBB:  for use in 'getToolByName';  in the future, prefer
+              'zapi.getUtility(ISyndicationTool)'.
+
+            o Must be set to "portal_syndication"
+            """,
+            )
+
+    def enableSyndication(obj):
+        """ Enable syndication for the passed-in object
+
+        o raises 'Syndication is Disabled' if syndication is now allowed
+
+        o raises 'Syndication Information Exists' if used repeatedly
+        """
+
+    def disableSyndication(obj):
+        """ Disable syndication for the passed-in object
+
+        o raises 'This object does not have Syndication Information' if 
+          syndication has already been disabled
+        """
+
+    def getSyndicatableContent(obj):
+        """ Retrieve all syndicatable content from the passed-in object
+
+        o will call the hool "synContentValues" if it exists to allow
+          individual customization
+
+        o falls back to calling contentValues
+        """
+
+    def isSiteSyndicationAllowed():
+        """ Return the site-wide syndication flag
+        """
+
+    def isSyndicationAllowed(obj=None):
+        """ Return the syndication flag for the passed-in object
+
+        o falls back to retrieving the site-wide syndication flag
+        """
+
+    def getUpdatePeriod(obj=None):
+        """ Return the update period for the syndicated feed
+
+        o falls back to the site-wide value if no object is passed in
+
+        o raises 'Syndication is not Allowed' if the site-wide policy
+          does not allow syndication
+        """
+
+    def getUpdateFrequency(obj=None):
+        """ Return the syndicated feed update frequency
+
+        o falls back to the site-wide value if no object is passed in
+
+        o raises 'Syndication is not Allowed' if the site-wide policy
+          does not allow syndication
+        """
+
+    def getUpdateBase(obj=None):
+        """ Return the syndication feed base date for the publishing schedule
+
+        o falls back to the site-wide value if no object is passed in
+
+        o raises 'Syndication is not Allowed' if the site-wide policy
+          does not allow syndication
+        """
+
+    def getHTML4UpdateBase(obj=None):
+        """ return the HTML-formatted feed publishing base date
+
+        o falls back to the site-wide value if no object is passed in
+
+        o raises 'Syndication is not Allowed' if the site-wide policy
+          does not allow syndication
+        """
+        
+    def getMaxItems(obj=None):
+        """ Return the number of items published at any one time in the feed
+
+        o falls back to the site-wide value if no object is passed in
+
+        o raises 'Syndication is not Allowed' if the site-wide policy
+          does not allow syndication
+        """
 
 #
 #   Types tool interfaces

@@ -15,15 +15,21 @@
 $Id$
 """
 import unittest
+import Testing
+
 import os
 import re
 
-from zope.component.testing import PlacelessSetup
+from zope.component import getSiteManager
+from zope.testing.cleanup import cleanUp
 
+from Products.CMFCore.interfaces import ICachingPolicyManager
+from Products.CMFCore.interfaces import ISkinsTool
+from Products.CMFCore.testing import TraversingZCMLLayer
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
-from Products.CMFCore.tests.base.utils import _setUpDefaultTraversable
+
 
 class FSSTXMaker(FSDVTest):
 
@@ -93,19 +99,18 @@ class _TemplateSwitcher:
 class FSSTXMethodTests(RequestTest,
                        FSSTXMaker,
                        _TemplateSwitcher,
-                       PlacelessSetup,
                       ):
+
+    layer = TraversingZCMLLayer
 
     def setUp(self):
         _TemplateSwitcher.setUp(self)
-        FSSTXMaker.setUp(self)
         RequestTest.setUp(self)
-        PlacelessSetup.setUp(self)
+        FSSTXMaker.setUp(self)
 
     def tearDown(self):
-        PlacelessSetup.tearDown(self)
-        RequestTest.tearDown(self)
         FSSTXMaker.tearDown(self)
+        RequestTest.tearDown(self)
         _TemplateSwitcher.tearDown(self)
 
     def test___call___with_DTML( self ):
@@ -119,7 +124,6 @@ class FSSTXMethodTests(RequestTest,
         self._setWhichTemplate('ZPT')
         script = self._makeOne( 'testSTX', 'testSTX.stx' )
         script = script.__of__(self.app)
-        _setUpDefaultTraversable()
         self.assertEqual(_normalize_whitespace(script(self.REQUEST)),
                          _normalize_whitespace(_EXPECTED_HTML))
 
@@ -128,6 +132,12 @@ class FSSTXMethodTests(RequestTest,
         from Products.CMFCore.tests.base.dummy import DummyCachingManager
         self._setWhichTemplate('DTML')
         self.root.caching_policy_manager = DummyCachingManager()
+
+        sm = getSiteManager(self.root)
+        sm.registerUtility( self.root.caching_policy_manager
+                          , ICachingPolicyManager
+                          )
+
         original_len = len( self.RESPONSE.headers )
         script = self._makeOne('testSTX', 'testSTX.stx')
         script = script.__of__(self.root)
@@ -158,6 +168,12 @@ class FSSTXMethodTests(RequestTest,
 
         mod_time = DateTime()
         self.root.caching_policy_manager = DummyCachingManagerWithPolicy()
+
+        sm = getSiteManager(self.root)
+        sm.registerUtility( self.root.caching_policy_manager
+                          , ICachingPolicyManager
+                          )
+
         script = self._makeOne('testSTX', 'testSTX.stx')
         script = script.__of__(self.root)
         self.REQUEST.environ[ 'IF_MODIFIED_SINCE'
@@ -167,6 +183,7 @@ class FSSTXMethodTests(RequestTest,
         self.assertEqual( data, '' )
         self.assertEqual( self.RESPONSE.getStatus(), 304 )
 
+
 ADD_ZPT = 'Add page templates'
 ZPT_META_TYPES = ( { 'name'        : 'Page Template'
                    , 'action'      : 'manage_addPageTemplate'
@@ -175,21 +192,23 @@ ZPT_META_TYPES = ( { 'name'        : 'Page Template'
                  ,
                  )
 
+
 class FSSTXMethodCustomizationTests(SecurityTest,
                                     FSSTXMaker,
                                     _TemplateSwitcher,
-                                    PlacelessSetup,
                                    ):
 
-    def setUp( self ):
+    def setUp(self):
         from OFS.Folder import Folder
+
+        _TemplateSwitcher.setUp(self)
+        SecurityTest.setUp(self)
         FSSTXMaker.setUp(self)
-        SecurityTest.setUp( self )
-        _TemplateSwitcher.setUp( self )
-        PlacelessSetup.setUp(self)
 
         self.root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
         self.skins = self.root.portal_skins
+        sm = getSiteManager()
+        sm.registerUtility(self.skins, ISkinsTool)
 
         self.skins._setObject( 'custom', Folder( 'custom' ) )
         self.custom = self.skins.custom
@@ -202,11 +221,11 @@ class FSSTXMethodCustomizationTests(SecurityTest,
 
         self.fsSTX = self.fsdir.testSTX
 
-    def tearDown( self ):
-        PlacelessSetup.tearDown(self)
-        _TemplateSwitcher.tearDown( self )
-        FSSTXMaker.tearDown( self )
-        SecurityTest.tearDown( self )
+    def tearDown(self):
+        cleanUp()
+        FSSTXMaker.tearDown(self)
+        SecurityTest.tearDown(self)
+        _TemplateSwitcher.tearDown(self)
 
     def test_customize_with_DTML( self ):
         from OFS.DTMLDocument import DTMLDocument
@@ -269,10 +288,6 @@ class FSSTXMethodCustomizationTests(SecurityTest,
 
         self.assertEqual(custom_pt.ZCacheable_getManagerId(), cache_id)
 
-    def tearDown(self):
-        SecurityTest.tearDown(self)
-        FSSTXMaker.tearDown(self)
-
 
 def test_suite():
     return unittest.TestSuite((
@@ -281,4 +296,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

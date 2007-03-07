@@ -26,14 +26,18 @@ from Acquisition import aq_base
 from Acquisition import Implicit
 from DateTime import DateTime
 from OFS.Image import manage_addFile
-from zope.component import getGlobalSiteManager
+
+from zope.component import getSiteManager
 from zope.component.interfaces import IFactory
+from zope.interface import implements
 
 from Products.CMFCore.CatalogTool import CatalogTool
 from Products.CMFCore.exceptions import BadRequest
+from Products.CMFCore.interfaces import ICatalogTool
+from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.testing import ConformsToFolder
-from Products.CMFCore.testing import EventZCMLLayer
 from Products.CMFCore.testing import FunctionalZCMLLayer
+from Products.CMFCore.testing import TraversingEventZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFactoryDispatcher
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -55,7 +59,7 @@ def extra_meta_types():
 
 class PortalFolderFactoryTests(SecurityTest):
 
-    layer = EventZCMLLayer
+    layer = TraversingEventZCMLLayer
     _PORTAL_TYPE = 'Test Folder'
 
     def _getTargetObject(self):
@@ -67,13 +71,14 @@ class PortalFolderFactoryTests(SecurityTest):
         from Products.CMFCore.PortalFolder import PortalFolder
 
         SecurityTest.setUp(self)
-        gsm = getGlobalSiteManager()
-        gsm.registerUtility(self._getTargetObject(), IFactory, 'cmf.folder')
+        sm = getSiteManager()
+        sm.registerUtility(self._getTargetObject(), IFactory, 'cmf.folder')
         self.site = DummySite('site').__of__(self.root)
         acl_users = self.site._setObject('acl_users', DummyUserFolder())
         newSecurityManager(None, acl_users.all_powerful_Oz)
 
         ttool = self.site._setObject('portal_types', TypesTool())
+        sm.registerUtility(self.site.portal_types, ITypesTool)
         ttool._setObject(self._PORTAL_TYPE,
                          FTI(id=self._PORTAL_TYPE,
                              title='Folder or Directory',
@@ -125,11 +130,7 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
                                     self._getTargetClass()(id, *args, **kw))
 
     def setUp(self):
-        from Products.CMFCore.PortalFolder import PortalFolderFactory
-
         SecurityTest.setUp(self)
-        gsm = getGlobalSiteManager()
-        gsm.registerUtility(PortalFolderFactory, IFactory, 'cmf.folder')
         self.site = DummySite('site').__of__(self.root)
 
     def test_z2interfaces(self):
@@ -145,7 +146,9 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         verifyClass(IOrderedContainer, self._getTargetClass())
 
     def test_contents_methods(self):
+        sm = getSiteManager(self.site)
         ttool = self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(ttool, ITypesTool)
         f = self._makeOne('foo')
         self.assertEqual( f.objectValues(), [] )
         self.assertEqual( f.contentIds(), [] )
@@ -217,9 +220,12 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         # Test is a new object does get cataloged upon _setObject
         # and uncataloged upon manage_deleteObjects
         #
+        sm = getSiteManager(self.site)
         test = self._makeOne('test')
         ttool = self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(ttool, ITypesTool)
         ctool = self.site._setObject( 'portal_catalog', CatalogTool() )
+        sm.registerUtility(ctool, ICatalogTool)
         self.assertEqual( len(ctool), 0 )
 
         test._setObject( 'foo', DummyContent( 'foo' , catalog=1 ) )
@@ -239,8 +245,11 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         # Test to ensure a portal folder itself is *not* cataloged upon
         # instantiation (Tracker issue 309)
         #
+        sm = getSiteManager(self.site)
         ttool = self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(ttool, ITypesTool)
         ctool = self.site._setObject( 'portal_catalog', CatalogTool() )
+        sm.registerUtility(ctool, ICatalogTool)
         wftool = self.site._setObject( 'portal_workflow', WorkflowTool() )
         test = self._makeOne('test')
         wftool.notifyCreated(test)
@@ -254,9 +263,12 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         #
         from Products.CMFCore.PortalFolder import PortalFolder
 
+        sm = getSiteManager(self.site)
         test = self._makeOne('test')
         ttool = self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(ttool, ITypesTool)
         ctool = self.site._setObject( 'portal_catalog', CatalogTool() )
+        sm.registerUtility(ctool, ICatalogTool)
         self.assertEqual( len(ctool), 0 )
 
         test._setObject( 'sub', PortalFolder( 'sub', '' ) )
@@ -281,9 +293,11 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         #
         from Products.CMFCore.PortalFolder import PortalFolder
 
+        sm = getSiteManager(self.site)
         test = self._makeOne('test')
 
         ttool = self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(ttool, ITypesTool)
         ttool._setObject( 'Folder'
                         , FTI( id='Folder'
                              , title='Folder or Directory'
@@ -334,7 +348,9 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         #
         #   _verifyObjectPaste() should honor allowed content types
         #
+        sm = getSiteManager(self.site)
         ttool = self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(ttool, ITypesTool)
         fti = FTIDATA_DUMMY[0].copy()
         ttool._setObject( 'Dummy Content', FTI(**fti) )
         ttool._setObject( 'Folder', FTI(**fti) )
@@ -382,9 +398,11 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         self.assertRaises(BadRequest, test._checkId, 'acl_users')
 
     def test__checkId_MethodAlias(self):
+        sm = getSiteManager(self.site)
         test = self._makeOne('test')
         test._setPortalTypeName('Dummy Content 15')
         ttool = self.site._setObject('portal_types', TypesTool())
+        sm.registerUtility(self.site.portal_types, ITypesTool)
         ttool._setObject('Dummy Content 15', FTI(**FTIDATA_CMF15[0]))
         acl_users = self.site._setObject('acl_users', DummyUserFolder())
         test._checkId('view.html')
@@ -425,7 +443,7 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
 
 class PortalFolderMoveTests(SecurityTest):
 
-    layer = EventZCMLLayer
+    layer = TraversingEventZCMLLayer
 
     def setUp(self):
         SecurityTest.setUp(self)
@@ -443,8 +461,11 @@ class PortalFolderMoveTests(SecurityTest):
         #
         from Products.CMFCore.PortalFolder import PortalFolder
 
+        sm = getSiteManager(self.site)
         ttool = self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(ttool, ITypesTool)
         ctool = self.site._setObject( 'portal_catalog', CatalogTool() )
+        sm.registerUtility(ctool, ICatalogTool)
         ctool.addIndex('getId', 'FieldIndex')
         self.assertEqual( len(ctool), 0 )
 
@@ -489,8 +510,11 @@ class PortalFolderMoveTests(SecurityTest):
         #
         #   Does copy / paste work?
         #
+        sm = getSiteManager(self.site)
         ctool = self.site._setObject( 'portal_catalog', CatalogTool() )
+        sm.registerUtility(ctool, ICatalogTool)
         ttool = self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(ttool, ITypesTool)
         fti = FTIDATA_DUMMY[0].copy()
         ttool._setObject( 'Dummy Content', FTI(**fti) )
         sub1 = self._makeOne('sub1')
@@ -1056,6 +1080,7 @@ class PortalFolderCopySupportTests(SecurityRequestTest):
         from AccessControl.Permissions import delete_objects as DeleteObjects
         from Products.CMFCore.PortalFolder import PortalFolder
 
+        sm = getSiteManager()
         folder1, folder2 = self._initFolders()
         folder1.manage_permission( DeleteObjects, roles=(), acquire=0 )
 
@@ -1063,6 +1088,7 @@ class PortalFolderCopySupportTests(SecurityRequestTest):
         transaction.savepoint(optimistic=True) # get a _p_jar for 'sub'
 
         self.app.portal_types = DummyTypesTool()
+        sm.registerUtility(self.app.portal_types, ITypesTool)
 
         def _no_delete_objects(permission, object, context):
             return permission != DeleteObjects
@@ -1089,11 +1115,13 @@ class PortalFolderCopySupportTests(SecurityRequestTest):
         folder1, folder2 = self._initFolders()
         folder1.portal_type = UNRESTRICTED_TYPE
         folder2.portal_type = RESTRICTED_TYPE
+        sm = getSiteManager()
 
         self._initPolicyAndUser() # ensure that sec. machinery allows paste
 
         self.app._setObject( 'portal_types', TypesTool() )
         types_tool = self.app.portal_types
+        sm.registerUtility(types_tool, ITypesTool)
         types_tool._setObject( RESTRICTED_TYPE
                              , FTI( id=RESTRICTED_TYPE
                                   , title=RESTRICTED_TYPE
@@ -1134,11 +1162,13 @@ class PortalFolderCopySupportTests(SecurityRequestTest):
         folder1, folder2 = self._initFolders()
         folder1.portal_type = UNRESTRICTED_TYPE
         folder2.portal_type = RESTRICTED_TYPE
+        sm = getSiteManager()
 
         self._initPolicyAndUser() # ensure that sec. machinery allows paste
 
         self.app._setObject( 'portal_types', TypesTool() )
         types_tool = self.app.portal_types
+        sm.registerUtility(types_tool, ITypesTool)
         types_tool._setObject( RESTRICTED_TYPE
                              , FTI( id=RESTRICTED_TYPE
                                   , title=RESTRICTED_TYPE
@@ -1178,11 +1208,13 @@ class PortalFolderCopySupportTests(SecurityRequestTest):
         folder1, folder2 = self._initFolders()
         folder1.portal_type = RESTRICTED_TYPE
         folder2.portal_type = UNRESTRICTED_TYPE
+        sm = getSiteManager()
 
         self._initPolicyAndUser() # ensure that sec. machinery allows paste
 
         self.app._setObject( 'portal_types', TypesTool() )
         types_tool = self.app.portal_types
+        sm.registerUtility(types_tool, ITypesTool)
         types_tool._setObject( RESTRICTED_TYPE
                              , FTI( id=RESTRICTED_TYPE
                                   , title=RESTRICTED_TYPE
@@ -1217,6 +1249,8 @@ class DummyTypeInfo:
         return True
 
 class DummyTypesTool( Implicit ):
+
+    implements(ITypesTool)
 
     def getTypeInfo( self, portal_type ):
 

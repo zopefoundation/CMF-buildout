@@ -20,6 +20,10 @@ import Testing
 
 from DateTime.DateTime import DateTime
 
+from zope.component import getSiteManager
+from zope.testing.cleanup import cleanUp
+
+from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
 
@@ -37,6 +41,10 @@ class SyndicationToolTests(SecurityTest):
 
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
+
+    def tearDown(self):
+        cleanUp()
+        SecurityTest.tearDown(self)
 
     def test_empty(self):
         ONE_MINUTE = (24.0 * 60.0) / 86400
@@ -163,12 +171,14 @@ class SyndicationToolTests(SecurityTest):
         from Products.CMFCore.PortalFolder import PortalFolder
         from Products.CMFCore.CMFBTreeFolder import CMFBTreeFolder
         from Products.CMFCore.TypesTool import TypesTool
+        sm = getSiteManager()
         PERIOD = 'hourly'
         FREQUENCY = 4
         NOW = DateTime()
         MAX_ITEMS = 42
 
         self.root._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(self.root.portal_types, ITypesTool)
         self.root._setObject('pf', PortalFolder('pf'))
         self.root._setObject('bf', CMFBTreeFolder('bf'))
         self.root._setObject('portal_syndication', self._makeOne())

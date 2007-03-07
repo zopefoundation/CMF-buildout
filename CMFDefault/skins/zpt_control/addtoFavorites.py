@@ -1,8 +1,8 @@
 ##parameters=
 ##
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import getToolByInterfaceName
 
-mtool = getToolByName(script, 'portal_membership')
+mtool = getToolByInterfaceName('Products.CMFCore.interfaces.IMembershipTool')
 
 home = mtool.getHomeFolder()
 if not hasattr(home, 'Favorites'):

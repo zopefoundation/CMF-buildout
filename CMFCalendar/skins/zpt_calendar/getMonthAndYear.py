@@ -1,9 +1,9 @@
 
 # Get the year and month that the calendar should display.
 
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import getToolByInterfaceName
 
-caltool = getToolByName(script, 'portal_calendar')
+caltool = getToolByInterfaceName('Products.CMFCalendar.interfaces.ICalendarTool')
 current = DateTime()
 session = None
 

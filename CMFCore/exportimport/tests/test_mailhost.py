@@ -19,6 +19,9 @@ import unittest
 import Testing
 
 from OFS.Folder import Folder
+from Products.MailHost.interfaces import IMailHost
+
+from zope.component import getSiteManager
 
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
@@ -47,6 +50,8 @@ class _MailHostSetup(BaseRegistryTests):
         self.root.site = Folder(id='site')
         site = self.root.site
         mh = site.MailHost = MailHost('MailHost')
+        sm = getSiteManager()
+        sm.registerUtility(site.MailHost, IMailHost)
  
         if use_changed:
            mh.smtp_port='1'

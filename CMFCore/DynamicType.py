@@ -19,11 +19,17 @@ from urllib import quote
 
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
+
+from zope.app.publication.zopepublication import BeforeTraverseEvent
+from zope.component import getUtility
+from zope.component import queryUtility
+from zope.event import notify
 from zope.interface import implements
 
 from interfaces import IDynamicType
+from interfaces import ITypesTool
+from interfaces import IURLTool
 from interfaces.Dynamic import DynamicType as z2IDynamicType
-from utils import getToolByName
 
 from zope.component import queryMultiAdapter
 from zope.app.publisher.browser import queryDefaultViewName
@@ -66,7 +72,7 @@ class DynamicType:
     def getTypeInfo(self):
         """ Get the TypeInformation object specified by the portal type.
         """
-        tool = getToolByName(self, 'portal_types', None)
+        tool = queryUtility(ITypesTool)
         if tool is None:
             return None
         return tool.getTypeInfo(self)  # Can return None.
@@ -102,7 +108,7 @@ class DynamicType:
                     return icon
                 else:
                     # Relative to REQUEST['BASEPATH1']
-                    portal_url = getToolByName( self, 'portal_url' )
+                    portal_url = getUtility(IURLTool)
                     res = portal_url(relative=1) + '/' + icon
                     while res[:1] == '/':
                         res = res[1:]
@@ -117,6 +123,8 @@ class DynamicType:
         """
         # XXX hack around a bug(?) in BeforeTraverse.MultiHook
         REQUEST = arg2 or arg1
+
+        notify(BeforeTraverseEvent(self, REQUEST))
 
         if REQUEST['REQUEST_METHOD'] not in ('GET', 'POST'):
             return

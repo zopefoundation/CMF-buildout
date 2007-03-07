@@ -18,10 +18,17 @@ $Id$
 import unittest
 import Testing
 
+from zope.component import getSiteManager
+from zope.testing.cleanup import cleanUp
+
+from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
+from Products.CMFUid.interfaces import IUniqueIdGenerator
+from Products.CMFUid.interfaces import IUniqueIdHandler
 
 
 class DummyUid:
@@ -50,6 +57,18 @@ class UniqueIdHandlerTests(SecurityTest):
         self.root._setObject('portal_uidhandler', self._getTargetClass()())
         self.root._setObject('dummy', DummyContent(id='dummy'))
         self.root._setObject('dummy2', DummyContent(id='dummy2'))
+
+        sm = getSiteManager()
+        sm.registerUtility(self.root.portal_catalog, ICatalogTool)
+        sm.registerUtility( self.root.portal_uidannotation
+                          , IUniqueIdAnnotationManagement
+                          )
+        sm.registerUtility(self.root.portal_uidgenerator, IUniqueIdGenerator)
+        sm.registerUtility(self.root.portal_uidhandler, IUniqueIdHandler)
+
+    def tearDown(self):
+        cleanUp()
+        SecurityTest.tearDown(self)
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass

@@ -18,7 +18,11 @@ $Id$
 import unittest
 import Testing
 
-from Products.GenericSetup.testing import ExportImportZCMLLayer
+from zope.component import getSiteManager
+
+from Products.CMFActionIcons.interfaces import IActionIconsTool
+from Products.CMFCore.testing import ExportImportZCMLLayer
+from Products.CMFCore.tests.base.utils import _setUpDefaultTraversable
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
@@ -60,10 +64,15 @@ class _ActionIconsToolSetup(BaseRegistryTests):
         from OFS.Folder import Folder
         from Products.CMFActionIcons.ActionIconsTool import ActionIconsTool
 
+        _setUpDefaultTraversable()
+
         self.root.site = Folder(id='site')
         site = self.root.site
         tool = ActionIconsTool()
         site._setObject( tool.getId(), tool )
+
+        sm = getSiteManager()
+        sm.registerUtility(site.portal_actionicons, IActionIconsTool)
 
         if with_icon:
             tool.addActionIcon( category=self.CATEGORY

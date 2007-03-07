@@ -18,6 +18,7 @@ $Id$
 from zope.app.form.browser import DatetimeI18nWidget
 from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.component import adapts
+from zope.component import getUtility
 from zope.formlib import form
 from zope.interface import implements
 from zope.interface import Interface
@@ -30,7 +31,7 @@ from zope.schema import Text
 from zope.schema import TextLine
 from zope.schema import URI
 
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.interfaces import IMetadataTool
 from Products.CMFDefault.formlib.form import ContentEditFormBase
 from Products.CMFDefault.formlib.form import DisplayFormBase
 from Products.CMFDefault.formlib.schema import EmailLine
@@ -51,7 +52,7 @@ class EventTypeVocabulary(object):
 
     def __call__(self, context):
         context = getattr(context, 'context', context)
-        mdtool = getToolByName(context, 'portal_metadata')
+        mdtool = getUtility(IMetadataTool)
         items = [ (str(v), unicode(v), _(v))
                   for v in mdtool.listAllowedSubjects(context) ]
         return SimpleVocabulary.fromTitleItems(items)

@@ -8,7 +8,8 @@ RegistrationTool
     ...     def getProperty(self, id): return 'foo@example.org'
     ...     def getPassword(self): return 'secret'
 
-    >>> class MembershipTool:
+    >>> from Acquisition import Implicit
+    >>> class MembershipTool(Implicit):
     ...     def getMemberById(self, id): return Member()
 
     >>> class MailHost:
@@ -25,10 +26,16 @@ RegistrationTool
 
   Now we can set up a RegistrationTool with dummy context::
 
-    >>> from Products.CMFDefault.RegistrationTool import RegistrationTool
-    >>> rtool = RegistrationTool()
-    >>> rtool.MailHost = MailHost()
-    >>> rtool.portal_membership = MembershipTool()
+    >>> from zope.app.component.hooks import setSite
+    >>> from zope.component import getSiteManager
+    >>> from zope.component import getUtility
+    >>> from Products.CMFCore.interfaces import IMembershipTool
+    >>> from Products.MailHost.interfaces import IMailHost
+    >>> setSite(app.site)
+    >>> sm = getSiteManager()
+    >>> sm.registerUtility(MembershipTool(), IMembershipTool)
+    >>> sm.registerUtility(MailHost(), IMailHost)
+    >>> rtool = app.site.portal_registration
     >>> rtool.password_email = password_email
     >>> rtool.mail_password_response = mail_password_response
     >>> rtool.registered_email = registered_email
@@ -38,71 +45,33 @@ RegistrationTool
     >>> rtool.mailPassword('foo', None)
     'done'
 
-    >>> rtool.MailHost.lastMessage
+    >>> getUtility(IMailHost).lastMessage
     'Reminder: foo, secret'
 
   registeredNotify sends a welcome message::
 
     >>> rtool.registeredNotify('foo')
 
-    >>> rtool.MailHost.lastMessage
+    >>> getUtility(IMailHost).lastMessage
     'Welcome: foo, secret, foo@example.org'
+
+  Now we have to restore the normal MembershipTool::
+
+    >>> sm.registerUtility(app.site.portal_membership, IMembershipTool)
 
 password_email and registered_email
 -----------------------------------
 
-  First we need some dummy code::
+  First we have to set up some site properties::
 
-    >>> from os.path import join
-    >>> from OFS.Folder import Folder
-    >>> from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
-    >>> from Products.PythonScripts.PythonScript import PythonScript
-    >>> class DummySite(Folder):
-    ...     def getPhysicalRoot(self): return self
-    ...     def getPhysicalPath(self): return ('root',)
-    ...     def addResource(self, dir, f_name):
-    ...         r_name, f_type = f_name.split('.')
-    ...         if f_type == 'pt': r = ZopePageTemplate(r_name)
-    ...         if f_type == 'py': r = PythonScript(r_name)
-    ...         f = file(join(dir, f_name), 'r')
-    ...         r.write(f.read())
-    ...         f.close()
-    ...         setattr(self, r_name, r)
-
-    >>> class DummyTool(Folder):
-    ...     def getActionInfo(self, action_chain): return self.login_action
-    ...     def getProperty(self, id, d=None): return getattr(self, id, d)
-    ...     def title(self): return self.Title
-    ...     def __call__(self): return self.url
-
-  And have to set up security::
-
-    >>> from AccessControl.SecurityManagement import newSecurityManager
-    >>> from AccessControl.User import UnrestrictedUser
-    >>> newSecurityManager(None, UnrestrictedUser('god', '', ['Manager'], ''))
-
-  Now we can set up password_email and registered_email with dummy context::
-
-    >>> from Testing.makerequest import makerequest
-    >>> s = makerequest(DummySite())
+    >>> s = app.site
     >>> s.REQUEST.environ['HTTP_X_FORWARDED_FOR'] = 'NNN.NNN.NNN.NNN'
-    >>> s.portal_actions = s.portal_properties = s.portal_url = DummyTool()
     >>> s.ZopeTime = 'NNNN/NN/NN'
     >>> s.description = 'THE SITE DESCRIPTION.'
     >>> s.default_charset = 'utf-8'
     >>> s.email_from_name = u'WEBMASTER \xc4\xd6\xdc'.encode('utf-8')
     >>> s.email_from_address = 'WEBMASTER@EXAMPLE.ORG'
-    >>> s.Title = 'WWW.EXAMPLE.ORG'
-    >>> s.url = 'PORTAL_URL'
-    >>> s.login_action = {'url': 'LOGIN_URL'}
-
-    >>> from os.path import dirname
-    >>> from Products import CMFDefault
-    >>> dir = join(dirname(CMFDefault.__file__), 'skins', 'zpt_generic')
-    >>> s.addResource(dir, 'password_email.py')
-    >>> s.addResource(dir, 'password_email_template.pt')
-    >>> s.addResource(dir, 'registered_email.py')
-    >>> s.addResource(dir, 'registered_email_template.pt')
+    >>> s.title = 'WWW.EXAMPLE.ORG'
 
   password_email creates a complete reminder email::
 
@@ -153,7 +122,7 @@ password_email and registered_email
     <BLANKLINE>
     THE SITE DESCRIPTION.
     <BLANKLINE>
-    [[cmf_default][Visit us at PORTAL_URL]]
+    [[cmf_default][Visit us at http://nohost/site]]
     <BLANKLINE>
     [[cmf_default][Here is your login data (mind upper and lower case):]]
     <BLANKLINE>
@@ -162,7 +131,7 @@ password_email and registered_email
     <BLANKLINE>
     [[cmf_default][You can use this URL to log in:]]
     <BLANKLINE>
-    LOGIN_URL
+    http://nohost/site/login_form
     <BLANKLINE>
     <BLANKLINE>
     WEBMASTER =C4=D6=DC
@@ -180,8 +149,3 @@ password_email and registered_email
     <BLANKLINE>
     W1tj...
     <BLANKLINE>
-
-  Finally we have to clean up::
-
-    >>> from AccessControl.SecurityManagement import noSecurityManager
-    >>> noSecurityManager()

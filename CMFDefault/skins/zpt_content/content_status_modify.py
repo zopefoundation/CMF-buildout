@@ -1,11 +1,12 @@
 ##parameters=workflow_action, comment=''
 ##title=Modify the status of a content object
 ##
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import getToolByInterfaceName
 from Products.CMFDefault.exceptions import WorkflowException
 from Products.CMFDefault.utils import Message as _
 
-wtool = getToolByName(script, 'portal_workflow')
+wtool_iface = 'Products.CMFCore.interfaces.IConfigurableWorkflowTool'
+wtool = getToolByInterfaceName(wtool_iface)
 
 try:
     wtool.doActionFor(context, workflow_action, comment=comment)

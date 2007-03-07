@@ -22,6 +22,12 @@ from Products.PythonScripts.standard import thousands_commas
 from ZTUtils import Batch
 from ZTUtils import make_query
 
+from zope.component import getUtility
+
+from Products.CMFCore.interfaces import IMembershipTool
+from Products.CMFCore.interfaces import IPropertiesTool
+from Products.CMFCore.interfaces import IURLTool
+from Products.CMFCore.utils import getToolByInterfaceName
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.permissions import View
 from Products.CMFDefault.utils import getBrowserCharset
@@ -74,13 +80,21 @@ class ViewBase(BrowserView):
         return getToolByName(self.context, name)
 
     @memoize
+    def _getToolByInterface(self, iface):
+        return getUtility(iface)
+
+    @memoize
+    def _getToolByInterfaceName(self, dotted_name):
+        return getToolByInterfaceName(dotted_name)
+
+    @memoize
     def _checkPermission(self, permission):
-        mtool = self._getTool('portal_membership')
+        mtool = self._getToolByInterface(IMembershipTool)
         return mtool.checkPermission(permission, self.context)
 
     @memoize
     def _getPortalURL(self):
-        utool = self._getTool('portal_url')
+        utool = self._getToolByInterface(IURLTool)
         return utool()
 
     @memoize
@@ -89,7 +103,7 @@ class ViewBase(BrowserView):
 
     @memoize
     def _getDefaultCharset(self):
-        ptool = self._getTool('portal_properties')
+        ptool = self._getToolByInterface(IPropertiesTool)
         return ptool.getProperty('default_charset', None)
 
     @memoize
@@ -113,8 +127,8 @@ class FormViewBase(ViewBase):
 
     # helpers
 
-    def _setRedirect(self, provider_id, action_path, keys=''):
-        provider = self._getTool(provider_id)
+    def _setRedirect(self, provider_iface, action_path, keys=''):
+        provider = self._getToolByInterfaceName(provider_iface)
         try:
             target = provider.getActionInfo(action_path, self.context)['url']
         except ValueError:

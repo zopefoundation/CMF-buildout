@@ -49,7 +49,7 @@ from permissions import View
 from utils import _checkPermission
 from utils import _dtmldir
 from utils import _wwwdir
-from utils import getToolByName
+from utils import registerToolInterface
 from utils import SimpleItemWithProperties
 from utils import UniqueObject
 
@@ -744,3 +744,5 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
         return rval
 
 InitializeClass(TypesTool)
+registerToolInterface('portal_types', ITypesTool)
+

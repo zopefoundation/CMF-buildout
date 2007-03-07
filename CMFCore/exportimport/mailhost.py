@@ -15,25 +15,27 @@
 $Id$
 """
 
+from Products.MailHost.interfaces import IMailHost
+
+from zope.component import getSiteManager
+
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
-
-from Products.CMFCore.utils import getToolByName
 
 
 def importMailHost(context):
     """Import mailhost settings from an XML file.
     """
-    site = context.getSite()
-    tool = getToolByName(site, 'MailHost')
+    sm = getSiteManager(context.getSite())
+    tool = sm.getUtility(IMailHost)
 
     importObjects(tool, '', context)
 
 def exportMailHost(context):
     """Export mailhost settings as an XML file.
     """
-    site = context.getSite()
-    tool = getToolByName(site, 'MailHost', None)
+    sm = getSiteManager(context.getSite())
+    tool = sm.queryUtility(IMailHost)
     if tool is None:
         logger = context.getLogger('mailhost')
         logger.info('Nothing to export.')

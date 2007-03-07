@@ -19,6 +19,7 @@ import unittest
 from Testing import ZopeTestCase
 
 from AccessControl.SecurityManagement import newSecurityManager
+from zope.app.component.hooks import setSite
 
 from Products.CMFDefault.testing import FunctionalLayer
 
@@ -28,6 +29,7 @@ class DiscussionReplyTest(ZopeTestCase.FunctionalTestCase):
     layer = FunctionalLayer
 
     def afterSetUp(self):
+        setSite(self.app.site)
         self.portal = self.app.site
         # Become a Manager
         self.uf = self.portal.acl_users

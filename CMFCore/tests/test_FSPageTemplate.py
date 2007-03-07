@@ -24,10 +24,15 @@ from os.path import join as path_join
 
 from OFS.Folder import Folder
 from Products.StandardCacheManagers import RAMCacheManager
+
+from zope.component import getSiteManager
 from zope.tales.tales import Undefined
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.FSPageTemplate import FSPageTemplate
 from Products.CMFCore.FSMetadata import FSMetadata
+from Products.CMFCore.interfaces import ICachingPolicyManager
+from Products.CMFCore.interfaces import ISkinsTool
 from Products.CMFCore.testing import TraversingZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
 from Products.CMFCore.tests.base.testcase import FSDVTest
@@ -55,6 +60,13 @@ class FSPageTemplateTests( RequestTest, FSPTMaker ):
     def tearDown(self):
         RequestTest.tearDown(self)
         FSPTMaker.tearDown(self)
+
+    def _setupCachingPolicyManager(self, cpm_object):
+        self.root.caching_policy_manager = cpm_object
+        sm = getSiteManager()
+        sm.registerUtility( self.root.caching_policy_manager
+                          , ICachingPolicyManager
+                          )
 
     def test_Call( self ):
         script = self._makeOne( 'testPT', 'testPT.pt' )
@@ -123,7 +135,7 @@ class FSPageTemplateTests( RequestTest, FSPTMaker ):
     def test_caching( self ):
 
         #   Test HTTP caching headers.
-        self.root.caching_policy_manager = DummyCachingManager()
+        self._setupCachingPolicyManager(DummyCachingManager())
         original_len = len( self.RESPONSE.headers )
         script = self._makeOne('testPT', 'testPT.pt')
         script = script.__of__(self.root)
@@ -146,14 +158,17 @@ class FSPageTemplateTests( RequestTest, FSPTMaker ):
             script = script.__of__(self.root)
             self.assertEqual(script(), 'foo bar spam eggs\n')
 
+
 class FSPageTemplateCustomizationTests( SecurityTest, FSPTMaker ):
 
-    def setUp( self ):
+    def setUp(self):
         FSPTMaker.setUp(self)
-        SecurityTest.setUp( self )
+        SecurityTest.setUp(self)
 
         self.root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
         self.skins = self.root.portal_skins
+        sm = getSiteManager()
+        sm.registerUtility(self.skins, ISkinsTool)
 
         self.skins._setObject( 'custom', Folder( 'custom' ) )
         self.custom = self.skins.custom
@@ -165,6 +180,11 @@ class FSPageTemplateCustomizationTests( SecurityTest, FSPTMaker ):
                              , self._makeOne( 'testPT', 'testPT.pt' ) )
 
         self.fsPT = self.fsdir.testPT
+
+    def tearDown(self):
+        cleanUp()
+        SecurityTest.tearDown(self)
+        FSPTMaker.tearDown(self)
 
     def test_customize( self ):
 
@@ -196,10 +216,6 @@ class FSPageTemplateCustomizationTests( SecurityTest, FSPTMaker ):
 
         customized = self.custom.testPT
         self.failIf( customized.expand )
-
-    def tearDown(self):
-        SecurityTest.tearDown(self)
-        FSPTMaker.tearDown(self)
 
 
 def test_suite():

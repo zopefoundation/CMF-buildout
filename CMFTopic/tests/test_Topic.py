@@ -21,6 +21,11 @@ ZopeTestCase.installProduct('CMFTopic', 1)
 
 from Acquisition import Implicit
 
+from zope.component import getSiteManager
+
+from Products.CMFCore.interfaces import ICatalogTool
+from Products.CMFCore.interfaces import ISyndicationTool
+from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.testing import ConformsToFolder
 from Products.CMFCore.testing import EventZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -62,7 +67,7 @@ class DummyCatalog( Implicit ):
         for index_id in index_ids:
             self._indexes[ index_id ] = {}
 
-    def _index( self, obj ):
+    def _index( self, obj, idxs=[] ):
 
         marker = object()
         self._objects.append( obj )
@@ -79,6 +84,8 @@ class DummyCatalog( Implicit ):
                     bucket.append( rid )
 
     indexObject = _index
+
+    reindexObject = _index
 
     def searchResults( self, REQUEST=None, **kw ):
 
@@ -136,8 +143,11 @@ class TestTopic(ConformsToFolder, SecurityTest):
                                     self._getTargetClass()(id, *args, **kw))
 
     def _initSite(self, max_items=15, index_ids=()):
+        sm = getSiteManager()
         self.site.portal_catalog = DummyCatalog( index_ids )
+        sm.registerUtility(self.site.portal_catalog, ICatalogTool)
         self.site.portal_syndication = DummySyndicationTool( max_items )
+        sm.registerUtility(self.site.portal_syndication, ISyndicationTool)
 
     def _initDocuments(self, **kw):
         for k, v in kw.items():
@@ -194,7 +204,9 @@ class TestTopic(ConformsToFolder, SecurityTest):
         self.assertEqual( query[ 'baz' ], 43 )
 
     def test_Nested( self ):
+        sm = getSiteManager()
         self.site._setObject( 'portal_types', TypesTool() )
+        sm.registerUtility(self.site.portal_types, ITypesTool)
         self.site.portal_types._setObject('Topic', FTI(id='Topic',
                                       product='CMFTopic', factory='addTopic'))
         topic = self._makeOne('top')

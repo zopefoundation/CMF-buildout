@@ -24,6 +24,7 @@ from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
+from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
 from interfaces import ICalendarTool
@@ -357,3 +358,4 @@ class CalendarTool (UniqueObject, SimpleItem):
         return (begin, end)
 
 InitializeClass(CalendarTool)
+registerToolInterface('portal_calendar', ICalendarTool)

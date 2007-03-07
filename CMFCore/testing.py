@@ -17,6 +17,7 @@ $Id$
 
 from OFS.SimpleItem import SimpleItem
 from Products.Five import zcml
+from zope.app.component.hooks import setHooks
 from zope.component import adapts
 from zope.i18n.interfaces import IUserPreferredLanguages
 from zope.interface import implements
@@ -108,29 +109,48 @@ class BrowserLanguages(object):
 class EventZCMLLayer:
 
     @classmethod
-    def setUp(cls):
+    def testSetUp(cls):
         import Products
 
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('event.zcml', Products.Five)
         zcml.load_config('event.zcml', Products.CMFCore)
+        setHooks()
 
     @classmethod
-    def tearDown(cls):
+    def testTearDown(cls):
         cleanUp()
 
 
 class TraversingZCMLLayer:
 
     @classmethod
-    def setUp(cls):
+    def testSetUp(cls):
         import Products.Five
 
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('traversing.zcml', Products.Five)
+        setHooks()
 
     @classmethod
-    def tearDown(cls):
+    def testTearDown(cls):
+        cleanUp()
+
+
+class TraversingEventZCMLLayer:
+
+    @classmethod
+    def testSetUp(cls):
+        import Products.Five
+
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('traversing.zcml', Products.Five)
+        zcml.load_config('event.zcml', Products.Five)
+        zcml.load_config('event.zcml', Products.CMFCore)
+        setHooks()
+
+    @classmethod
+    def testTearDown(cls):
         cleanUp()
 
 
@@ -141,6 +161,7 @@ class FunctionalZCMLLayer:
         import Products
 
         zcml.load_config('testing.zcml', Products.CMFCore)
+        setHooks()
 
     @classmethod
     def tearDown(cls):
@@ -191,7 +212,7 @@ class DummyWorkflowBodyAdapter(BodyAdapterBase):
 class ExportImportZCMLLayer:
 
     @classmethod
-    def setUp(cls):
+    def testSetUp(cls):
         import Products.Five
         import Products.GenericSetup
         import Products.CMFCore
@@ -203,9 +224,10 @@ class ExportImportZCMLLayer:
         zcml.load_config('tool.zcml', Products.CMFCore)
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
         zcml.load_string(_DUMMY_ZCML)
+        setHooks()
 
     @classmethod
-    def tearDown(cls):
+    def testTearDown(cls):
         cleanUp()
 
 

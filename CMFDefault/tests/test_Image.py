@@ -21,10 +21,15 @@ from Testing import ZopeTestCase
 from os.path import join as path_join
 from cStringIO import StringIO
 
+from zope.app.component.hooks import setSite
+from zope.component import getSiteManager
+from zope.testing.cleanup import cleanUp
+
 import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.User import UnrestrictedUser
 
+from Products.CMFCore.interfaces import ICachingPolicyManager
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
 from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
@@ -119,6 +124,7 @@ class TestImageCopyPaste(ZopeTestCase.FunctionalTestCase):
     layer = FunctionalLayer
 
     def afterSetUp(self):
+        setSite(self.app.site)
         newSecurityManager(None, UnrestrictedUser('god', '', ['Manager'], ''))
 
         self.site = self.app.site
@@ -204,8 +210,19 @@ class TestCaching(RequestTest):
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
 
+    def _setupCachingPolicyManager(self, cpm_object):
+        self.root.caching_policy_manager = cpm_object
+        sm = getSiteManager()
+        sm.registerUtility( self.root.caching_policy_manager
+                          , ICachingPolicyManager
+                          )
+
+    def tearDown(self):
+        cleanUp()
+        RequestTest.tearDown(self)
+
     def test_index_html_with_304_from_cpm( self ):
-        self.root.caching_policy_manager = DummyCachingManagerWithPolicy()
+        self._setupCachingPolicyManager(DummyCachingManagerWithPolicy())
         path, ref = self._extractFile()
 
         from webdav.common import rfc1123_date
@@ -226,7 +243,7 @@ class TestCaching(RequestTest):
         self.assertEqual( self.RESPONSE.getStatus(), 304 )
 
     def test_caching( self ):
-        self.root.caching_policy_manager = DummyCachingManager()
+        self._setupCachingPolicyManager(DummyCachingManager())
         original_len = len(self.RESPONSE.headers)
         image = self._makeOne('test_image', 'test_image.jpg')
         image = image.__of__(self.root)
@@ -238,7 +255,7 @@ class TestCaching(RequestTest):
         self.assertEqual(headers['test_path'], '/test_image')
 
     def test_index_html_200_with_cpm( self ):
-        self.root.caching_policy_manager = DummyCachingManagerWithPolicy()
+        self._setupCachingPolicyManager(DummyCachingManagerWithPolicy())
         path, ref = self._extractFile()
 
         from webdav.common import rfc1123_date
@@ -264,7 +281,7 @@ class TestCaching(RequestTest):
     def test_index_html_with_304_and_caching( self ):
 
         # See collector #355
-        self.root.caching_policy_manager = DummyCachingManager()
+        self._setupCachingPolicyManager(DummyCachingManager())
         original_len = len(self.RESPONSE.headers)
         path, ref = self._extractFile()
 

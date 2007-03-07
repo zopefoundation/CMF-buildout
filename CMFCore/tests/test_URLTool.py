@@ -18,6 +18,9 @@ $Id$
 import unittest
 import Testing
 
+from zope.component import getSiteManager
+
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -27,6 +30,8 @@ class URLToolTests(unittest.TestCase):
 
     def setUp(self):
         self.site = DummySite(id='foo')
+        sm = getSiteManager()
+        sm.registerUtility(self.site, ISiteRoot)
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.URLTool import URLTool

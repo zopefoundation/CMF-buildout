@@ -122,7 +122,7 @@ def createExprContext(sci):
         'container':    container,
         'folder':       container,
         'nothing':      None,
-        'root':         wf.getPhysicalRoot(),
+        'root':         ob.getPhysicalRoot(),
         'request':      getattr( ob, 'REQUEST', None ),
         'modules':      SecureModuleImporter,
         'user':         getSecurityManager().getUser(),

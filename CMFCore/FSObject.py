@@ -28,12 +28,15 @@ from Acquisition import Implicit
 from DateTime import DateTime
 from OFS.Cache import Cacheable
 from OFS.SimpleItem import Item
+
+from zope.component import getUtility
+
 from Products.PythonScripts.standard import html_quote
 
+from interfaces import ISkinsTool
 from permissions import ManagePortal
 from permissions import View
 from permissions import ViewManagementScreens
-from utils import getToolByName
 
 
 class FSObject(Implicit, Item, RoleManager, Cacheable):
@@ -113,15 +116,9 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
                 # The permission was invalid, never mind
                 pass
 
-        skins_tool_namegetter = getattr(self, 'getSkinsFolderName', None)
-        if skins_tool_namegetter is not None:
-            skins_tool_name = skins_tool_namegetter()
-        else:
-            skins_tool_name = 'portal_skins'
-
         id = obj.getId()
         fpath = tuple( folder_path.split('/') )
-        portal_skins = getToolByName(self, skins_tool_name)
+        portal_skins = getUtility(ISkinsTool)
         folder = portal_skins.restrictedTraverse(fpath)
         if id in folder.objectIds():
             # we cant catch the badrequest so

@@ -25,11 +25,14 @@ from Products.ZCTextIndex.Lexicon import Splitter
 from Products.ZCTextIndex.Lexicon import StopWordRemover
 from Products.ZCTextIndex.ZCTextIndex import PLexicon
 
+from zope.component import getSiteManager
+
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
 from Products.CMFCore.CatalogTool import CatalogTool
+from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _EMPTY_EXPORT = """\
@@ -78,6 +81,9 @@ class _CatalogToolSetup(BaseRegistryTests):
     def _initSite(self, foo=2):
         site = self.root.site = Folder(id='site')
         ctool = site.portal_catalog = CatalogTool()
+
+        sm = getSiteManager(site)
+        sm.registerUtility(ctool, ICatalogTool)
 
         for obj_id in ctool.objectIds():
             ctool._delObject(obj_id)

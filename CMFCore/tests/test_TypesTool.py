@@ -26,7 +26,7 @@ from Acquisition import aq_base
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.PythonScripts.standard import html_quote
 from webdav.NullResource import NullResource
-from zope.component import getGlobalSiteManager
+from zope.component import getSiteManager
 from zope.component.interfaces import IFactory
 from zope.testing.cleanup import cleanUp
 
@@ -447,8 +447,8 @@ class FTINewstyleConstructionTests(FTIConstructionTestCase, SecurityTest):
 
     def setUp(self):
         SecurityTest.setUp(self)
-        gsm = getGlobalSiteManager()
-        gsm.registerUtility(DummyFactory, IFactory, 'test.dummy')
+        sm = getSiteManager()
+        sm.registerUtility(DummyFactory, IFactory, 'test.dummy')
 
         self.f = DummyFolder()
         self.ti = self._makeOne('Foo', meta_type='Dummy',
@@ -456,8 +456,8 @@ class FTINewstyleConstructionTests(FTIConstructionTestCase, SecurityTest):
         newSecurityManager(None, UserWithRoles('FooAdder').__of__(self.f))
 
     def tearDown(self):
-        SecurityTest.tearDown(self)
         cleanUp()
+        SecurityTest.tearDown(self)
 
 
 def test_suite():

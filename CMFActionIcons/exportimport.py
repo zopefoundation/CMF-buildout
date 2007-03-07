@@ -22,13 +22,17 @@ from Globals import InitializeClass
 from Globals import package_home
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
-from Products.CMFCore.utils import getToolByName
+from zope.component import getSiteManager
+from zope.component import getUtility
+from zope.component import queryUtility
+
 from Products.GenericSetup.utils import CONVERTER
 from Products.GenericSetup.utils import DEFAULT
 from Products.GenericSetup.utils import ExportConfiguratorBase
 from Products.GenericSetup.utils import ImportConfiguratorBase
 from Products.GenericSetup.utils import KEY
 
+from interfaces import IActionIconsTool
 from permissions import ManagePortal
 
 _pkgdir = package_home( globals() )
@@ -40,10 +44,11 @@ _xmldir = os.path.join( _pkgdir, 'xml' )
 _FILENAME = 'actionicons.xml'
 
 def importActionIconsTool(context):
-    """ Import cache policy maanger settings from an XML file.
+    """ Import action icons tool settings from an XML file.
     """
     site = context.getSite()
-    ait = getToolByName(site, 'portal_actionicons', None)
+    sm = getSiteManager(site)
+    ait = sm.queryUtility(IActionIconsTool)
     if ait is None:
         return 'Action icons: No tool!'
 
@@ -89,7 +94,8 @@ class ActionIconsToolExportConfigurator(ExportConfiguratorBase):
     def listActionIconInfo(self):
         """ Return a list of mappings describing the action icons.
         """
-        ait = getToolByName(self._site, 'portal_actionicons')
+        sm = getSiteManager(self._site)
+        ait = sm.getUtility(IActionIconsTool)
         for action_icon in ait.listActionIcons():
             yield {'category': action_icon.getCategory(),
                    'action_id': action_icon.getActionId(),

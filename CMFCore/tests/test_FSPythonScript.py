@@ -28,8 +28,11 @@ from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
 from Products.StandardCacheManagers import RAMCacheManager
 
+from zope.component import getSiteManager
+
 from Products.CMFCore.FSMetadata import FSMetadata
 from Products.CMFCore.FSPythonScript import FSPythonScript
+from Products.CMFCore.interfaces import ISkinsTool
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
@@ -97,6 +100,8 @@ class FSPythonScriptCustomizationTests(SecurityTest, FSPSMaker):
         root = self.root
         root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
         tool = self.root.portal_skins
+        sm = getSiteManager()
+        sm.registerUtility(tool, ISkinsTool)
 
         tool._setObject( 'custom', Folder( 'custom' ) )
         custom = tool.custom

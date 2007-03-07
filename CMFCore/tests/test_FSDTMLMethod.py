@@ -26,12 +26,17 @@ from Products.StandardCacheManagers import RAMCacheManager
 
 from Products.CMFCore.FSDTMLMethod import FSDTMLMethod
 from Products.CMFCore.FSMetadata import FSMetadata
+from Products.CMFCore.interfaces import ICachingPolicyManager
+from Products.CMFCore.interfaces import ISkinsTool
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
 from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.dummy import DummyContent
+
+from zope.app.component.hooks import setHooks
+from zope.component import getSiteManager
 
 
 class FSDTMLMaker(FSDVTest):
@@ -48,10 +53,18 @@ class FSDTMLMethodTests(RequestTest, FSDTMLMaker):
     def setUp(self):
         FSDTMLMaker.setUp(self)
         RequestTest.setUp(self)
+        setHooks()
 
     def tearDown(self):
         RequestTest.tearDown(self)
         FSDTMLMaker.tearDown(self)
+
+    def _setupCachingPolicyManager(self, cpm_object):
+        self.root.caching_policy_manager = cpm_object
+        sm = getSiteManager(self.root)
+        sm.registerUtility( self.root.caching_policy_manager
+                          , ICachingPolicyManager
+                          )
 
     def test_Call( self ):
         script = self._makeOne( 'testDTML', 'testDTML.dtml' )
@@ -60,7 +73,7 @@ class FSDTMLMethodTests(RequestTest, FSDTMLMaker):
 
     def test_caching( self ):
         #   Test HTTP caching headers.
-        self.root.caching_policy_manager = DummyCachingManager()
+        self._setupCachingPolicyManager(DummyCachingManager())
         original_len = len( self.RESPONSE.headers )
         script = self._makeOne('testDTML', 'testDTML.dtml')
         script = script.__of__(self.root)
@@ -87,7 +100,7 @@ class FSDTMLMethodTests(RequestTest, FSDTMLMaker):
         from webdav.common import rfc1123_date
 
         mod_time = DateTime()
-        self.root.caching_policy_manager = DummyCachingManagerWithPolicy()
+        self._setupCachingPolicyManager(DummyCachingManagerWithPolicy())
         content = DummyContent(id='content')
         content.modified_date = mod_time
         content = content.__of__(self.root)
@@ -108,6 +121,8 @@ class FSDTMLMethodCustomizationTests( SecurityTest, FSDTMLMaker ):
 
         self.root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
         self.skins = self.root.portal_skins
+        sm = getSiteManager()
+        sm.registerUtility(self.skins, ISkinsTool)
 
         self.skins._setObject( 'custom', Folder( 'custom' ) )
         self.custom = self.skins.custom

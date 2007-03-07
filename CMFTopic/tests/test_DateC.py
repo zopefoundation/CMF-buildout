@@ -19,6 +19,7 @@ import unittest
 from Testing import ZopeTestCase
 
 from DateTime.DateTime import DateTime
+from zope.app.component.hooks import setSite
 
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFDefault.testing import FunctionalLayer
@@ -160,6 +161,7 @@ class FriendlyDateCriterionFunctionalTests(ZopeTestCase.FunctionalTestCase):
     day_diffs.extend(selectable_diffs)
 
     def afterSetUp(self):
+        setSite(self.app.site)
         self.site = self.app.site
         self.site._setObject( 'topic', Topic('topic') )
         self.topic = self.site.topic

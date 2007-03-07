@@ -22,10 +22,14 @@ from Globals import package_home
 from AccessControl import ClassSecurityInfo
 from OFS.SimpleItem import SimpleItem
 
+from zope.interface import implements
+
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.CMFCore.Expression import Expression
+from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
+from interfaces import IActionIconsTool
 from permissions import ManagePortal
 from permissions import View
 
@@ -34,6 +38,8 @@ _wwwdir = os.path.join( package_home( globals() ), 'www' )
 class ActionIcon( SimpleItem ):
 
     security = ClassSecurityInfo()
+
+    implements(IActionIconsTool)
 
     _title = None           # Use the one supplied by the provider
     _priority = 0           # All animals are equal....
@@ -419,3 +425,5 @@ class ActionIconsTool( UniqueObject, SimpleItem ):
                                     )
 
 InitializeClass( ActionIconsTool )
+registerToolInterface('portal_actionicons', IActionIconsTool)
+

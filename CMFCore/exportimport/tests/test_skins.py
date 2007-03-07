@@ -22,6 +22,8 @@ ZopeTestCase.installProduct('CMFCore', 1)
 import os
 
 from OFS.Folder import Folder
+
+from zope.component import getSiteManager
 from zope.interface import implements
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
@@ -269,6 +271,10 @@ class _SkinsSetup(_DVRegistrySetup, BaseRegistryTests):
         fsdvs = [ (id, DirectoryView(id, 'CMFCore/exportimport/tests/%s' %
                                          id)) for id in ids ]
         site._setObject('portal_skins', DummySkinsTool(selections, fsdvs))
+
+        sm = getSiteManager(site)
+        sm.registerUtility(site.portal_skins, ISkinsTool)
+        
         site.REQUEST = 'exists'
         return site
 

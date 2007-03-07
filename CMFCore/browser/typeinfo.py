@@ -18,12 +18,13 @@ $Id$
 from xml.dom.minidom import parseString
 
 from zope.component import queryMultiAdapter
+from zope.component import queryUtility
 
 from Products.CMFCore.TypesTool import FactoryTypeInformation
 from Products.CMFCore.TypesTool import ScriptableTypeInformation
-from Products.CMFCore.utils import getToolByName
 from Products.GenericSetup.browser.utils import AddWithPresettingsViewBase
 from Products.GenericSetup.interfaces import IBody
+from Products.GenericSetup.interfaces import ISetupTool
 
 
 class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
@@ -37,7 +38,7 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
 
     def getProfileInfos(self):
         profiles = []
-        stool = getToolByName(self, 'portal_setup', None)
+        stool = queryUtility(ISetupTool)
         if stool:
             for info in stool.listContextInfos():
                 obj_ids = []
@@ -68,7 +69,7 @@ class FactoryTypeInformationAddView(AddWithPresettingsViewBase):
         return tuple(profiles)
 
     def _initSettings(self, obj, profile_id, obj_path):
-        stool = getToolByName(self, 'portal_setup', None)
+        stool = queryUtility(ISetupTool)
         if stool is None:
             return
 

@@ -20,6 +20,12 @@ import Testing
 
 import Acquisition
 
+from zope.component import getSiteManager
+from zope.testing.cleanup import cleanUp
+
+from Products.CMFCore.interfaces import IMemberDataTool
+from Products.CMFCore.interfaces import IMembershipTool
+
 
 class DummyUserFolder(Acquisition.Implicit):
 
@@ -70,6 +76,9 @@ class MemberDataToolTests(unittest.TestCase):
 
         return MemberDataTool(*args, **kw)
 
+    def tearDown(self):
+        cleanUp()
+
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
         from Products.CMFCore.interfaces.portal_actions \
@@ -103,8 +112,11 @@ class MemberDataToolTests(unittest.TestCase):
         from OFS.Folder import Folder
         from Products.CMFCore.MembershipTool import MembershipTool
         folder = Folder('test')
+        sm = getSiteManager()
         folder._setObject('portal_memberdata', self._makeOne())
+        sm.registerUtility(folder.portal_memberdata, IMemberDataTool)
         folder._setObject('portal_membership', MembershipTool())
+        sm.registerUtility(folder.portal_membership, IMembershipTool)
         folder._setObject('acl_users', DummyUserFolder())
         tool = folder.portal_memberdata
 

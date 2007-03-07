@@ -61,6 +61,23 @@ Installing CMF 2.1
        site creation.
 
 
+Important Note for users upgrading existing CMF instances to CMF 2.1
+
+  In order to make CMF instances created in CMF versions prior to CMF 2.1
+  work, you need to run a separate one-time upgrade script. After putting the
+  new code in place as instructed above, please change into your instance
+  home and execute the following as the user normally running this Zope
+  instance:
+
+    ./bin/zopectl run Products/CMFCore/Extensions/migrateToCMF21.py
+
+  The script will print some diagnostic information to the console and 
+  inform you about CMF sites it finds and upgrades. Once the script has
+  finished, you can start and use your Zope instance as before. This script
+  only needs to be run a single time when you start using a CMF version
+  2.1.0-beta or higher.
+
+
 Installing Translations for CMF
 
   Assumptions

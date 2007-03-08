@@ -77,7 +77,7 @@ class URLTool(UniqueObject, SimpleItem, ActionProviderBase):
     def getPortalObject(self):
         """ Get the portal object itself.
         """
-        site = queryUtility(ISiteRoot, None)
+        site = queryUtility(ISiteRoot)
         if site is None:
             # fallback
             return aq_parent(aq_inner(self))

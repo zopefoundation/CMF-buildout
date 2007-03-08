@@ -25,9 +25,6 @@ from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.interfaces import IURLTool
 from Products.CMFDefault.permissions import View
 from Products.CMFDefault.utils import getBrowserCharset
-from Products.CMFDefault.utils import html_marshal
-from Products.CMFDefault.utils import Message as _
-from Products.CMFDefault.utils import translate
 from Products.CMFDefault.utils import toUnicode
 
 

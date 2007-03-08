@@ -32,6 +32,8 @@ from Products.CMFDefault.permissions import DeleteObjects
 from Products.CMFDefault.permissions import ListFolderContents
 from Products.CMFDefault.permissions import ManageProperties
 from Products.CMFDefault.permissions import ViewManagementScreens
+from Products.CMFDefault.utils import html_marshal
+from Products.CMFDefault.utils import translate
 from Products.CMFDefault.utils import Message as _
 
 from utils import decode

@@ -28,6 +28,7 @@ from zope.component import queryUtility
 from zope.component.factory import Factory
 from zope.interface import implements
 
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces import IURLTool
 from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
 
@@ -66,7 +67,7 @@ class Favorite(Link):
         self.title=title
         self.remote_url=remote_url
         self.description = description
-        
+
     def _getUidByUrl(self):
         """Registers and returns the uid of the remote object if
         the unique id handler tool is available.
@@ -75,9 +76,8 @@ class Favorite(Link):
         handler = queryUtility(IUniqueIdAnnotationManagement)
         if handler is None or not hasattr(handler, 'register'):
             return
-        
-        portal = getUtility(IURLTool).getPortalObject()
-        obj = portal.restrictedTraverse(self.remote_url)
+
+        obj = getUtility(ISiteRoot).restrictedTraverse(self.remote_url)
         return handler.register(obj)
 
     def _getObjectByUid(self):
@@ -143,8 +143,7 @@ class Favorite(Link):
         if remote_obj is not None:
             return remote_obj
 
-        portal_url = getUtility(IURLTool)
-        return portal_url.getPortalObject().restrictedTraverse(self.remote_url)
+        return getUtility(ISiteRoot).restrictedTraverse(self.remote_url)
 
     security.declarePrivate('_edit')
     def _edit( self, remote_url ):

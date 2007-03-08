@@ -27,6 +27,7 @@ from zope.testing.cleanup import cleanUp
 from Products.CMFCore.MemberDataTool import MemberDataTool
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.interfaces import IMemberDataTool
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces import IURLTool
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
@@ -141,12 +142,10 @@ class MembershipToolSecurityTests(SecurityTest):
     def test_deleteMembers(self):
         site = self._makeSite()
         sm = getSiteManager()
+        sm.registerUtility(site, ISiteRoot)
         mtool = site.portal_membership
         members = site._setObject( 'Members', PortalFolder('Members') )
         acl_users = site._setObject( 'acl_users', DummyUserFolder() )
-        utool = site._setObject( 'portal_url', DummyTool() )
-        sm.registerUtility(utool, IURLTool)
-        wtool = site._setObject( 'portal_workflow', DummyTool() )
         mdtool = site._setObject( 'portal_memberdata', MemberDataTool() )
         sm.registerUtility(mdtool, IMemberDataTool)
         newSecurityManager(None, acl_users.all_powerful_Oz)

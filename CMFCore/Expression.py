@@ -19,14 +19,13 @@ from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base, aq_inner, aq_parent
 from Globals import InitializeClass
 from Globals import Persistent
-
 from zope.component import getUtility
 
 from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
 
 from interfaces import IMembershipTool
-from interfaces import IURLTool
+from interfaces import ISiteRoot
 
 
 class Expression(Persistent):
@@ -67,8 +66,7 @@ def getExprContext(context, object=None):
     else:
         ec = None
     if ec is None:
-        utool = getUtility(IURLTool)
-        portal = utool.getPortalObject()
+        portal = getUtility(ISiteRoot)
         if object is None or not hasattr(object, 'aq_base'):
             folder = portal
         else:

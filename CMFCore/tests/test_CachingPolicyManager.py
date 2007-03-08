@@ -27,8 +27,6 @@ from Acquisition import Implicit
 from App.Common import rfc1123_date
 from DateTime.DateTime import DateTime
 from OFS.Cache import Cacheable
-
-from zope.app.component.hooks import setHooks
 from zope.component import getSiteManager
 
 from Products.CMFCore.FSPageTemplate import FSPageTemplate

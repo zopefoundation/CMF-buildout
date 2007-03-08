@@ -18,20 +18,21 @@ $Id$
 import unittest
 import Testing
 
-from Products.CMFCore.testing import TraversingZCMLLayer
+from zope.component import adapter
+from zope.component import provideHandler
+
+from Products.CMFCore.testing import TraversingEventZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.WorkflowTool import WorkflowTool
-
-from zope.interface import Interface
-from zope.component import provideHandler, adapter
 from Products.DCWorkflow.interfaces import IBeforeTransitionEvent
 from Products.DCWorkflow.interfaces import IAfterTransitionEvent
 
+
 class DCWorkflowDefinitionTests(unittest.TestCase):
 
-    layer = TraversingZCMLLayer
+    layer = TraversingEventZCMLLayer
 
     def setUp(self):
         self.site = DummySite('site')
@@ -194,4 +195,5 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    from Products.CMFCore.testing import run
+    run(test_suite())

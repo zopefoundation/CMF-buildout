@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from zope.component import getSiteManager
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import ISkinsTool
 
@@ -108,6 +109,11 @@ class SkinnableTests(unittest.TestCase):
         
         return TestSkinnableObjectManager()
     
+    def tearDown(self):
+        from Products.CMFCore.Skinnable import SKINDATA
+        SKINDATA.clear()
+        cleanUp()
+
     def test_getCurrentSkinName(self):
         som = self._makeOne()
 

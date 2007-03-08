@@ -6,6 +6,8 @@ from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import getBrowserCharset
 
 atool = getToolByInterfaceName('Products.CMFCore.interfaces.IActionsTool')
+caltool_iface = 'Products.CMFCalendar.interfaces.ICalendarTool'
+caltool = getToolByInterfaceName(caltool_iface, None)
 mtool = getToolByInterfaceName('Products.CMFCore.interfaces.IMembershipTool')
 ptool = getToolByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
 utool = getToolByInterfaceName('Products.CMFCore.interfaces.IURLTool')
@@ -30,6 +32,7 @@ globals = {'utool': utool,
            'mtool': mtool,
            'atool': atool,
            'wtool': wtool,
+           'caltool_installed': caltool is not None,
            'portal_object': portal_object,
            'portal_title': portal_object.Title(),
            'object_title': context.Title(),

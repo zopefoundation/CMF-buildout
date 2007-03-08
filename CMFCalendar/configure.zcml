@@ -38,9 +38,9 @@
       />
 
   <genericsetup:registerProfile
-      name="views_support"
-      title="Experimental CMFCalendar Browser Views"
-      description="Hooks up the browser views."
+      name="skins_support"
+      title="CMFCalendar Oldstyle Skins"
+      description="Hooks up the oldstyle skins."
       provides="Products.GenericSetup.interfaces.EXTENSION"
       for="Products.CMFCore.interfaces.ISiteRoot"
       />

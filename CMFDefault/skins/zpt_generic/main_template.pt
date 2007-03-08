@@ -5,6 +5,7 @@
                   mtool globals/mtool;
                   atool globals/atool;
                   wtool globals/wtool;
+                  caltool_installed globals/caltool_installed;
                   portal_object globals/portal_object;
                   portal_title globals/portal_title;
                   object_title globals/object_title;
@@ -30,9 +31,9 @@
 
  <link rel="stylesheet" type="text/css" href="zpt_stylesheet.css"
        tal:attributes="href context/zpt_stylesheet.css/absolute_url" />
- <link rel="stylesheet" type="text/css" href="CalendarStyle.css"
-       tal:condition="context/CalendarStyle.css|nothing"
-       tal:attributes="href context/CalendarStyle.css/absolute_url" />
+ <link rel="stylesheet" type="text/css" href="calendar.css"
+       tal:condition="caltool_installed"
+       tal:attributes="href string:${portal_url}/++resource++calendar.css" />
  <metal:slot define-slot="style_slot" />
 </head>
 
@@ -240,10 +241,9 @@
     </td>
    </tr>
 
-   <tr>
+   <tr tal:condition="caltool_installed">
     <td>
-     <div metal:use-macro="context/calendarBox/macros/calendarBox | default">
-      <!-- CMFCalendar not Installed -->
+     <div metal:use-macro="context/@@calendar_widget/macros/calendarBox">
      </div>
     </td>
    </tr>

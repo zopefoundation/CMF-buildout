@@ -53,7 +53,7 @@
             tal:attributes="class python: calendar_box_view.getDaysClass(daynumber, month, year, day['event'])">
           <a href
              tal:omit-tag="not: day/event"
-             tal:attributes="href string:${portal_url}/@@calendar_day.html?date=${datestring}"
+             tal:attributes="href string:${portal_url}/calendar_day.html?date=${datestring}"
              tal:content="python:daynumber or default"> &nbsp;</a>
          </td></tal:loop>
         </tr>

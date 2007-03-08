@@ -43,7 +43,8 @@ class FunctionalLayer(FunctionalZCMLLayer):
         app = ZopeTestCase.app()
         addConfiguredSite(app, 'site', 'Products.CMFDefault:default',
                           snapshot=False,
-                          extension_ids=('Products.CMFCalendar:default',))
+                          extension_ids=('Products.CMFCalendar:default',
+                                        'Products.CMFCalendar:skins_support'))
         transaction.commit()
         ZopeTestCase.close(app)
 

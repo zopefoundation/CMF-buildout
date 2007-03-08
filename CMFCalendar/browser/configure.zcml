@@ -51,4 +51,14 @@
       permission="zope2.View"
       />
 
+  <browser:resource
+      name="event_icon.gif"
+      image="../skins/zpt_calendar/event_icon.gif"
+      />
+
+  <browser:resource
+      name="calendar.css"
+      file="../skins/zpt_calendar/CalendarStyle.css"
+      />
+
 </configure>

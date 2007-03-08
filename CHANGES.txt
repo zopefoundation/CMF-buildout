@@ -7,6 +7,10 @@ CMF 2.1.0-beta (unreleased)
 
   New Features
 
+    - CMFCalendar: Zope3 style browser views are now used by default.
+      An additional setup profile allows you to hook up the oldstyle skins and
+      to make customizations TTW.
+
     - DirectoryView: Added 'registerDirectory' ZCML directive.
       Using the old registerDirectory method in __init__.py is now deprecated.
       See zcml.IRegisterDirectoryDirective for details.

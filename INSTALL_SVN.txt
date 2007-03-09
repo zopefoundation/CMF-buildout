@@ -12,7 +12,7 @@ Overview
       the sources for a specific version from Subversion.
 
   * Please note that the trunk version of the CMF requires Zope 
-    2.10.0 or later.
+    2.10.2 or later.
 
   * For help with Subversion in general, see "Version Control with 
     Subversion" at http://svnbook.red-bean.com/
@@ -100,8 +100,8 @@ Fetching a Previous Version
   Retrieving Sources for a specific release
   
      Sources for prior releases are tagged, using the release version 
-     number. For instance, version 1.5.2 of the CMF was tagged as 
-     '1.5.2'.  To fetch such a release from Subversion::
+     number. For instance, version 2.1.0 of the CMF was tagged as 
+     '2.1.0'.  To fetch such a release from Subversion::
   
-      $ svn co svn://svn.zope.org/repos/main/CMF/tags/1.5.2 CMF-1.5.2
+      $ svn co svn://svn.zope.org/repos/main/CMF/tags/2.1.0 CMF-2.1.0
   

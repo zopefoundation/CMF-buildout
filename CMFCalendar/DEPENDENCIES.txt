@@ -1,4 +1,5 @@
 Zope >= 2.10.2
+five.localsitemanager >= 0.1.1
 CMFCore
 CMFDefault
 GenericSetup

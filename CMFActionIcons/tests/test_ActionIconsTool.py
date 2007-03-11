@@ -18,6 +18,8 @@ $Id$
 import unittest
 import Testing
 
+from zope.interface.verify import verifyClass
+
 
 class ActionIconToolTests(unittest.TestCase):
 
@@ -26,6 +28,12 @@ class ActionIconToolTests(unittest.TestCase):
         from Products.CMFActionIcons.ActionIconsTool import ActionIconsTool
 
         return ActionIconsTool( *args, **kw )
+
+    def test_interfaces(self):
+        from Products.CMFActionIcons.ActionIconsTool import ActionIconsTool
+        from Products.CMFActionIcons.interfaces import IActionIconsTool
+
+        verifyClass(IActionIconsTool, ActionIconsTool)
 
     def test_empty( self ):
 

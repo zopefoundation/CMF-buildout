@@ -22,8 +22,16 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.User import UnrestrictedUser
 from Acquisition import aq_base
 from zope.app.component.hooks import setSite
+from zope.component import getUtility
+from zope.component import queryUtility
 
+from Products.CMFCore.interfaces import ICatalogTool
+from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFDefault.testing import FunctionalLayer
+try:
+    from Products.CMFUid.interfaces import IUniqueIdHandler
+except ImportError:
+    IUniqueIdHandler = None
 
 
 class CMFSiteTests(ZopeTestCase.FunctionalTestCase):
@@ -45,17 +53,17 @@ class CMFSiteTests(ZopeTestCase.FunctionalTestCase):
         setSite(self.app.site)
 
     def test_new( self ):
-        site = self.app.site
+        catalog = getUtility(ICatalogTool)
 
-        self.assertEqual( len( site.portal_catalog ), 0 )
+        self.assertEqual(len(catalog), 0)
 
     def test_MetadataCataloguing( self ):
         site = self.app.site
-        catalog = site.portal_catalog
-        site.portal_membership.memberareaCreationFlag = 0
-        uid_handler = getattr(site, 'portal_uidhandler', None)
+        catalog = getUtility(ICatalogTool)
+        ttool = getUtility(ITypesTool)
+        uid_handler = IUniqueIdHandler and queryUtility(IUniqueIdHandler)
 
-        portal_types = [ x for x in site.portal_types.listContentTypes()
+        portal_types = [ x for x in ttool.listContentTypes()
                            if x not in ( 'Discussion Item'
                                        , 'CMF BTree Folder'
                                        , 'Folder'
@@ -100,7 +108,7 @@ class CMFSiteTests(ZopeTestCase.FunctionalTestCase):
 
     def test_DocumentEditCataloguing( self ):
         site = self.app.site
-        catalog = site.portal_catalog
+        catalog = getUtility(ICatalogTool)
 
         doc = self._makeContent( site
                                , portal_type='Document'
@@ -118,7 +126,7 @@ class CMFSiteTests(ZopeTestCase.FunctionalTestCase):
 
     def test_ImageEditCataloguing( self ):
         site = self.app.site
-        catalog = site.portal_catalog
+        catalog = getUtility(ICatalogTool)
 
         doc = self._makeContent( site
                                , portal_type='Image'
@@ -134,7 +142,7 @@ class CMFSiteTests(ZopeTestCase.FunctionalTestCase):
 
     def test_FileEditCataloguing( self ):
         site = self.app.site
-        catalog = site.portal_catalog
+        catalog = getUtility(ICatalogTool)
 
         doc = self._makeContent( site
                                , portal_type='File'
@@ -150,7 +158,7 @@ class CMFSiteTests(ZopeTestCase.FunctionalTestCase):
 
     def test_LinkEditCataloguing( self ):
         site = self.app.site
-        catalog = site.portal_catalog
+        catalog = getUtility(ICatalogTool)
 
         doc = self._makeContent( site
                                , portal_type='Link'
@@ -166,7 +174,7 @@ class CMFSiteTests(ZopeTestCase.FunctionalTestCase):
 
     def test_NewsItemEditCataloguing( self ):
         site = self.app.site
-        catalog = site.portal_catalog
+        catalog = getUtility(ICatalogTool)
 
         doc = self._makeContent( site
                                , portal_type='News Item'

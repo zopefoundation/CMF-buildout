@@ -2,7 +2,11 @@ CMF 2.1.0-beta2 (unreleased)
 
   Bug Fixes
 
-    - CMFActionIcons: Fixed interface declarations.
+    - Favorite: Fixed UID handling broken in 2.1.0-beta.
+
+    - CMFDefault: Removed CMFUid dependency inadvertently added in 2.1.0-beta.
+
+    - CMFActionIcons: Fixed interface declarations added in 2.1.0-beta.
 
 
 CMF 2.1.0-beta (2007/03/09)

@@ -17,10 +17,9 @@ $Id$
 
 import urlparse
 
-from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
-
+from Globals import InitializeClass
 from zope.app.container.interfaces import IObjectAddedEvent
 from zope.component import adapter
 from zope.component import getUtility
@@ -30,7 +29,10 @@ from zope.interface import implements
 
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces import IURLTool
-from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
+try:
+    from Products.CMFUid.interfaces import IUniqueIdHandler
+except ImportError:
+    IUniqueIdHandler = None
 
 from DublinCore import DefaultDublinCoreImpl
 from interfaces import IFavorite
@@ -73,8 +75,8 @@ class Favorite(Link):
         the unique id handler tool is available.
         """
         # check for unique id handler tool
-        handler = queryUtility(IUniqueIdAnnotationManagement)
-        if handler is None or not hasattr(handler, 'register'):
+        handler = IUniqueIdHandler and queryUtility(IUniqueIdHandler)
+        if handler is None:
             return
 
         obj = getUtility(ISiteRoot).restrictedTraverse(self.remote_url)
@@ -85,15 +87,15 @@ class Favorite(Link):
         the unique id handler tool is available.
         """
         # check for unique id handler tool
-        handler = queryUtility(IUniqueIdAnnotationManagement)
-        if handler is None or not hasattr(handler, 'queryObject'):
+        handler = IUniqueIdHandler and queryUtility(IUniqueIdHandler)
+        if handler is None:
             return
-        
+
         # check for remote uid info on object
         uid = getattr(aq_base(self), 'remote_uid', None)
         if uid is None:
             return
-        
+
         return handler.queryObject(uid, None)
 
     security.declareProtected(View, 'getRemoteUrl')
@@ -110,7 +112,7 @@ class Favorite(Link):
             if url != remote_url:
                 self.edit(url)
             return url
-        
+
         return remote_url
 
     def _getRemoteUrlTheOldWay(self):

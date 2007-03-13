@@ -15,6 +15,7 @@
 $Id$
 """
 import logging
+from warnings import warn
 
 from AccessControl import ClassSecurityInfo
 from AccessControl.User import nobody
@@ -335,16 +336,12 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
             name = user.getUserName()
             # this really does need to be the user name, and not the user id,
             # because we're dealing with authentication credentials
-            if hasattr(acl_users.aq_base, 'credentialsChanged'):
-                # Use an interface provided by LoginManager.
-                acl_users.credentialsChanged(user, name, password)
-            else:
-                req = self.REQUEST
-                p = getattr(req, '_credentials_changed_path', None)
-                if p is not None:
-                    # Use an interface provided by CookieCrumbler.
-                    change = self.restrictedTraverse(p)
-                    change(user, name, password)
+            req = self.REQUEST
+            p = getattr(req, '_credentials_changed_path', None)
+            if p is not None:
+                # Use an interface provided by CookieCrumbler.
+                change = self.restrictedTraverse(p)
+                change(user, name, password)
 
     security.declareProtected(ManageUsers, 'getMemberById')
     def getMemberById(self, id):
@@ -379,16 +376,12 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
             return uf.getUserById(username)
 
     def __getPUS(self):
-        # Gets something we can call getUsers() and getUserNames() on.
-        acl_users = self.acl_users
-        if hasattr(acl_users, 'getUsers'):
-            return acl_users
-        else:
-            # This hack works around the absence of getUsers() in LoginManager.
-            # Gets the PersistentUserSource object that stores our users
-            for us in acl_users.UserSourcesGroup.objectValues():
-                if us.meta_type == 'Persistent User Source':
-                    return us.__of__(acl_users)
+        """ Retrieve the nearest user folder
+        """
+        warn('__getPUS is deprecated and will be removed in CMF 2.4, '
+             'please acquire "acl_users" instead.', DeprecationWarning,
+             stacklevel=2)
+        return self.acl_users
 
     security.declareProtected(ManageUsers, 'listMemberIds')
     def listMemberIds(self):
@@ -396,14 +389,14 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
         replaced with a set of methods for querying pieces of the
         list rather than the entire list at once.
         '''
-        user_folder = self.__getPUS()
+        user_folder = self.acl_users
         return [ x.getId() for x in user_folder.getUsers() ]
 
     security.declareProtected(ManageUsers, 'listMembers')
     def listMembers(self):
         '''Gets the list of all members.
         '''
-        return map(self.wrapUser, self.__getPUS().getUsers())
+        return map(self.wrapUser, self.acl_users.getUsers())
 
     security.declareProtected(ListPortalMembers, 'searchMembers')
     def searchMembers( self, search_param, search_term ):
@@ -470,16 +463,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
         '''Adds a new member to the user folder.  Security checks will have
         already been performed.  Called by portal_registration.
         '''
-        acl_users = self.acl_users
-        if hasattr(acl_users, '_doAddUser'):
-            acl_users._doAddUser(id, password, roles, domains)
-        else:
-            # The acl_users folder is a LoginManager.  Search for a UserSource
-            # with the needed support.
-            for source in acl_users.UserSourcesGroup.objectValues():
-                if hasattr(source, 'addUser'):
-                    source.__of__(self).addUser(id, password, roles, domains)
-            raise "Can't add Member", "No supported UserSources"
+        self.acl_users._doAddUser(id, password, roles, domains)
 
         if properties is not None:
             member = self.getMemberById(id)

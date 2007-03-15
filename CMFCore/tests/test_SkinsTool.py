@@ -66,7 +66,6 @@ class SkinsToolTests(unittest.TestCase):
         from zope.interface.verify import verifyClass
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import ISkinsContainer
-        from Products.CMFCore.interfaces import ISkinsTool
         from Products.CMFCore.SkinsTool import SkinsTool
 
         verifyClass(IActionProvider, SkinsTool)

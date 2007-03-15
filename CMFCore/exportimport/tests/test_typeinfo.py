@@ -291,8 +291,6 @@ class TypeInformationXMLAdapterTests(BodyAdapterTestCase):
         self.assertEqual(obj._actions[0].condition.text, 'python:1')
 
     def setUp(self):
-        from Products.CMFCore.TypesTool import FactoryTypeInformation
-
         BodyAdapterTestCase.setUp(self)
         self._obj = FactoryTypeInformation('foo_fti')
         self._BODY = _FTI_BODY
@@ -309,13 +307,9 @@ class TypesToolXMLAdapterTests(BodyAdapterTestCase):
         return TypesToolXMLAdapter
 
     def _populate(self, obj):
-        from Products.CMFCore.TypesTool import FactoryTypeInformation
-
         obj._setObject('foo_type', FactoryTypeInformation('foo_type'))
 
     def setUp(self):
-        from Products.CMFCore.TypesTool import TypesTool
-
         BodyAdapterTestCase.setUp(self)
         self._obj = TypesTool()
         self._BODY = _TYPESTOOL_BODY

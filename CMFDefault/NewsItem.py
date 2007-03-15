@@ -24,7 +24,6 @@ from Document import Document
 from interfaces import IMutableNewsItem
 from interfaces import INewsItem
 from permissions import ModifyPortalContent
-from permissions import View
 
 
 def addNewsItem( self

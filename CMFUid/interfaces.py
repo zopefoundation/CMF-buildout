@@ -20,7 +20,6 @@ $Id$
 """
 
 from zope.interface import Interface
-from zope.interface import Attribute
 
 from Products.CMFCore.interfaces import ICallableOpaqueItem
 from Products.CMFCore.interfaces import ICallableOpaqueItemEvents

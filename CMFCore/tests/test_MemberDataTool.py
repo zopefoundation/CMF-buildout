@@ -93,7 +93,6 @@ class MemberDataToolTests(unittest.TestCase):
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
         from Products.CMFCore.interfaces import IActionProvider
-        from Products.CMFCore.interfaces import IMemberDataTool
         from Products.CMFCore.MemberDataTool import MemberDataTool
 
         verifyClass(IActionProvider, MemberDataTool)

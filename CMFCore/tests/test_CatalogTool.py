@@ -19,7 +19,6 @@ import unittest
 import Testing
 
 from AccessControl.SecurityManagement import newSecurityManager
-from AccessControl.SecurityManagement import noSecurityManager
 from DateTime import DateTime
 
 from Products.CMFCore.tests.base.dummy import DummyContent

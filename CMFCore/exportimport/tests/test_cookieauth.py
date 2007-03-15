@@ -91,8 +91,6 @@ class CookieCrumblerXMLAdapterTests(BodyAdapterTestCase):
         return CookieCrumblerXMLAdapter
 
     def setUp(self):
-        from Products.CMFCore.CookieCrumbler import CookieCrumbler
-
         BodyAdapterTestCase.setUp(self)
         self._obj = CookieCrumbler('foo_cookiecrumbler')
         self._BODY = _COOKIECRUMBLER_BODY

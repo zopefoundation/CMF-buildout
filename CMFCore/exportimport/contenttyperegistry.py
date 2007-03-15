@@ -17,16 +17,12 @@ $Id$
 
 from zope.component import adapts
 from zope.component import getSiteManager
-from zope.component import getUtility
-from zope.component import queryUtility
 
 from Products.CMFCore.interfaces import IContentTypeRegistry
 from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import XMLAdapterBase
-
-from Products.CMFCore.interfaces import IContentTypeRegistry
 
 
 class ContentTypeRegistryXMLAdapter(XMLAdapterBase):

@@ -24,7 +24,6 @@ from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IConfigurableWorkflowTool
-from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite

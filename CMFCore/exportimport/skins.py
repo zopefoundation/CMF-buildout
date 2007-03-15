@@ -20,8 +20,6 @@ from Acquisition import aq_parent
 
 from zope.component import adapts
 from zope.component import getSiteManager
-from zope.component import getUtility
-from zope.component import queryUtility
 
 from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects

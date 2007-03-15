@@ -361,7 +361,7 @@ class SyndicationTool(UniqueObject, SimpleItem, ActionProviderBase):
             raise 'Syndication is not Allowed'
 
         if obj is None:
-            when = syUpdateBase
+            when = self.syUpdateBase
             return when.HTML4()
 
         syInfo = getattr(obj, 'syndication_information',

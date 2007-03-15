@@ -35,7 +35,6 @@ from Products.CMFCore.utils import getToolInterface
 from zope.component import adapts
 from zope.component import getUtility
 from zope.component import getSiteManager
-from zope.component import queryUtility
 
 _SPECIAL_PROVIDERS = ('portal_actions', 'portal_types', 'portal_workflow')
 

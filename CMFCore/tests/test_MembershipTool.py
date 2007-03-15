@@ -28,7 +28,6 @@ from Products.CMFCore.MemberDataTool import MemberDataTool
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.interfaces import IMemberDataTool
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.interfaces import IURLTool
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.dummy import DummyUserFolder

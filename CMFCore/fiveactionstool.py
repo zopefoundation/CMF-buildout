@@ -18,7 +18,6 @@ $Id$
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
-from Products.Five import security
 from zope.app.publisher.interfaces.browser import IBrowserMenu
 from zope.app.publisher.browser.menu import getMenu
 from zope.component import getUtilitiesFor

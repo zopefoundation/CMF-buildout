@@ -41,7 +41,6 @@ from exceptions import AccessControl_Unauthorized
 from exceptions import DiscussionNotAllowed
 from permissions import ManagePortal
 from permissions import ModifyPortalContent
-from permissions import ReplyToItem
 from utils import _dtmldir
 
 

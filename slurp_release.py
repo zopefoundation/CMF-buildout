@@ -196,8 +196,6 @@ options:
 
 if __name__ == '__main__':
 
-    import sys
-
     pkg = ReleasePackage( sys.argv[1:] )
 
     pkg.run()

@@ -45,4 +45,4 @@ class IAfterTransitionEvent(ITransitionEvent):
     
     """An event that's fired after a workflow transition.
     """
-    
+

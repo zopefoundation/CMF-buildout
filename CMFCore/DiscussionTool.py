@@ -15,10 +15,14 @@
 $Id$
 """
 
-from OFS.SimpleItem import SimpleItem
-from Globals import InitializeClass, DTMLFile
+import urllib
+
 from Acquisition import Implicit
 from AccessControl import ClassSecurityInfo
+from DateTime.DateTime import DateTime
+from Globals import DTMLFile
+from Globals import InitializeClass
+from OFS.SimpleItem import SimpleItem
 
 from zope.component import getUtility
 from zope.interface import implements

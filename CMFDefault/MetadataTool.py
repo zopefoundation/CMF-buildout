@@ -16,7 +16,6 @@ $Id$
 """
 
 from AccessControl import ClassSecurityInfo
-from AccessControl import getSecurityManager
 from Globals import DTMLFile
 from Globals import InitializeClass
 from Globals import PersistentMapping

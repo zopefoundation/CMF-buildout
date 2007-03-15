@@ -29,7 +29,6 @@ from AccessControl.Permission import Permission
 from AccessControl.PermissionRole import rolesForPermissionOn
 from AccessControl.Role import gather_permissions
 from Acquisition import aq_get
-from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition import Implicit
 from DateTime import DateTime

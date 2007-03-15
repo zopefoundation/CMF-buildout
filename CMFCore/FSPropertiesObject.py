@@ -123,7 +123,7 @@ class FSPropertiesObject(FSObject, PropertyManager):
                             })
             except:
                 raise ValueError, ( 'Error processing line %s of %s:\n%s'
-                                  % (lino,fp,line) )
+                                  % (lino,self._filepath,line) )
         self._properties = tuple(map)
 
     if Globals.DevelopmentMode:

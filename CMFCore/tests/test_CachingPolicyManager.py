@@ -37,7 +37,6 @@ from Products.CMFCore.testing import TraversingZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
-from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.interfaces import ICachingPolicyManager
@@ -453,7 +452,6 @@ class CachingPolicyManagerTests(unittest.TestCase):
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
         from Products.CMFCore.CachingPolicyManager import CachingPolicyManager
-        from Products.CMFCore.interfaces import ICachingPolicyManager
 
         verifyClass(ICachingPolicyManager, CachingPolicyManager)
 

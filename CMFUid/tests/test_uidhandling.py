@@ -24,7 +24,6 @@ from zope.testing.cleanup import cleanUp
 from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFolder
-from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
 from Products.CMFUid.interfaces import IUniqueIdGenerator

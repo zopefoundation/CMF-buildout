@@ -20,8 +20,6 @@ from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 
 from zope.component import getSiteManager
-from zope.component import getUtility
-from zope.component import queryUtility
 
 
 def importCatalogTool(context):

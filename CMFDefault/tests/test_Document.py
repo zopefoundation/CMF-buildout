@@ -34,7 +34,6 @@ from Products.CMFCore.tests.base.content import DOCTYPE
 from Products.CMFCore.tests.base.content import ENTITY_IN_TITLE
 from Products.CMFCore.tests.base.content import FAUX_HTML_LEADING_TEXT
 from Products.CMFCore.tests.base.content import HTML_TEMPLATE
-from Products.CMFCore.tests.base.content import SIMPLE_HTML
 from Products.CMFCore.tests.base.content import SIMPLE_STRUCTUREDTEXT
 from Products.CMFCore.tests.base.content import SIMPLE_XHTML
 from Products.CMFCore.tests.base.content import STX_NO_HEADERS

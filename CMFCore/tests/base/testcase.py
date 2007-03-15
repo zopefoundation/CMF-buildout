@@ -65,7 +65,6 @@ class WarningInterceptor:
         if self._old_stderr is not None:
             return
 
-        import sys
         from StringIO import StringIO
 
         self._old_stderr = sys.stderr
@@ -76,7 +75,6 @@ class WarningInterceptor:
         if self._old_stderr is None:
             return
 
-        import sys
         sys.stderr = self._old_stderr
 
 

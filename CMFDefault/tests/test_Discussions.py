@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 
 from Products.CMFCore.CatalogTool import CatalogTool
 from Products.CMFCore.interfaces import ICatalogTool
@@ -40,31 +41,7 @@ from Products.CMFDefault.exceptions import DiscussionNotAllowed
 
 class DiscussionItemTests(unittest.TestCase):
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.Contentish \
-                import Contentish as IContentish
-        from Products.CMFCore.interfaces.Discussions \
-                import DiscussionResponse as IDiscussionResponse
-        from Products.CMFCore.interfaces.DublinCore \
-                import CatalogableDublinCore as ICatalogableDublinCore
-        from Products.CMFCore.interfaces.DublinCore \
-                import DublinCore as IDublinCore
-        from Products.CMFCore.interfaces.DublinCore \
-                import MutableDublinCore as IMutableDublinCore
-        from Products.CMFCore.interfaces.Dynamic \
-                import DynamicType as IDynamicType
-        from Products.CMFDefault.DiscussionItem import DiscussionItem
-
-        verifyClass(ICatalogableDublinCore, DiscussionItem)
-        verifyClass(IContentish, DiscussionItem)
-        verifyClass(IDiscussionResponse, DiscussionItem)
-        verifyClass(IDublinCore, DiscussionItem)
-        verifyClass(IDynamicType, DiscussionItem)
-        verifyClass(IMutableDublinCore, DiscussionItem)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+   def test_interfaces(self):
         from Products.CMFCore.interfaces import ICatalogableDublinCore
         from Products.CMFCore.interfaces import IContentish
         from Products.CMFCore.interfaces import IDiscussionResponse
@@ -88,15 +65,7 @@ class DiscussionItemContainerTests(unittest.TestCase):
 
         return DiscussionItemContainer
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.Discussions \
-                import Discussable as IDiscussable
-
-        verifyClass(IDiscussable, self._getTargetClass())
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
         from Products.CMFCore.interfaces import IDiscussable
 

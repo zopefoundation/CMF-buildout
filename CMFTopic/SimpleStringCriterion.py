@@ -20,7 +20,6 @@ from Globals import InitializeClass
 from zope.interface import implements
 
 from AbstractCriterion import AbstractCriterion
-from interfaces import Criterion as z2ICriterion
 from interfaces import ICriterion
 from permissions import ChangeTopics
 from permissions import View
@@ -33,7 +32,6 @@ class SimpleStringCriterion( AbstractCriterion ):
     """
 
     implements(ICriterion)
-    __implements__ = z2ICriterion
 
     meta_type = 'String Criterion'
 
@@ -45,21 +43,21 @@ class SimpleStringCriterion( AbstractCriterion ):
         self.id = id
         self.field = field
         self.value = ''
-        
+
     security.declareProtected( ChangeTopics, 'getEditForm' )
     def getEditForm( self ):
         """
             Return the skinned name of the edit form.
         """
         return 'ssc_edit'
-    
+
     security.declareProtected( ChangeTopics, 'edit' )
     def edit( self, value ):
         """
             Update the value we are to match up against.
         """
         self.value = str( value )
-    
+
     security.declareProtected(View, 'getCriteriaItems')
     def getCriteriaItems( self ):
         """
@@ -71,7 +69,6 @@ class SimpleStringCriterion( AbstractCriterion ):
             result.append( ( self.field, self.value ) )
 
         return tuple( result )
-
 
 InitializeClass( SimpleStringCriterion )
 

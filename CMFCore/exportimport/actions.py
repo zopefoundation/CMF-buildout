@@ -15,6 +15,10 @@
 $Id$
 """
 
+from zope.component import adapts
+from zope.component import getSiteManager
+from zope.component import getUtility
+
 from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import I18NURI
@@ -28,13 +32,7 @@ from Products.CMFCore.interfaces import IAction
 from Products.CMFCore.interfaces import IActionCategory
 from Products.CMFCore.interfaces import IActionProvider
 from Products.CMFCore.interfaces import IActionsTool
-from Products.CMFCore.interfaces.portal_actions \
-        import ActionProvider as z2IActionProvider
 from Products.CMFCore.utils import getToolInterface
-
-from zope.component import adapts
-from zope.component import getUtility
-from zope.component import getSiteManager
 
 _SPECIAL_PROVIDERS = ('portal_actions', 'portal_types', 'portal_workflow')
 
@@ -150,8 +148,7 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
         provider_iface = getToolInterface(provider_id)
         provider = getUtility(provider_iface)
 
-        if not (IActionProvider.providedBy(provider) or
-                z2IActionProvider.isImplementedBy(provider)):
+        if not IActionProvider.providedBy(provider):
             return fragment
 
         if provider_id == 'portal_actions':

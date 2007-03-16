@@ -19,8 +19,8 @@ import unittest
 import Testing
 
 import Acquisition
-
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IMemberDataTool
@@ -79,19 +79,7 @@ class MemberDataToolTests(unittest.TestCase):
     def tearDown(self):
         cleanUp()
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_memberdata \
-                import portal_memberdata as IMemberDataTool
-        from Products.CMFCore.MemberDataTool import MemberDataTool
-
-        verifyClass(IActionProvider, MemberDataTool)
-        verifyClass(IMemberDataTool, MemberDataTool)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.MemberDataTool import MemberDataTool
 
@@ -148,16 +136,7 @@ class MemberDataTests(unittest.TestCase):
 
         return MemberData(*args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_memberdata \
-                import MemberData as IMemberData
-        from Products.CMFCore.MemberDataTool import MemberData
-
-        verifyClass(IMemberData, MemberData)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IMemberData
         from Products.CMFCore.MemberDataTool import MemberData
 

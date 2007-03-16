@@ -28,6 +28,7 @@ from Products.PythonScripts.standard import html_quote
 from webdav.NullResource import NullResource
 from zope.component import getSiteManager
 from zope.component.interfaces import IFactory
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.ActionInformation import ActionInformation
@@ -71,19 +72,7 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
         SecurityTest.tearDown(self)
         self._free_warning_output()
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_types \
-                import portal_types as ITypesTool
-        from Products.CMFCore.TypesTool import TypesTool
-
-        verifyClass(IActionProvider, TypesTool)
-        verifyClass(ITypesTool, TypesTool)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import ITypesTool
         from Products.CMFCore.TypesTool import TypesTool
@@ -296,16 +285,7 @@ class FTIDataTests( TypeInfoTests ):
 
         return FactoryTypeInformation(id, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_types \
-                import ContentTypeInformation as ITypeInformation
-        from Products.CMFCore.TypesTool import FactoryTypeInformation
-
-        verifyClass(ITypeInformation, FactoryTypeInformation)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import ITypeInformation
         from Products.CMFCore.TypesTool import FactoryTypeInformation
 
@@ -331,16 +311,7 @@ class STIDataTests( TypeInfoTests ):
 
         return ScriptableTypeInformation(id, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_types \
-                import ContentTypeInformation as ITypeInformation
-        from Products.CMFCore.TypesTool import ScriptableTypeInformation
-
-        verifyClass(ITypeInformation, ScriptableTypeInformation)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import ITypeInformation
         from Products.CMFCore.TypesTool import ScriptableTypeInformation
 

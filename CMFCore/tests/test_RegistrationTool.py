@@ -18,6 +18,8 @@ $Id$
 import unittest
 import Testing
 
+from zope.interface.verify import verifyClass
+
 
 class RegistrationToolTests(unittest.TestCase):
 
@@ -26,19 +28,7 @@ class RegistrationToolTests(unittest.TestCase):
 
         return RegistrationTool()
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_registration \
-                import portal_registration as IRegistrationTool
-        from Products.CMFCore.RegistrationTool import RegistrationTool
-
-        verifyClass(IActionProvider, RegistrationTool)
-        verifyClass(IRegistrationTool, RegistrationTool)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IRegistrationTool
         from Products.CMFCore.RegistrationTool import RegistrationTool

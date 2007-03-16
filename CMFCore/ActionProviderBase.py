@@ -26,17 +26,16 @@ from ActionInformation import getOAI
 from exceptions import AccessControl_Unauthorized
 from Expression import getExprContext
 from interfaces import IActionProvider
-from interfaces.portal_actions import ActionProvider as z2IActionProvider
 from permissions import ManagePortal
 from utils import _dtmldir
 
 
 class ActionProviderBase:
+
     """ Provide ActionTabs and management methods for ActionProviders
     """
 
     implements(IActionProvider)
-    __implements__ = z2IActionProvider
 
     security = ClassSecurityInfo()
 

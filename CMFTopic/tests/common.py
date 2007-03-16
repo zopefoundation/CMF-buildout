@@ -17,20 +17,15 @@ $Id$
 
 from unittest import TestCase
 
+from zope.interface.verify import verifyClass
+
 
 class CriterionTestCase(TestCase):
 
     def _makeOne(self, id, *args, **kw):
         return self._getTargetClass()(id, *args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFTopic.interfaces import Criterion as ICriterion
-
-        verifyClass( ICriterion, self._getTargetClass() )
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFTopic.interfaces import ICriterion
 
-        verifyClass( ICriterion, self._getTargetClass() )
+        verifyClass(ICriterion, self._getTargetClass())

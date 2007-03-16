@@ -101,14 +101,3 @@ class ICriterion(Interface):
         a value to be injected into the query dictionary (and,
         therefore, tailored to work with the catalog).
         """
-
-
-# BBB: will be removed in CMF 2.2
-#      create zope2 interfaces
-from Interface.bridge import createZope3Bridge
-import Criterion
-
-createZope3Bridge(ICriterion, Criterion, 'Criterion')
-
-from Criterion import Criterion
-del createZope3Bridge

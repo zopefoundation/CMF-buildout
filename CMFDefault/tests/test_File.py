@@ -21,13 +21,14 @@ import Testing
 from os.path import join as path_join
 
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import ICachingPolicyManager
 from Products.CMFCore.testing import ConformsToContent
-from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
-from Products.CMFCore.tests.base.testcase import RequestTest 
+from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
+from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFDefault import tests
 
 TESTS_HOME = tests.__path__[0]
@@ -45,8 +46,7 @@ class FileTests(ConformsToContent, unittest.TestCase):
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFDefault.interfaces import IFile
         from Products.CMFDefault.interfaces import IMutableFile
 
@@ -122,7 +122,7 @@ class CachingTests(RequestTest):
 
         from webdav.common import rfc1123_date
         from Products.CMFCore.tests.base.dummy import FAKE_ETAG
-        
+
         file = self._makeOne( 'test_file', 'test_file.swf', file=ref )
         file = file.__of__( self.root )
 
@@ -143,7 +143,7 @@ class CachingTests(RequestTest):
         path, ref = self._extractFile()
 
         from webdav.common import rfc1123_date
-        
+
         file = self._makeOne( 'test_file', 'test_file.swf', file=ref )
         file = file.__of__( self.root )
 

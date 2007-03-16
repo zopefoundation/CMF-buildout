@@ -58,9 +58,6 @@ class Link(PortalContent, DefaultDublinCoreImpl):
     """
 
     implements(IMutableLink, ILink, IDAVAware)
-    __implements__ = ( PortalContent.__implements__
-                     , DefaultDublinCoreImpl.__implements__
-                     )
 
     URL_FORMAT = format = 'text/url'
     effective_date = expiration_date = None

@@ -20,7 +20,6 @@ from Acquisition import aq_base
 from Globals import InitializeClass
 from Products.MailHost.interfaces import IMailHost
 from zope.component import getUtility
-from zope.interface import implements
 from zope.schema import ValidationError
 
 from Products.CMFCore.interfaces import IMembershipTool
@@ -38,9 +37,6 @@ class RegistrationTool(BaseTool):
 
     """ Manage through-the-web signup policies.
     """
-
-    implements(IRegistrationTool)
-    __implements__ = BaseTool.__implements__
 
     meta_type = 'Default Registration Tool'
 
@@ -210,4 +206,3 @@ class RegistrationTool(BaseTool):
 
 InitializeClass(RegistrationTool)
 registerToolInterface('portal_registration', IRegistrationTool)
-

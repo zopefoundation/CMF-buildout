@@ -21,7 +21,6 @@ from Globals import InitializeClass
 from zope.interface import implements
 
 from AbstractCriterion import AbstractCriterion
-from interfaces import Criterion as z2ICriterion
 from interfaces import ICriterion
 from permissions import ChangeTopics
 from permissions import View
@@ -36,7 +35,6 @@ class FriendlyDateCriterion( AbstractCriterion ):
     """
 
     implements(ICriterion)
-    __implements__ = z2ICriterion
 
     meta_type = 'Friendly Date Criterion'
 
@@ -148,7 +146,7 @@ class FriendlyDateCriterion( AbstractCriterion ):
                                           } ), )
                     else:
                         return ( ( field, { 'query': date.earliestTime()
-                                          , 'range': operation 
+                                          , 'range': operation
                                           } ), )
                 else:
                     # Value 0 means "Now", so get everything from now on

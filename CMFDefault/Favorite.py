@@ -54,7 +54,6 @@ class Favorite(Link):
     """
 
     implements(IMutableFavorite, IFavorite)
-    __implements__ = Link.__implements__ # redundant, but explicit
 
     security = ClassSecurityInfo()
 

@@ -23,6 +23,7 @@ from OFS.event import ObjectClonedEvent
 from zope.app.container.contained import ObjectAddedEvent
 from zope.component import getSiteManager
 from zope.event import notify
+from zope.interface.verify import verifyClass
 
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.testing import EventZCMLLayer
@@ -53,8 +54,7 @@ class UniqueIdAnnotationToolTests(SecurityTest):
                           , IUniqueIdAnnotationManagement
                           )
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFUid.interfaces import IUniqueIdAnnotation
         from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
         from Products.CMFUid.UniqueIdAnnotationTool \

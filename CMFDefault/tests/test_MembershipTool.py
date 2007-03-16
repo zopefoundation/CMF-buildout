@@ -19,8 +19,8 @@ import unittest
 import Testing
 
 from AccessControl.SecurityManagement import newSecurityManager
-
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IConfigurableWorkflowTool
@@ -43,19 +43,7 @@ class MembershipToolTests(unittest.TestCase):
         self.site = DummySite('site')
         self.site._setObject( 'portal_membership', self._makeOne() )
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFDefault.interfaces.portal_membership \
-                import portal_membership as IMembershipTool
-        from Products.CMFDefault.MembershipTool import MembershipTool
-
-        verifyClass(IActionProvider, MembershipTool)
-        verifyClass(IMembershipTool, MembershipTool)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFDefault.interfaces import IMembershipTool
         from Products.CMFDefault.MembershipTool import MembershipTool

@@ -20,6 +20,7 @@ import Testing
 
 from AccessControl.SecurityManagement import newSecurityManager
 from DateTime import DateTime
+from zope.interface.verify import verifyClass
 
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -38,15 +39,7 @@ class IndexableObjectWrapperTests(unittest.TestCase):
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_catalog \
-                import IndexableObjectWrapper as IIndexableObjectWrapper
-
-        verifyClass(IIndexableObjectWrapper, self._getTargetClass())
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IIndexableObjectWrapper
 
         verifyClass(IIndexableObjectWrapper, self._getTargetClass())
@@ -97,20 +90,7 @@ class CatalogToolTests(SecurityTest):
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_catalog \
-                import portal_catalog as ICatalogTool
-        from Products.ZCatalog.IZCatalog import IZCatalog
-
-        verifyClass(IActionProvider, self._getTargetClass())
-        verifyClass(ICatalogTool, self._getTargetClass())
-        verifyClass(IZCatalog, self._getTargetClass())
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import ICatalogTool
         from Products.ZCatalog.interfaces import IZCatalog

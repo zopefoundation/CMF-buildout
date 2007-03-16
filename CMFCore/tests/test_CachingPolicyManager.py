@@ -28,9 +28,11 @@ from App.Common import rfc1123_date
 from DateTime.DateTime import DateTime
 from OFS.Cache import Cacheable
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 
-from Products.CMFCore.FSPageTemplate import FSPageTemplate
 from Products.CMFCore.FSDTMLMethod import FSDTMLMethod
+from Products.CMFCore.FSPageTemplate import FSPageTemplate
+from Products.CMFCore.interfaces import ICachingPolicyManager
 from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.testing import FunctionalZCMLLayer
 from Products.CMFCore.testing import TraversingZCMLLayer
@@ -39,7 +41,6 @@ from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
-from Products.CMFCore.interfaces import ICachingPolicyManager
 
 ACCLARK = DateTime( '2001/01/01' )
 portal_owner = 'portal_owner'
@@ -84,12 +85,12 @@ class CacheableDummyContent(Implicit, Cacheable):
                 # from a "FileCacheManager"
                 return result
 
-        self.ZCacheable_set(None) 
+        self.ZCacheable_set(None)
 
 class DummyView(CacheableDummyContent):
 
     meta_type = 'DTML Method'
-    
+
 
 class CachingPolicyTests(unittest.TestCase):
 
@@ -108,8 +109,7 @@ class CachingPolicyTests(unittest.TestCase):
     def setUp(self):
         self._epoch = DateTime(0)
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.CachingPolicyManager import CachingPolicy
         from Products.CMFCore.interfaces import ICachingPolicy
 
@@ -441,16 +441,7 @@ class CachingPolicyManagerTests(unittest.TestCase):
     def assertEqualDelta( self, lhs, rhs, delta ):
         self.failUnless( abs( lhs - rhs ) <= delta )
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.CachingPolicyManager import CachingPolicyManager
-        from Products.CMFCore.interfaces.CachingPolicyManager \
-                import CachingPolicyManager as ICachingPolicyManager
-
-        verifyClass(ICachingPolicyManager, CachingPolicyManager)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.CachingPolicyManager import CachingPolicyManager
 
         verifyClass(ICachingPolicyManager, CachingPolicyManager)
@@ -1133,7 +1124,7 @@ class NestedTemplateTests( RequestTest, FSObjMaker ):
         headers = [x.lower() for x in self.RESPONSE.headers.keys()]
         self.failIf('x-cache-headers-set-by' in headers)
         self.failIf('vary' in headers)
-        
+
     def test_fireForSubtemplates2(self):
         # This is a FSPageTemplate that will be used as the View for 
         # our content objects. It doesn't matter what it returns.
@@ -1216,7 +1207,7 @@ class NestedTemplateTests( RequestTest, FSObjMaker ):
         self.assertEquals( headers.get('cache-control')
                          , 'max-age=100, s-maxage=100'
                          )
-        
+
 
 class OFSCacheTests(RequestTest):
 
@@ -1251,7 +1242,7 @@ class OFSCacheTests(RequestTest):
                       enable_304s = 0)
 
     def test_empty(self):
-        
+
         from Products.CMFCore.CachingPolicyManager import CPMCache
 
         cpm = self.portal.caching_policy_manager

@@ -15,11 +15,10 @@
 $Id$
 """
 
-from Globals import InitializeClass
-from Acquisition import aq_base
-from OFS.SimpleItem import SimpleItem
 from AccessControl import ClassSecurityInfo
-from webdav.WriteLockInterface import WriteLockInterface as z2IWriteLock
+from Acquisition import aq_base
+from Globals import InitializeClass
+from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
 
 from CMFCatalogAware import CMFCatalogAware
@@ -27,7 +26,6 @@ from DynamicType import DynamicType
 from exceptions import NotFound
 from exceptions import ResourceLockedError
 from interfaces import IContentish
-from interfaces.Contentish import Contentish as z2IContentish
 from permissions import FTPAccess
 from permissions import View
 from utils import Message as _
@@ -44,7 +42,6 @@ class PortalContent(DynamicType, CMFCatalogAware, SimpleItem):
     """
 
     implements(IContentish)
-    __implements__ = (z2IContentish, z2IWriteLock, DynamicType.__implements__)
 
     isPortalContent = 1
     _isPortalContent = 1  # More reliable than 'isPortalContent'.

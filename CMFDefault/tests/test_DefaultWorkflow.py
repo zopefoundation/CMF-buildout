@@ -18,11 +18,12 @@ $Id$
 import unittest
 import Testing
 
+from zope.interface.verify import verifyClass
+
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
-
 from Products.CMFCore.WorkflowTool import WorkflowTool
 
 
@@ -41,17 +42,7 @@ class DefaultWorkflowDefinitionTests(unittest.TestCase):
         wftool._setObject('wf', DefaultWorkflowDefinition('wf'))
         wftool.setDefaultChain('wf')
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_workflow \
-                import WorkflowDefinition as IWorkflowDefinition
-        from Products.CMFDefault.DefaultWorkflow \
-                import DefaultWorkflowDefinition
-
-        verifyClass(IWorkflowDefinition, DefaultWorkflowDefinition)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IWorkflowDefinition
         from Products.CMFDefault.DefaultWorkflow \
                 import DefaultWorkflowDefinition

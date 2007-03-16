@@ -18,22 +18,12 @@ $Id$
 import unittest
 import Testing
 
+from zope.interface.verify import verifyClass
+
 
 class DiscussionToolTests(unittest.TestCase):
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.DiscussionTool import DiscussionTool
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_discussion \
-                import oldstyle_portal_discussion as IOldstyleDiscussionTool
-
-        verifyClass(IActionProvider, DiscussionTool)
-        verifyClass(IOldstyleDiscussionTool, DiscussionTool)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.DiscussionTool import DiscussionTool
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IOldstyleDiscussionTool
@@ -44,16 +34,7 @@ class DiscussionToolTests(unittest.TestCase):
 
 class OldDiscussableTests(unittest.TestCase):
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.DiscussionTool import OldDiscussable
-        from Products.CMFCore.interfaces.Discussions \
-                import OldDiscussable as IOldDiscussable
-
-        verifyClass(IOldDiscussable, OldDiscussable)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.DiscussionTool import OldDiscussable
         from Products.CMFCore.interfaces import IOldstyleDiscussable
 

@@ -24,8 +24,9 @@ from os.path import join as path_join
 from re import compile
 from StringIO import StringIO
 
-from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from DocumentTemplate.DT_Util import html_quote
+from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
+from zope.interface.verify import verifyClass
 
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.content import BASIC_HTML
@@ -60,16 +61,7 @@ class RequestTestBase(RequestTest):
 
 class DocumentTests(ConformsToContent, RequestTestBase):
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFDefault.interfaces.Document import IDocument
-        from Products.CMFDefault.interfaces.Document import IMutableDocument
-
-        verifyClass(IDocument, self._getTargetClass())
-        verifyClass(IMutableDocument, self._getTargetClass())
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFDefault.interfaces import IDocument
         from Products.CMFDefault.interfaces import IMutableDocument
 

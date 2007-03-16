@@ -18,8 +18,8 @@ $Id$
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
-from zope.app.publisher.interfaces.browser import IBrowserMenu
 from zope.app.publisher.browser.menu import getMenu
+from zope.app.publisher.interfaces.browser import IBrowserMenu
 from zope.component import getUtilitiesFor
 
 from Products.CMFCore.ActionInformation import ActionInformation
@@ -36,8 +36,6 @@ class FiveActionsTool( UniqueObject, SimpleItem, ActionProviderBase ):
     """ Links content to discussions.
     """
 
-    __implements__ = (ActionProviderBase.__implements__)
-
     id = 'portal_fiveactions'
     meta_type = 'Five Actions Tool'
 
@@ -49,7 +47,7 @@ class FiveActionsTool( UniqueObject, SimpleItem, ActionProviderBase ):
     security.declarePrivate('listActions')
     def listActions(self, info=None, object=None):
         """ List all the actions defined by a provider.
-        """       
+        """
         if object is None:
             if  info is None:
                 # There is no support for global actions
@@ -68,7 +66,7 @@ class FiveActionsTool( UniqueObject, SimpleItem, ActionProviderBase ):
                     act_id = 'action_%s' % action
                 else:
                     act_id = 'action_%s_%s' % (object.getId(), action)
-                    
+
                 if entry.get('filter') is None:
                     filter = None
                 else:
@@ -90,7 +88,7 @@ class FiveActionsTool( UniqueObject, SimpleItem, ActionProviderBase ):
                     category=str(menu_id),
                     visible=1)
                 actions.append(act)
-                
+
         return tuple(actions)
 
 InitializeClass( FiveActionsTool )

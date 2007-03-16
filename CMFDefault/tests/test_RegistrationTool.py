@@ -20,6 +20,7 @@ from Testing import ZopeTestCase
 
 from Acquisition import Implicit
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IMembershipTool
@@ -47,18 +48,7 @@ class RegistrationToolTests(RequestTest):
         cleanUp()
         RequestTest.tearDown(self)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_registration \
-                import portal_registration as IRegistrationTool
-
-        verifyClass(IActionProvider, self._getTargetClass())
-        verifyClass(IRegistrationTool, self._getTargetClass())
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IRegistrationTool
 

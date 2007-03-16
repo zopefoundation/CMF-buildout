@@ -26,22 +26,19 @@ from zope.interface import implements
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
+
 from Products.CMFUid.interfaces import IUniqueIdGenerator
 
 
 class UniqueIdGeneratorTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     """Generator of unique ids.
-    
+
     This is a dead simple implementation using a counter. May cause
     ConflictErrors under high load and the values are predictable.
     """
 
     implements(IUniqueIdGenerator)
-    __implements__ = (
-        ActionProviderBase.__implements__,
-        SimpleItem.__implements__,
-    )
 
     id = 'portal_uidgenerator'
     alternative_id = 'portal_standard_uidgenerator'
@@ -77,4 +74,3 @@ class UniqueIdGeneratorTool(UniqueObject, SimpleItem, ActionProviderBase):
 
 InitializeClass(UniqueIdGeneratorTool)
 registerToolInterface('portal_uidgenerator', IUniqueIdGenerator)
-

@@ -99,9 +99,6 @@ class Event(PortalContent, DefaultDublinCoreImpl):
     security.declareObjectProtected(View)
 
     implements(IMutableEvent, IEvent, IDAVAware)
-    __implements__ = ( PortalContent.__implements__
-                     , DefaultDublinCoreImpl.__implements__
-                     )
 
     def __init__( self
                 , id
@@ -292,7 +289,7 @@ class Event(PortalContent, DefaultDublinCoreImpl):
         """ Return our end time as a DateTime object
         """
         date = getattr( self, 'end_date', None )
-        return date is None and self.start() or date    
+        return date is None and self.start() or date
 
     security.declarePublic('getStartTimeString')
     def getStartTimeString( self ):

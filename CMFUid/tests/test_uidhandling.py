@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import ICatalogTool
@@ -69,13 +70,13 @@ class UniqueIdHandlerTests(SecurityTest):
         cleanUp()
         SecurityTest.tearDown(self)
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFUid.interfaces import IUniqueIdBrainQuery
         from Products.CMFUid.interfaces import IUniqueIdHandler
         from Products.CMFUid.interfaces import IUniqueIdUnrestrictedQuery
-        verifyClass(IUniqueIdHandler, self._getTargetClass())
+
         verifyClass(IUniqueIdBrainQuery, self._getTargetClass())
+        verifyClass(IUniqueIdHandler, self._getTargetClass())
         verifyClass(IUniqueIdUnrestrictedQuery, self._getTargetClass())
 
     def test_getUidOfNotYetRegisteredObject(self):

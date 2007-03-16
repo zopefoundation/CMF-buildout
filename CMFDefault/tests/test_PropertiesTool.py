@@ -18,22 +18,12 @@ $Id$
 import unittest
 import Testing
 
+from zope.interface.verify import verifyClass
+
 
 class PropertiesToolTests(unittest.TestCase):
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_properties \
-                import portal_properties as IPropertiesTool
-        from Products.CMFDefault.PropertiesTool import PropertiesTool
-
-        verifyClass(IActionProvider, PropertiesTool)
-        verifyClass(IPropertiesTool, PropertiesTool)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IPropertiesTool
         from Products.CMFDefault.PropertiesTool import PropertiesTool

@@ -26,6 +26,7 @@ from zope.component import getSiteManager
 from zope.component import provideAdapter
 from zope.component.interfaces import IDefaultViewName
 from zope.interface import alsoProvides
+from zope.interface.verify import verifyClass
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.browser import IBrowserView
 from zope.testing.cleanup import cleanUp
@@ -34,8 +35,8 @@ from ZPublisher.HTTPResponse import HTTPResponse
 
 from Products.CMFCore.DynamicType import DynamicType
 from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.tests.base.dummy import DummyObject
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
@@ -62,16 +63,9 @@ class DummyView(BrowserView):
 
 class DynamicTypeTests(unittest.TestCase):
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.Dynamic \
-                import DynamicType as IDynamicType
-
-        verifyClass(IDynamicType, DynamicType)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IDynamicType
+
         verifyClass(IDynamicType, DynamicType)
 
 

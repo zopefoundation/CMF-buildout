@@ -24,24 +24,19 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.interfaces import IObjectClonedEvent
 from OFS.interfaces import IObjectWillBeMovedEvent
-
 from zope.app.container.interfaces import IObjectAddedEvent
 from zope.app.container.interfaces import IObjectMovedEvent
 from zope.component import queryUtility
 from zope.component import subscribers
 
+from interfaces import ICallableOpaqueItem
+from interfaces import ICatalogTool
+from interfaces import IConfigurableWorkflowTool
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from permissions import ModifyPortalContent
 from utils import _dtmldir
 from utils import _getAuthenticatedUser
-
-from interfaces import ICallableOpaqueItem
-from interfaces import ICatalogTool
-from interfaces import IConfigurableWorkflowTool
-from interfaces.IOpaqueItems \
-        import ICallableOpaqueItem as z2ICallableOpaqueItem
-
 
 logger = logging.getLogger('CMFCore.CMFCatalogAware')
 
@@ -178,8 +173,7 @@ class CMFCatalogAware(Base):
         self_base = aq_base(self)
         for name in self_base.__dict__.keys():
             obj = getattr(self, name)
-            if ICallableOpaqueItem.providedBy(obj) \
-                    or z2ICallableOpaqueItem.isImplementedBy(obj):
+            if ICallableOpaqueItem.providedBy(obj):
                 items.append((obj.getId(), obj))
 
         return tuple(items)

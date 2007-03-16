@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from BTrees.Length import Length
+from zope.interface.verify import verifyClass
 
 from Products.CMFCore.tests.base.testcase import SecurityTest
 
@@ -35,8 +36,7 @@ class UniqueIdGeneratorToolTests(SecurityTest):
         SecurityTest.setUp(self)
         self.root._setObject('portal_uidgenerator', self._getTargetClass()())
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFUid.interfaces import IUniqueIdGenerator
 
         verifyClass(IUniqueIdGenerator, self._getTargetClass())

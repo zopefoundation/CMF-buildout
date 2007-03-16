@@ -18,6 +18,8 @@ $Id$
 import unittest
 import Testing
 
+from zope.interface.verify import verifyClass
+
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.content import BASIC_HTML
 from Products.CMFCore.tests.base.content import BASIC_STRUCTUREDTEXT
@@ -36,8 +38,7 @@ class NewsItemTests(ConformsToContent, unittest.TestCase):
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFDefault.interfaces import IDocument
         from Products.CMFDefault.interfaces import IMutableDocument
         from Products.CMFDefault.interfaces import IMutableNewsItem

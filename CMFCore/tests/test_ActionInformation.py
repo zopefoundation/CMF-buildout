@@ -20,8 +20,8 @@ import Testing
 
 from OFS.Folder import manage_addFolder
 from Products.PythonScripts.PythonScript import manage_addPythonScript
-
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 
 from Products.CMFCore.Expression import createExprContext
 from Products.CMFCore.Expression import Expression
@@ -41,8 +41,7 @@ class ActionCategoryTests(unittest.TestCase):
 
         return ActionCategory(*args, **kw)
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.ActionInformation import ActionCategory
         from Products.CMFCore.interfaces import IActionCategory
 
@@ -66,8 +65,7 @@ class ActionTests(unittest.TestCase):
 
         return Action(*args, **kw)
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.ActionInformation import Action
         from Products.CMFCore.interfaces import IAction
 
@@ -139,16 +137,7 @@ class ActionInfoTests(unittest.TestCase):
 
         return ActionInfo(*args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.ActionInformation import ActionInfo
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionInfo as IActionInfo
-
-        verifyClass(IActionInfo, ActionInfo)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.ActionInformation import ActionInfo
         from Products.CMFCore.interfaces import IActionInfo
 
@@ -346,8 +335,7 @@ class ActionInformationTests(TransactionalTest):
 
         return ActionInformation(*args, **kw)
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.ActionInformation import ActionInformation
         from Products.CMFCore.interfaces import IAction
 

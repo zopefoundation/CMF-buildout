@@ -21,6 +21,7 @@ from zope.app.component.hooks import setHooks
 from zope.component import adapts
 from zope.i18n.interfaces import IUserPreferredLanguages
 from zope.interface import implements
+from zope.interface.verify import verifyClass
 from zope.publisher.interfaces.http import IHTTPRequest
 from zope.testing import testrunner
 from zope.testing.cleanup import cleanUp
@@ -31,20 +32,7 @@ from Products.GenericSetup.utils import BodyAdapterBase
 
 class ConformsToFolder:
 
-    def test_folder_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from webdav.WriteLockInterface import WriteLockInterface
-        from Products.CMFCore.interfaces.Dynamic \
-                import DynamicType as IDynamicType
-        from Products.CMFCore.interfaces.Folderish \
-                import Folderish as IFolderish
-
-        verifyClass(IDynamicType, self._getTargetClass())
-        verifyClass(IFolderish, self._getTargetClass())
-        verifyClass(WriteLockInterface, self._getTargetClass())
-
-    def test_folder_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_folder_interfaces(self):
         from webdav.interfaces import IWriteLock
         from Products.CMFCore.interfaces import IDynamicType
         from Products.CMFCore.interfaces import IFolderish
@@ -58,27 +46,7 @@ class ConformsToFolder:
 
 class ConformsToContent:
 
-    def test_content_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.Contentish \
-                import Contentish as IContentish
-        from Products.CMFCore.interfaces.DublinCore \
-                import CatalogableDublinCore as ICatalogableDublinCore
-        from Products.CMFCore.interfaces.DublinCore \
-                import DublinCore as IDublinCore
-        from Products.CMFCore.interfaces.DublinCore \
-                import MutableDublinCore as IMutableDublinCore
-        from Products.CMFCore.interfaces.Dynamic \
-                import DynamicType as IDynamicType
-
-        verifyClass(ICatalogableDublinCore, self._getTargetClass())
-        verifyClass(IContentish, self._getTargetClass())
-        verifyClass(IDublinCore, self._getTargetClass())
-        verifyClass(IDynamicType, self._getTargetClass())
-        verifyClass(IMutableDublinCore, self._getTargetClass())
-
-    def test_content_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_content_interfaces(self):
         from Products.CMFCore.interfaces import ICatalogableDublinCore
         from Products.CMFCore.interfaces import IContentish
         from Products.CMFCore.interfaces import IDublinCore

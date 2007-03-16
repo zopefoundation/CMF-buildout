@@ -26,8 +26,6 @@ from ActionProviderBase import ActionProviderBase
 from interfaces import IActionCategory
 from interfaces import IActionProvider
 from interfaces import IActionsTool
-from interfaces.portal_actions import ActionProvider as z2IActionProvider
-from interfaces.portal_actions import portal_actions as z2IActionsTool
 from permissions import ManagePortal
 from utils import _dtmldir
 from utils import registerToolInterface
@@ -43,8 +41,6 @@ class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
     """
 
     implements(IActionsTool)
-    __implements__ = (z2IActionsTool, OrderedFolder.__implements__,
-                      ActionProviderBase.__implements__)
 
     id = 'portal_actions'
     meta_type = 'CMF Actions Tool'
@@ -159,14 +155,12 @@ class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
         # Include actions from specific tools.
         for provider_name in self.listActionProviders():
             provider = getattr(self, provider_name)
-            if IActionProvider.providedBy(provider) or \
-                    z2IActionProvider.isImplementedBy(provider):
+            if IActionProvider.providedBy(provider):
                 actions.extend( provider.listActionInfos(object=object) )
 
         # Include actions from object.
         if object is not None:
-            if IActionProvider.providedBy(object) or \
-                    z2IActionProvider.isImplementedBy(object):
+            if IActionProvider.providedBy(object):
                 actions.extend( object.listActionInfos(object=object) )
 
         # Reorganize the actions by category.

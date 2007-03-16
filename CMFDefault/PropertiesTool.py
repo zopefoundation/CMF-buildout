@@ -27,8 +27,6 @@ from zope.interface import implements
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.interfaces.portal_properties \
-        import portal_properties as z2IPropertiesTool
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
@@ -39,7 +37,6 @@ from utils import _dtmldir
 class PropertiesTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     implements(IPropertiesTool)
-    __implements__ = (z2IPropertiesTool, ActionProviderBase.__implements__)
 
     id = 'portal_properties'
     meta_type = 'Default Properties Tool'

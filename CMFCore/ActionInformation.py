@@ -24,7 +24,6 @@ from OFS.ObjectManager import IFAwareObjectManager
 from OFS.OrderedFolder import OrderedFolder
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
-
 from zope.component import getUtility
 from zope.i18nmessageid import Message
 from zope.interface import implements
@@ -34,12 +33,11 @@ from interfaces import IAction
 from interfaces import IActionCategory
 from interfaces import IActionInfo
 from interfaces import IMembershipTool
-from interfaces.portal_actions import ActionInfo as z2IActionInfo
 from permissions import View
 from utils import _checkPermission
 
-
 _unchanged = [] # marker
+
 
 class ActionCategory(IFAwareObjectManager, OrderedFolder):
 
@@ -47,7 +45,6 @@ class ActionCategory(IFAwareObjectManager, OrderedFolder):
     """
 
     implements(IActionCategory)
-    __implements__ = OrderedFolder.__implements__
 
     _product_interfaces = (IActionCategory, IAction)
 
@@ -164,7 +161,6 @@ class ActionInfo(UserDict):
     """
 
     implements(IActionInfo)
-    __implements__ = z2IActionInfo
 
     __allow_access_to_unprotected_subobjects__ = 1
 
@@ -496,6 +492,7 @@ def getOAI(context, object=None):
 
 
 class oai:
+
     #Provided for backwards compatability
     # Provides information that may be needed when constructing the list of
     # available actions.
@@ -528,4 +525,3 @@ class oai:
         if hasattr(self, name):
             return getattr(self, name)
         raise KeyError, name
-

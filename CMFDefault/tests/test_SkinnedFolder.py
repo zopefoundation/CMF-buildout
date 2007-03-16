@@ -18,6 +18,8 @@ $Id$
 import unittest
 import Testing
 
+from zope.interface.verify import verifyClass
+
 from Products.CMFCore.testing import ConformsToFolder
 
 
@@ -28,14 +30,7 @@ class SkinnedFolderTests(ConformsToFolder, unittest.TestCase):
 
         return SkinnedFolder
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from OFS.IOrderSupport import IOrderedContainer
-
-        verifyClass(IOrderedContainer, self._getTargetClass())
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from OFS.interfaces import IOrderedContainer
         from Products.CMFCore.interfaces import IContentish
 

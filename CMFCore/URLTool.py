@@ -21,14 +21,12 @@ from Acquisition import aq_parent
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
-
 from zope.component import queryUtility
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
 from interfaces import ISiteRoot
 from interfaces import IURLTool
-from interfaces.portal_url import portal_url as z2IURLTool
 from permissions import ManagePortal
 from permissions import View
 from utils import _dtmldir
@@ -42,7 +40,6 @@ class URLTool(UniqueObject, SimpleItem, ActionProviderBase):
     """
 
     implements(IURLTool)
-    __implements__ = (z2IURLTool, ActionProviderBase.__implements__)
 
     id = 'portal_url'
     meta_type = 'CMF URL Tool'

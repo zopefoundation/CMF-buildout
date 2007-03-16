@@ -19,17 +19,17 @@ import unittest
 import Testing
 
 import transaction
-from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl import SecurityManager
 from AccessControl import Unauthorized
+from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import aq_base
 from Acquisition import Implicit
 from DateTime import DateTime
 from OFS.Image import manage_addFile
-
 from zope.component import getSiteManager
 from zope.component.interfaces import IFactory
 from zope.interface import implements
+from zope.interface.verify import verifyClass
 
 from Products.CMFCore.CatalogTool import CatalogTool
 from Products.CMFCore.exceptions import BadRequest
@@ -133,14 +133,7 @@ class PortalFolderTests(ConformsToFolder, SecurityTest):
         SecurityTest.setUp(self)
         self.site = DummySite('site').__of__(self.root)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from OFS.IOrderSupport import IOrderedContainer
-
-        verifyClass(IOrderedContainer, self._getTargetClass())
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from OFS.interfaces import IOrderedContainer
 
         verifyClass(IOrderedContainer, self._getTargetClass())

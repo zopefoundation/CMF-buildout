@@ -20,7 +20,6 @@ from Globals import InitializeClass
 from zope.interface import implements
 
 from AbstractCriterion import AbstractCriterion
-from interfaces import Criterion as z2ICriterion
 from interfaces import ICriterion
 from permissions import ChangeTopics
 from permissions import View
@@ -35,7 +34,6 @@ class ListCriterion( AbstractCriterion ):
     """
 
     implements(ICriterion)
-    __implements__ = z2ICriterion
 
     meta_type = 'List Criterion'
     operator = None

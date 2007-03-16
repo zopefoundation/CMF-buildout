@@ -22,11 +22,10 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
-from ZPublisher.Converters import type_converters
-
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import implements
+from ZPublisher.Converters import type_converters
 
 from ActionProviderBase import ActionProviderBase
 from exceptions import BadRequest
@@ -34,16 +33,12 @@ from interfaces import IMemberData
 from interfaces import IMemberDataTool
 from interfaces import IMembershipTool
 from interfaces import IRegistrationTool
-from interfaces.portal_memberdata import MemberData as z2IMemberData
-from interfaces.portal_memberdata \
-        import portal_memberdata as z2IMemberDataTool
 from permissions import ManagePortal
 from permissions import SetOwnProperties
 from permissions import ViewManagementScreens
 from utils import _dtmldir
 from utils import registerToolInterface
 from utils import UniqueObject
-
 
 _marker = []  # Create a new marker object.
 
@@ -55,7 +50,6 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
     """
 
     implements(IMemberDataTool)
-    __implements__ = (z2IMemberDataTool, ActionProviderBase.__implements__)
 
     id = 'portal_memberdata'
     meta_type = 'CMF Member Data Tool'
@@ -261,7 +255,6 @@ class CleanupTemp:
 class MemberData(SimpleItem):
 
     implements(IMemberData)
-    __implements__ = z2IMemberData
 
     security = ClassSecurityInfo()
 

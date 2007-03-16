@@ -50,7 +50,6 @@ class NewsItem(Document):
     """
 
     implements(IMutableNewsItem, INewsItem)
-    __implements__ = Document.__implements__  # redundant, but explicit
 
     text_format = 'html'
 

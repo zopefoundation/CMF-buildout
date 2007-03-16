@@ -21,8 +21,8 @@ import Testing
 from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import aq_base
 from OFS.Folder import Folder
-
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.exceptions import NotFound
@@ -41,19 +41,7 @@ class PortalContentTests(unittest.TestCase):
     def tearDown(self):
         cleanUp()
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.Contentish \
-                import Contentish as IContentish
-        from Products.CMFCore.interfaces.Dynamic \
-                import DynamicType as IDynamicType
-        from Products.CMFCore.PortalContent import PortalContent
-
-        verifyClass(IContentish, PortalContent)
-        verifyClass(IDynamicType, PortalContent)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IContentish
         from Products.CMFCore.interfaces import IDynamicType
         from Products.CMFCore.PortalContent import PortalContent

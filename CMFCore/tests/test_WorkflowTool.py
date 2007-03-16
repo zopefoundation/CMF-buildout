@@ -19,14 +19,15 @@ import unittest
 import Testing
 
 from OFS.SimpleItem import SimpleItem
-
 from zope.component import adapter
 from zope.component import getSiteManager
 from zope.component import provideHandler
-from Products.CMFCore.interfaces import IActionWillBeInvokedEvent
+from zope.interface.verify import verifyClass
+from zope.testing.cleanup import cleanUp
+
 from Products.CMFCore.interfaces import IActionRaisedExceptionEvent
 from Products.CMFCore.interfaces import IActionSucceededEvent
-
+from Products.CMFCore.interfaces import IActionWillBeInvokedEvent
 from Products.CMFCore.interfaces import ITypesTool
 
 
@@ -110,7 +111,7 @@ class DummyWorkflow( Dummy ):
 @adapter(IActionWillBeInvokedEvent)
 def notifyBeforeHandler(evt):
     evt.workflow.notified( 'before-evt' ).append( (evt.object, evt.action) )
-    
+
 @adapter(IActionSucceededEvent)
 def notifySuccessHandler(evt):
     evt.workflow.notified( 'success-evt' ).append( (evt.object, evt.action,
@@ -183,19 +184,10 @@ class WorkflowToolTests(unittest.TestCase):
         tool.setChainForPortalTypes( ( 'Dummy Content', ), ( 'a', 'b' ) )
         return tool
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_workflow \
-                import portal_workflow as IWorkflowTool
-        from Products.CMFCore.WorkflowTool import WorkflowTool
+    def tearDown(self):
+        cleanUp()
 
-        verifyClass(IActionProvider, WorkflowTool)
-        verifyClass(IWorkflowTool, WorkflowTool)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IConfigurableWorkflowTool
         from Products.CMFCore.interfaces import IWorkflowTool
@@ -363,7 +355,7 @@ class WorkflowToolTests(unittest.TestCase):
             notified = wf.notified( 'before' )
             self.assertEqual( len( notified ), 1 )
             self.assertEqual( notified[0], ( ob, 'action' ) )
-            
+
             notified = wf.notified( 'before-evt' )
             self.assertEqual( len( notified ), 1 )
             self.assertEqual( notified[0], ( ob, 'action' ) )
@@ -381,7 +373,7 @@ class WorkflowToolTests(unittest.TestCase):
             notified = wf.notified( 'success' )
             self.assertEqual( len( notified ), 1 )
             self.assertEqual( notified[0], ( ob, 'action', None ) )
-            
+
             notified = wf.notified( 'success-evt' )
             self.assertEqual( len( notified ), 1 )
             self.assertEqual( notified[0], ( ob, 'action', None ) )
@@ -399,7 +391,7 @@ class WorkflowToolTests(unittest.TestCase):
             notified = wf.notified( 'exception' )
             self.assertEqual( len( notified ), 1 )
             self.assertEqual( notified[0], ( ob, 'action', 'exception' ) )
-            
+
             notified = wf.notified( 'exception-evt' )
             self.assertEqual( len( notified ), 1 )
             self.assertEqual( notified[0], ( ob, 'action', 'exception' ) )

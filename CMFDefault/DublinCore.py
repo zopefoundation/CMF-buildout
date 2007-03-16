@@ -21,7 +21,6 @@ from DateTime.DateTime import DateTime
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.PropertyManager import PropertyManager
-
 from zope.component import queryUtility
 from zope.interface import implements
 
@@ -30,18 +29,12 @@ from Products.CMFCore.interfaces import IDublinCore
 from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import IMetadataTool
 from Products.CMFCore.interfaces import IMutableDublinCore
-from Products.CMFCore.interfaces.DublinCore \
-        import CatalogableDublinCore as z2ICatalogableDublinCore
-from Products.CMFCore.interfaces.DublinCore \
-        import DublinCore as z2IDublinCore
-from Products.CMFCore.interfaces.DublinCore \
-        import MutableDublinCore as z2IMutableDublinCore
 
 from permissions import ModifyPortalContent
 from permissions import View
-from utils import tuplize
 from utils import _dtmldir
 from utils import semi_split
+from utils import tuplize
 
 _marker=[]
 
@@ -56,8 +49,6 @@ class DefaultDublinCoreImpl( PropertyManager ):
     """
 
     implements(IDublinCore, ICatalogableDublinCore, IMutableDublinCore)
-    __implements__ = (z2IDublinCore, z2ICatalogableDublinCore,
-                      z2IMutableDublinCore)
 
     security = ClassSecurityInfo()
 

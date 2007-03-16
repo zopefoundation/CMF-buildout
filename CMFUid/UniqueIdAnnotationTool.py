@@ -24,13 +24,12 @@ from Globals import InitializeClass
 from Globals import Persistent
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
-
 from zope.component import getUtility
 from zope.interface import implements
 
-from Products.CMFCore.utils import UniqueObject
-from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
+from Products.CMFCore.utils import registerToolInterface
+from Products.CMFCore.utils import UniqueObject
 
 from Products.CMFUid.interfaces import IUniqueIdAnnotation
 from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
@@ -115,10 +114,6 @@ class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager,
     __doc__ = __doc__ # copy from module
 
     implements(IUniqueIdAnnotationManagement)
-    __implements__ = (
-        ActionProviderBase.__implements__,
-        SimpleItem.__implements__,
-    )
 
     manage_options = (
         PropertyManager.manage_options +
@@ -149,4 +144,3 @@ class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager,
 
 InitializeClass(UniqueIdAnnotationTool)
 registerToolInterface('portal_uidannotation', IUniqueIdAnnotationManagement)
-

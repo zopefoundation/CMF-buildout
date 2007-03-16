@@ -19,22 +19,15 @@ import unittest
 import Testing
 
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import ISkinsTool
 
+
 class SkinsContainerTests(unittest.TestCase):
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_skins \
-                import SkinsContainer as ISkinsContainer
-        from Products.CMFCore.SkinsContainer import SkinsContainer
-
-        verifyClass(ISkinsContainer, SkinsContainer)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import ISkinsContainer
         from Products.CMFCore.SkinsContainer import SkinsContainer
 
@@ -48,22 +41,7 @@ class SkinsToolTests(unittest.TestCase):
 
         return SkinsTool(*args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_skins \
-                import portal_skins as ISkinsTool
-        from Products.CMFCore.interfaces.portal_skins \
-                import SkinsContainer as ISkinsContainer
-        from Products.CMFCore.SkinsTool import SkinsTool
-
-        verifyClass(IActionProvider, SkinsTool)
-        verifyClass(ISkinsContainer, SkinsTool)
-        verifyClass(ISkinsTool, SkinsTool)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import ISkinsContainer
         from Products.CMFCore.SkinsTool import SkinsTool
@@ -104,10 +82,10 @@ class SkinnableTests(unittest.TestCase):
             sm.registerUtility(tool, ISkinsTool)
             # This is needed otherwise REQUEST is the string
             # '<Special Object Used to Force Acquisition>'
-            REQUEST = None 
-        
+            REQUEST = None
+
         return TestSkinnableObjectManager()
-    
+
     def tearDown(self):
         from Products.CMFCore.Skinnable import SKINDATA
         SKINDATA.clear()
@@ -121,7 +99,7 @@ class SkinnableTests(unittest.TestCase):
 
         som.tool.addSkinSelection('skinA', pathA)
         som.tool.addSkinSelection('skinB', pathB)
-        
+
         som.tool.manage_properties(default_skin='skinA')
 
         # Expect the default skin name to be returned
@@ -130,7 +108,7 @@ class SkinnableTests(unittest.TestCase):
         # after a changeSkin the new skin name should be returned
         som.changeSkin('skinB')
         self.failUnless(som.getCurrentSkinName() == 'skinB')
-        
+
 
 def test_suite():
     return unittest.TestSuite((

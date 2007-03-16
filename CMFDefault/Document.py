@@ -36,8 +36,6 @@ from exceptions import EditingConflict
 from exceptions import ResourceLockedError
 from interfaces import IDocument
 from interfaces import IMutableDocument
-from interfaces.Document import IDocument as z2IDocument
-from interfaces.Document import IMutableDocument as z2IMutableDocument
 from permissions import ModifyPortalContent
 from permissions import View
 from utils import _dtmldir
@@ -62,9 +60,6 @@ class Document(PortalContent, DefaultDublinCoreImpl):
     """
 
     implements(IMutableDocument, IDocument, IDAVAware)
-    __implements__ = (z2IMutableDocument, z2IDocument,
-                      PortalContent.__implements__,
-                      DefaultDublinCoreImpl.__implements__)
 
     effective_date = expiration_date = None
     cooked_text = text = text_format = ''

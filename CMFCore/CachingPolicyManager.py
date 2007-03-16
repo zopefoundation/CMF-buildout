@@ -29,19 +29,16 @@ from OFS.interfaces import IObjectWillBeMovedEvent
 from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
-
 from zope.app.container.interfaces import IObjectMovedEvent
 from zope.component import queryUtility
 from zope.interface import implements
 
-from permissions import ManagePortal
-from permissions import View
 from Expression import Expression
 from interfaces import ICachingPolicy
 from interfaces import ICachingPolicyManager
 from interfaces import IMembershipTool
-from interfaces.CachingPolicyManager \
-        import CachingPolicyManager as z2ICachingPolicyManager
+from permissions import ManagePortal
+from permissions import View
 from utils import _dtmldir
 from utils import _setCacheHeaders
 from utils import _ViewEmulator
@@ -132,7 +129,7 @@ class CachingPolicy:
             with access to the following top-level names:
 
             'object' -- the object itself
-            
+
             'view' -- the name of the view method
 
             'keywords' -- keywords passed to the request
@@ -184,9 +181,9 @@ class CachingPolicy:
              'must_revalidate=1' argument => "must-revalidate" token
 
              'proxy_revalidate=1' argument => "proxy-revalidate" token
-             
+
              'public=1' argument => "public" token
-             
+
              'private=1' argument => "private" token
 
              'no_transform=1' argument => "no-transform" token
@@ -257,7 +254,7 @@ class CachingPolicy:
                 pre_check = None
             else:
                 pre_check = int(pre_check)
-            
+
         if post_check is not None:
             if str(post_check).strip() == '':
                 post_check = None
@@ -377,7 +374,7 @@ class CachingPolicy:
         """
         """
         return getattr(self, '_post_check', None)
-    
+
     def testPredicate(self, expr_context):
         """ Does this request match our predicate?"""
         return self._predicate(expr_context)
@@ -407,7 +404,7 @@ class CachingPolicy:
                 exp_time_str = rfc1123_date(now.timeTime() + self._max_age_secs)
                 headers.append( ( 'Expires', exp_time_str ) )
                 control.append( 'max-age=%d' % self._max_age_secs )
-                
+
             if self.getSMaxAgeSecs() is not None:
                 control.append( 's-maxage=%d' % self._s_max_age_secs )
 
@@ -462,7 +459,6 @@ class CachingPolicyManager( SimpleItem, CacheManager ):
     """
 
     implements(ICachingPolicyManager)
-    __implements__ = z2ICachingPolicyManager
 
     id = 'caching_policy_manager'
     meta_type = 'CMF Caching Policy Manager'
@@ -530,7 +526,7 @@ class CachingPolicyManager( SimpleItem, CacheManager ):
             s_max_age_secs = None
         else:
             s_max_age_secs = int(s_max_age_secs)
-            
+
         if pre_check is None or str(pre_check).strip() == '':
             pre_check = None
         else:
@@ -601,7 +597,7 @@ class CachingPolicyManager( SimpleItem, CacheManager ):
             s_max_age_secs = None
         else:
             s_max_age_secs = int(s_max_age_secs)
-            
+
         if pre_check is None or str(pre_check).strip() == '':
             pre_check = None
         else:
@@ -849,7 +845,7 @@ class CachingPolicyManager( SimpleItem, CacheManager ):
         context = createCPContext( content, view_method, keywords, time=time )
         for policy_id, policy in self.listPolicies():
             if policy.getEnable304s() and policy.testPredicate(context):
-                
+
                 last_modified = policy._mtime_func(context)
                 if type(last_modified) is type(''):
                     last_modified = DateTime(last_modified)
@@ -857,9 +853,9 @@ class CachingPolicyManager( SimpleItem, CacheManager ):
                 content_etag = None
                 if policy.getETagFunc():
                     content_etag = policy._etag_func(context)
-                    
+
                 return (last_modified, content_etag, policy.getLastModified())
-            
+
         return None
 
     #

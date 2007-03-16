@@ -18,6 +18,8 @@ $Id$
 import unittest
 import Testing
 
+from zope.interface.verify import verifyClass
+
 
 class MajorMinorPredicateTests(unittest.TestCase):
 
@@ -26,17 +28,7 @@ class MajorMinorPredicateTests(unittest.TestCase):
 
         return MajorMinorPredicate(*args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.ContentTypeRegistry import MajorMinorPredicate
-        from Products.CMFCore.interfaces.ContentTypeRegistry \
-                import ContentTypeRegistryPredicate \
-                as IContentTypeRegistryPredicate
-
-        verifyClass(IContentTypeRegistryPredicate, MajorMinorPredicate)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.ContentTypeRegistry import MajorMinorPredicate
         from Products.CMFCore.interfaces import IContentTypeRegistryPredicate
 
@@ -82,17 +74,7 @@ class ExtensionPredicateTests(unittest.TestCase):
 
         return ExtensionPredicate(*args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.ContentTypeRegistry import ExtensionPredicate
-        from Products.CMFCore.interfaces.ContentTypeRegistry \
-                import ContentTypeRegistryPredicate \
-                as IContentTypeRegistryPredicate
-
-        verifyClass(IContentTypeRegistryPredicate, ExtensionPredicate)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.ContentTypeRegistry import ExtensionPredicate
         from Products.CMFCore.interfaces import IContentTypeRegistryPredicate
 
@@ -133,18 +115,7 @@ class MimeTypeRegexPredicateTests(unittest.TestCase):
 
         return MimeTypeRegexPredicate(*args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.ContentTypeRegistry \
-                import MimeTypeRegexPredicate
-        from Products.CMFCore.interfaces.ContentTypeRegistry \
-                import ContentTypeRegistryPredicate \
-                as IContentTypeRegistryPredicate
-
-        verifyClass(IContentTypeRegistryPredicate, MimeTypeRegexPredicate)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.ContentTypeRegistry \
                 import MimeTypeRegexPredicate
         from Products.CMFCore.interfaces import IContentTypeRegistryPredicate
@@ -179,17 +150,7 @@ class NameRegexPredicateTests(unittest.TestCase):
 
         return NameRegexPredicate(*args, **kw)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.ContentTypeRegistry import NameRegexPredicate
-        from Products.CMFCore.interfaces.ContentTypeRegistry \
-                import ContentTypeRegistryPredicate \
-                as IContentTypeRegistryPredicate
-
-        verifyClass(IContentTypeRegistryPredicate, NameRegexPredicate)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.ContentTypeRegistry import NameRegexPredicate
         from Products.CMFCore.interfaces import IContentTypeRegistryPredicate
 
@@ -227,16 +188,7 @@ class ContentTypeRegistryTests(unittest.TestCase):
     def setUp( self ):
         self.reg = self._makeOne()
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.ContentTypeRegistry import ContentTypeRegistry
-        from Products.CMFCore.interfaces.ContentTypeRegistry \
-                import ContentTypeRegistry as IContentTypeRegistry
-
-        verifyClass(IContentTypeRegistry, ContentTypeRegistry)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.ContentTypeRegistry import ContentTypeRegistry
         from Products.CMFCore.interfaces import IContentTypeRegistry
 

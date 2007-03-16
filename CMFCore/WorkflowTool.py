@@ -24,28 +24,26 @@ from Globals import InitializeClass
 from Globals import PersistentMapping
 from OFS.Folder import Folder
 from OFS.ObjectManager import IFAwareObjectManager
-
 from zope.component import queryUtility
-from zope.interface import implements
 from zope.event import notify
+from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
 from interfaces import IConfigurableWorkflowTool
 from interfaces import ITypesTool
 from interfaces import IWorkflowDefinition
 from interfaces import IWorkflowTool
-from interfaces.portal_workflow import portal_workflow as z2IWorkflowTool
 from permissions import ManagePortal
 from utils import _dtmldir
 from utils import Message as _
 from utils import registerToolInterface
 from utils import UniqueObject
+from WorkflowCore import ActionRaisedExceptionEvent
+from WorkflowCore import ActionSucceededEvent
+from WorkflowCore import ActionWillBeInvokedEvent
 from WorkflowCore import ObjectDeleted
 from WorkflowCore import ObjectMoved
 from WorkflowCore import WorkflowException
-from WorkflowCore import ActionWillBeInvokedEvent
-from WorkflowCore import ActionRaisedExceptionEvent
-from WorkflowCore import ActionSucceededEvent
 
 _marker = []  # Create a new marker object.
 
@@ -57,7 +55,6 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
     """
 
     implements(IConfigurableWorkflowTool, IWorkflowTool)
-    __implements__ = (z2IWorkflowTool, ActionProviderBase.__implements__)
 
     id = 'portal_workflow'
     meta_type = 'CMF Workflow Tool'
@@ -618,4 +615,3 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
 InitializeClass(WorkflowTool)
 registerToolInterface('portal_workflow', IWorkflowTool)
-

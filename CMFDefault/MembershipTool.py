@@ -23,7 +23,6 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from zope.interface import implements
 
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import _getAuthenticatedUser
@@ -31,14 +30,11 @@ from Products.CMFCore.utils import registerToolInterface
 
 from Document import addDocument
 from interfaces import IMembershipTool
-from interfaces.portal_membership \
-        import portal_membership as z2IMembershipTool
 from permissions import ListPortalMembers
 from permissions import ManagePortal
 from permissions import ManageUsers
 from permissions import View
 from utils import _dtmldir
-
 
 DEFAULT_MEMBER_CONTENT = """\
 Default page for %s
@@ -51,13 +47,12 @@ Default page for %s
 """
 
 
-class MembershipTool( BaseTool ):
+class MembershipTool(BaseTool):
 
     """ Implement 'portal_membership' interface using "stock" policies.
     """
 
     implements(IMembershipTool)
-    __implements__ = (z2IMembershipTool, ActionProviderBase.__implements__)
 
     meta_type = 'Default Membership Tool'
     membersfolder_id = 'Members'
@@ -217,4 +212,3 @@ class MembershipTool( BaseTool ):
 
 InitializeClass(MembershipTool)
 registerToolInterface('portal_membership', IMembershipTool)
-

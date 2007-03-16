@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from DateTime import DateTime
+from zope.interface.verify import verifyClass
 
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.testcase import RequestTest
@@ -34,8 +35,7 @@ class TestEvent(ConformsToContent, unittest.TestCase):
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCalendar.interfaces import IEvent
         from Products.CMFCalendar.interfaces import IMutableEvent
 
@@ -145,7 +145,7 @@ class EventPUTTests(RequestTest):
         self.assertEqual( d.Title(), 'Test Event' )
         self.assertEqual( d.Format(), 'text/html' )
         self.assertEqual( d.Description().strip()
-                        , 'Fundraiser for disabled goldfish' 
+                        , 'Fundraiser for disabled goldfish'
                         )
         self.assertEqual( d.Subject(), ('Foosubject',) )
         self.assertEqual( d.Contributors(), ('Jim',) )

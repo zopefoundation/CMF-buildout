@@ -15,13 +15,12 @@
 $Id$
 """
 
+from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
 from Globals import InitializeClass
-
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import implements
@@ -29,8 +28,6 @@ from zope.interface import implements
 from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import IWorkflowDefinition
-from Products.CMFCore.interfaces.portal_workflow \
-        import WorkflowDefinition as z2IWorkflowDefinition
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import _modifyPermissionMappings
 from Products.CMFCore.utils import SimpleItemWithProperties
@@ -42,13 +39,12 @@ from permissions import ReviewPortalContent
 from permissions import View
 
 
-class DefaultWorkflowDefinition (SimpleItemWithProperties):
+class DefaultWorkflowDefinition(SimpleItemWithProperties):
 
     """ Default workflow definition.
     """
 
     implements(IWorkflowDefinition)
-    __implements__ = z2IWorkflowDefinition
 
     meta_type = 'CMF Default Workflow'
     id = 'default_workflow'

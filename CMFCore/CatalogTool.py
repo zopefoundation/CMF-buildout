@@ -24,7 +24,6 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from Products.PluginIndexes.common import safe_callable
 from Products.ZCatalog.ZCatalog import ZCatalog
-
 from zope.component import queryUtility
 from zope.interface import implements
 from zope.interface import providedBy
@@ -34,11 +33,8 @@ from zope.interface.declarations import ObjectSpecificationDescriptor
 
 from ActionProviderBase import ActionProviderBase
 from interfaces import ICatalogTool
-from interfaces import IIndexableObjectWrapper
 from interfaces import IConfigurableWorkflowTool
-from interfaces.portal_catalog \
-        import IndexableObjectWrapper as z2IIndexableObjectWrapper
-from interfaces.portal_catalog import portal_catalog as z2ICatalogTool
+from interfaces import IIndexableObjectWrapper
 from permissions import AccessInactivePortalContent
 from permissions import ManagePortal
 from permissions import View
@@ -64,7 +60,6 @@ class IndexableObjectSpecification(ObjectSpecificationDescriptor):
 class IndexableObjectWrapper(object):
 
     implements(IIndexableObjectWrapper)
-    __implements__ = z2IIndexableObjectWrapper
     __providedBy__ = IndexableObjectSpecification()
 
     def __init__(self, vars, ob):
@@ -119,8 +114,6 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
     """
 
     implements(ICatalogTool)
-    __implements__ = (z2ICatalogTool, ZCatalog.__implements__,
-                      ActionProviderBase.__implements__)
 
     id = 'portal_catalog'
     meta_type = 'CMF Catalog'

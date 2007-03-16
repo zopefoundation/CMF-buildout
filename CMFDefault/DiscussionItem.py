@@ -22,7 +22,6 @@ from Globals import InitializeClass
 from Globals import Persistent
 from Globals import PersistentMapping
 from OFS.Traversable import Traversable
-
 from zope.component import getUtility
 from zope.interface import implements
 
@@ -30,10 +29,6 @@ from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
 from Products.CMFCore.interfaces import IDiscussable
 from Products.CMFCore.interfaces import IDiscussionResponse
 from Products.CMFCore.interfaces import IDiscussionTool
-from Products.CMFCore.interfaces.Discussions \
-        import Discussable as z2IDiscussable
-from Products.CMFCore.interfaces.Discussions \
-        import DiscussionResponse as z2IDiscussionResponse
 
 from Document import Document
 from permissions import AccessContentsInformation
@@ -76,7 +71,6 @@ class DiscussionItem(Document):
     """
 
     implements(IDiscussionResponse)
-    __implements__ = (z2IDiscussionResponse, Document.__implements__)
 
     meta_type           = 'Discussion Item'
     portal_type         = 'Discussion Item'
@@ -162,7 +156,6 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
     """
 
     implements(IDiscussable, ICallableOpaqueItemEvents)
-    __implements__ = z2IDiscussable
 
     # for the security machinery to allow traversal
     #__roles__ = None

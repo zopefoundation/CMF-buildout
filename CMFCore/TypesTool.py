@@ -40,9 +40,6 @@ from exceptions import BadRequest
 from exceptions import zExceptions_Unauthorized
 from interfaces import ITypeInformation
 from interfaces import ITypesTool
-from interfaces.portal_types \
-        import ContentTypeInformation as z2ITypeInformation
-from interfaces.portal_types import portal_types as z2ITypesTool
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from permissions import View
@@ -53,9 +50,7 @@ from utils import registerToolInterface
 from utils import SimpleItemWithProperties
 from utils import UniqueObject
 
-
 logger = logging.getLogger('CMFCore.TypesTool')
-
 
 _marker = []  # Create a new marker.
 
@@ -344,7 +339,6 @@ class FactoryTypeInformation(TypeInformation):
     """
 
     implements(ITypeInformation)
-    __implements__ = z2ITypeInformation
 
     security = ClassSecurityInfo()
 
@@ -472,7 +466,6 @@ class ScriptableTypeInformation(TypeInformation):
     """
 
     implements(ITypeInformation)
-    __implements__ = z2ITypeInformation
 
     security = ClassSecurityInfo()
 
@@ -537,7 +530,6 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
     """
 
     implements(ITypesTool)
-    __implements__ = (z2ITypesTool, ActionProviderBase.__implements__)
 
     id = 'portal_types'
     meta_type = 'CMF Types Tool'
@@ -745,4 +737,3 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
 
 InitializeClass(TypesTool)
 registerToolInterface('portal_types', ITypesTool)
-

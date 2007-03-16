@@ -22,14 +22,12 @@ from zope.interface import implements
 
 from exceptions import SkinPathError
 from interfaces import ISkinsContainer
-from interfaces.portal_skins import SkinsContainer as z2ISkinsContainer
 from permissions import AccessContentsInformation
 
 
 class SkinsContainer:
 
     implements(ISkinsContainer)
-    __implements__ = z2ISkinsContainer
 
     security = ClassSecurityInfo()
 

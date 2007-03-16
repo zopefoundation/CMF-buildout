@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from zope.app.testing.placelesssetup import PlacelessSetup
+from zope.interface.verify import verifyClass
 
 def makerequest(root, stdout, stdin=None):
     # Customized version of Testing.makerequest.makerequest()
@@ -118,8 +119,7 @@ class CookieCrumblerTests(unittest.TestCase, PlacelessSetup):
 
         return root, cc, req, credentials
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import ICookieCrumbler
 
         verifyClass(ICookieCrumbler, self._getTargetClass())

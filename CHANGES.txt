@@ -2,10 +2,16 @@ CMF 2.2.0-beta (unreleased)
 
   Others
 
+    - interfaces: Removed deprecated oldstyle interfaces.
+
     - CMFCore.MembershipTool: Removed ancient LoginManager compatibility code
       and deprecated the no longer needed __getPUS method.
     
 
-CMF 2.1.x and earlier
+CMF 2.1.x
+
+  For a complete list see CHANGES.txt of the 2.1 branch.
+
+CMF 2.0.x and earlier
 
   For a complete list of changes see HISTORY.txt.

@@ -20,7 +20,6 @@ from Acquisition import aq_base
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
-
 from zope.component import getUtility
 from zope.interface import implements
 
@@ -29,10 +28,6 @@ from Products.CMFCore.interfaces import IDiscussionResponse
 from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import ITypesTool
-from Products.CMFCore.interfaces.Discussions \
-        import DiscussionResponse as z2IDiscussionResponse
-from Products.CMFCore.interfaces.portal_discussion \
-        import portal_discussion as z2IDiscussionTool
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
@@ -43,8 +38,8 @@ from permissions import ManagePortal
 from permissions import ModifyPortalContent
 from utils import _dtmldir
 
-
 _marker = []
+
 
 class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
 
@@ -52,7 +47,6 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
     """
 
     implements(IDiscussionTool)
-    __implements__ = (z2IDiscussionTool, ActionProviderBase.__implements__)
 
     id = 'portal_discussion'
     meta_type = 'Default Discussion Tool'
@@ -96,7 +90,6 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
             raise DiscussionNotAllowed
 
         if not IDiscussionResponse.providedBy(content) and \
-                not z2IDiscussionResponse.isImplementedBy(content) and \
                 getattr( aq_base(content), 'talkback', None ) is None:
             # Discussion Items use the DiscussionItemContainer object of the
             # related content item, so only create one for other content items
@@ -130,4 +123,3 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
 
 InitializeClass( DiscussionTool )
 registerToolInterface('portal_discussion', IDiscussionTool)
-

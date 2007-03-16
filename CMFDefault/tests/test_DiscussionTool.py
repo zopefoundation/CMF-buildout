@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IDiscussionTool
@@ -49,19 +50,7 @@ class DiscussionToolTests(unittest.TestCase):
     def tearDown(self):
         cleanUp()
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_discussion \
-                import portal_discussion as IDiscussionTool
-        from Products.CMFDefault.DiscussionTool import DiscussionTool
-
-        verifyClass(IActionProvider, DiscussionTool)
-        verifyClass(IDiscussionTool, DiscussionTool)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IDiscussionTool
         from Products.CMFDefault.DiscussionTool import DiscussionTool

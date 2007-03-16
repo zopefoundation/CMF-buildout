@@ -20,14 +20,15 @@ import Testing
 
 from zope.component import adapter
 from zope.component import provideHandler
+from zope.interface.verify import verifyClass
 
 from Products.CMFCore.testing import TraversingEventZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.WorkflowTool import WorkflowTool
-from Products.DCWorkflow.interfaces import IBeforeTransitionEvent
 from Products.DCWorkflow.interfaces import IAfterTransitionEvent
+from Products.DCWorkflow.interfaces import IBeforeTransitionEvent
 
 
 class DCWorkflowDefinitionTests(unittest.TestCase):
@@ -40,16 +41,7 @@ class DCWorkflowDefinitionTests(unittest.TestCase):
         self.site._setObject( 'portal_workflow', WorkflowTool() )
         self._constructDummyWorkflow()
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_workflow \
-             import WorkflowDefinition as IWorkflowDefinition
-        from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
-
-        verifyClass(IWorkflowDefinition, DCWorkflowDefinition)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IWorkflowDefinition
         from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 
@@ -100,28 +92,28 @@ class DCWorkflowDefinitionTests(unittest.TestCase):
         # XXX more
 
     def test_events(self):
-        
+
         events = []
-        
+
         @adapter(IBeforeTransitionEvent)
         def _handleBefore(event):
             events.append(event)
         provideHandler(_handleBefore)
-    
+
         @adapter(IAfterTransitionEvent)
         def _handleAfter(event):
             events.append(event)
         provideHandler(_handleAfter)
-        
+
         wftool = self.site.portal_workflow
         wf = self._getDummyWorkflow()
 
         dummy = self.site._setObject( 'dummy', DummyContent() )
         wftool.notifyCreated(dummy)
         wf.doActionFor(dummy, 'publish', comment='foo', test='bar')
-        
+
         self.assertEquals(4, len(events))
-        
+
         evt = events[0]
         self.failUnless(IBeforeTransitionEvent.providedBy(evt))
         self.assertEquals(dummy, evt.object)
@@ -130,7 +122,7 @@ class DCWorkflowDefinitionTests(unittest.TestCase):
         self.assertEquals(None, evt.transition)
         self.assertEquals({}, evt.status)
         self.assertEquals(None, evt.kwargs)
-        
+
         evt = events[1]
         self.failUnless(IAfterTransitionEvent.providedBy(evt))
         self.assertEquals(dummy, evt.object)
@@ -139,7 +131,7 @@ class DCWorkflowDefinitionTests(unittest.TestCase):
         self.assertEquals(None, evt.transition)
         self.assertEquals({}, evt.status)
         self.assertEquals(None, evt.kwargs)
-        
+
         evt = events[2]
         self.failUnless(IBeforeTransitionEvent.providedBy(evt))
         self.assertEquals(dummy, evt.object)
@@ -148,7 +140,7 @@ class DCWorkflowDefinitionTests(unittest.TestCase):
         self.assertEquals('publish', evt.transition.id)
         self.assertEquals({'state': 'private', 'comments': ''}, evt.status)
         self.assertEquals({'test' : 'bar', 'comment' : 'foo'}, evt.kwargs)
-        
+
         evt = events[3]
         self.failUnless(IAfterTransitionEvent.providedBy(evt))
         self.assertEquals(dummy, evt.object)

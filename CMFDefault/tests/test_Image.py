@@ -21,13 +21,13 @@ from Testing import ZopeTestCase
 from os.path import join as path_join
 from cStringIO import StringIO
 
-from zope.app.component.hooks import setSite
-from zope.component import getSiteManager
-from zope.testing.cleanup import cleanUp
-
 import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.User import UnrestrictedUser
+from zope.app.component.hooks import setSite
+from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import ICachingPolicyManager
 from Products.CMFCore.testing import ConformsToContent
@@ -57,8 +57,7 @@ class TestImageElement(ConformsToContent, unittest.TestCase):
         self.site = DummySite('site')
         self.site._setObject( 'portal_membership', DummyTool() )
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFDefault.interfaces import IFile
         from Products.CMFDefault.interfaces import IImage
         from Products.CMFDefault.interfaces import IMutableFile

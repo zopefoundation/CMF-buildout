@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IMembershipTool
@@ -50,8 +51,7 @@ class FavoriteTests(ConformsToContent, unittest.TestCase):
     def tearDown(self):
         cleanUp()
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFDefault.interfaces import IFavorite
         from Products.CMFDefault.interfaces import ILink
         from Products.CMFDefault.interfaces import IMutableFavorite

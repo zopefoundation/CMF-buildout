@@ -21,8 +21,8 @@ import Testing
 from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import Implicit
 from DateTime.DateTime import DateTime
-
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IMembershipTool
@@ -74,22 +74,7 @@ class DublinCoreTests(SecurityTest):
         cleanUp()
         SecurityTest.tearDown(self)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.DublinCore \
-                import CatalogableDublinCore as ICatalogableDublinCore
-        from Products.CMFCore.interfaces.DublinCore \
-                import DublinCore as IDublinCore
-        from Products.CMFCore.interfaces.DublinCore \
-                import MutableDublinCore as IMutableDublinCore
-        from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
-
-        verifyClass(ICatalogableDublinCore, DefaultDublinCoreImpl)
-        verifyClass(IDublinCore, DefaultDublinCoreImpl)
-        verifyClass(IMutableDublinCore, DefaultDublinCoreImpl)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import ICatalogableDublinCore
         from Products.CMFCore.interfaces import IDublinCore
         from Products.CMFCore.interfaces import IMutableDublinCore
@@ -103,8 +88,7 @@ class DublinCoreTests(SecurityTest):
         site = DummySite('site').__of__(self.root)
         sm = getSiteManager()
         acl_users = site._setObject( 'acl_users', DummyUserFolder() )
-        site._setObject( 'portal_membership', MembershipTool() )
-        sm.registerUtility(site.portal_membership, IMembershipTool)
+        sm.registerUtility(MembershipTool(), IMembershipTool)
         newSecurityManager(None, acl_users.user_foo)
         item = self._makeDummyContent('item').__of__(site)
         self.assertEqual( item.listCreators(), () )
@@ -119,8 +103,7 @@ class DublinCoreTests(SecurityTest):
         site = DummySite('site').__of__(self.root)
         sm = getSiteManager()
         acl_users = site._setObject( 'acl_users', DummyUserFolder() )
-        site._setObject( 'portal_membership', MembershipTool() )
-        sm.registerUtility(site.portal_membership, IMembershipTool)
+        sm.registerUtility(MembershipTool(), IMembershipTool)
         newSecurityManager(None, acl_users.user_foo)
         item = self._makeDummyContent('item').__of__(site)
         self.assertEqual( item.listCreators(), () )
@@ -144,8 +127,7 @@ class DublinCoreTests(SecurityTest):
         site = DummySite('site').__of__(self.root)
         sm = getSiteManager()
         acl_users = site._setObject( 'acl_users', DummyUserFolder() )
-        site._setObject( 'portal_membership', MembershipTool() )
-        sm.registerUtility(site.portal_membership, IMembershipTool)
+        sm.registerUtility(MembershipTool(), IMembershipTool)
         newSecurityManager(None, acl_users.user_foo)
         item = self._makeDummyContent('item').__of__(site)
         item.manage_fixupOwnershipAfterAdd()
@@ -178,8 +160,8 @@ class DublinCoreTests(SecurityTest):
         PUBLISHER = 'Some Publisher'
         site = DummySite('site').__of__(self.root)
         sm = getSiteManager()
-        site.portal_metadata = DummyMetadataTool(publisher=PUBLISHER)
-        sm.registerUtility(site.portal_metadata, IMetadataTool)
+        sm.registerUtility(DummyMetadataTool(publisher=PUBLISHER),
+                           IMetadataTool)
         item = self._makeDummyContent('item').__of__(site)
         self.assertEqual(item.Publisher(), PUBLISHER)
 

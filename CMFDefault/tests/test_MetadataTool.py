@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from Acquisition import aq_base
+from zope.interface.verify import verifyClass
 
 
 class TestMetadataElementPolicy(unittest.TestCase):
@@ -41,7 +42,7 @@ class TestMetadataElementPolicy(unittest.TestCase):
 
     def test_edit_single_valued( self ):
         sv_policy = self._makeOne( 0 )
-        sv_policy.edit( 1, 1, 'xxx', 0, '' ) 
+        sv_policy.edit( 1, 1, 'xxx', 0, '' )
         self.failIf( sv_policy.isMultiValued() )
         self.failUnless( sv_policy.isRequired() )
         self.failUnless( sv_policy.supplyDefault() )
@@ -139,18 +140,7 @@ class TestMetadataTool(unittest.TestCase):
 
         return Foo(), Bar()
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_metadata \
-                import portal_metadata as IMetadataTool
-
-        verifyClass(IActionProvider, self._getTargetClass())
-        verifyClass(IMetadataTool, self._getTargetClass())
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IMetadataTool
 

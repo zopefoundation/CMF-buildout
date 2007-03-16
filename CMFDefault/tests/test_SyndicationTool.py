@@ -19,8 +19,8 @@ import unittest
 import Testing
 
 from DateTime.DateTime import DateTime
-
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import ITypesTool
@@ -45,6 +45,13 @@ class SyndicationToolTests(SecurityTest):
     def tearDown(self):
         cleanUp()
         SecurityTest.tearDown(self)
+
+    def test_interfaces(self):
+        from Products.CMFCore.interfaces import IActionProvider
+        from Products.CMFCore.interfaces import ISyndicationTool
+
+        verifyClass(IActionProvider, self._getTargetClass())
+        verifyClass(ISyndicationTool, self._getTargetClass())
 
     def test_empty(self):
         ONE_MINUTE = (24.0 * 60.0) / 86400

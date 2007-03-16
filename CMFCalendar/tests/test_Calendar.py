@@ -25,6 +25,7 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.User import UnrestrictedUser
 from DateTime import DateTime
 from zope.app.component.hooks import setSite
+from zope.interface.verify import verifyClass
 
 from Products.CMFCalendar.testing import FunctionalLayer
 
@@ -39,8 +40,7 @@ class CalendarTests(unittest.TestCase):
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCalendar.interfaces import ICalendarTool
 
         verifyClass(ICalendarTool, self._getTargetClass())

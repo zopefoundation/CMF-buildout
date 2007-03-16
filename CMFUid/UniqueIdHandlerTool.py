@@ -27,7 +27,6 @@ from Globals import InitializeClass
 from Globals import package_home
 from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-
 from zope.component import getUtility
 from zope.interface import implements
 
@@ -55,10 +54,6 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     implements(IUniqueIdHandler, IUniqueIdBrainQuery,
                IUniqueIdUnrestrictedQuery)
-    __implements__ = (
-        ActionProviderBase.__implements__,
-        SimpleItem.__implements__,
-    )
 
     id = 'portal_uidhandler'
 
@@ -266,4 +261,3 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
 
 InitializeClass(UniqueIdHandlerTool)
 registerToolInterface('portal_uidhandler', IUniqueIdHandler)
-

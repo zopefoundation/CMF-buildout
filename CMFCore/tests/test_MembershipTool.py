@@ -20,14 +20,14 @@ import Testing
 
 from AccessControl.SecurityManagement import newSecurityManager
 from OFS.Folder import Folder
-
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.MemberDataTool import MemberDataTool
-from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.interfaces import IMemberDataTool
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.MemberDataTool import MemberDataTool
+from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
@@ -36,19 +36,7 @@ from Products.CMFCore.tests.base.testcase import SecurityTest
 
 class MembershipToolTests(unittest.TestCase):
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
-        from Products.CMFCore.interfaces.portal_membership \
-                import portal_membership as IMembershipTool
-        from Products.CMFCore.MembershipTool import MembershipTool
-
-        verifyClass(IActionProvider, MembershipTool)
-        verifyClass(IMembershipTool, MembershipTool)
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IMembershipTool
         from Products.CMFCore.MembershipTool import MembershipTool

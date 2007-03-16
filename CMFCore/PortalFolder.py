@@ -23,9 +23,8 @@ from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent, aq_inner, aq_base
 from Globals import InitializeClass
-from OFS.OrderSupport import OrderSupport
 from OFS.Folder import Folder
-
+from OFS.OrderSupport import OrderSupport
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.component.factory import Factory
@@ -40,7 +39,6 @@ from interfaces import IContentTypeRegistry
 from interfaces import IFolderish
 from interfaces import IMutableMinimalDublinCore
 from interfaces import ITypesTool
-from interfaces.Folderish import Folderish as z2IFolderish
 from permissions import AddPortalContent
 from permissions import AddPortalFolders
 from permissions import DeleteObjects
@@ -57,8 +55,6 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
     """
 
     implements(IFolderish, IMutableMinimalDublinCore)
-    __implements__ = (z2IFolderish, DynamicType.__implements__,
-                      Folder.__implements__)
 
     security = ClassSecurityInfo()
 
@@ -469,8 +465,6 @@ class PortalFolder(OrderSupport, PortalFolderBase):
     """Implements portal content management, but not UI details.
     """
 
-    __implements__ = (PortalFolderBase.__implements__,
-                      OrderSupport.__implements__)
     portal_type = 'Folder'
 
     security = ClassSecurityInfo()
@@ -496,9 +490,10 @@ manage_addPortalFolder = PortalFolder.manage_addPortalFolder.im_func
 
 
 class ContentFilter:
+
+    """Represent a predicate against a content object's metadata.
     """
-        Represent a predicate against a content object's metadata.
-    """
+
     MARKER = []
     filterSubject = []
     def __init__( self

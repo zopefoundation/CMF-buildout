@@ -25,10 +25,6 @@ from Products.CMFCore.interfaces import ICallableOpaqueItem
 from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
 from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.interfaces import ITypesTool
-from Products.CMFCore.interfaces.IOpaqueItems \
-        import ICallableOpaqueItem as z2ICallableOpaqueItem
-from Products.CMFCore.interfaces.IOpaqueItems \
-        import ICallableOpaqueItemEvents as z2ICallableOpaqueItemEvents
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.testing import TraversingEventZCMLLayer
 from Products.CMFCore.tests.base.dummy \
@@ -101,21 +97,19 @@ class OpaqueBase:
 
 
 class Marker(OpaqueBase):
+
     """ Opaque item without manage_after/before hookes but marked as callable
     """
+
     implements(ICallableOpaqueItem)
-    __implements__ = (
-        z2ICallableOpaqueItem,
-    )
 
 
 class Hooks(OpaqueBase):
+
     """ Opaque item with manage_after/before hooks but not marked as callable
     """
+
     implements(ICallableOpaqueItemEvents)
-    __implements__ = (
-        z2ICallableOpaqueItemEvents,
-    )
 
     def manage_afterAdd(self, item, container):
         self.addCount = self.addCounter
@@ -131,9 +125,9 @@ class Hooks(OpaqueBase):
 
 
 class MarkerAndHooks(Marker, Hooks):
+
     """ Opaque item with manage_after/before hookes and marked as callable
     """
-    __implements__ = Marker.__implements__ + Hooks.__implements__
 
 
 # -------------------------------------------

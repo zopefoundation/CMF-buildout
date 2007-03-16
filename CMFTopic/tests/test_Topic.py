@@ -22,6 +22,7 @@ ZopeTestCase.installProduct('CMFTopic', 1)
 from Acquisition import Implicit
 
 from zope.component import getSiteManager
+from zope.interface.verify import verifyClass
 
 from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.interfaces import ISyndicationTool
@@ -162,14 +163,7 @@ class TestTopic(ConformsToFolder, SecurityTest):
         SecurityTest.setUp(self)
         self.site = DummySite('site').__of__(self.root)
 
-    def test_z2interfaces(self):
-        from Interface.Verify import verifyClass
-        from OFS.IOrderSupport import IOrderedContainer
-
-        verifyClass(IOrderedContainer, self._getTargetClass())
-
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from OFS.interfaces import IOrderedContainer
         from Products.CMFCore.interfaces import IContentish
         from Products.CMFTopic.interfaces import IMutableTopic

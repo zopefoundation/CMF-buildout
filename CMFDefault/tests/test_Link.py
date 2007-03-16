@@ -20,6 +20,8 @@ import Testing
 
 from re import compile
 
+from zope.interface.verify import verifyClass
+
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.content import BASIC_RFC822
 from Products.CMFCore.tests.base.content import RFC822_W_CONTINUATION
@@ -45,8 +47,7 @@ class LinkTests(ConformsToContent, unittest.TestCase):
             d.edit(orig)
             self.assertEqual(d.getRemoteUrl(), wanted)
 
-    def test_z3interfaces(self):
-        from zope.interface.verify import verifyClass
+    def test_interfaces(self):
         from Products.CMFDefault.interfaces import ILink
         from Products.CMFDefault.interfaces import IMutableLink
 

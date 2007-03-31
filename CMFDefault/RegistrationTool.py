@@ -21,6 +21,7 @@ from AccessControl import ClassSecurityInfo
 
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import postonly
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.Expression import Expression
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
@@ -199,6 +200,7 @@ class RegistrationTool(BaseTool):
                   , password=None
                   , roles=None
                   , domains=None
+                  , REQUEST = None
                   ):
         """ Edit a user's properties and security settings
 
@@ -212,6 +214,7 @@ class RegistrationTool(BaseTool):
         member.setSecurityProfile(password,roles,domains)
 
         return member
+    editMember = postonly(editMember)
 
 InitializeClass(RegistrationTool)
 

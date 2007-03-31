@@ -294,7 +294,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
             return 1
         else:
             return 0
-    postonly(deleteMemberArea)
+    deleteMemberArea = postonly(deleteMemberArea)
 
     security.declarePublic('isAnonymousUser')
     def isAnonymousUser(self):

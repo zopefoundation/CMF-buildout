@@ -11,7 +11,8 @@ rtool = getToolByName(script, 'portal_registration')
 try:
     rtool.addMember( id=member_id, password=password,
                      properties={'username': member_id,
-                                 'email': member_email} )
+                                 'email': member_email},
+                     REQUEST=context.REQUEST)
 except ValueError, errmsg:
     return context.setStatus(False, errmsg)
 else:

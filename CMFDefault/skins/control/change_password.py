@@ -9,7 +9,7 @@ if failMessage:
                                context.REQUEST,
                                error=failMessage)
 member = mt.getAuthenticatedMember()
-mt.setPassword(password, domains)
+mt.setPassword(password, domains, REQUEST=context.REQUEST)
 mt.credentialsChanged(password)
 return context.personalize_form(context,
                                 context.REQUEST,

@@ -18,7 +18,7 @@ if failMessage:
     return context.join_form( context, REQUEST, error=failMessage )
 else:
     password=REQUEST.get('password') or portal_registration.generatePassword()
-    portal_registration.addMember(REQUEST['username'], password, properties=REQUEST)
+    portal_registration.addMember(REQUEST['username'], password, properties=REQUEST, REQUEST=REQUEST)
 
     if portal_properties.validate_email or REQUEST.get('mail_me', 0):
         portal_registration.registeredNotify(REQUEST['username'])

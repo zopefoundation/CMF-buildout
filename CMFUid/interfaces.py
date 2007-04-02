@@ -60,7 +60,7 @@ class IUniqueIdAnnotationManagement(Interface):
         """
 
 
-class IUniqueIdAnnotation(ICallableOpaqueItem, ICallableOpaqueItemEvents):
+class IUniqueIdAnnotation(ICallableOpaqueItem):
 
     """Opaque unique id item handling adding, copying, and deletion events.
     """

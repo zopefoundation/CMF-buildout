@@ -24,16 +24,20 @@ from Globals import InitializeClass
 from Globals import Persistent
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
-from zope.component import getUtility
+from zope.component import queryUtility
 from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
+from Products.CMFUid.interfaces import IUniqueIdHandler
 from Products.CMFUid.interfaces import IUniqueIdAnnotation
 from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
+from Products.CMFUid.interfaces import UniqueIdError
 
+from OFS.interfaces import IObjectClonedEvent
+from zope.app.container.interfaces import IObjectAddedEvent
 
 class UniqueIdAnnotation(Persistent, Implicit):
 
@@ -64,50 +68,47 @@ class UniqueIdAnnotation(Persistent, Implicit):
         """
         self._uid = uid
 
-    def manage_afterClone(self, item):
-        """See IUniqueIdAnnotation.
-        """
-        # Duplicated unique ids on the copied object have to be avoided.
-        # the uid object may already be removed by the 'manage_afterAdd'.
-        # To be independent of the implementation of 'manage_afterAdd'
-        # the unique id object probably gets removed another time.
-        anno_tool = getUtility(IUniqueIdAnnotationManagement)
-        if anno_tool.remove_on_clone:
-            try:
-                delattr( aq_parent( aq_inner(self) ), self.id )
-            except (KeyError, AttributeError):
-                pass
-
-    def manage_beforeDelete(self, item, container):
-        """See IUniqueIdAnnotation.
-        """
-        # This helps in distinguishing renaming from copying/adding and
-        # importing in 'manage_afterAdd' (see below)
-        anno_tool = getUtility(IUniqueIdAnnotationManagement)
-        if anno_tool.remove_on_add:
-            self._cmf_uid_is_rename = True
-
-    def manage_afterAdd(self, item, container):
-        """See IUniqueIdAnnotation.
-        """
-        # 'is_rename' is set if deletion was caused by a rename/move.
-        # The unique id is deleted only if the call is not part of
-        # a rename operation.
-        # This way I the unique id gets deleted on imports.
-        _is_rename = getattr(aq_base(self), '_cmf_uid_is_rename', None)
-        anno_tool = getUtility(IUniqueIdAnnotationManagement)
-        if anno_tool.remove_on_add and anno_tool.remove_on_clone \
-           and not _is_rename:
-            try:
-                delattr( aq_parent( aq_inner(self) ), self.id )
-            except (KeyError, AttributeError):
-                pass
-        if _is_rename is not None:
-            del self._cmf_uid_is_rename
-
 InitializeClass(UniqueIdAnnotation)
 
+def handleUidAnnotationEvent(ob, event):
+    """ Event subscriber for (IUniqueIdAnnotation, IObjectEvent) events
+    """
 
+    if IObjectAddedEvent.providedBy(event):
+        if event.newParent is not None:
+            anno_tool = queryUtility(IUniqueIdAnnotationManagement)
+            uid_handler = queryUtility(IUniqueIdHandler)
+            if anno_tool is not None:
+                remove_on_add = anno_tool.getProperty('remove_on_add',False)
+                remove_on_clone = anno_tool.getProperty('remove_on_clone',False)
+                assign_on_add = anno_tool.getProperty('assign_on_add',False)
+
+                if (remove_on_add and remove_on_clone) or assign_on_add:
+                    try:
+                        uid_handler.unregister(ob)
+                    except UniqueIdError:
+                        # did not have one
+                        pass
+                if assign_on_add:
+                    # assign new uid
+                    uid_handler.register(ob)
+                 
+    elif IObjectClonedEvent.providedBy(event):
+        anno_tool = queryUtility(IUniqueIdAnnotationManagement)
+        uid_handler = queryUtility(IUniqueIdHandler)
+        if anno_tool is not None:
+            remove_on_clone = anno_tool.getProperty('remove_on_clone', False)
+            assign_on_clone = anno_tool.getProperty('assign_on_clone', False)
+            if remove_on_clone or assign_on_clone:
+                try:
+                    uid_handler.unregister(ob)
+                except UniqueIdError:
+                    # did not have one
+                    pass
+            if assign_on_clone:
+                # assign new uid
+                uid_handler.register(ob)
+        
 class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager,
                              ActionProviderBase):
 
@@ -129,11 +130,17 @@ class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager,
 
     remove_on_add = True
     remove_on_clone = True
+    assign_on_add = False
+    assign_on_clone = False
     _properties = (
     {'id': 'remove_on_add', 'type': 'boolean', 'mode': 'w',
      'label': "Remove the objects unique id on add (and import)"},
     {'id': 'remove_on_clone', 'type': 'boolean', 'mode': 'w',
      'label': 'Remove the objects unique id on clone (CAUTION !!!)'},
+    {'id': 'assign_on_add', 'type': 'boolean', 'mode': 'w',
+     'label': "Assign a unique ID when an object is added"},
+    {'id': 'assign_on_clone', 'type': 'boolean', 'mode': 'w',
+     'label': "Assign a unique ID when an object is cloned"},
     )
 
     security.declarePrivate('__call__')

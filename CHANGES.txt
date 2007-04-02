@@ -8,6 +8,15 @@ CMF 2.1.0-beta2 (unreleased)
 
     - CMFActionIcons: Fixed interface declarations added in 2.1.0-beta.
 
+  Other
+
+    - CMFUid.UniqueIdAnnotationTool: Annotation handling has been switched
+      from triggering it through old-style manage_*-methods to using
+      events. UID assigning behavior has been made more flexible. Please
+      review CMFUid/README.txt for information about the current
+      behavior and the new features. 
+      (http://www.zope.org/Collectors/CMF/474)
+
 
 CMF 2.1.0-beta (2007/03/09)
 

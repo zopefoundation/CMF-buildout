@@ -3,6 +3,8 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="cmf_default">
 
+  <include file="event.zcml" />
+
   <!-- profiles -->
 
   <genericsetup:registerProfile

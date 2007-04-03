@@ -58,8 +58,10 @@ class SkinDataCleanup:
         self.tid = tid
     def __del__(self):
         tid = self.tid
-        if SKINDATA.has_key(tid):
-            del SKINDATA[tid]
+        # Be extra careful in __del__
+        if SKINDATA is not None:
+            if SKINDATA.has_key(tid):
+                del SKINDATA[tid]
 
 
 class SkinnableObjectManager(ObjectManager):

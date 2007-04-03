@@ -23,7 +23,7 @@ class IDCWorkflowDefinition(Interface):
     """Web-configurable workflow definition.
     """
 
-class ITransitionEvent(Interface):
+class ITransitionEvent(IObjectEvent):
     
     """An event that's fired upon a workflow transition.
     """

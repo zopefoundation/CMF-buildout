@@ -4,6 +4,7 @@ ZopeTestCase.installProduct('ZSQLMethods', 1)
 
 from os.path import join
 
+from Acquisition import aq_base
 from OFS.Folder import Folder
 
 from zope.component import getSiteManager
@@ -76,6 +77,35 @@ class FSZSQLMethodCustomizationTests(SecurityTest, FSZSQLMaker):
 
         self.assertEqual( len( self.custom.objectIds() ), 1 )
         self.failUnless( 'testsql' in self.custom.objectIds() )   
+
+    def test_customize_alternate_root( self ):
+
+        from OFS.Folder import Folder
+
+        self.root.other = Folder('other')
+
+        self.fsZSQL.manage_doCustomize( folder_path='other', root=self.root )
+
+        self.failIf( 'testsql' in self.custom.objectIds() )   
+        self.failUnless( 'testsql' in self.root.other.objectIds() )   
+
+    def test_customize_fspath_as_dot( self ):
+
+        self.fsZSQL.manage_doCustomize( folder_path='.' )
+
+        self.failIf( 'testsql' in self.custom.objectIds() )   
+        self.failUnless( 'testsql' in self.skins.objectIds() )   
+
+    def test_customize_manual_clone( self ):
+
+        from OFS.Folder import Folder
+
+        clone = Folder('testsql')
+
+        self.fsZSQL.manage_doCustomize( folder_path='custom', obj=clone )
+
+        self.failUnless( 'testsql' in self.custom.objectIds() )   
+        self.failUnless( aq_base(self.custom._getOb('testsql')) is clone )   
 
     def test_customize_properties(self):
         # Make sure all properties are coming across

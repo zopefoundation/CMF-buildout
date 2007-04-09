@@ -20,6 +20,7 @@ import Testing
 import os
 import re
 
+from Acquisition import aq_base
 from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
@@ -211,6 +212,33 @@ class FSReSTMethodCustomizationTests(SecurityTest, FSReSTMaker):
 
         self.assertEqual(_normalize_whitespace(target.document_src()),
                          _normalize_whitespace(_CUSTOMIZED_TEMPLATE_ZPT))
+
+    def test_customize_alternate_root( self ):
+        from OFS.Folder import Folder
+
+        self.root.other = Folder('other')
+
+        self.fsReST.manage_doCustomize(folder_path='other', root=self.root)
+
+        self.failIf('testReST' in self.custom.objectIds())
+        self.failUnless('testReST' in self.root.other.objectIds())
+
+    def test_customize_fpath_as_dot( self ):
+
+        self.fsReST.manage_doCustomize(folder_path='.')
+
+        self.failIf('testReST' in self.custom.objectIds())
+        self.failUnless('testReST' in self.skins.objectIds())
+
+    def test_customize_manual_clone( self ):
+        from OFS.Folder import Folder
+
+        clone = Folder('testReST')
+
+        self.fsReST.manage_doCustomize(folder_path='custom', obj=clone)
+
+        self.failUnless('testReST' in self.custom.objectIds())
+        self.failUnless(aq_base(self.custom._getOb('testReST')) is clone)
 
     def test_customize_caching(self):
         # Test to ensure that cache manager associations survive customizing

@@ -20,6 +20,7 @@ import Testing
 
 from os.path import join as path_join
 
+from Acquisition import aq_base
 from DateTime import DateTime
 from OFS.Folder import Folder
 from Products.StandardCacheManagers import RAMCacheManager
@@ -141,6 +142,35 @@ class FSDTMLMethodCustomizationTests( SecurityTest, FSDTMLMaker ):
 
         self.assertEqual( len( self.custom.objectIds() ), 1 )
         self.failUnless( 'testDTML' in self.custom.objectIds() )
+
+    def test_customize_alternate_root( self ):
+
+        from OFS.Folder import Folder
+
+        self.root.other = Folder('other')
+
+        self.fsDTML.manage_doCustomize( folder_path='other', root=self.root )
+
+        self.failIf( 'testDTML' in self.custom.objectIds() )
+        self.failUnless( 'testDTML' in self.root.other.objectIds() )
+
+    def test_customize_fspath_as_dot( self ):
+
+        self.fsDTML.manage_doCustomize( folder_path='.' )
+
+        self.failIf( 'testDTML' in self.custom.objectIds() )
+        self.failUnless( 'testDTML' in self.skins.objectIds() )
+
+    def test_customize_manual_clone( self ):
+
+        from OFS.Folder import Folder
+
+        clone = Folder('testDTML')
+
+        self.fsDTML.manage_doCustomize( folder_path='custom', obj=clone )
+
+        self.failUnless( 'testDTML' in self.custom.objectIds() )
+        self.failUnless( aq_base(self.custom._getOb('testDTML')) is clone)
 
     def test_customize_caching(self):
         # Test to ensure that cache manager associations survive customizing

@@ -20,6 +20,7 @@ import Testing
 import os
 import re
 
+from Acquisition import aq_base
 from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
@@ -225,6 +226,37 @@ class FSSTXMethodCustomizationTests(SecurityTest,
         FSSTXMaker.tearDown(self)
         SecurityTest.tearDown(self)
         _TemplateSwitcher.tearDown(self)
+
+    def test_customize_alternate_root( self ):
+        from OFS.Folder import Folder
+
+        self._setWhichTemplate('DTML')
+        self.root.other = Folder('other')
+
+        self.fsSTX.manage_doCustomize(folder_path='other', root=self.root)
+
+        self.failIf('testSTX' in self.custom.objectIds())
+        self.failUnless('testSTX' in self.root.other.objectIds())
+
+    def test_customize_fspath_as_dot( self ):
+        self._setWhichTemplate('DTML')
+
+        self.fsSTX.manage_doCustomize(folder_path='.')
+
+        self.failIf('testSTX' in self.custom.objectIds())
+        self.failUnless('testSTX' in self.skins.objectIds())
+
+    def test_customize_manual_clone( self ):
+        from OFS.Folder import Folder
+
+        clone = Folder('testSTX')
+
+        self._setWhichTemplate('DTML')
+
+        self.fsSTX.manage_doCustomize(folder_path='custom', obj=clone)
+
+        self.failUnless('testSTX' in self.custom.objectIds())
+        self.failUnless(aq_base(self.custom._getOb('testSTX')) is clone)
 
     def test_customize_with_DTML( self ):
         from OFS.DTMLDocument import DTMLDocument

@@ -2,6 +2,10 @@ CMF 2.1.0-beta2 (unreleased)
 
   Bug Fixes
 
+    - Remove antique usage of marker attributes in favor of interfaces,
+      leaving BBB behind for places potentially affecting third-party code.
+      (http://www.zope.org/Collectors/CMF/440)
+
     - Fixed DST-driven test breakage in CMFCalendar by adding an optional
       'zone' argument to the DublineCore methods which return string
       rednitions of date metadata.

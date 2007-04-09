@@ -48,8 +48,6 @@ class OldDiscussable(Implicit):
     implements(IOldstyleDiscussable)
     __implements__ = z2IOldstyleDiscussable
 
-    _isDiscussable = 1
-
     security = ClassSecurityInfo()
     
 

@@ -36,7 +36,7 @@ from zope.interface import implements
 from FSMetadata import FSMetadata
 from FSObject import BadFile
 from interfaces import IDirectoryView
-from permissions import AccessContentsInformation
+from permissions import AccessContentsInformation as ACI
 from permissions import ManagePortal
 from utils import _dtmldir
 from utils import normalize
@@ -519,7 +519,6 @@ class DirectoryViewSurrogate(Folder):
 
     meta_type = 'Filesystem Directory View'
     all_meta_types = ()
-    _isDirectoryView = 1
 
     security = ClassSecurityInfo()
 
@@ -552,14 +551,24 @@ class DirectoryViewSurrogate(Folder):
             REQUEST['RESPONSE'].redirect( '%s/manage_propertiesForm'
                                         % self.absolute_url() )
 
-    security.declareProtected(AccessContentsInformation, 'getCustomizableObject')
+    security.declareProtected(ACI, 'getCustomizableObject')
     def getCustomizableObject(self):
         ob = aq_parent(aq_inner(self))
-        while getattr(ob, '_isDirectoryView', 0):
-            ob = aq_parent(aq_inner(ob))
+        while ob:
+            if IDirectoryView.providedBy(ob):
+                ob = aq_parent(ob)
+            elif getattr(ob, '_isDirectoryView', 0):
+                # BBB
+                warn("The '_isDirectoryView' marker attribute is deprecated, "
+                     "and will be removed in CMF 2.3.  Please mark the "
+                     "instance with the 'IDirectoryView' interface instead.",
+                     DeprecationWarning, stacklevel=2)
+                ob = aq_parent(ob)
+            else:
+                break
         return ob
 
-    security.declareProtected(AccessContentsInformation, 'listCustFolderPaths')
+    security.declareProtected(ACI, 'listCustFolderPaths')
     def listCustFolderPaths(self, adding_meta_type=None):
         """ List possible customization folders as key, value pairs.
         """
@@ -569,7 +578,7 @@ class DirectoryViewSurrogate(Folder):
         rval.sort()
         return rval
 
-    security.declareProtected(AccessContentsInformation, 'getDirPath')
+    security.declareProtected(ACI, 'getDirPath')
     def getDirPath(self):
         return self.__dict__['_real']._dirpath
 

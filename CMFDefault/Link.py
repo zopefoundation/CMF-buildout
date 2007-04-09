@@ -64,7 +64,6 @@ class Link(PortalContent, DefaultDublinCoreImpl):
 
     URL_FORMAT = format = 'text/url'
     effective_date = expiration_date = None
-    _isDiscussable = 1
 
     security = ClassSecurityInfo()
 

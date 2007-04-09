@@ -46,9 +46,6 @@ class PortalContent(DynamicType, CMFCatalogAware, SimpleItem):
     implements(IContentish)
     __implements__ = (z2IContentish, z2IWriteLock, DynamicType.__implements__)
 
-    isPortalContent = 1
-    _isPortalContent = 1  # More reliable than 'isPortalContent'.
-
     manage_options = ( ( { 'label'  : 'Dublin Core'
                          , 'action' : 'manage_metadata'
                          }

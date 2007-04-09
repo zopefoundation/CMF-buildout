@@ -88,7 +88,6 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
                      )
 
     effective_date = expiration_date = None
-    _isDiscussable = 1
     icon = PortalContent.icon
 
     manage_options = ( PortalContent.manage_options

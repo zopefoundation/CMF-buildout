@@ -53,7 +53,6 @@ class DefaultWorkflowDefinition (SimpleItemWithProperties):
     meta_type = 'CMF Default Workflow'
     id = 'default_workflow'
     title = 'Simple Review / Publish Policy'
-    _isAWorkflow = 1
 
     security = ClassSecurityInfo()
 

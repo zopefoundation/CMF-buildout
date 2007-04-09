@@ -253,7 +253,6 @@ class ActionInformation( SimpleItem ):
 
     implements(IAction)
 
-    _isActionInformation = 1
     __allow_access_to_unprotected_subobjects__ = 1
 
     security = ClassSecurityInfo()

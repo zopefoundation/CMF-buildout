@@ -98,44 +98,59 @@ class DublinCore(Interface):
         'initial caps' names are reserved for strings.
         """
 
-    def Date():
+    def Date(zone=None):
         """ Dublin Core Date element - default date.
 
         Permission -- View
 
         Returns -- String, formatted 'YYYY-MM-DD H24:MN:SS TZ'
+
+        o If 'zone' is 'None', return the time in the system default
+          timezone.
         """
 
-    def CreationDate():
+    def CreationDate(zone=None):
         """ Dublin Core Date element - date resource created.
 
         Permission -- View
 
         Returns -- String, formatted 'YYYY-MM-DD H24:MN:SS TZ'
+
+        o If 'zone' is 'None', return the time in the system default
+          timezone.
         """
 
-    def EffectiveDate():
+    def EffectiveDate(zone=None):
         """ Dublin Core Date element - date resource becomes effective.
 
         Permission -- View
 
         Returns -- String, formatted 'YYYY-MM-DD H24:MN:SS TZ'
+
+        o If 'zone' is 'None', return the time in the system default
+          timezone.
         """
 
-    def ExpirationDate():
+    def ExpirationDate(zone=None):
         """ Dublin Core Date element - date resource expires.
 
         Permission -- View
 
         Returns -- String, formatted 'YYYY-MM-DD H24:MN:SS TZ'
+
+        o If 'zone' is 'None', return the time in the system default
+          timezone.
         """
 
-    def ModificationDate():
+    def ModificationDate(zone=None):
         """ Dublin Core Date element - date resource last modified.
 
         Permission -- View
 
         Returns -- String, formatted 'YYYY-MM-DD H24:MN:SS TZ'
+
+        o If 'zone' is 'None', return the time in the system default
+          timezone.
         """
 
     def Type():

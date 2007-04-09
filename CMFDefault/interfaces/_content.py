@@ -17,6 +17,12 @@ $Id$
 
 from zope.interface import Interface
 
+class IHTMLScrubber(Interface):
+    """ Utility inteface for scrubbing user-supplied HTML.
+    """
+    def scrub(html):
+        """ Return 'scrubbed' HTML.
+        """
 
 class IDocument(Interface):
 

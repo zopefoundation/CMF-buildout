@@ -2,6 +2,11 @@ CMF 2.0.1-beta (unreleased)
 
   Bug Fixes
 
+    - Fixed DST-driven test breakage in CMFCalendar by adding an optional
+      'zone' argument to the DublineCore methods which return string
+      rednitions of date metadata.
+     (http://www.zope.org/Collectors/CMF/476)
+
     - Fixed test failures due to changes in TALES expression parsing under
       Zope 2.10.
 

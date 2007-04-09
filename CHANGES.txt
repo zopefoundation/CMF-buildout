@@ -7,6 +7,11 @@ CMF 1.6.3-beta (2007/01/17)
 
   Bug Fixes
 
+    - Fixed DST-driven test breakage in CMFCalendar by adding an optional
+      'zone' argument to the DublineCore methods which return string
+      rednitions of date metadata.
+      (http://www.zope.org/Collectors/CMF/476)
+
     - CMFCalendar: Refactored test setup to fix test breakage for Zope 2.9.
 
     - CMFDefault: The "Sample CMF Content" GenericSetup profile was 

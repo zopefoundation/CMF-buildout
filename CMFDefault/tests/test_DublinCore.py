@@ -196,6 +196,35 @@ class DublinCoreTests(SecurityTest):
             new_DC = getattr(item, dc_methodname)()
             self.assertEqual(orig_DC, new_DC)
 
+    def test_Date_with_explicit_timezone(self):
+        item = self._makeDummyContent('item')
+        item.effective_date = DateTime('2007-01-01T12:00:00Z')
+        self.assertEqual(item.Date('US/Eastern'),
+                         '2007-01-01 07:00:00')
+
+    def test_CreationDate_with_explicit_timezone(self):
+        item = self._makeDummyContent('item')
+        item.creation_date = DateTime('2007-01-01T12:00:00Z')
+        self.assertEqual(item.CreationDate('US/Eastern'),
+                         '2007-01-01 07:00:00')
+
+    def test_ModificationDate_with_explicit_timezone(self):
+        item = self._makeDummyContent('item')
+        item.modification_date = DateTime('2007-01-01T12:00:00Z')
+        self.assertEqual(item.ModificationDate('US/Eastern'),
+                         '2007-01-01 07:00:00')
+
+    def test_EffectiveDate_with_explicit_timezone(self):
+        item = self._makeDummyContent('item')
+        item.effective_date = DateTime('2007-01-01T12:00:00Z')
+        self.assertEqual(item.EffectiveDate('US/Eastern'),
+                         '2007-01-01 07:00:00')
+
+    def test_ExpirationDate_with_explicit_timezone(self):
+        item = self._makeDummyContent('item')
+        item.expiration_date = DateTime('2007-01-01T12:00:00Z')
+        self.assertEqual(item.ExpirationDate('US/Eastern'),
+                         '2007-01-01 07:00:00')
 
 def test_suite():
     return unittest.TestSuite((

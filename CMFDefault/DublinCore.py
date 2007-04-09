@@ -183,44 +183,54 @@ class DefaultDublinCoreImpl( PropertyManager ):
         return self.listContributors()
 
     security.declareProtected(View, 'Date')
-    def Date( self ):
+    def Date( self, zone=None ):
         """ Dublin Core Date element - default date.
         """
+        if zone is None:
+            zone = _zone
         # Return effective_date if set, modification date otherwise
         date = getattr(self, 'effective_date', None )
         if date is None:
             date = self.modified()
-        return date.toZone(_zone).ISO()
+        return date.toZone(zone).ISO()
 
     security.declareProtected(View, 'CreationDate')
-    def CreationDate( self ):
+    def CreationDate( self, zone=None ):
         """ Dublin Core Date element - date resource created.
         """
+        if zone is None:
+            zone = _zone
         # return unknown if never set properly
         if self.creation_date:
-            return self.creation_date.toZone(_zone).ISO()
+            return self.creation_date.toZone(zone).ISO()
         else:
             return 'Unknown'
 
     security.declareProtected(View, 'EffectiveDate')
-    def EffectiveDate( self ):
+    def EffectiveDate( self, zone=None ):
         """ Dublin Core Date element - date resource becomes effective.
         """
+        if zone is None:
+            zone = _zone
         ed = getattr( self, 'effective_date', None )
-        return ed and ed.toZone(_zone).ISO() or 'None'
+        return ed and ed.toZone(zone).ISO() or 'None'
 
     security.declareProtected(View, 'ExpirationDate')
-    def ExpirationDate( self ):
+    def ExpirationDate( self, zone=None ):
         """ Dublin Core Date element - date resource expires.
         """
+        if zone is None:
+            zone = _zone
         ed = getattr( self, 'expiration_date', None )
-        return ed and ed.toZone(_zone).ISO() or 'None'
+        return ed and ed.toZone(zone).ISO() or 'None'
 
     security.declareProtected(View, 'ModificationDate')
-    def ModificationDate( self ):
+    def ModificationDate( self, zone=None ):
         """ Dublin Core Date element - date resource last modified.
         """
-        return self.modified().toZone(_zone).ISO()
+        if zone is None:
+            zone = _zone
+        return self.modified().toZone(zone).ISO()
 
     security.declareProtected(View, 'Type')
     def Type( self ):

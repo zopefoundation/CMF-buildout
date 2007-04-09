@@ -2,6 +2,11 @@ CMF 2.1.0-beta2 (unreleased)
 
   Bug Fixes
 
+    - Fixed DST-driven test breakage in CMFCalendar by adding an optional
+      'zone' argument to the DublineCore methods which return string
+      rednitions of date metadata.
+     (http://www.zope.org/Collectors/CMF/476)
+
     - Favorite: Fixed UID handling broken in 2.1.0-beta.
 
     - CMFDefault: Removed CMFUid dependency inadvertently added in 2.1.0-beta.

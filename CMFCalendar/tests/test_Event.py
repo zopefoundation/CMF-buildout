@@ -92,8 +92,8 @@ EVENT_TXT = """\
 Title: Test Event
 Subject: Foosubject
 Contributors: Jim
-Effective_date: 2002/01/01
-Expiration_date: 2009/12/31
+Effective_date: 2002-01-01T00:00:00Z
+Expiration_date: 2009-12-31T00:00:00Z
 StartDate: 2006/02/23 18:00
 EndDate: 2006/02/23 23:00
 Location: Spuds and Suds, River Street, Anytown
@@ -126,8 +126,8 @@ class EventPUTTests(RequestTest):
         self.assertEqual( d.Description(), '' )
         self.assertEqual( d.Subject(), () )
         self.assertEqual( d.Contributors(), () )
-        self.assertEqual( d.EffectiveDate(), 'None' )
-        self.assertEqual( d.ExpirationDate(), 'None' )
+        self.assertEqual( d.EffectiveDate('UTC'), 'None' )
+        self.assertEqual( d.ExpirationDate('UTC'), 'None' )
         self.assertEqual( d.Language(), '' )
         self.assertEqual( d.Rights(), '' )
         self.assertEqual( d.location, '' )
@@ -149,8 +149,8 @@ class EventPUTTests(RequestTest):
                         )
         self.assertEqual( d.Subject(), ('Foosubject',) )
         self.assertEqual( d.Contributors(), ('Jim',) )
-        self.assertEqual( d.EffectiveDate(), '2002-01-01 00:00:00' )
-        self.assertEqual( d.ExpirationDate(), '2009-12-31 00:00:00' )
+        self.assertEqual( d.EffectiveDate('UTC'), '2002-01-01 00:00:00' )
+        self.assertEqual( d.ExpirationDate('UTC'), '2009-12-31 00:00:00' )
         self.assertEqual( d.Language(), 'French' )
         self.assertEqual( d.Rights(), 'Anytown Gazetteer' )
         self.assertEqual( d.location, 'Spuds and Suds, River Street, Anytown' )

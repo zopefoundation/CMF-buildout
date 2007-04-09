@@ -22,6 +22,7 @@ ZopeTestCase.installProduct('PageTemplates', 1)
 
 from os.path import join as path_join
 
+from Acquisition import aq_base
 from OFS.Folder import Folder
 from Products.StandardCacheManagers import RAMCacheManager
 
@@ -192,6 +193,32 @@ class FSPageTemplateCustomizationTests( SecurityTest, FSPTMaker ):
 
         self.assertEqual( len( self.custom.objectIds() ), 1 )
         self.failUnless( 'testPT' in self.custom.objectIds() )
+
+    def test_customize_alternate_root( self ):
+
+        from OFS.Folder import Folder
+        self.root.other = Folder('other')
+
+        self.fsPT.manage_doCustomize( folder_path='other', root=self.root )
+
+        self.failIf( 'testPT' in self.custom.objectIds() )  
+        self.failUnless( 'testPT' in self.root.other.objectIds() )  
+
+    def test_customize_fspath_as_dot( self ):
+
+        self.fsPT.manage_doCustomize( folder_path='.' )
+
+        self.failIf( 'testPT' in self.custom.objectIds() )  
+        self.failUnless( 'testPT' in self.skins.objectIds() )  
+
+    def test_customize_manual_clone( self ):
+
+        clone = Folder('testPT')
+
+        self.fsPT.manage_doCustomize( folder_path='custom', obj=clone )
+
+        self.failUnless( 'testPT' in self.custom.objectIds() )  
+        self.failUnless( aq_base(self.custom._getOb('testPT')) is clone )  
 
     def test_customize_caching(self):
         # Test to ensure that cache manager associations survive customizing

@@ -52,17 +52,22 @@ class FSPropertiesObject(FSObject, PropertyManager):
     security.declarePrivate('manage_changePropertyTypes')
 
     security.declareProtected(ViewManagementScreens, 'manage_doCustomize')
-    def manage_doCustomize(self, folder_path, RESPONSE=None):
+    def manage_doCustomize(self, folder_path, RESPONSE=None, \
+                           root=None, obj=None):
         """Makes a ZODB Based clone with the same data.
 
         Calls _createZODBClone for the actual work.
         """
         # Overridden here to provide a different redirect target.
 
-        FSObject.manage_doCustomize(self, folder_path, RESPONSE)
+        FSObject.manage_doCustomize(self, folder_path, RESPONSE, \
+                                    root=root, obj=obj)
 
         if RESPONSE is not None:
-            fpath = tuple(folder_path.split('/'))
+            if folder_path == '.':
+                fpath = ()
+            else:
+                fpath = tuple(folder_path.split('/'))
             folder = self.restrictedTraverse(fpath)
             RESPONSE.redirect('%s/%s/manage_propertiesForm' % (
                 folder.absolute_url(), self.getId()))

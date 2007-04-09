@@ -2,6 +2,10 @@ CMF 2.1.0-beta2 (unreleased)
 
   Bug Fixes
 
+    - Allow customization from DirectoryViews to be redirected into
+      alternate folders, and use manually-built clones.
+      (http://www.zope.org/Collectors/CMF/382)
+
     - Use a utility, registered for
       'Products.CMFDefault.interfaces.IHTMLScrubber', to perform scrubbing
       of HTML;  fall back to the old, hard-wired behavior.

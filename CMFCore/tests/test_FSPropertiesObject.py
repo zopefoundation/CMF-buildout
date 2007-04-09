@@ -1,5 +1,6 @@
 import unittest
 
+from Acquisition import aq_base
 from zope.component import getSiteManager
 
 from Products.CMFCore.interfaces import ISkinsTool
@@ -83,6 +84,37 @@ class FSPOTests(SecurityTest, FSDVTest):
 
         self.assertEqual( len( custom.objectIds() ), 1 )
         self.failUnless( 'test_props' in custom.objectIds() )  
+
+    def test_manage_doCustomize_alternate_root( self ):
+        from OFS.Folder import Folder
+
+        custom, fsdir, fspo = self._makeContext( 'test_props'
+                                               , 'test_props.props')
+        self.root.other = Folder('other')
+
+        fspo.manage_doCustomize( folder_path='other', root=self.root )
+
+        self.failIf( 'test_props' in custom.objectIds() )  
+        self.failUnless( 'test_props' in self.root.other.objectIds() )  
+
+    def test_manage_doCustomize_fspath_as_dot( self ):
+        custom, fsdir, fspo = self._makeContext( 'test_props'
+                                               , 'test_props.props')
+        fspo.manage_doCustomize( folder_path='.' )
+
+        self.failIf( 'test_props' in custom.objectIds() )  
+        self.failUnless( 'test_props' in self.root.portal_skins.objectIds() )  
+
+    def test_manage_doCustomize_manual_clone( self ):
+        from OFS.Folder import Folder
+
+        custom, fsdir, fspo = self._makeContext( 'test_props'
+                                               , 'test_props.props')
+        clone = Folder('test_props')
+        fspo.manage_doCustomize( folder_path='custom', obj=clone )
+
+        self.failUnless( 'test_props' in custom.objectIds() )  
+        self.failUnless( aq_base(custom._getOb('test_props')) is clone )  
 
 
 def test_suite():

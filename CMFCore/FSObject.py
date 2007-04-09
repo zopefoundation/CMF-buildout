@@ -79,13 +79,15 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
         self._readFile(0)
 
     security.declareProtected(ViewManagementScreens, 'manage_doCustomize')
-    def manage_doCustomize(self, folder_path, RESPONSE=None):
+    def manage_doCustomize(self, folder_path, RESPONSE=None, \
+                           root=None, obj=None):
         """Makes a ZODB Based clone with the same data.
 
         Calls _createZODBClone for the actual work.
         """
 
-        obj = self._createZODBClone()
+        if obj is None:
+            obj = self._createZODBClone()
         parent = aq_parent(aq_inner(self))
 
         # Preserve cache manager associations
@@ -118,7 +120,12 @@ class FSObject(Implicit, Item, RoleManager, Cacheable):
 
         id = obj.getId()
         fpath = tuple( folder_path.split('/') )
-        portal_skins = getUtility(ISkinsTool)
+        if root is None:
+            portal_skins = getUtility(ISkinsTool)
+        else:
+            portal_skins = root
+        if folder_path == '.':
+            fpath = ()
         folder = portal_skins.restrictedTraverse(fpath)
         if id in folder.objectIds():
             # we cant catch the badrequest so

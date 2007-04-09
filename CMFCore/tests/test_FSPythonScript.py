@@ -24,6 +24,7 @@ from sys import exc_info
 from thread import start_new_thread
 from time import sleep
 
+from Acquisition import aq_base
 from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
 from Products.StandardCacheManagers import RAMCacheManager
@@ -131,6 +132,35 @@ class FSPythonScriptCustomizationTests(SecurityTest, FSPSMaker):
 
         self.failUnless(isinstance(test6, CustomizedPythonScript))
         self.assertEqual(test6.original_source, fsPS.read())
+
+    def test_customize_alternate_root( self ):
+
+        root, tool, custom, fsdir, fsPS = self._makeSkins()
+        root.other = Folder('other')
+
+        fsPS.manage_doCustomize( folder_path='other', root=root )
+
+        self.failIf( 'test6' in custom.objectIds() )  
+        self.failUnless( 'test6' in root.other.objectIds() )  
+
+    def test_customize_fspath_as_dot( self ):
+
+        root, tool, custom, fsdir, fsPS = self._makeSkins()
+
+        fsPS.manage_doCustomize( folder_path='.' )
+
+        self.failIf( 'test6' in custom.objectIds() )  
+        self.failUnless( 'test6' in root.portal_skins.objectIds() )  
+
+    def test_customize_manual_clone( self ):
+
+        root, tool, custom, fsdir, fsPS = self._makeSkins()
+        clone = Folder('test6')
+
+        fsPS.manage_doCustomize( folder_path='custom', obj=clone )
+
+        self.failUnless( 'test6' in custom.objectIds() )  
+        self.failUnless( aq_base(custom._getOb('test6')) is clone )  
 
     def test_customize_caching(self):
         # Test to ensure that cache manager associations survive customizing

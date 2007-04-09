@@ -43,9 +43,6 @@ class PortalContent(DynamicType, CMFCatalogAware, SimpleItem):
 
     implements(IContentish)
 
-    isPortalContent = 1
-    _isPortalContent = 1  # More reliable than 'isPortalContent'.
-
     manage_options = ( ( { 'label'  : 'Dublin Core'
                          , 'action' : 'manage_metadata'
                          }

@@ -48,8 +48,6 @@ class OldDiscussable(Implicit):
 
     implements(IOldstyleDiscussable)
 
-    _isDiscussable = 1
-
     security = ClassSecurityInfo()
 
     def __init__( self, content ):

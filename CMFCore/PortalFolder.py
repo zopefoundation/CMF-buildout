@@ -18,6 +18,7 @@ $Id$
 import base64
 import marshal
 import re
+from warnings import warn
 
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
@@ -38,6 +39,7 @@ from exceptions import zExceptions_Unauthorized
 from interfaces import IContentTypeRegistry
 from interfaces import IFolderish
 from interfaces import IMutableMinimalDublinCore
+from interfaces import ISiteRoot
 from interfaces import ITypesTool
 from permissions import AddPortalContent
 from permissions import AddPortalFolders
@@ -346,9 +348,20 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
         # This code prevents people other than the portal manager from
         # overriding skinned names and tools.
         if not getSecurityManager().checkPermission(ManagePortal, self):
-            ob = self
-            while ob is not None and not getattr(ob, '_isPortalRoot', False):
-                ob = aq_parent( aq_inner(ob) )
+            ob = aq_inner(self)
+            while ob is not None:
+                if ISiteRoot.providedBy(ob):
+                    break
+                # BBB
+                if getattr(ob, '_isPortalRoot', False):
+                    warn("The '_isPortalRoot' marker attribute for site "
+                         "roots is deprecated and will be removed in "
+                         "CMF 2.3;  please mark the root object with "
+                         "'ISiteRoot' instead.",
+                         DeprecationWarning, stacklevel=2)
+                    break
+                ob = aq_parent(ob)
+
             if ob is not None:
                 # If the portal root has a non-contentish object by this name,
                 # don't allow an override.

@@ -30,6 +30,7 @@ from zope.interface import implements
 
 from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.PortalContent import PortalContent
 
@@ -64,7 +65,7 @@ class DummyObject(Implicit):
 
 class DummyType(DummyObject):
     """ A Dummy Type object """
-    _isTypeInformation = True
+    implements(ITypeInformation)
 
     def __init__(self, id='Dummy Content', title='Dummy Content', actions=()):
         """ To fake out some actions, pass in a sequence of tuples where the
@@ -269,7 +270,6 @@ class DummySite(DummyFolder):
 
     _domain = 'http://www.foobar.com'
     _path = 'bar'
-    _isPortalRoot = 1
     implements(ISiteRoot)
 
     def absolute_url(self, relative=0):

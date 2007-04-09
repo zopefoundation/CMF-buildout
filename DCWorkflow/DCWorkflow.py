@@ -67,7 +67,6 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
     implements(IDCWorkflowDefinition, IWorkflowDefinition)
 
     title = 'DC Workflow Definition'
-    _isAWorkflow = 1
 
     state_var = 'state'
     initial_state = None

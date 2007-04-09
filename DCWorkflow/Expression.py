@@ -14,6 +14,7 @@
 
 $Id$
 """
+from warnings import warn
 
 import Globals
 from Globals import Persistent
@@ -23,6 +24,7 @@ from DateTime import DateTime
 
 from Products.CMFCore.WorkflowCore import ObjectDeleted, ObjectMoved
 from Products.CMFCore.Expression import Expression
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
 
@@ -95,10 +97,20 @@ class StateChangeInfo:
             return ()
 
     def getPortal(self):
-        ob = self.object
-        while ob is not None and not getattr(ob, '_isPortalRoot', 0):
-            ob = aq_parent(aq_inner(ob))
-        return ob
+        ob = aq_inner(self.object)
+        while ob is not None:
+            if ISiteRoot.providedBy(ob):
+                return ob
+            if getattr(ob, '_isPortalRoot', None) is not None:
+                # BBB
+                warn("The '_isPortalRoot' marker attribute for site "
+                     "roots is deprecated and will be removed in "
+                     "CMF 2.3;  please mark the root object with "
+                     "'ISiteRoot' instead.",
+                     DeprecationWarning, stacklevel=2)
+                return ob
+            ob = aq_parent(ob)
+        return None
 
     def getDateTime(self):
         date = self._date

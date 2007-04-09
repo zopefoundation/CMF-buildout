@@ -64,7 +64,6 @@ class Document(PortalContent, DefaultDublinCoreImpl):
     effective_date = expiration_date = None
     cooked_text = text = text_format = ''
     _size = 0
-    _isDiscussable = 1
 
     _stx_level = 1                      # Structured text level
 

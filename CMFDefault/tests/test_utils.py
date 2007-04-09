@@ -122,7 +122,7 @@ Header: value
         self.assertNotEqual( preloaded[ 'Author' ], headers[ 'Author' ] )
         self.assertEqual( preloaded[ 'text_format' ], headers[ 'text_format' ] )
 
-    def test_scrubHTML(self):
+    def test_scrubHTML_no_adapter_falls_back(self):
         from Products.CMFDefault.utils import scrubHTML
 
         self.assertEqual( scrubHTML('<a href="foo.html">bar</a>'),
@@ -143,6 +143,46 @@ Header: value
                           '<img src="foo.png" /><img />' )
         self.assertEqual( scrubHTML('<meta name="title" content="" /><meta>'),
                           '<meta name="title" content="" /><meta />' )
+
+    def test_scrubHTML_with_adapter(self):
+        from zope.interface import implements
+        from zope.component.testing import setUp
+        from zope.component.testing import tearDown
+        from zope.app.testing import ztapi
+        from Products.CMFDefault.interfaces import IHTMLScrubber
+        from Products.CMFDefault.utils import scrubHTML
+
+        class _Scrubber:
+            implements(IHTMLScrubber)
+            def scrub(self, html):
+                return html.upper()
+
+
+        setUp()
+        try:
+            ztapi.provideUtility(IHTMLScrubber, _Scrubber())
+            self.assertEqual( scrubHTML('<a href="foo.html">bar</a>'),
+                            '<A HREF="FOO.HTML">BAR</A>' )
+            self.assertEqual( scrubHTML('<b>bar</b>'),
+                            '<B>BAR</B>' )
+            self.assertEqual( scrubHTML('<base href="" /><base>'),
+                            '<BASE HREF="" /><BASE>' )
+            self.assertEqual( scrubHTML('<blockquote>bar</blockquote>'),
+                            '<BLOCKQUOTE>BAR</BLOCKQUOTE>' )
+            self.assertEqual( scrubHTML('<body bgcolor="#ffffff">bar</body>'),
+                            '<BODY BGCOLOR="#FFFFFF">BAR</BODY>' )
+            self.assertEqual( scrubHTML('<br /><br>'),
+                            '<BR /><BR>' )
+            self.assertEqual( scrubHTML('<hr /><hr>'),
+                            '<HR /><HR>' )
+            self.assertEqual( scrubHTML('<img src="foo.png" /><img>'),
+                            '<IMG SRC="FOO.PNG" /><IMG>' )
+            self.assertEqual( scrubHTML(
+                                '<meta name="title" content="" /><meta>'),
+                            '<META NAME="TITLE" CONTENT="" /><META>' )
+
+        finally:
+            tearDown()
 
     def test_bodyfinder(self):
         from Products.CMFDefault.utils import bodyfinder

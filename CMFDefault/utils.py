@@ -31,13 +31,15 @@ from ZTUtils.Zope import complex_marshal
 
 from zope import i18n
 from zope.component import getUtility
+from zope.component import queryUtility
 from zope.i18n.interfaces import IUserPreferredCharsets
 from zope.i18nmessageid import MessageFactory
 
 from Products.CMFCore.interfaces import IPropertiesTool
 
-from exceptions import EmailAddressInvalid
-from exceptions import IllegalHTML
+from Products.CMFDefault.interfaces import IHTMLScrubber
+from Products.CMFDefault.exceptions import EmailAddressInvalid
+from Products.CMFDefault.exceptions import IllegalHTML
 
 
 security = ModuleSecurityInfo( 'Products.CMFDefault.utils' )
@@ -294,10 +296,12 @@ class StrippingParser( SGMLParser ):
 
     from htmlentitydefs import entitydefs # replace entitydefs from sgmllib
 
-    def __init__( self ):
+    def __init__( self, valid_tags=None, nasty_tags=None ):
 
         SGMLParser.__init__( self )
         self.result = ""
+        self.valid_tags = valid_tags or VALID_TAGS
+        self.nasty_tags = nasty_tags or NASTY_TAGS
 
     def handle_data( self, data ):
 
@@ -321,7 +325,7 @@ class StrippingParser( SGMLParser ):
     def unknown_starttag(self, tag, attrs):
         """ Delete all tags except for legal ones.
         """
-        if VALID_TAGS.has_key(tag):
+        if self.valid_tags.has_key(tag):
 
             self.result = self.result + '<' + tag
 
@@ -340,12 +344,12 @@ class StrippingParser( SGMLParser ):
                 self.result = '%s %s="%s"' % (self.result, k, v)
 
             endTag = '</%s>' % tag
-            if VALID_TAGS.get(tag):
+            if self.valid_tags.get(tag):
                 self.result = self.result + '>'
             else:
                 self.result = self.result + ' />'
 
-        elif NASTY_TAGS.get(tag):
+        elif self.nasty_tags.get(tag):
             msg = _(u"Dynamic tag '${tag}' not allowed.",
                     mapping={'tag': tag})
             raise IllegalHTML(msg)
@@ -355,7 +359,7 @@ class StrippingParser( SGMLParser ):
 
     def unknown_endtag(self, tag):
 
-        if VALID_TAGS.get(tag):
+        if self.valid_tags.get(tag):
 
             self.result = "%s</%s>" % (self.result, tag)
             remTag = '</%s>' % tag
@@ -365,7 +369,14 @@ security.declarePublic('scrubHTML')
 def scrubHTML( html ):
 
     """ Strip illegal HTML tags from string text.
+
+    o Prefer a utility, if registered.
     """
+    scrubber = queryUtility(IHTMLScrubber)
+
+    if scrubber is not None:
+        return scrubber.scrub(html)
+
     parser = StrippingParser()
     parser.feed( html )
     parser.close()

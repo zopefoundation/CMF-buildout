@@ -84,6 +84,7 @@ class EventZCMLLayer:
         zcml.load_config('event.zcml', Products.Five)
         zcml.load_config('event.zcml', Products.CMFCore)
         setHooks()
+    setUp = testSetUp  # forward-compatibility for Zope 2.11+ testrunner
 
     @classmethod
     def testTearDown(cls):

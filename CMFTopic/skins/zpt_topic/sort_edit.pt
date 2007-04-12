@@ -2,7 +2,7 @@
  <tr>
   <td width="20">
    <input type="checkbox" value="" name="criterion_ids:list" id=""
-          tal:attributes="value here/getId; id string:cb_${here/getId}">
+          tal:attributes="value here/getId; id string:cb_${here/getId}" />
   </td>
   <td align="left">
    <label for=""
@@ -16,7 +16,7 @@
  <tr>
   <td width="20">&nbsp;</td>
   <td><strong>Reversed?</strong>
-  <input type="hidden" name="criteria.reversed::int:default:records" value="0">
+  <input type="hidden" name="criteria.reversed::int:default:records" value="0" />
   <input type="checkbox" name="criteria.reversed:records" value="1"
          tal:attributes="checked here/reversed"/>
   </td>

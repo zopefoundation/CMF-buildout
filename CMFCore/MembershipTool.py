@@ -90,7 +90,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
     manage_mapRoles = DTMLFile('membershipRolemapping', _dtmldir )
 
     security.declareProtected(SetOwnPassword, 'setPassword')
-    def setPassword(self, password, domains=None):
+    def setPassword(self, password, domains=None, REQUEST=None):
         '''Allows the authenticated member to set his/her own password.
         '''
         registration = getToolByName(self, 'portal_registration', None)
@@ -103,6 +103,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
             member.setSecurityProfile(password=password, domains=domains)
         else:
             raise BadRequest('Not logged in.')
+    setPassword = postonly(setPassword)
 
     security.declarePublic('getAuthenticatedMember')
     def getAuthenticatedMember(self):
@@ -167,7 +168,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
         return roles
 
     security.declareProtected(ManagePortal, 'setRoleMapping')
-    def setRoleMapping(self, portal_role, userfolder_role):
+    def setRoleMapping(self, portal_role, userfolder_role, REQUEST=None):
         """
         set the mapping of roles between roles understood by
         the portal and roles coming from outside user sources
@@ -183,6 +184,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
                title  ='Mapping updated',
                message='The Role mappings have been updated',
                action ='manage_mapRoles')
+    setRoleMapping = postonly(setRoleMapping)
 
     security.declareProtected(ManagePortal, 'getMappedRole')
     def getMappedRole(self, portal_role):

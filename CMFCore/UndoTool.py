@@ -21,8 +21,10 @@ from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
 
+from zope.component import queryUtility
 from ActionProviderBase import ActionProviderBase
 from exceptions import AccessControl_Unauthorized
+from interfaces import ISiteRoot
 from interfaces import IUndoTool
 from interfaces.portal_undo import portal_undo as z2IUndoTool
 from permissions import ListUndoableChanges
@@ -69,7 +71,11 @@ class UndoTool(UniqueObject, SimpleItem, ActionProviderBase):
         '''Lists all transaction IDs the user is allowed to undo.
         '''
         # arg list for undoable_transactions() changed in Zope 2.2.
-        portal = self.aq_inner.aq_parent
+        portal = queryUtility(ISiteRoot)
+        if site is None:
+            # fallback
+            portal = self.aq_inner.aq_parent
+
         transactions = portal.undoable_transactions(
             first_transaction=first_transaction,
             last_transaction=last_transaction,

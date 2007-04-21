@@ -27,6 +27,7 @@ from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from ContainerTab import ContainerTab
 from permissions import ManagePortal
 from utils import _dtmldir
+from Products.CMFCore.utils import postonly
 
 
 class StateDefinition(SimpleItem):
@@ -213,8 +214,9 @@ class StateDefinition(SimpleItem):
                 roles = tuple(roles)
             pr[p] = roles
         return self.manage_permissions(REQUEST, 'Permissions changed.')
+    setPermissions = postonly(setPermissions)
 
-    def setPermission(self, permission, acquired, roles):
+    def setPermission(self, permission, acquired, roles, REQUEST=None):
         """Set a permission for this State."""
         pr = self.permission_roles
         if pr is None:
@@ -224,6 +226,7 @@ class StateDefinition(SimpleItem):
         else:
             roles = tuple(roles)
         pr[permission] = roles
+    setPermission = postonly(setPermission)
 
     manage_groups = PageTemplateFile('state_groups.pt', _dtmldir)
 
@@ -247,6 +250,7 @@ class StateDefinition(SimpleItem):
             RESPONSE.redirect(
                 "%s/manage_groups?manage_tabs_message=Groups+changed."
                 % self.absolute_url())
+    setGroups = postonly(setGroups)
 
 InitializeClass(StateDefinition)
 

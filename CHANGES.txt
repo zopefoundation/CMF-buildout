@@ -2,6 +2,13 @@ CMF 2.1.0-beta2 (unreleased)
 
   Bug Fixes
 
+    - Use the property API to get the member specific skin, because
+      direct attribute access won't work with PAS based membership.
+      (http://dev.plone.org/plone/ticket/5904)
+
+    - Add POST-only protections to security critical methods (see
+      http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0240).
+
     - Added forward-compatibility fix for running tests under the
       testrunner shipped with Zope 2.11.
 

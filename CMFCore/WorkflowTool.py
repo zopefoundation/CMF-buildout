@@ -41,6 +41,7 @@ from utils import _dtmldir
 from utils import Message as _
 from utils import registerToolInterface
 from utils import UniqueObject
+from utils import postonly
 from WorkflowCore import ObjectDeleted
 from WorkflowCore import ObjectMoved
 from WorkflowCore import WorkflowException
@@ -155,6 +156,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
         if REQUEST is not None:
             return self.manage_selectWorkflows(REQUEST,
                             manage_tabs_message='Changed.')
+    manage_changeWorkflows = postonly(manage_changeWorkflows)
 
     #
     #   'IActionProvider' interface methods
@@ -362,7 +364,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
     #   'IConfigurableWorkflowTool' interface methods
     #
     security.declareProtected(ManagePortal, 'setDefaultChain')
-    def setDefaultChain(self, default_chain):
+    def setDefaultChain(self, default_chain, REQUEST=None):
         """ Set the default chain for this tool.
         """
         default_chain = default_chain.replace(',', ' ')
@@ -374,9 +376,11 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
                 ids.append(wf_id)
 
         self._default_chain = tuple(ids)
+    setDefaultChain = postonly(setDefaultChain)
 
     security.declareProtected(ManagePortal, 'setChainForPortalTypes')
-    def setChainForPortalTypes(self, pt_names, chain, verify=True):
+    def setChainForPortalTypes(self, pt_names, chain, verify=True,
+                               REQUEST=None):
         """ Set a chain for specific portal types.
         """
         cbt = self._chains_by_type
@@ -398,6 +402,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
             if verify and not (type_id in ti_ids):
                 continue
             cbt[type_id] = tuple(chain)
+    setChainForPortalTypes = postonly(setChainForPortalTypes)
 
     security.declarePrivate('getDefaultChain')
     def getDefaultChain(self):
@@ -455,6 +460,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
                                                '%d object(s) updated.' % count)
         else:
             return count
+    updateRoleMappings = postonly(updateRoleMappings)
 
     security.declarePrivate('getWorkflowById')
     def getWorkflowById(self, wf_id):

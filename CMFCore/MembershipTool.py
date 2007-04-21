@@ -52,6 +52,7 @@ from utils import _checkPermission
 from utils import _dtmldir
 from utils import _getAuthenticatedUser
 from utils import UniqueObject
+from utils import postonly
 
 
 logger = logging.getLogger('CMFCore.MembershipTool')
@@ -96,7 +97,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
     manage_mapRoles = DTMLFile('membershipRolemapping', _dtmldir )
 
     security.declareProtected(SetOwnPassword, 'setPassword')
-    def setPassword(self, password, domains=None):
+    def setPassword(self, password, domains=None, REQUEST=None):
         '''Allows the authenticated member to set his/her own password.
         '''
         registration = queryUtility(IRegistrationTool)
@@ -109,6 +110,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
             member.setSecurityProfile(password=password, domains=domains)
         else:
             raise BadRequest('Not logged in.')
+    setPassword = postonly(setPassword)
 
     security.declarePublic('getAuthenticatedMember')
     def getAuthenticatedMember(self):
@@ -173,7 +175,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
         return roles
 
     security.declareProtected(ManagePortal, 'setRoleMapping')
-    def setRoleMapping(self, portal_role, userfolder_role):
+    def setRoleMapping(self, portal_role, userfolder_role, REQUEST=None):
         """
         set the mapping of roles between roles understood by
         the portal and roles coming from outside user sources
@@ -189,6 +191,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
                title  ='Mapping updated',
                message='The Role mappings have been updated',
                action ='manage_mapRoles')
+    setRoleMapping = postonly(setRoleMapping)
 
     security.declareProtected(ManagePortal, 'getMappedRole')
     def getMappedRole(self, portal_role):
@@ -289,7 +292,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
     createMemberarea = createMemberArea
 
     security.declareProtected(ManageUsers, 'deleteMemberArea')
-    def deleteMemberArea(self, member_id):
+    def deleteMemberArea(self, member_id, REQUEST=None):
         """ Delete member area of member specified by member_id.
         """
         members = self.getMembersFolder()
@@ -300,6 +303,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
             return 1
         else:
             return 0
+    deleteMemberArea = postonly(deleteMemberArea)
 
     security.declarePublic('isAnonymousUser')
     def isAnonymousUser(self):
@@ -429,7 +433,8 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
         return tuple(local_roles)
 
     security.declareProtected(View, 'setLocalRoles')
-    def setLocalRoles(self, obj, member_ids, member_role, reindex=1):
+    def setLocalRoles(self, obj, member_ids, member_role, reindex=1,
+                      REQUEST=None):
         """ Add local roles on an item.
         """
         if ( _checkPermission(ChangeLocalRoles, obj)
@@ -446,9 +451,11 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
             # reindexObjectSecurity, which is in CMFCatalogAware and
             # thus PortalContent and PortalFolder.
             obj.reindexObjectSecurity()
+    setLocalRoles = postonly(setLocalRoles)
 
     security.declareProtected(View, 'deleteLocalRoles')
-    def deleteLocalRoles(self, obj, member_ids, reindex=1, recursive=0):
+    def deleteLocalRoles(self, obj, member_ids, reindex=1, recursive=0,
+                         REQUEST=None):
         """ Delete local roles of specified members.
         """
         if _checkPermission(ChangeLocalRoles, obj):
@@ -464,6 +471,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
         if reindex:
             # reindexObjectSecurity is always recursive
             obj.reindexObjectSecurity()
+    deleteLocalRoles = postonly(deleteLocalRoles)
 
     security.declarePrivate('addMember')
     def addMember(self, id, password, roles, domains, properties=None):
@@ -487,7 +495,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
 
     security.declareProtected(ManageUsers, 'deleteMembers')
     def deleteMembers(self, member_ids, delete_memberareas=1,
-                      delete_localroles=1):
+                      delete_localroles=1, REQUEST=None):
         """ Delete members specified by member_ids.
         """
 
@@ -526,6 +534,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
                                    reindex=1, recursive=1 )
 
         return tuple(member_ids)
+    deleteMembers = postonly(deleteMembers)
 
     security.declarePublic('getHomeFolder')
     def getHomeFolder(self, id=None, verifyPermission=0):

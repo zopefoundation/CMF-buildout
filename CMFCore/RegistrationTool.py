@@ -39,6 +39,7 @@ from utils import _dtmldir
 from utils import _limitGrantedRoles
 from utils import Message as _
 from utils import UniqueObject
+from utils import postonly
 
 
 class RegistrationTool(UniqueObject, SimpleItem, ActionProviderBase):
@@ -133,7 +134,7 @@ class RegistrationTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     security.declareProtected(AddPortalMember, 'addMember')
     def addMember(self, id, password, roles=('Member',), domains='',
-                  properties=None):
+                  properties=None, REQUEST=None):
         '''Creates a PortalMember and returns it. The properties argument
         can be a mapping with additional member properties. Raises an
         exception if the given id already exists, the password does not
@@ -165,6 +166,7 @@ class RegistrationTool(UniqueObject, SimpleItem, ActionProviderBase):
         member = membership.getMemberById(id)
         self.afterAdd(member, id, password, properties)
         return member
+    addMember = postonly(addMember)
 
     security.declareProtected(AddPortalMember, 'isMemberIdAllowed')
     def isMemberIdAllowed(self, id):

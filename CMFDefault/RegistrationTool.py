@@ -28,6 +28,7 @@ from Products.CMFCore.interfaces import IRegistrationTool
 from Products.CMFCore.RegistrationTool import RegistrationTool as BaseTool
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import registerToolInterface
+from Products.CMFCore.utils import postonly
 
 from permissions import ManagePortal
 from utils import checkEmailAddress
@@ -194,6 +195,7 @@ class RegistrationTool(BaseTool):
                   , password=None
                   , roles=None
                   , domains=None
+                  , REQUEST = None
                   ):
         """ Edit a user's properties and security settings
 
@@ -207,6 +209,7 @@ class RegistrationTool(BaseTool):
         member.setSecurityProfile(password,roles,domains)
 
         return member
+    editMember = postonly(editMember)
 
 InitializeClass(RegistrationTool)
 registerToolInterface('portal_registration', IRegistrationTool)

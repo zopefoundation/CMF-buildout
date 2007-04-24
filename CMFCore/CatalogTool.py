@@ -134,10 +134,7 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
 
     def __init__(self):
         ZCatalog.__init__(self, self.getId())
-        warn('CatalogTool._initIndexes is deprecated and will be removed in '
-             'CMF 2.0.',
-             DeprecationWarning)
-        self._initIndexes()
+        self._initIndexes(internal_cmf_16=True)
 
     #
     #   Subclass extension interface
@@ -216,7 +213,11 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
                , 'portal_type'
                )
 
-    def _initIndexes(self):
+    def _initIndexes(self, internal_cmf_16=False):
+        if not internal_cmf_16:
+            warn('CatalogTool._initIndexes is deprecated and will be '
+                 'removed in CMF 2.0.', DeprecationWarning)
+
         # ZCTextIndex lexicons
         for id, splitter, normalizer, sw_remover in self.enumerateLexicons():
             lexicon = PLexicon(id, '', splitter, normalizer, sw_remover)

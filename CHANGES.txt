@@ -1,4 +1,8 @@
-CMF 1.6.4 (unreleased):
+CMF 1.6.4-beta (2007/04/24):
+
+  Other Changes
+
+    - Switch to using GenericSetup 1.2 final release (From 1.2beta).
 
   Bug Fixes
 

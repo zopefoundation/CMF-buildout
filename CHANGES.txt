@@ -2,6 +2,8 @@ CMF 1.6.4 (unreleased):
 
   Bug Fixes
 
+    - Fixed test breakage / spew when running on Zope 2.8.
+
     - Use the property API to get the member specific skin, because
       direct attribute access won't work with PAS based membership.
       (http://dev.plone.org/plone/ticket/5904)

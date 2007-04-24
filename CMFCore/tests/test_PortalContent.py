@@ -36,12 +36,13 @@ except ImportError:
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
+from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyObject
 from OFS.Folder import Folder
 
-class PortalContentTests(TestCase):
+class PortalContentTests(TestCase, WarningInterceptor):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
@@ -88,6 +89,7 @@ class PortalContentTests(TestCase):
         # in unfixed version fail here with AttributeError
         # can end up with this arrangement using _getAliases though
         # in fixed version, falls through to _getViewFor, which is BBB
+        self._trap_warning_output()
         self.assertEqual( ob(), 'dummy' )
 
     def test_BlankDefaultAlias(self):
@@ -96,6 +98,7 @@ class PortalContentTests(TestCase):
                        )
         ob = self._setupCallTests(test_aliases)
         # blank default is BBB
+        self._trap_warning_output()
         self.assertEqual( ob(), 'dummy' )
 
     def test_SpecificAlias(self):

@@ -191,6 +191,10 @@ class FriendlyDateCriterionFunctionalTests(PlacelessSetup, RequestTest):
             dummy_ob.modified_date = self.now + i
             dummy_ob.reindexObject()
 
+    def tearDown(self):
+        RequestTest.tearDown(self)
+        PlacelessSetup.tearDown(self)
+
 
     def test_Harness(self):
         # Make sure the test harness is set up OK

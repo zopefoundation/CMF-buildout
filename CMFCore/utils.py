@@ -100,10 +100,6 @@ def getToolByName(obj, name, default=_marker):
     tool_interface = _tool_interface_registry.get(name)
 
     if tool_interface is not None:
-        warn('getToolByName is deprecated and will be removed in '
-             'CMF 2.3, please use "getUtility(%s)"' % (
-               tool_interface.__name__), DeprecationWarning, stacklevel=2) 
-
         try:
             return getUtility(tool_interface)
         except ComponentLookupError:

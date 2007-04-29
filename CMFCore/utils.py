@@ -101,7 +101,8 @@ def getToolByName(obj, name, default=_marker):
 
     if tool_interface is not None:
         try:
-            return getUtility(tool_interface)
+            utility = getUtility(tool_interface)
+            return utility_tool.__of__(obj)
         except ComponentLookupError:
             # behave in backwards-compatible way
             # fall through to old implementation

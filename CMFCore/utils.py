@@ -28,6 +28,7 @@ from AccessControl import ModuleSecurityInfo
 from AccessControl.Permission import Permission
 from AccessControl.PermissionRole import rolesForPermissionOn
 from AccessControl.Role import gather_permissions
+from Acquisition.interfaces import IAcquirer
 from Acquisition import aq_get
 from Acquisition import aq_inner
 from Acquisition import aq_parent
@@ -102,7 +103,14 @@ def getToolByName(obj, name, default=_marker):
     if tool_interface is not None:
         try:
             utility = getUtility(tool_interface)
-            return utility.__of__(obj)
+            # Site managers, except for five.localsitemanager, return unwrapped
+            # utilities. If the result is something which is acquisition-unaware
+            # but unwrapped we wrap it on the context.
+            if IAcquirer.providedBy(obj) and \
+                    aq_parent(obj) is None and \
+                    IAcquirer.providedBy(utility):
+                utilty = utility.__of__(obj)
+            return utility
         except ComponentLookupError:
             # behave in backwards-compatible way
             # fall through to old implementation

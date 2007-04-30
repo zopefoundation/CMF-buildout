@@ -107,7 +107,7 @@ def getToolByName(obj, name, default=_marker):
             # utilities. If the result is something which is acquisition-unaware
             # but unwrapped we wrap it on the context.
             if IAcquirer.providedBy(obj) and \
-                    aq_parent(obj) is None and \
+                    aq_parent(utility) is None and \
                     IAcquirer.providedBy(utility):
                 utilty = utility.__of__(obj)
             return utility

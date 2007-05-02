@@ -133,7 +133,7 @@ options:
                                         , 'auth='
                                         ]
                                       )
-        except getopt.GetOptError:
+        except getopt.GetoptError:
             self._usage()
 
         for k, v in opts:
@@ -195,8 +195,6 @@ options:
 
 
 if __name__ == '__main__':
-
-    import sys
 
     pkg = ReleasePackage( sys.argv[1:] )
 

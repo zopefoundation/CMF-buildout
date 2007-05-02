@@ -84,12 +84,10 @@ class EventZCMLLayer:
         zcml.load_config('event.zcml', Products.Five)
         zcml.load_config('event.zcml', Products.CMFCore)
         setHooks()
-    setUp = testSetUp  # forward-compatibility for Zope 2.11+ testrunner
 
     @classmethod
     def testTearDown(cls):
         cleanUp()
-    tearDown = testTearDown  # forward-compatibility for Zope 2.11+ testrunner
 
 
 class TraversingZCMLLayer:
@@ -101,12 +99,10 @@ class TraversingZCMLLayer:
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('traversing.zcml', Products.Five)
         setHooks()
-    setUp = testSetUp  # forward-compatibility for Zope 2.11+ testrunner
 
     @classmethod
     def testTearDown(cls):
         cleanUp()
-    tearDown = testTearDown  # forward-compatibility for Zope 2.11+ testrunner
 
 
 class TraversingEventZCMLLayer:
@@ -120,12 +116,10 @@ class TraversingEventZCMLLayer:
         zcml.load_config('event.zcml', Products.Five)
         zcml.load_config('event.zcml', Products.CMFCore)
         setHooks()
-    setUp = testSetUp  # forward-compatibility for Zope 2.11+ testrunner
 
     @classmethod
     def testTearDown(cls):
         cleanUp()
-    tearDown = testTearDown  # forward-compatibility for Zope 2.11+ testrunner
 
 
 class FunctionalZCMLLayer:
@@ -199,12 +193,10 @@ class ExportImportZCMLLayer:
         zcml.load_config('configure.zcml', Products.CMFCore.exportimport)
         zcml.load_string(_DUMMY_ZCML)
         setHooks()
-    setUp = testSetUp  # forward-compatibility for Zope 2.11+ testrunner
 
     @classmethod
     def testTearDown(cls):
         cleanUp()
-    tearDown = testTearDown  # forward-compatibility for Zope 2.11+ testrunner
 
 
 def run(test_suite):

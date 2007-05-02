@@ -9,9 +9,6 @@ CMF 2.1.0-beta2 (unreleased)
     - Add POST-only protections to security critical methods (see
       http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0240).
 
-    - Added forward-compatibility fix for running tests under the
-      testrunner shipped with Zope 2.11.
-
     - Allow customization from DirectoryViews to be redirected into
       alternate folders, and use manually-built clones.
       (http://www.zope.org/Collectors/CMF/382)

@@ -27,6 +27,7 @@ from permissions import ChangeTopics
 from permissions import View
 from Topic import Topic
 
+_as_of = DateTime  # Allow for controlled value when testing
 
 class FriendlyDateCriterion( AbstractCriterion ):
 
@@ -131,7 +132,8 @@ class FriendlyDateCriterion( AbstractCriterion ):
                 elif operation == 'min':
                     operation = 'max'
 
-            date = DateTime() + value
+            now = _as_of()
+            date = now + value
 
             if operation == 'within_day':
                 # When items within a day are requested, the range is between
@@ -142,7 +144,7 @@ class FriendlyDateCriterion( AbstractCriterion ):
             elif operation == 'min':
                 if value != 0:
                     if self.daterange == 'old':
-                        date_range = (date, DateTime())
+                        date_range = (date, now)
                         return ( ( field, { 'query': date_range
                                           , 'range': 'min:max'
                                           } ), )
@@ -159,7 +161,7 @@ class FriendlyDateCriterion( AbstractCriterion ):
                     if self.daterange == 'old':
                         return ((field, {'query': date, 'range': operation}),)
                     else:
-                        date_range = (DateTime(), date.latestTime())
+                        date_range = (now, date.latestTime())
                         return ( ( field, { 'query': date_range
                                           , 'range': 'min:max'
                                           } ), )

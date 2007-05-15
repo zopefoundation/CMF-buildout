@@ -1,3 +1,7 @@
+CMF 1.6.4 (2007/05/15):
+
+  (No changes since 1.6.4-beta)
+
 CMF 1.6.4-beta (2007/04/24):
 
   Other Changes

@@ -1,3 +1,10 @@
+After CMF 1.6.4
+
+  Bug Fixes
+
+    - Backported test fix from 2.1 branch which suppresses race conditions
+      in date-based topic criteria tests.
+
 CMF 1.6.4 (2007/05/15):
 
   (No changes since 1.6.4-beta)

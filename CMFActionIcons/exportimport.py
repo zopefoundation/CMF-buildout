@@ -66,6 +66,9 @@ def importActionIconsTool(context):
     for action_icon in ait_info['action_icons']:
         category = action_icon['category']
         action_id = action_icon['action_id']
+        # Ignore the i18n markup
+        if action_icon.get('i18n:attributes', None) is not None:
+            del action_icon['i18n:attributes']
         if ait.queryActionInfo(category, action_id) is not None:
             ait.updateActionIcon(**action_icon)
         else:
@@ -117,13 +120,17 @@ class ActionIconsToolImportConfigurator(ImportConfiguratorBase):
     def _getImportMapping(self):
         return {
           'action-icons':
-             { 'action-icon': {KEY: 'action_icons', DEFAULT: ()} },
+             { 'action-icon': {KEY: 'action_icons', DEFAULT: ()},
+               'i18n:domain': {},
+               'xmlns:i18n': {},
+             },
           'action-icon':
-             { 'category':      {},
-               'action_id':     {},
-               'title':         {},
-               'icon_expr':     {},
-               'priority':      {CONVERTER: self._convertToInteger},
+             { 'category': {},
+               'action_id': {},
+               'title': {},
+               'icon_expr': {},
+               'priority': {CONVERTER: self._convertToInteger},
+               'i18n:attributes': {},
              },
           }
 

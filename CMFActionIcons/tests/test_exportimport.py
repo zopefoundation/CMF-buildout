@@ -42,6 +42,13 @@ class _ActionIconsToolSetup(BaseRegistryTests):
 </action-icons>
 """
 
+    _EMPTY_I18N_EXPORT = """\
+<?xml version="1.0"?>
+<action-icons xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="cmf">
+</action-icons>
+"""
+
     _WITH_ICON_EXPORT = """\
 <?xml version="1.0"?>
 <action-icons>
@@ -52,6 +59,26 @@ class _ActionIconsToolSetup(BaseRegistryTests):
     priority="%d"
     icon_expr="%s"
     />
+</action-icons>
+""" % (CATEGORY,
+       ACTION_ID,
+       TITLE,
+       PRIORITY,
+       ICON_EXPR,
+      )
+
+    _WITH_I18N_ICON_EXPORT = """\
+<?xml version="1.0"?>
+<action-icons xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="cmf">
+<action-icon
+  category="%s"
+  action_id="%s"
+  title="%s"
+  priority="%d"
+  icon_expr="%s"
+  i18n:attributes="title"
+  />
 </action-icons>
 """ % (CATEGORY,
        ACTION_ID,
@@ -124,10 +151,31 @@ class ActionIconsToolImportConfiguratorTests(_ActionIconsToolSetup):
 
         self.assertEqual(len(ait_info['action_icons']), 0)
 
+    def test_parseXML_empty_i18n(self):
+        site = self._initSite(with_icon=False)
+        configurator = self._makeOne(site)
+        ait_info = configurator.parseXML(self._EMPTY_I18N_EXPORT)
+
+        self.assertEqual(len(ait_info['action_icons']), 0)
+
     def test_parseXML_with_icon(self):
         site = self._initSite(with_icon=False)
         configurator = self._makeOne(site)
         ait_info = configurator.parseXML(self._WITH_ICON_EXPORT)
+
+        self.assertEqual(len(ait_info['action_icons']), 1)
+
+        info = ait_info['action_icons'][0]
+        self.assertEqual(info['category'], self.CATEGORY)
+        self.assertEqual(info['action_id'], self.ACTION_ID)
+        self.assertEqual(info['title'], self.TITLE)
+        self.assertEqual(info['priority'], self.PRIORITY)
+        self.assertEqual(info['icon_expr'], self.ICON_EXPR)
+
+    def test_parseXML_with_i18n_icon(self):
+        site = self._initSite(with_icon=False)
+        configurator = self._makeOne(site)
+        ait_info = configurator.parseXML(self._WITH_I18N_ICON_EXPORT)
 
         self.assertEqual(len(ait_info['action_icons']), 1)
 

@@ -2,6 +2,9 @@ After CMF 1.5.7
 
   Bug Fixes
 
+    - Backported test fix from 2.1 branch which suppresses race conditions
+      in date-based topic criteria tests.
+
     - Fixed DST-driven test breakage in CMFCalendar by adding an optional
       'zone' argument to the DublineCore methods which return string
       rednitions of date metadata.

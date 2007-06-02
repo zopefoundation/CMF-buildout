@@ -134,6 +134,40 @@ class MembershipToolSecurityTests(SecurityTest):
         self.failIf( mdtool._members.has_key('user_foo') )
         self.failIf( hasattr(members.aq_self, 'user_foo') )
 
+    def test_deleteMembersUnsupported(self):
+        # Quite a few user folders do not support the deletion API
+        # http://www.zope.org/Collectors/CMF/481
+        # Make sure we get the right exception
+        site = self._makeSite()
+        mtool = site.portal_membership
+        members = site._setObject( 'Members', PortalFolder('Members') )
+        acl_users = site._setObject( 'acl_users', DummyUserFolder() )
+        utool = site._setObject( 'portal_url', DummyTool() )
+        wtool = site._setObject( 'portal_workflow', DummyTool() )
+        mdtool = site._setObject( 'portal_memberdata', MemberDataTool() )
+        newSecurityManager(None, acl_users.all_powerful_Oz)
+
+        self.assertEqual( acl_users.getUserById('user_foo'),
+                          acl_users.user_foo )
+        mtool.createMemberArea('user_foo')
+        self.failUnless( hasattr(members.aq_self, 'user_foo') )
+        mdtool.registerMemberData('Dummy', 'user_foo')
+        self.failUnless( mdtool._members.has_key('user_foo') )
+
+        # Fake an incompatible user folder by deleting the class method
+        deletion_method = DummyUserFolder.userFolderDelUsers
+        del DummyUserFolder.userFolderDelUsers
+        self.assertRaises( NotImplementedError
+                         , mtool.deleteMembers
+                         , ('user_foo',)
+                         )
+        self.failUnless( acl_users.getUserById('user_foo', None) )
+        self.failUnless( mdtool._members.has_key('user_foo') )
+        self.failUnless( hasattr(members.aq_self, 'user_foo') )
+
+        # Cleanup
+        DummyUserFolder.userFolderDelUsers = deletion_method
+
     def test_getMemberById_nonesuch(self):
         INVALID_USER_ID = 'nonesuch'
 

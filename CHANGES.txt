@@ -2,6 +2,11 @@ After CMF 1.6.4
 
   Bug Fixes
 
+    - User folders not supporting the userFolderDelUsers API, such as PAS,
+      would raise an unhelpful error when members were deleted using the
+      portal_membership tool.
+      (http://www.zope.org/Collectors/CMF/481)
+
     - Backported test fix from 2.1 branch which suppresses race conditions
       in date-based topic criteria tests.
 

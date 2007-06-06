@@ -78,15 +78,8 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
     security = ClassSecurityInfo()
 
     def _reindexObject(self, obj):
-        # add uid index and colums to catalog if not yet done
-        UID_ATTRIBUTE_NAME = self.UID_ATTRIBUTE_NAME
         catalog = getUtility(ICatalogTool)
-        if UID_ATTRIBUTE_NAME not in catalog.indexes():
-            catalog.addIndex(UID_ATTRIBUTE_NAME, 'FieldIndex')
-            catalog.addColumn(UID_ATTRIBUTE_NAME)
-
-        # reindex
-        catalog.reindexObject(obj, idxs=[UID_ATTRIBUTE_NAME])
+        catalog.reindexObject(obj, idxs=[self.UID_ATTRIBUTE_NAME])
 
     def _setUid(self, obj, uid):
         """Attaches a unique id to the object and does reindexing.

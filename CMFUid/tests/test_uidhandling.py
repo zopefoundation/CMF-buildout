@@ -66,6 +66,11 @@ class UniqueIdHandlerTests(SecurityTest):
         sm.registerUtility(self.root.portal_uidgenerator, IUniqueIdGenerator)
         sm.registerUtility(self.root.portal_uidhandler, IUniqueIdHandler)
 
+        # Make sure we have our indices/columns
+        uid_name = self.root.portal_uidhandler.UID_ATTRIBUTE_NAME
+        self.root.portal_catalog.addIndex(uid_name, 'FieldIndex')
+        self.root.portal_catalog.addColumn(uid_name)
+
     def tearDown(self):
         cleanUp()
         SecurityTest.tearDown(self)

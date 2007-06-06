@@ -128,6 +128,9 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
             if child.nodeName != 'skin-path':
                 continue
             path_id = str(child.getAttribute('name'))
+            if str(child.getAttribute('remove')):
+                self._removeSkin(skin_name=path_id)
+                continue
             if path_id == '*':
                 for path_id, path in self.context._getSelections().items():
                     path = self._updatePath(path, child)
@@ -202,6 +205,15 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
                 path.append(layer_name)
 
         return str( ','.join(path) )
+
+
+    def _removeSkin(self, skin_name=None):
+        """
+        Remove a skin from the skinstool
+        """
+        skins = self.context.getSkinSelections()
+        if skin_name in skins:
+            self.context.manage_skinLayers(chosen=[skin_name], del_skin=1, )
 
 
 def importSkinsTool(context):

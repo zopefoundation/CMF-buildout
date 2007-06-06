@@ -1,5 +1,11 @@
 CMF 2.2.0-beta (unreleased)
 
+  New Features
+
+    - CMFCore.exportimport.skins: Added the ability to remove whole skin
+      selections using a GS profile.
+      (http://www.zope.org/Collectors/CMF/479)
+
   Others
 
     - interfaces: Removed deprecated oldstyle interfaces.

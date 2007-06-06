@@ -2,6 +2,10 @@ After CMF 1.6.4
 
   Bug Fixes
 
+    - CMFCore.WorkflowTool: Using the '(Default)' keyword for a type's 
+      workflow chain will now reset any custom workflow chains for the type
+      (http://www.zope.org/Collectors/CMF/475)
+
     - User folders not supporting the userFolderDelUsers API, such as PAS,
       would raise an unhelpful error when members were deleted using the
       portal_membership tool.

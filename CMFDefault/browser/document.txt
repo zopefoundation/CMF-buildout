@@ -8,6 +8,8 @@ Set up Document and user.
 
     >>> uf = app.site.acl_users
     >>> uf._doAddUser('mgr', 'mgrpw', ['Manager'], [])
+    >>> from zope.app.component.hooks import setSite
+    >>> setSite(app.site)
 
 Create the browser object we'll be using.
 

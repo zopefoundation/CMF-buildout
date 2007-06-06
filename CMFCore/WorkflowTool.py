@@ -387,7 +387,10 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
             return
 
         if isinstance(chain, basestring):
-            chain = [ wf.strip() for wf in chain.split(',') if wf.strip() ]
+            if chain == '(Default)':
+                chain = ''
+            else:
+                chain = [ wf.strip() for wf in chain.split(',') if wf.strip() ]
 
         ti_ids = [ t.getId() for t in self._listTypeInfo() ]
 

@@ -70,6 +70,7 @@ class PortalObjectBase(PortalFolder, SkinnableObjectManager):
                 next = base
             name = '/'.join(self.getPhysicalPath())
             self._components = PersistentComponents(name, (next,))
+            self._components.__parent__ = self
         return self._components
 
 InitializeClass(PortalObjectBase)

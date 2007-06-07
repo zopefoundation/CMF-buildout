@@ -48,16 +48,12 @@ class FSDTMLMethod(RestrictedDTML, RoleManager, FSObject, Globals.HTML):
     _cache_namespace_keys = ()
     _reading = 0
 
-    manage_options=(
-        (
-            {'label':'Customize', 'action':'manage_main'},
-            {'label':'View', 'action':'',
-             'help':('OFSP','DTML-DocumentOrMethod_View.stx')},
-            {'label':'Proxy', 'action':'manage_proxyForm',
-             'help':('OFSP','DTML-DocumentOrMethod_Proxy.stx')},
-            )
-            + Cacheable.manage_options
-        )
+    manage_options=({'label':'Customize', 'action':'manage_main'},
+                    {'label':'View', 'action':'',
+                     'help':('OFSP','DTML-DocumentOrMethod_View.stx')},
+                    {'label':'Proxy', 'action':'manage_proxyForm',
+                     'help':('OFSP','DTML-DocumentOrMethod_Proxy.stx')},
+                   )
 
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)

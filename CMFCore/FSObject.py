@@ -225,9 +225,7 @@ class BadFile(FSObject):
 <dtml-var manage_page_footer>
 """
 
-    manage_options=(
-        {'label':'Error', 'action':'manage_showError'},
-        )
+    manage_options = ({'label':'Error', 'action':'manage_showError'},)
 
     def __init__( self, id, filepath, exc_str=''
                 , fullname=None, properties=None):

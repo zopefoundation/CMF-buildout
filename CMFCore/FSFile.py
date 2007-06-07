@@ -45,9 +45,7 @@ class FSFile(FSObject):
     meta_type = 'Filesystem File'
     content_type = 'unknown/unknown'
 
-    manage_options=(
-        {'label':'Customize', 'action':'manage_main'},
-        ) + Cacheable.manage_options
+    manage_options = ({'label':'Customize', 'action':'manage_main'},)
 
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)

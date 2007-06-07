@@ -43,9 +43,7 @@ class FSImage(FSObject):
     content_type = 'unknown/unknown'
     _data = None
 
-    manage_options=(
-        {'label':'Customize', 'action':'manage_main'},
-        ) + Cacheable.manage_options
+    manage_options = ({'label':'Customize', 'action':'manage_main'},)
 
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)

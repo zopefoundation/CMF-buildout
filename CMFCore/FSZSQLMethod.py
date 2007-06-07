@@ -39,13 +39,10 @@ class FSZSQLMethod(SQL, FSObject):
 
     meta_type = 'Filesystem Z SQL Method'
 
-    manage_options=(
-        (
-            {'label':'Customize', 'action':'manage_customise'},
-            {'label':'Test', 'action':'manage_testForm',
-             'help':('ZSQLMethods','Z-SQL-Method_Test.stx')},
-            )
-        )
+    manage_options = ({'label':'Customize', 'action':'manage_customise'},
+                      {'label':'Test', 'action':'manage_testForm',
+                       'help':('ZSQLMethods','Z-SQL-Method_Test.stx')},
+                     )
 
     security = ClassSecurityInfo()
     security.declareObjectProtected(View)

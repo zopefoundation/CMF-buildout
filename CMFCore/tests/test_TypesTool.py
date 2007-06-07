@@ -36,6 +36,7 @@ from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.testing import FunctionalZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyFactory
 from Products.CMFCore.tests.base.dummy import DummyFactoryDispatcher
+from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyUserFolder
@@ -48,6 +49,19 @@ from Products.CMFCore.tests.base.tidata import FTIDATA_CMF15
 from Products.CMFCore.tests.base.tidata import FTIDATA_DUMMY
 from Products.CMFCore.tests.base.tidata import STI_SCRIPT
 
+from zope.interface import implements
+from Products.CMFCore.interfaces import ITypeInformation
+
+class ActionTesterTypeInfo:
+
+    implements(ITypeInformation)
+
+    id = 'Dummy Content'
+
+    def listActions(self, info=None, obj=None):
+        self._action_info = info
+        self._action_obj = obj
+        return ()
 
 class TypesToolTests(SecurityTest, WarningInterceptor):
 
@@ -79,6 +93,20 @@ class TypesToolTests(SecurityTest, WarningInterceptor):
 
         verifyClass(IActionProvider, TypesTool)
         verifyClass(ITypesTool, TypesTool)
+
+    def test_listActions(self):
+        """test that a full set of context information is passed
+           by the types tool
+        """
+        tool = self.ttool
+        ti = ActionTesterTypeInfo()
+        setattr( tool, 'Dummy Content', ti )
+
+        dummy = self.site._setObject('dummy', DummyContent('dummy'))
+        tool.listActions('fake_info', dummy)
+
+        self.assertEqual(ti._action_info, 'fake_info')
+        self.assertEqual(ti._action_obj, dummy)
 
     def test_allMetaTypes(self):
         """

@@ -20,6 +20,8 @@ from AccessControl.SecurityInfo import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2Base
 
+from permissions import AddPortalFolders
+from PortalFolder import PortalFolder
 from PortalFolder import PortalFolderBase
 
 
@@ -50,5 +52,15 @@ class CMFBTreeFolder(BTreeFolder2Base, PortalFolderBase):
     def _checkId(self, id, allow_dup=0):
         PortalFolderBase._checkId(self, id, allow_dup)
         BTreeFolder2Base._checkId(self, id, allow_dup)
+
+    security.declareProtected(AddPortalFolders, 'manage_addPortalFolder')
+    def manage_addPortalFolder(self, id, title='', REQUEST=None):
+        """Add a new PortalFolder object with id *id*.
+        """
+        ob = PortalFolder(id, title)
+        self._setObject(id, ob)
+        if REQUEST is not None:
+            return self.folder_contents( # XXX: ick!
+                self, REQUEST, portal_status_message="Folder added")
 
 InitializeClass(CMFBTreeFolder)

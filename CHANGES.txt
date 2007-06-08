@@ -2,6 +2,10 @@ CMF 2.0.1-beta (unreleased)
 
   Bug Fixes
 
+    - CMFCore.CMFBTreeFolder: CMFBTreeFolders could not be used as the
+      toplevel /Members container. 
+      (http://www.zope.org/Collectors/CMF/441)
+
     - Fixed DST-driven test breakage in CMFCalendar by adding an optional
       'zone' argument to the DublineCore methods which return string
       rednitions of date metadata.

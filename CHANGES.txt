@@ -2,6 +2,10 @@ CMF 2.1.0-beta2 (unreleased)
 
   New Features
 
+    - CMFCore.exportimport.skins: Added the ability to remove whole skin
+      selections using a GS profile.
+      (http://www.zope.org/Collectors/CMF/479)
+
     - Workflow definition instances now have a description field
       (http://www.zope.org/Collectors/CMF/480)
 

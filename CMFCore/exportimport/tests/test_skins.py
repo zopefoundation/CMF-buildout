@@ -141,6 +141,25 @@ _FRAGMENT5_IMPORT = """\
 </object>"""
 
 
+_FRAGMENT6_IMPORT = """\
+<?xml version="1.0"?>
+<object name="portal_skins" meta_type="Dummy Skins Tool" allow_any="True"
+   cookie_persistence="True" default_skin="basic" request_varname="skin_var">
+ <object name="one" meta_type="Filesystem Directory View"
+    directory="Products.CMFCore.exportimport.tests:one"/>
+ <object name="three" meta_type="Filesystem Directory View"
+    directory="Products.CMFCore.exportimport.tests:three"/>
+ <object name="two" meta_type="Filesystem Directory View"
+    directory="Products.CMFCore.exportimport.tests:two"/>
+ <skin-path name="basic">
+  <layer name="one"/>
+ </skin-path>
+ <skin-path name="fancy" remove="True"/>
+ <skin-path name="invalid" remove="True"/>
+</object>
+"""
+
+
 class DummySite(Folder):
 
     _skin_setup_called = False
@@ -171,6 +190,8 @@ class DummySkinsTool(Folder):
     def _getSelections(self):
         return self._selections
 
+    getSkinSelections = _getSelections
+
     def getId(self):
         return 'portal_skins'
 
@@ -182,9 +203,15 @@ class DummySkinsTool(Folder):
     def addSkinSelection(self, skinname, skinpath, test=0, make_default=0):
         self._selections[skinname] = skinpath
 
+    def manage_skinLayers(self, chosen=(), add_skin=0, del_skin=0,
+                          skinname='', skinpath='', REQUEST=None):
+        if del_skin:
+            for skin_name in chosen:
+                del self._selections[skin_name]
+
 
 class _DVRegistrySetup:
-    
+
     def setUp(self):
         from Products.CMFCore import DirectoryView
 
@@ -337,7 +364,26 @@ class importSkinsToolTests(_SkinsSetup):
     _FRAGMENT3_IMPORT = _FRAGMENT3_IMPORT
     _FRAGMENT4_IMPORT = _FRAGMENT4_IMPORT
     _FRAGMENT5_IMPORT = _FRAGMENT5_IMPORT
+    _FRAGMENT6_IMPORT = _FRAGMENT6_IMPORT
     _NORMAL_EXPORT = _NORMAL_EXPORT
+
+
+    def test_remove_skin_path(self):
+        from Products.CMFCore.exportimport.skins import importSkinsTool
+
+        _IDS = ('one', 'two', 'three')
+        _PATHS = {'basic': 'one', 'fancy': 'three, two, one'}
+
+        site = self._initSite(selections=_PATHS, ids=_IDS)
+        skins_tool = site.portal_skins
+        self.failUnless(skins_tool._getSelections().has_key('fancy'))
+
+        context = DummyImportContext(site)
+        context._files['skins.xml'] = self._FRAGMENT6_IMPORT
+        importSkinsTool(context)
+
+        self.failIf(skins_tool._getSelections().has_key('fancy'))
+
 
     def test_empty_default_purge(self):
         from Products.CMFCore.exportimport.skins import importSkinsTool

@@ -53,10 +53,12 @@ class WorkflowUIMixin:
     manage_groups = PageTemplateFile('workflow_groups.pt', _dtmldir)
 
     security.declareProtected(ManagePortal, 'setProperties')
-    def setProperties(self, title, manager_bypass=0, props=None, REQUEST=None):
+    def setProperties(self, title, manager_bypass=0, props=None, 
+                      REQUEST=None, description=''):
         """Sets basic properties.
         """
         self.title = str(title)
+        self.description = str(description)
         self.manager_bypass = manager_bypass and 1 or 0
         g = Guard()
         if g.changeFromProperties(props or REQUEST):

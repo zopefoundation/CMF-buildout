@@ -24,6 +24,7 @@ from OFS.Folder import Folder
 from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
+from Products.CMFCore.CMFBTreeFolder import CMFBTreeFolder
 from Products.CMFCore.MemberDataTool import MemberDataTool
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.interfaces import IMemberDataTool
@@ -88,6 +89,39 @@ class MembershipToolSecurityTests(SecurityTest):
         site = self._makeSite()
         mtool = site.portal_membership
         members = site._setObject( 'Members', PortalFolder('Members') )
+        acl_users = site._setObject( 'acl_users', DummyUserFolder() )
+        wtool = site._setObject( 'portal_workflow', DummyTool() )
+
+        # permission
+        mtool.createMemberArea('user_foo')
+        self.failIf( hasattr(members.aq_self, 'user_foo') )
+        newSecurityManager(None, acl_users.user_bar)
+        mtool.createMemberArea('user_foo')
+        self.failIf( hasattr(members.aq_self, 'user_foo') )
+        newSecurityManager(None, acl_users.user_foo)
+        mtool.setMemberareaCreationFlag()
+        mtool.createMemberArea('user_foo')
+        self.failIf( hasattr(members.aq_self, 'user_foo') )
+        newSecurityManager(None, acl_users.all_powerful_Oz)
+        mtool.setMemberareaCreationFlag()
+        mtool.createMemberArea('user_foo')
+        self.failUnless( hasattr(members.aq_self, 'user_foo') )
+
+        # default content
+        f = members.user_foo
+        ownership = acl_users.user_foo
+        localroles = ( ( 'user_foo', ('Owner',) ), )
+        self.assertEqual( f.getOwner(), ownership )
+        self.assertEqual( f.get_local_roles(), localroles,
+                          'CMF Collector issue #162 (LocalRoles broken): %s'
+                          % str( f.get_local_roles() ) )
+
+    def test_createMemberAreaCMFBTreeFolder(self):
+        # Test member area creation if the toplevel "Members" folder is
+        # a CMFBTreeFolder (http://www.zope.org/Collectors/CMF/441
+        site = self._makeSite()
+        mtool = site.portal_membership
+        members = site._setObject( 'Members', CMFBTreeFolder('Members') )
         acl_users = site._setObject( 'acl_users', DummyUserFolder() )
         wtool = site._setObject( 'portal_workflow', DummyTool() )
 

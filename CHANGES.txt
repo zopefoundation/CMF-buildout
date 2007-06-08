@@ -7,6 +7,10 @@ CMF 2.1.0-beta2 (unreleased)
 
   Bug Fixes
 
+    - CMFCore.CMFBTreeFolder: CMFBTreeFolders could not be used as the
+      toplevel /Members container.
+      (http://www.zope.org/Collectors/CMF/441)
+
     - Pass 'object' through to TypeInformation objects' 'listActions'.
       (http://www.zope.org/Collectors/CMF/482)
       

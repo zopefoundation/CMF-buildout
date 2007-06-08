@@ -243,7 +243,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
         if not self.getMemberareaCreationFlag():
             return None
         members = self.getMembersFolder()
-        if not members:
+        if members is None:
             return None
         if self.isAnonymousUser():
             return None

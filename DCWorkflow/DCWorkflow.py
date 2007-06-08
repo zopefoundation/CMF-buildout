@@ -71,6 +71,7 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
     __implements__ = z2IWorkflowDefinition
 
     title = 'DC Workflow Definition'
+    description = ''
 
     state_var = 'state'
     initial_state = None

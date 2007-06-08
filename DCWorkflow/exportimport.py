@@ -67,10 +67,12 @@ class DCWorkflowDefinitionBodyAdapter(BodyAdapterBase):
         , worklists
         , permissions
         , scripts
+        , description
         ) = wfdc.parseWorkflowXML(body, encoding)
 
         _initDCWorkflow( self.context
                        , title
+                       , description
                        , state_variable
                        , initial_state
                        , states
@@ -110,6 +112,8 @@ class WorkflowDefinitionConfigurator( Implicit ):
 
           'title' -- the workflow's title property
 
+          'description' -- the workflow's description property
+
         o See '_extractDCWorkflowInfo' below for keys present only for
           DCWorkflow definitions.
 
@@ -119,6 +123,7 @@ class WorkflowDefinitionConfigurator( Implicit ):
         workflow_info = { 'id'          : workflow_id
                         , 'meta_type'   : workflow.meta_type
                         , 'title'       : workflow.title_or_id()
+                        , 'description' : workflow.description
                         }
 
         if workflow.meta_type == DCWorkflowDefinition.meta_type:
@@ -148,6 +153,11 @@ class WorkflowDefinitionConfigurator( Implicit ):
 
         workflow_id = _getNodeAttribute( root, 'workflow_id', encoding )
         title = _getNodeAttribute( root, 'title', encoding )
+        try:
+            description = _getNodeAttribute( root, 'description', encoding )
+        except ValueError:
+            # Don't fail on export files that do not have the description field!
+            description = ''
         state_variable = _getNodeAttribute( root, 'state_variable', encoding )
         initial_state = _getNodeAttribute( root, 'initial_state', encoding )
 
@@ -168,6 +178,7 @@ class WorkflowDefinitionConfigurator( Implicit ):
                , worklists
                , permissions
                , scripts
+               , description
                )
 
     security.declarePrivate( '_workflowConfig' )
@@ -939,6 +950,7 @@ _METATYPE_SUFFIXES = \
 
 def _initDCWorkflow( workflow
                    , title
+                   , description
                    , state_variable
                    , initial_state
                    , states
@@ -952,6 +964,7 @@ def _initDCWorkflow( workflow
     """ Initialize a DC Workflow using values parsed from XML.
     """
     workflow.title = title
+    workflow.description = description
     workflow.state_var = state_variable
     workflow.initial_state = initial_state
 

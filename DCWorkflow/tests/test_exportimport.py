@@ -219,6 +219,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         self.assertEqual( info[ 'id' ], WF_ID )
         self.assertEqual( info[ 'meta_type' ], DCWorkflowDefinition.meta_type )
         self.assertEqual( info[ 'title' ], dcworkflow.title )
+        self.assertEqual( info['description'], dcworkflow.description )
 
         self.assertEqual( info[ 'state_variable' ], dcworkflow.state_var )
 
@@ -472,11 +473,13 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         WF_ID = 'empty'
         WF_TITLE = 'Empty DCWorkflow'
+        WF_DESCRIPTION = 'This is a empty workflow'
         WF_INITIAL_STATE = 'initial'
 
         site = self._initSite()
         dcworkflow = self._initDCWorkflow( WF_ID )
         dcworkflow.title = WF_TITLE
+        dcworkflow.description = WF_DESCRIPTION
         dcworkflow.initial_state = WF_INITIAL_STATE
 
         configurator = self._makeOne(dcworkflow).__of__(site)
@@ -484,6 +487,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         self._compareDOM( configurator.generateWorkflowXML()
                         , _EMPTY_WORKFLOW_EXPORT % ( WF_ID
                                                    , WF_TITLE
+                                                   , WF_DESCRIPTION
                                                    , WF_INITIAL_STATE
                                                    ) )
 
@@ -491,11 +495,13 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
+        WF_DESCRIPTION = 'Normal Workflow'
         WF_INITIAL_STATE = 'closed'
 
         site = self._initSite()
         dcworkflow = self._initDCWorkflow( WF_ID )
         dcworkflow.title = WF_TITLE
+        dcworkflow.description = WF_DESCRIPTION
         dcworkflow.initial_state = WF_INITIAL_STATE
         dcworkflow.permissions = _WF_PERMISSIONS
         self._initVariables( dcworkflow )
@@ -510,6 +516,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
                         , _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID
                             , 'title' : WF_TITLE
+                            , 'description' : WF_DESCRIPTION
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID.replace(' ', '_')
                             } )
@@ -518,14 +525,17 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         WF_ID_1 = 'dc1'
         WF_TITLE_1 = 'Normal DCWorkflow #1'
+        WF_DESCRIPTION_1 = 'Normal Number 1'
         WF_ID_2 = 'dc2'
         WF_TITLE_2 = 'Normal DCWorkflow #2'
+        WF_DESCRIPTION_2 = 'Normal Numer 2'
         WF_INITIAL_STATE = 'closed'
 
         site = self._initSite()
 
         dcworkflow_1 = self._initDCWorkflow( WF_ID_1 )
         dcworkflow_1.title = WF_TITLE_1
+        dcworkflow_1.description = WF_DESCRIPTION_1
         dcworkflow_1.initial_state = WF_INITIAL_STATE
         dcworkflow_1.permissions = _WF_PERMISSIONS
         self._initVariables( dcworkflow_1 )
@@ -536,6 +546,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         dcworkflow_2 = self._initDCWorkflow( WF_ID_2 )
         dcworkflow_2.title = WF_TITLE_2
+        dcworkflow_2.description = WF_DESCRIPTION_2
         dcworkflow_2.initial_state = WF_INITIAL_STATE
         dcworkflow_2.permissions = _WF_PERMISSIONS
         self._initVariables( dcworkflow_2 )
@@ -550,6 +561,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
                         , _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID_1
                             , 'title' : WF_TITLE_1
+                            , 'description' : WF_DESCRIPTION_1
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID_1.replace(' ', '_')
                             } )
@@ -560,6 +572,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
                         , _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID_2
                             , 'title' : WF_TITLE_2
+                            , 'description' : WF_DESCRIPTION_2
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID_2.replace(' ', '_')
                             } )
@@ -568,6 +581,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         WF_ID = 'empty'
         WF_TITLE = 'Empty DCWorkflow'
+        WF_DESCRIPTION = 'This is an empty workflow'
         WF_INITIAL_STATE = 'initial'
 
         site = self._initSite()
@@ -584,12 +598,15 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         , worklists
         , permissions
         , scripts
+        , description
         ) = configurator.parseWorkflowXML( _EMPTY_WORKFLOW_EXPORT
                                          % ( WF_ID
                                            , WF_TITLE
+                                           , WF_DESCRIPTION
                                            , WF_INITIAL_STATE
                                            ) )
 
+        self.assertEqual(description, WF_DESCRIPTION)
         self.assertEqual( len( states ), 0 )
         self.assertEqual( len( transitions ), 0 )
         self.assertEqual( len( variables ), 0 )
@@ -601,6 +618,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
+        WF_DESCRIPTION = 'This is a normal DCWorkflow'
         WF_INITIAL_STATE = 'closed'
 
         site = self._initSite()
@@ -617,16 +635,19 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         , worklists
         , permissions
         , scripts
+        , description
         ) = configurator.parseWorkflowXML(
                           _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID
                             , 'title' : WF_TITLE
+                            , 'description' : WF_DESCRIPTION
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID.replace(' ', '_')
                             } )
 
         self.assertEqual( workflow_id, WF_ID )
         self.assertEqual( title, WF_TITLE )
+        self.assertEqual( description, WF_DESCRIPTION )
         self.assertEqual( state_variable, 'state' )
         self.assertEqual( initial_state, WF_INITIAL_STATE )
 
@@ -634,6 +655,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
+        WF_DESCRIPTION = 'Normal workflow'
         WF_INITIAL_STATE = 'closed'
 
         site = self._initSite()
@@ -650,10 +672,12 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         , worklists
         , permissions
         , scripts
+        , description
         ) = configurator.parseWorkflowXML(
                           _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID
                             , 'title' : WF_TITLE
+                            , 'description' : WF_DESCRIPTION
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID.replace(' ', '_')
                             } )
@@ -697,6 +721,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
+        WF_DESCRIPTION = 'Normal workflow'
         WF_INITIAL_STATE = 'closed'
 
         site = self._initSite()
@@ -713,10 +738,12 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         , worklists
         , permissions
         , scripts
+        , description 
         ) = configurator.parseWorkflowXML(
                           _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID
                             , 'title' : WF_TITLE
+                            , 'description' : WF_DESCRIPTION
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID.replace(' ', '_')
                             } )
@@ -764,6 +791,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
+        WF_DESCRIPTION = 'Normal workflow'
         WF_INITIAL_STATE = 'closed'
 
         site = self._initSite()
@@ -780,10 +808,12 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         , worklists
         , permissions
         , scripts
+        , description
         ) = configurator.parseWorkflowXML(
                           _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID
                             , 'title' : WF_TITLE
+                            , 'description' : WF_DESCRIPTION
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID.replace(' ', '_')
                             } )
@@ -841,6 +871,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
+        WF_DESCRIPTION = 'Normal workflow'
         WF_INITIAL_STATE = 'closed'
 
         site = self._initSite()
@@ -857,10 +888,12 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         , worklists
         , permissions
         , scripts
+        , description
         ) = configurator.parseWorkflowXML(
                           _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID
                             , 'title' : WF_TITLE
+                            , 'description' : WF_DESCRIPTION
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID.replace(' ', '_')
                             } )
@@ -902,6 +935,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
+        WF_DESCRIPTION = 'Normal workflow'
         WF_INITIAL_STATE = 'closed'
 
         site = self._initSite()
@@ -918,10 +952,12 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         , worklists
         , permissions
         , scripts
+        , description
         ) = configurator.parseWorkflowXML(
                           _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID
                             , 'title' : WF_TITLE
+                            , 'description' : WF_DESCRIPTION
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID.replace(' ', '_')
                             } )
@@ -938,6 +974,7 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
+        WF_DESCRIPTION = 'Normal workflow'
         WF_INITIAL_STATE = 'closed'
 
         site = self._initSite()
@@ -954,10 +991,12 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
         , worklists
         , permissions
         , scripts
+        , description
         ) = configurator.parseWorkflowXML(
                           _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID
                             , 'title' : WF_TITLE
+                            , 'description': WF_DESCRIPTION
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID.replace(' ', '_')
                             } )
@@ -1255,6 +1294,7 @@ _EMPTY_WORKFLOW_EXPORT = """\
 <dc-workflow
     workflow_id="%s"
     title="%s"
+    description="%s"
     state_variable="state"
     initial_state="%s">
 </dc-workflow>
@@ -1510,6 +1550,7 @@ _NORMAL_WORKFLOW_EXPORT = """\
 <dc-workflow
     workflow_id="%(workflow_id)s"
     title="%(title)s"
+    description="%(description)s"
     state_variable="state"
     initial_state="%(initial_state)s">
  <permission>Open content for modifications</permission>
@@ -1771,8 +1812,10 @@ class Test_exportWorkflow(_WorkflowSetup, _GuardChecker):
 
         WF_ID_NON = 'non_dcworkflow'
         WF_TITLE_NON = 'Non-DCWorkflow'
+        WF_DESCRIPTION_NON = 'Not a DCWorkflow'
         WF_ID_DC = 'dcworkflow'
         WF_TITLE_DC = 'DCWorkflow'
+        WF_DESCRIPTION_DC = 'I am a DCWorkflow'
         WF_INITIAL_STATE = 'closed'
 
         site = self._initSite()
@@ -1780,10 +1823,12 @@ class Test_exportWorkflow(_WorkflowSetup, _GuardChecker):
         wf_tool = site.portal_workflow
         nondcworkflow = DummyWorkflow( WF_TITLE_NON )
         nondcworkflow.title = WF_TITLE_NON
+        nondcworkflow.description = WF_DESCRIPTION_NON
         wf_tool._setObject( WF_ID_NON, nondcworkflow )
 
         dcworkflow = self._initDCWorkflow( WF_ID_DC )
         dcworkflow.title = WF_TITLE_DC
+        dcworkflow.description = WF_DESCRIPTION_DC
         dcworkflow.initial_state = WF_INITIAL_STATE
         dcworkflow.permissions = _WF_PERMISSIONS
         self._initVariables( dcworkflow )
@@ -1809,6 +1854,7 @@ class Test_exportWorkflow(_WorkflowSetup, _GuardChecker):
                         , _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID_DC
                             , 'title' : WF_TITLE_DC
+                            , 'description' : WF_DESCRIPTION_DC
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID_DC.replace(' ', '_')
                             } )
@@ -1825,12 +1871,14 @@ class Test_exportWorkflow(_WorkflowSetup, _GuardChecker):
 
         WF_ID_DC = 'name with spaces'
         WF_TITLE_DC = 'DCWorkflow with spaces'
+        WF_DESCRIPTION_DC = 'Workflow w/spaces'
         WF_INITIAL_STATE = 'closed'
 
         site = self._initSite()
 
         dcworkflow = self._initDCWorkflow( WF_ID_DC )
         dcworkflow.title = WF_TITLE_DC
+        dcworkflow.description = WF_DESCRIPTION_DC
         dcworkflow.initial_state = WF_INITIAL_STATE
         dcworkflow.permissions = _WF_PERMISSIONS
         self._initVariables( dcworkflow )
@@ -1857,6 +1905,7 @@ class Test_exportWorkflow(_WorkflowSetup, _GuardChecker):
                         , _NORMAL_WORKFLOW_EXPORT
                           % { 'workflow_id' : WF_ID_DC
                             , 'title' : WF_TITLE_DC
+                            , 'description' : WF_DESCRIPTION_DC
                             , 'initial_state' : WF_INITIAL_STATE
                             , 'workflow_filename' : WF_ID_DC.replace(' ', '_')
                             } )
@@ -1874,18 +1923,19 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
 
     layer = ExportImportZCMLLayer
 
-    def _importNormalWorkflow( self, wf_id, wf_title, wf_initial_state ):
+    def _importNormalWorkflow( self, wf_id, wf_title, 
+                               wf_description, wf_initial_state ):
         from Products.CMFCore.exportimport.workflow import importWorkflowTool
 
         site, context = self._prepareImportNormalWorkflow(
-            wf_id, wf_title, wf_initial_state)
+            wf_id, wf_title, wf_description, wf_initial_state)
 
         importWorkflowTool(context)
 
         return site.portal_workflow
 
-    def _prepareImportNormalWorkflow(self, wf_id, wf_title, wf_initial_state,
-                                     site=None, purge=True):
+    def _prepareImportNormalWorkflow(self, wf_id, wf_title, wf_description, 
+                                     wf_initial_state, site=None, purge=True):
         if site is None:
             site = self._initSite()
         workflow_filename = wf_id.replace(' ', '_')
@@ -1901,6 +1951,7 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
                       ] = ( _NORMAL_WORKFLOW_EXPORT
                             % { 'workflow_id' : wf_id
                               , 'title' : wf_title
+                              , 'description' : wf_description
                               , 'initial_state' : wf_initial_state
                               , 'workflow_filename' : workflow_filename
                               }
@@ -2075,16 +2126,18 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
 
         WF_ID = 'dcworkflow_purge'
         WF_TITLE = 'DC Workflow testing purge'
+        WF_DESCRIPTION = 'Test Purge'
         WF_INITIAL_STATE = 'closed'
 
         # Import a first time
         site, context = self._prepareImportNormalWorkflow(
-            WF_ID, WF_TITLE, WF_INITIAL_STATE)
+            WF_ID, WF_TITLE, WF_DESCRIPTION, WF_INITIAL_STATE)
         importWorkflowTool(context)
 
         # Now reimport without purge
         site, context = self._prepareImportNormalWorkflow(
-            WF_ID, WF_TITLE, WF_INITIAL_STATE, site=site, purge=False)
+            WF_ID, WF_TITLE, WF_DESCRIPTION, WF_INITIAL_STATE, 
+            site=site, purge=False)
         importWorkflowTool(context)
         workflow = site.portal_workflow.objectValues()[1]
 
@@ -2111,9 +2164,11 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
 
         WF_ID = 'dcworkflow_tool'
         WF_TITLE = 'DC Workflow testing tool'
+        WF_DESCRIPTION = 'Testing Tool'
         WF_INITIAL_STATE = 'closed'
 
-        tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
+        tool = self._importNormalWorkflow( WF_ID, WF_TITLE,
+                                           WF_DESCRIPTION, WF_INITIAL_STATE )
 
         self.assertEqual( len( tool.objectIds() ), 2 )
         self.assertEqual( tool.objectIds()[ 1 ], WF_ID )
@@ -2122,9 +2177,11 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
 
         WF_ID = 'dcworkflow_attrs'
         WF_TITLE = 'DC Workflow testing attrs'
+        WF_DESCRIPTION = 'Testing Attributes'
         WF_INITIAL_STATE = 'closed'
 
-        tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
+        tool = self._importNormalWorkflow( WF_ID, WF_TITLE,
+                                           WF_DESCRIPTION, WF_INITIAL_STATE )
 
         workflow = tool.objectValues()[ 1 ]
         self.assertEqual( workflow.meta_type, DCWorkflowDefinition.meta_type )
@@ -2136,9 +2193,11 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
 
         WF_ID = 'dcworkflow_permissions'
         WF_TITLE = 'DC Workflow testing permissions'
+        WF_DESCRIPTION = 'Testing Permissions'
         WF_INITIAL_STATE = 'closed'
 
-        tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
+        tool = self._importNormalWorkflow( WF_ID, WF_TITLE,
+                                           WF_DESCRIPTION, WF_INITIAL_STATE )
 
         workflow = tool.objectValues()[ 1 ]
 
@@ -2152,9 +2211,11 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
 
         WF_ID = 'dcworkflow_variables'
         WF_TITLE = 'DC Workflow testing variables'
+        WF_DESCRIPTION = 'Testing Variables'
         WF_INITIAL_STATE = 'closed'
 
-        tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
+        tool = self._importNormalWorkflow( WF_ID, WF_TITLE,
+                                           WF_DESCRIPTION, WF_INITIAL_STATE )
 
         workflow = tool.objectValues()[ 1 ]
 
@@ -2184,9 +2245,11 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
 
         WF_ID = 'dcworkflow_states'
         WF_TITLE = 'DC Workflow testing states'
+        WF_DESCRIPTION = 'Testing States'
         WF_INITIAL_STATE = 'closed'
 
-        tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
+        tool = self._importNormalWorkflow( WF_ID, WF_TITLE,
+                                           WF_DESCRIPTION, WF_INITIAL_STATE )
 
         workflow = tool.objectValues()[ 1 ]
 
@@ -2241,9 +2304,11 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
 
         WF_ID = 'dcworkflow_transitions'
         WF_TITLE = 'DC Workflow testing transitions'
+        WF_DESCRIPTION = 'Testing Transitions'
         WF_INITIAL_STATE = 'closed'
 
-        tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
+        tool = self._importNormalWorkflow( WF_ID, WF_TITLE,
+                                           WF_DESCRIPTION, WF_INITIAL_STATE )
 
         workflow = tool.objectValues()[ 1 ]
 
@@ -2283,9 +2348,11 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
 
         WF_ID = 'dcworkflow_worklists'
         WF_TITLE = 'DC Workflow testing worklists'
+        WF_DESCRIPTION = 'Testing Worklists'
         WF_INITIAL_STATE = 'closed'
 
-        tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
+        tool = self._importNormalWorkflow( WF_ID, WF_TITLE, 
+                                           WF_DESCRIPTION, WF_INITIAL_STATE )
 
         workflow = tool.objectValues()[ 1 ]
 
@@ -2349,9 +2416,11 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
 
         WF_ID = 'dcworkflow_scripts'
         WF_TITLE = 'DC Workflow testing scripts'
+        WF_DESCRIPTION = 'Testing Scripts'
         WF_INITIAL_STATE = 'closed'
 
-        tool = self._importNormalWorkflow( WF_ID, WF_TITLE, WF_INITIAL_STATE )
+        tool = self._importNormalWorkflow( WF_ID, WF_TITLE, 
+                                           WF_DESCRIPTION, WF_INITIAL_STATE )
 
         workflow = tool.objectValues()[ 1 ]
 

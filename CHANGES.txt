@@ -2,6 +2,10 @@ CMF 2.2.0-beta (unreleased)
 
   New Features
 
+    - CMFCalendar.CalendarTool: Added a new method getNextEvent to grab the
+      next event relative to a given point in time.
+      (http://www.zope.org/Collectors/CMF/462)
+
     - CMFCore.exportimport.skins: Added the ability to remove whole skin
       selections using a GS profile.
       (http://www.zope.org/Collectors/CMF/479)

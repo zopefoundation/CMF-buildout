@@ -30,6 +30,23 @@ from Products.CMFCore.utils import UniqueObject
 from interfaces import ICalendarTool
 from permissions import ManagePortal
 
+def sort_by_date(x, y):
+    """ Utility function for sorting by start times, falling back on end times
+    """
+    z = cmp(x.start, y.start)
+    if not z:
+        return cmp(x.end, y.end)
+    return z
+    
+def unique_results(results):
+    """ Utility function to create a sequence of unique calendar results
+    """
+    rids = {}
+    for result in results:
+        rids[result.getRID()] = result
+    return rids.values()
+
+
 class CalendarTool (UniqueObject, SimpleItem):
     """ A tool for encapsulating how calendars work and are displayed """
 
@@ -296,22 +313,10 @@ class CalendarTool (UniqueObject, SimpleItem):
                          end={'query': last_date, 'range': 'min'} )
 
         # Unique the results
-        results = []
-        rids = []
-        for item in query:
-            rid = item.getRID()
-            if not rid in rids:
-                results.append(item)
-                rids.append(rid)
-
-        def sort_function(x,y):
-            z = cmp(x.start,y.start)
-            if not z:
-                return cmp(x.end,y.end)
-            return z
+        results = unique_results(query)
 
         # Sort by start date
-        results.sort(sort_function)
+        results.sort(sort_by_date)
 
         return results
 
@@ -356,6 +361,27 @@ class CalendarTool (UniqueObject, SimpleItem):
         end = DateTime('%d/%02d/%02d 23:59:59' % (year, month, day))
 
         return (begin, end)
+        
+    security.declarePublic('getNextEvent')
+    def getNextEvent(self, start_date=None):
+        """ Get the next event that starts after start_date
+        
+        start_date is expected to be a DateTime instance
+        """
+        if start_date is None:
+            start_date = DateTime()
+
+        query = self.portal_catalog(
+                    portal_type=self.getCalendarTypes(),
+                    review_state=self.getCalendarStates(),
+                    start={'query': start_date, 'range': 'min'},
+                    sort_on='start')
+
+        results = unique_results(query)
+        if results:
+            results.sort(sort_by_date)
+            return results[0]
+
 
 InitializeClass(CalendarTool)
 registerToolInterface('portal_calendar', ICalendarTool)

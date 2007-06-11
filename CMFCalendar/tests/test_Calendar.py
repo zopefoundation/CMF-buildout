@@ -715,6 +715,38 @@ class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
         events = caltool.catalog_getevents(2002, 5)
         self.assertEqual([events[e] for e in range(1, 8)], data)
 
+    def test_getNextEvent(self):
+        cal = self.app.site.portal_calendar
+        wf_tool = self.app.site.portal_workflow
+        start_one = DateTime('2002/05/01 19:30:00 GMT+1')
+        stop_one = DateTime('2002/05/01 22:00:00 GMT+1')
+        start_two = DateTime('2002/06/01 19:30:00 GMT+1')
+        stop_two = DateTime('2002/06/01 22:00:00 GMT+1')
+
+        test_day = DateTime('2002/07/01')
+
+        self.app.site.invokeFactory( 'Event'
+                                   , id='party1'
+                                   , start_date=start_one
+                                   , end_date=stop_one
+                                   )
+
+
+        self.app.site.invokeFactory( 'Event'
+                                   , id='party2'
+                                   , start_date=start_two
+                                   , end_date=start_two
+                                   )
+
+        wf_tool.doActionFor(self.app.site.party1, 'publish')
+        wf_tool.doActionFor(self.app.site.party2, 'publish')
+
+        # Check to see if we get only one event when back
+        self.assertEqual(cal.getNextEvent(stop_one).start, start_two)
+
+        # Check to see that we don't have events after July 2002
+        self.failIf(cal.getNextEvent(test_day))
+
 
 def test_suite():
     return unittest.TestSuite((

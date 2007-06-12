@@ -26,8 +26,11 @@ from StringIO import StringIO
 
 from DocumentTemplate.DT_Util import html_quote
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
+from zope.component import getSiteManager
+from zope.interface import implements
 from zope.interface.verify import verifyClass
 
+from Products.CMFCore.interfaces import ILinebreakNormalizer
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.content import BASIC_HTML
 from Products.CMFCore.tests.base.content import BASIC_ReST
@@ -61,6 +64,20 @@ class RequestTestBase(RequestTest):
 
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
+
+class DummyLinebreakNormalizer(object):
+
+    implements(ILinebreakNormalizer)
+
+    def __init__(self, before, after):
+        self.before = before
+        self.after = after
+
+    def normalizeIncoming(self, obj, text):
+        return text.replace(self.before, self.after)
+
+    def normalizeOutgoing(self, ob, text):
+        return text.replace(self.before, self.after)
 
 
 class DocumentTests(ConformsToContent, RequestTestBase):
@@ -473,6 +490,67 @@ class DocumentTests(ConformsToContent, RequestTestBase):
 
         self.assertEqual( d.Format(), 'text/plain' )
         self.assertEqual( d.text_format, 'structured-text' )
+
+    def test_normalize_linebreaks_incoming(self):
+        # New feature: Line breaks can be normalized on the way in
+        # and on the way out, *if* a specific utility exists.
+        # (http://www.zope.org/Collectors/CMF/174)
+        d = self._makeOne('foo', text='')
+        LF_TEXT = 'This\nis\nsome\ntext'
+        CRLF_TEXT = 'This\r\nis\r\nsome\r\ntext'
+
+        # First case, no normalizer installed. Text will stay the same.
+        d._edit(LF_TEXT)
+        self.assertEquals(d.text, LF_TEXT)
+
+        d._edit(CRLF_TEXT)
+        self.assertEquals(d.text, CRLF_TEXT)
+        
+        # Now register a normalizer that always replaces CRLF with LF
+        # When I pass in CRLFs, the resulting text will only have LFs.
+        crlf_to_lf = DummyLinebreakNormalizer('\r\n', '\n')
+        sm = getSiteManager()
+        sm.registerUtility(crlf_to_lf, ILinebreakNormalizer)
+
+        d._edit(CRLF_TEXT)
+        self.assertEquals(d.text, LF_TEXT)
+
+        d._edit(LF_TEXT)
+        self.assertEquals(d.text, LF_TEXT)
+
+        # cleanup
+        sm.unregisterUtility(crlf_to_lf, ILinebreakNormalizer)
+
+    def test_normalize_linebreaks_outgoing(self):
+        # New feature: Line breaks can be normalized on the way in
+        # and on the way out, *if* a specific utility exists.
+        # (http://www.zope.org/Collectors/CMF/174)
+        d = self._makeOne('foo', text='')
+        LF_TEXT = 'This\nis\nsome\ntext'
+        CRLF_TEXT = 'This\r\nis\r\nsome\r\ntext'
+        HEADERS = """Title: \r\nSubject: \r\nPublisher: No publisher\r\nDescription: \r\nContributors: \r\nEffective_date: None\r\nExpiration_date: None\r\nType: Unknown\r\nFormat: text/plain\r\nLanguage: \r\nRights: \r\nSafetyBelt: \r\n\r\n"""
+
+        # First case, no normalizer installed. Text will stay the same.
+        d.text = LF_TEXT
+        self.assertEquals(d.manage_FTPget(), HEADERS + LF_TEXT)
+
+        d.text = CRLF_TEXT
+        self.assertEquals(d.manage_FTPget(), HEADERS + CRLF_TEXT)
+
+        # Now register a normalizer that always replaces CRLF with LF
+        # When I pass in CRLFs, the resulting text will only have LFs.
+        crlf_to_lf = DummyLinebreakNormalizer('\r\n', '\n')
+        sm = getSiteManager()
+        sm.registerUtility(crlf_to_lf, ILinebreakNormalizer)
+
+        d.text = (CRLF_TEXT)
+        self.assertEquals(d.manage_FTPget(), HEADERS + LF_TEXT)
+
+        d.text = LF_TEXT
+        self.assertEquals(d.manage_FTPget(), HEADERS + LF_TEXT)
+
+        # cleanup
+        sm.unregisterUtility(crlf_to_lf, ILinebreakNormalizer)
 
 
 class DocumentFTPGetTests(RequestTestBase):

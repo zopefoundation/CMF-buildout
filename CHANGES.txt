@@ -2,6 +2,11 @@ CMF 2.2.0-beta (unreleased)
 
   New Features
 
+    - CMFDefault.Document and CMFDefault.NewsItem: It is now possible to
+      register a utility (ILinebreakNormalizer) that can normalize line 
+      breaks upon editing or rendering out to FTP.
+      (http://www.zope.org/Collectors/CMF/174)
+
     - CMFDefault.Document and CMFDefault.NewsItem: Added a format choice for
       ReStructuredText.
       (http://www.zope.org/Collectors/CMF/485)

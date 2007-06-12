@@ -30,9 +30,11 @@ except ImportError:
     REST_AVAILABLE = False
 from StructuredText.StructuredText import HTML
    
+from zope.component import queryUtility
 from zope.component.factory import Factory
 from zope.interface import implements
 
+from Products.CMFCore.interfaces import ILinebreakNormalizer
 from Products.CMFCore.PortalContent import PortalContent
 from Products.CMFCore.utils import contributorsplitter
 from Products.CMFCore.utils import keywordsplitter
@@ -107,12 +109,22 @@ class Document(PortalContent, DefaultDublinCoreImpl):
     def _edit(self, text):
         """ Edit the Document and cook the body.
         """
-        self.text = text
         self._size = len(text)
 
         text_format = self.text_format
         if not text_format:
             text_format = self.text_format
+
+        if text_format != 'html':
+            normalizer = queryUtility(ILinebreakNormalizer)
+            
+            if normalizer is not None:
+                self.text = normalizer.normalizeIncoming(self, text)
+            else:
+                self.text = text
+        else:
+            self.text = text
+            
         if text_format == 'html':
             self.cooked_text = text
         elif text_format == 'plain':
@@ -444,7 +456,14 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         else:
             hdrlist = self.getMetadataHeaders()
             hdrtext = formatRFC822Headers( hdrlist )
-            bodytext = '%s\r\n\r\n%s' % ( hdrtext, self.text )
+            normalizer = queryUtility(ILinebreakNormalizer)
+            
+            if normalizer is not None:
+                text = normalizer.normalizeOutgoing(self, self.text)
+            else:
+                text = self.text
+ 
+            bodytext = '%s\r\n\r\n%s' % ( hdrtext, text )
 
         return bodytext
 

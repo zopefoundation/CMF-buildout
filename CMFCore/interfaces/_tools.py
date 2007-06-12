@@ -1993,3 +1993,33 @@ class IWorkflowDefinition(Interface):
 
         o Permission:  Private (Python only)
         """
+
+
+class ILinebreakNormalizer(Interface):
+    
+    """ Interface for a utility to normalize line breaks in plain text
+
+    Implementations of this utility may adjust line breaks to conform to
+    any desired type, such as LF or CRLF.
+    """
+
+    def normalizeIncoming(ob, text):
+        """ Normalize line breaks in text pushed into the system
+
+        o ob is the content object receiving the text value
+
+        o text is the text value submitted by the user
+
+        o Permission:  Private (Python only)
+        """
+
+    def normalizeOutgoing(ob, text):
+        """ Normalize line breaks in text emitted by the system
+
+        o ob is the content object rendering the text value
+
+        o text is the text value to be rendered
+
+        o Permission:  Private (Python only)
+        """
+

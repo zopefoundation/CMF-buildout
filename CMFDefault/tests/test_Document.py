@@ -30,11 +30,15 @@ from zope.interface.verify import verifyClass
 
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.content import BASIC_HTML
+from Products.CMFCore.tests.base.content import BASIC_ReST
 from Products.CMFCore.tests.base.content import BASIC_STRUCTUREDTEXT
 from Products.CMFCore.tests.base.content import DOCTYPE
 from Products.CMFCore.tests.base.content import ENTITY_IN_TITLE
 from Products.CMFCore.tests.base.content import FAUX_HTML_LEADING_TEXT
 from Products.CMFCore.tests.base.content import HTML_TEMPLATE
+from Products.CMFCore.tests.base.content import ReST_NO_HEADERS
+from Products.CMFCore.tests.base.content import ReST_NO_HEADERS_BUT_COLON
+from Products.CMFCore.tests.base.content import ReST_WITH_HTML
 from Products.CMFCore.tests.base.content import SIMPLE_STRUCTUREDTEXT
 from Products.CMFCore.tests.base.content import SIMPLE_XHTML
 from Products.CMFCore.tests.base.content import STX_NO_HEADERS
@@ -258,6 +262,75 @@ class DocumentTests(ConformsToContent, RequestTestBase):
         self.failIf( d.CookedBody().find('<h1') >= 0 )
         self.failUnless( d.CookedBody().find('<h2') >= 0 )
 
+    def test_ReStructuredText(self):
+        self.REQUEST['BODY'] = BASIC_ReST
+        d = self._makeOne('foo')
+        d.PUT(self.REQUEST, self.RESPONSE)
+        d.edit(text_format='restructured-text', text=BASIC_ReST)
+
+        self.failUnless( hasattr(d, 'cooked_text') )
+        self.assertEqual( d.Format(), 'text/plain' )
+        self.assertEqual( d.Title(), 'My Document' )
+        self.assertEqual( d.Description(), 'A document by me' )
+        self.assertEqual( len(d.Contributors()), 3 )
+
+        # CookedBody() for consistency
+        self.failUnless( d.CookedBody().find('<p>') >= 0 )
+
+        #  override default
+        self.failUnless( d.CookedBody(rest_level=0).find('<h1') >= 0 )
+
+        # we should check for the list
+        self.failUnless( d.CookedBody().find('<ul') >= 0 )
+
+        # Make sure extra HTML is NOT found
+        self.failUnless( d.cooked_text.find('<title>') < 0 )
+        self.failUnless( d.cooked_text.find('<body>') < 0 )
+
+        # test subject/keyword headers
+        subj = list(d.Subject())
+        self.assertEqual( len(subj), 4 )
+        subj.sort()
+        self.assertEqual( subj, [ 'content management'
+                                , 'framework'
+                                , 'unit tests'
+                                , 'zope'
+                                ] )
+
+    def test_EditReStructuredTextWithHTML(self):
+        d = self._makeOne('foo')
+        d.edit(text_format='restructured-text', text=ReST_WITH_HTML)
+
+        self.assertEqual(d.Format(), 'text/plain')
+        self.assertEqual(d.get_size(), len(ReST_WITH_HTML))
+
+    def test_ReST_Levels(self):
+        d = self._makeOne('foo')
+        d.edit(text_format='restructured-text', text=BASIC_ReST)
+        d.CookedBody(rest_level=0, setlevel=True)
+        self.assertEqual( d._rest_level, 0)
+
+        ct = d.CookedBody()
+
+        # ReST always augments the level by one
+        self.failUnless( d.CookedBody().find('<h1') >= 0 )
+        self.assertEqual( d._rest_level, 0)
+
+        ct = d.CookedBody(rest_level=1)
+        self.failIf( ct.find('<h1') >= 0 )
+        self.failUnless( ct.find('<h2') >= 0 )
+        self.assertEqual( d._rest_level, 0 )
+
+        ct = d.CookedBody(rest_level=1, setlevel=1)
+        self.failIf( ct.find('<h1') >= 0 )
+        self.failUnless( ct.find('<h2') >= 0 )
+        self.assertEqual( d._rest_level, 1 )
+
+        ct = d.CookedBody()
+        self.assertEqual( d._rest_level, 1 )
+        self.failIf( d.CookedBody().find('<h1') >= 0 )
+        self.failUnless( d.CookedBody().find('<h2') >= 0 )
+
     def test_Init(self):
         self.REQUEST['BODY']=BASIC_STRUCTUREDTEXT
         d = self._makeOne('foo')
@@ -312,6 +385,29 @@ class DocumentTests(ConformsToContent, RequestTestBase):
         self.failUnless( 'plain' in d.Subject() )
         self.failUnless( 'STX' in d.Subject() )
 
+    def test_ReST_NoHeaders( self ):
+        self.REQUEST['BODY'] = ReST_NO_HEADERS
+        d = self._makeOne('foo')
+        d.editMetadata( title="Plain ReST"
+                       , description="Look, Ma, no headers!"
+                       , subject=( "plain", "ReST" )
+                       )
+        self.assertEqual( d.Format(), 'text/html' )
+        self.assertEqual( d.Title(), 'Plain ReST' )
+        self.assertEqual( d.Description(), 'Look, Ma, no headers!' )
+        self.assertEqual( len( d.Subject() ), 2 )
+        self.failUnless( 'plain' in d.Subject() )
+        self.failUnless( 'ReST' in d.Subject() )
+
+        d.PUT(self.REQUEST, self.RESPONSE)
+
+        self.assertEqual( d.Format(), 'text/plain' )
+        self.assertEqual( d.Title(), 'Plain ReST' )
+        self.assertEqual( d.Description(), 'Look, Ma, no headers!' )
+        self.assertEqual( len( d.Subject() ), 2 )
+        self.failUnless( 'plain' in d.Subject() )
+        self.failUnless( 'ReST' in d.Subject() )
+
     def test_STX_NoHeaders_but_colon( self ):
         d = self._makeOne('foo')
         d.editMetadata( title="Plain STX"
@@ -321,6 +417,16 @@ class DocumentTests(ConformsToContent, RequestTestBase):
 
         d.edit(text_format='structured-text', text=STX_NO_HEADERS_BUT_COLON)
         self.assertEqual( d.EditableBody(), STX_NO_HEADERS_BUT_COLON )
+
+    def test_ReST_NoHeaders_but_colon( self ):
+        d = self._makeOne('foo')
+        d.editMetadata( title="Plain ReST"
+                       , description="Look, Ma, no headers!"
+                       , subject=( "plain", "ST" )
+                       )
+
+        d.edit(text_format='restructured-text', text=ReST_NO_HEADERS_BUT_COLON)
+        self.assertEqual( d.EditableBody(), ReST_NO_HEADERS_BUT_COLON )
 
     def test_ZMI_edit( self ):
         d = self._makeOne('foo')
@@ -346,6 +452,12 @@ class DocumentTests(ConformsToContent, RequestTestBase):
         self.assertEqual( d.Format(), 'text/plain' )
         d.setFormat( d.Format() )
         self.assertEqual( d.text_format, 'structured-text' )
+
+        d.setFormat('restructured-text')
+        self.assertEqual( d.text_format, 'restructured-text' )
+        self.assertEqual( d.Format(), 'text/plain' )
+        d.setFormat( d.Format() )
+        self.assertEqual( d.text_format, 'restructured-text' )
 
         d.setFormat('html')
         self.assertEqual( d.text_format, 'html' )
@@ -511,6 +623,22 @@ class DocumentPUTTests(RequestTestBase):
 
     def test_PutStructuredText(self):
         self.REQUEST['BODY'] = BASIC_STRUCTUREDTEXT
+        d = self._makeOne('foo')
+        r = d.PUT(self.REQUEST, self.RESPONSE)
+
+        self.assertEqual( d.Format(), 'text/plain' )
+        self.assertEqual( r.status, 204 )
+
+    def test_PutReStructuredTextWithHTML(self):
+        self.REQUEST['BODY'] = ReST_WITH_HTML
+        d = self._makeOne('foo')
+        r = d.PUT(self.REQUEST, self.RESPONSE)
+
+        self.assertEqual( d.Format(), 'text/plain' )
+        self.assertEqual( r.status, 204 )
+
+    def test_PutReStructuredText(self):
+        self.REQUEST['BODY'] = BASIC_ReST
         d = self._makeOne('foo')
         r = d.PUT(self.REQUEST, self.RESPONSE)
 

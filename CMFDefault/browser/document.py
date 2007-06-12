@@ -38,10 +38,18 @@ from utils import decode
 from utils import memoize
 from utils import ViewBase
 
+from Products.CMFDefault.Document import REST_AVAILABLE
+
 available_text_formats = (
         (u'structured-text', 'structured-text', _(u'structured-text')),
         (u'plain', 'plain', _(u'plain text')),
         (u'html', 'html', _(u'html')))
+
+if REST_AVAILABLE:
+    available_text_formats +=  ( ( u'restructured-text'
+                                 , 'restructured-text'
+                                 , _(u'restructured-text')
+                                 ), )
 
 TextFormatVocabularyFactory = StaticVocabulary(available_text_formats)
 

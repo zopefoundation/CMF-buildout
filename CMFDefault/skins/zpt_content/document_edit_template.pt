@@ -23,6 +23,11 @@
  <tr>
   <th i18n:translate="">Format</th>
   <td>
+    <tal:condition tal:condition="context/rest_available">
+     <input type="radio" name="text_format" value="restructured-text" id="cb_rest"
+         tal:attributes="checked python: options['text_format']=='restructured-text'" />
+     <label for="cb_rest" i18n:translate="">ReStructured-text</label>
+     </tal:condition>
    <input type="radio" name="text_format" value="structured-text" id="cb_stx"
       tal:attributes="checked python: options['text_format']=='structured-text'" />
    <label for="cb_stx" i18n:translate="">structured-text</label>

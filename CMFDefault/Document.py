@@ -19,10 +19,17 @@ import transaction
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
+from App.config import getConfiguration
 from DocumentTemplate.DT_Util import html_quote
 from Globals import DTMLFile
 from Globals import InitializeClass
+try:
+    from reStructuredText import HTML as ReST
+    REST_AVAILABLE = True
+except ImportError:
+    REST_AVAILABLE = False
 from StructuredText.StructuredText import HTML
+   
 from zope.component.factory import Factory
 from zope.interface import implements
 
@@ -66,6 +73,8 @@ class Document(PortalContent, DefaultDublinCoreImpl):
     _size = 0
 
     _stx_level = 1                      # Structured text level
+    _rest_level = getConfiguration().rest_header_level # comes from zope.conf
+    rest_available = REST_AVAILABLE
 
     _last_safety_belt_editor = ''
     _last_safety_belt = ''
@@ -102,10 +111,14 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         self._size = len(text)
 
         text_format = self.text_format
+        if not text_format:
+            text_format = self.text_format
         if text_format == 'html':
             self.cooked_text = text
         elif text_format == 'plain':
             self.cooked_text = html_quote(text).replace('\n', '<br />')
+        elif text_format == 'restructured-text':
+            self.cooked_text = ReST(text, initial_header_level=self._rest_level)
         else:
             self.cooked_text = HTML(text, level=self._stx_level, header=0)
 
@@ -266,22 +279,34 @@ class Document(PortalContent, DefaultDublinCoreImpl):
     #
 
     security.declareProtected(View, 'CookedBody')
-    def CookedBody(self, stx_level=None, setlevel=0):
+    def CookedBody(self, stx_level=None, setlevel=0, rest_level=None):
         """ Get the "cooked" (ready for presentation) form of the text.
 
         The prepared basic rendering of an object.  For Documents, this
         means pre-rendered structured text, or what was between the
         <BODY> tags of HTML.
 
-        If the format is html, and 'stx_level' is not passed in or is the
-        same as the object's current settings, return the cached cooked
-        text.  Otherwise, recook.  If we recook and 'setlevel' is true,
-        then set the recooked text and stx_level on the object.
+        If the format is html, and 'stx_level' or 'rest_level' are not 
+        passed in or is the same as the object's current settings, return 
+        the cached cooked text.  Otherwise, recook.  If we recook and 
+        'setlevel' is true, then set the recooked text and stx_level or 
+        rest_level on the object.
         """
-        if (self.text_format == 'html' or self.text_format == 'plain'
+        if (
+            (self.text_format == 'html' or self.text_format == 'plain'
             or (stx_level is None)
-            or (stx_level == self._stx_level)):
+            or (stx_level == self._stx_level))
+            and 
+            ((rest_level is None) 
+            or (rest_level == self._rest_level))
+            ):
             return self.cooked_text
+        elif rest_level is not None:
+            cooked = ReST(self.text, initial_header_level=rest_level)
+            if setlevel:
+                self._rest_level = rest_level
+                self.cooked_text = cooked
+            return cooked
         else:
             cooked = HTML(self.text, level=stx_level, header=0)
             if setlevel:
@@ -321,14 +346,17 @@ class Document(PortalContent, DefaultDublinCoreImpl):
         """
         value = str(format)
         old_value = self.text_format
+        text_formats = ('structured-text', 'plain', 'restructured-text')
 
         if value == 'text/html' or value == 'html':
             self.text_format = 'html'
         elif value == 'text/plain':
-            if self.text_format not in ('structured-text', 'plain'):
+            if self.text_format not in text_formats:
                 self.text_format = 'structured-text'
         elif value == 'plain':
             self.text_format = 'plain'
+        elif value == 'restructured-text':
+            self.text_format = 'restructured-text'
         else:
             self.text_format = 'structured-text'
 

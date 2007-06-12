@@ -172,3 +172,56 @@ Subject: open source; Zope; community
 
 http://www.zope.org
 """
+
+BASIC_ReST = '''\
+Title: My Document
+Description: A document by me
+Contributors: foo@bar.com; baz@bam.net; no@yes.maybe
+Subject: content management, zope
+Keywords: unit tests; , framework
+
+==================
+This is the header
+==================
+
+Body body body body body body body body.
+
+* A list item
+
+* And another thing...
+'''
+
+ReST_WITH_HTML = """\
+Sometimes people do interesting things
+======================================
+
+Sometimes people do interesting things like have examples
+of HTML inside their ReStructured text document.  We should
+be detecting that this is indeed a restructured text document
+and **NOT** an HTML document::
+
+  <html>
+  <head><title>Hello World</title></head>
+  <body><p>Hello world, I am Bruce.</p></body>
+  </html>
+
+All in favor say pi!
+"""
+
+
+ReST_NO_HEADERS = """\
+============
+Title Phrase
+============
+This is a "plain" ReST file, with no headers.  Saving with
+it shouldn't overwrite any metadata.
+"""
+
+ReST_NO_HEADERS_BUT_COLON = """\
+======================
+Plain ReST:  No magic!
+======================
+
+This is a "plain" ReST file, with no headers.  Saving with
+it shouldn't overwrite any metadata.
+"""

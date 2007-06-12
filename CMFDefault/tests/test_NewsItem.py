@@ -22,6 +22,7 @@ from zope.interface.verify import verifyClass
 
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.content import BASIC_HTML
+from Products.CMFCore.tests.base.content import BASIC_ReST
 from Products.CMFCore.tests.base.content import BASIC_STRUCTUREDTEXT
 from Products.CMFCore.tests.base.content import DOCTYPE
 from Products.CMFCore.tests.base.content import ENTITY_IN_TITLE
@@ -68,6 +69,15 @@ class NewsItemTests(ConformsToContent, unittest.TestCase):
         self.assertEqual( d.text_format, 'structured-text' )
         self.assertEqual( d.text, '' )
 
+    def test_Empty_ReST(self):
+        d = self._makeOne('foo', text_format='restructured-text')
+
+        self.assertEqual( d.Title(), '' )
+        self.assertEqual( d.Description(), '' )
+        self.assertEqual( d.Format(), 'text/plain' )
+        self.assertEqual( d.text_format, 'restructured-text' )
+        self.assertEqual( d.text, '' )
+
     def test_Init_with_stx( self ):
         d = self._makeOne('foo', text_format='structured-text',
                           title='Foodoc')
@@ -76,6 +86,16 @@ class NewsItemTests(ConformsToContent, unittest.TestCase):
         self.assertEqual( d.Description(), '' )
         self.assertEqual( d.Format(), 'text/plain' )
         self.assertEqual( d.text_format, 'structured-text' )
+        self.assertEqual( d.text, '' )
+
+    def test_Init_with_ReST( self ):
+        d = self._makeOne('foo', text_format='restructured-text',
+                          title='Foodoc')
+
+        self.assertEqual( d.Title(), 'Foodoc' )
+        self.assertEqual( d.Description(), '' )
+        self.assertEqual( d.Format(), 'text/plain' )
+        self.assertEqual( d.text_format, 'restructured-text' )
         self.assertEqual( d.text, '' )
 
     def test_default_format( self ):

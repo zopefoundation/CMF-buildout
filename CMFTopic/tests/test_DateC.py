@@ -28,6 +28,12 @@ from Products.CMFTopic.Topic import Topic
 
 from common import CriterionTestCase
 
+def _replace_DC__as_of(new_callable):
+    from Products.CMFTopic import DateCriteria
+    old_value = DateCriteria._as_of
+    DateCriteria._as_of = new_callable
+    return old_value
+
 
 class FriendlyDateCriterionTests(CriterionTestCase):
 
@@ -44,6 +50,13 @@ class FriendlyDateCriterionTests(CriterionTestCase):
             , 'operation': 'within_day'
             , 'daterange': 'ahead'
             }
+
+    def setUp(self):
+        self._now = DateTime()
+        self._old_as_of = _replace_DC__as_of(lambda: self._now)
+
+    def tearDown(self):
+        _replace_DC__as_of(self._old_as_of)
 
     def _getTargetClass(self):
         from Products.CMFTopic.DateCriteria import FriendlyDateCriterion
@@ -180,6 +193,7 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
         type_crit.edit(value='Dummy Content')
         self.criterion = self.topic.getCriterion('modified')
         self.now = DateTime()
+        self._old_as_of = _replace_DC__as_of(lambda: self.now)
 
         for i in self.day_diffs:
             dummy_id = 'dummy%i' % i
@@ -193,6 +207,9 @@ class FriendlyDateCriterionFunctionalTests(RequestTest):
     def tearDown(self):
         RequestTest.tearDown(self)
         cleanUp()
+
+    def beforeTearDown(self):
+        _replace_DC__as_of(self._old_as_of)
 
     def test_Harness(self):
         # Make sure the test harness is set up OK

@@ -11,6 +11,12 @@ CMF 2.1.0-beta2 (unreleased)
 
   Bug Fixes
 
+    - SkinnableObjectManager: Changed the way skins are set up.
+      Acquisition wrapping no longer triggers 'setupCurrentSkin'. This is now
+      done on publishing traversal after the BeforeTraverseEvent triggers
+      'setSite'. This fix replaces a temporary hack introduced in 2.1.0-beta,
+      making sure ISkinsTool is looked up after setting the site.
+
     - CMFCore.CMFBTreeFolder: CMFBTreeFolders could not be used as the
       toplevel /Members container.
       (http://www.zope.org/Collectors/CMF/441)

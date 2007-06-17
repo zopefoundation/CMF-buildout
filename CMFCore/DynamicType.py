@@ -19,11 +19,10 @@ from urllib import quote
 
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
-
-from zope.app.publication.zopepublication import BeforeTraverseEvent
+from zope.app.publisher.browser import queryDefaultViewName
 from zope.component import getUtility
+from zope.component import queryMultiAdapter
 from zope.component import queryUtility
-from zope.event import notify
 from zope.interface import implements
 
 from interfaces import IDynamicType
@@ -31,8 +30,6 @@ from interfaces import ITypesTool
 from interfaces import IURLTool
 from interfaces.Dynamic import DynamicType as z2IDynamicType
 
-from zope.component import queryMultiAdapter
-from zope.app.publisher.browser import queryDefaultViewName
 
 class DynamicType:
 
@@ -89,7 +86,7 @@ class DynamicType:
         else:
             msg = 'Action "%s" not available for %s' % (
                         action_chain, '/'.join(self.getPhysicalPath()))
-            raise ValueError(msg) 
+            raise ValueError(msg)
 
     # Support for dynamic icons
 
@@ -123,8 +120,6 @@ class DynamicType:
         """
         # XXX hack around a bug(?) in BeforeTraverse.MultiHook
         REQUEST = arg2 or arg1
-
-        notify(BeforeTraverseEvent(self, REQUEST))
 
         if REQUEST['REQUEST_METHOD'] not in ('GET', 'POST'):
             return

@@ -32,6 +32,7 @@ RegistrationTool
     >>> from Products.CMFCore.interfaces import IMembershipTool
     >>> from Products.MailHost.interfaces import IMailHost
     >>> setSite(app.site)
+    >>> app.site.setupCurrentSkin(app.REQUEST)
     >>> sm = getSiteManager()
     >>> sm.registerUtility(MembershipTool(), IMembershipTool)
     >>> sm.registerUtility(MailHost(), IMailHost)

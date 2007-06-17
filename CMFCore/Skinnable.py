@@ -25,7 +25,6 @@ from zope.component import getSiteManager
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
-from Acquisition import ImplicitAcquisitionWrapper
 from Globals import InitializeClass
 from OFS.ObjectManager import ObjectManager
 from ZODB.POSException import ConflictError
@@ -47,7 +46,7 @@ except AttributeError:
     except AttributeError:
         superGetAttr = None
 
-_marker = []  # Create a new marker object.
+_MARKER = object()  # Create a new marker object.
 
 
 SKINDATA = {} # mapping thread-id -> (skinobj, skinname, ignore, resolve)
@@ -90,8 +89,8 @@ class SkinnableObjectManager(ObjectManager):
                 if not ignore.has_key(name):
                     if resolve.has_key(name):
                         return resolve[name]
-                    subob = getattr(ob, name, _marker)
-                    if subob is not _marker:
+                    subob = getattr(ob, name, _MARKER)
+                    if subob is not _MARKER:
                         # Return it in context of self, forgetting
                         # its location and acting as if it were located
                         # in self.
@@ -110,11 +109,6 @@ class SkinnableObjectManager(ObjectManager):
         """
         skinob = None
         sf = queryUtility(ISkinsTool)
-        if sf is None:
-            # XXX: Maybe we can set up the skin *after* the sm?
-            # try again with self as explicit site
-            sm = getSiteManager(self)
-            sf = sm.queryUtility(ISkinsTool)
 
         if sf is not None:
            if name is not None:
@@ -130,16 +124,12 @@ class SkinnableObjectManager(ObjectManager):
     def getSkinNameFromRequest(self, REQUEST=None):
         '''Returns the skin name from the Request.'''
         sf = queryUtility(ISkinsTool)
-        if sf is None:
-            # XXX: Maybe we can set up the skin *after* the sm?
-            # try again with self as explicit site
-            sm = getSiteManager(self)
-            sf = sm.queryUtility(ISkinsTool)
+
         if sf is not None:
             return REQUEST.get(sf.getRequestVarname(), None)
 
     security.declarePublic('changeSkin')
-    def changeSkin(self, skinname):
+    def changeSkin(self, skinname, REQUEST=_MARKER):
         '''Change the current skin.
 
         Can be called manually, allowing the user to change
@@ -149,7 +139,11 @@ class SkinnableObjectManager(ObjectManager):
         if skinobj is not None:
             tid = get_ident()
             SKINDATA[tid] = (skinobj, skinname, {}, {})
-            REQUEST = getattr(self, 'REQUEST', None)
+            if REQUEST is _MARKER:
+                REQUEST = getattr(self, 'REQUEST', None)
+                warn("changeSkin should be called with 'REQUEST' as second "
+                     "argument. The BBB code will be removed in CMF 2.3.",
+                     DeprecationWarning, stacklevel=2)
             if REQUEST is not None:
                 REQUEST._hold(SkinDataCleanup(tid))
 
@@ -177,15 +171,18 @@ class SkinnableObjectManager(ObjectManager):
             del SKINDATA[tid]
 
     security.declarePublic('setupCurrentSkin')
-    def setupCurrentSkin(self, REQUEST=None):
+    def setupCurrentSkin(self, REQUEST=_MARKER):
         '''
         Sets up skindata so that __getattr__ can find it.
 
         Can NOT be called manually to change skins in the middle of a
         request! Use changeSkin for that.
         '''
-        if REQUEST is None:
+        if REQUEST is _MARKER:
             REQUEST = getattr(self, 'REQUEST', None)
+            warn("setupCurrentSkin should be called with 'REQUEST' as "
+                 "argument. The BBB code will be removed in CMF 2.3.",
+                 DeprecationWarning, stacklevel=2)
         if REQUEST is None:
             # self is not fully wrapped at the moment.  Don't
             # change anything.
@@ -194,23 +191,14 @@ class SkinnableObjectManager(ObjectManager):
             # Already set up for this request.
             return
         skinname = self.getSkinNameFromRequest(REQUEST)
-        self.changeSkin(skinname)
-
-    def __of__(self, parent):
-        '''
-        Sneakily sets up the portal skin then returns the wrapper
-        that Acquisition.Implicit.__of__() would return.
-        '''
-        w_self = ImplicitAcquisitionWrapper(self, parent)
         try:
-            w_self.setupCurrentSkin()
+            self.changeSkin(skinname, REQUEST)
         except ConflictError:
             raise
         except:
             # This shouldn't happen, even if the requested skin
             # does not exist.
             logger.exception("Unable to setupCurrentSkin()")
-        return w_self
 
     def _checkId(self, id, allow_dup=0):
         '''

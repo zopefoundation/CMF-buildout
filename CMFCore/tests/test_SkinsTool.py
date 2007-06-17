@@ -106,7 +106,7 @@ class SkinnableTests(unittest.TestCase):
         self.failUnless(som.getCurrentSkinName() == 'skinA')
 
         # after a changeSkin the new skin name should be returned
-        som.changeSkin('skinB')
+        som.changeSkin('skinB', som.REQUEST)
         self.failUnless(som.getCurrentSkinName() == 'skinB')
 
 

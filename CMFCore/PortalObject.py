@@ -21,7 +21,9 @@ from five.localsitemanager import find_next_sitemanager
 from five.localsitemanager.registry import PersistentComponents
 from Globals import InitializeClass
 from Products.Five.component.interfaces import IObjectManagerSite
+from zope.app.publication.zopepublication import BeforeTraverseEvent
 from zope.component.globalregistry import base
+from zope.event import notify
 from zope.interface import implements
 
 from interfaces import ISiteRoot
@@ -44,7 +46,6 @@ class PortalObjectBase(PortalFolder, SkinnableObjectManager):
 
     # Ensure certain attributes come from the correct base class.
     __getattr__ = SkinnableObjectManager.__getattr__
-    __of__ = SkinnableObjectManager.__of__
     _checkId = SkinnableObjectManager._checkId
 
     # Ensure all necessary permissions exist.
@@ -72,5 +73,17 @@ class PortalObjectBase(PortalFolder, SkinnableObjectManager):
             self._components = PersistentComponents(name, (next,))
             self._components.__parent__ = self
         return self._components
+
+    def __before_publishing_traverse__(self, arg1, arg2=None):
+        """ Pre-traversal hook.
+        """
+        # XXX hack around a bug(?) in BeforeTraverse.MultiHook
+        REQUEST = arg2 or arg1
+
+        notify(BeforeTraverseEvent(self, REQUEST))
+        self.setupCurrentSkin(REQUEST)
+
+        super(PortalObjectBase,
+              self).__before_publishing_traverse__(arg1, arg2)
 
 InitializeClass(PortalObjectBase)

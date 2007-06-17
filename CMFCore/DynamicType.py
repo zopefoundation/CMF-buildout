@@ -19,12 +19,10 @@ from urllib import quote
 
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
-from zope.app.publication.zopepublication import BeforeTraverseEvent
 from zope.app.publisher.browser import queryDefaultViewName
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
 from zope.component import queryUtility
-from zope.event import notify
 from zope.interface import implements
 
 from interfaces import IDynamicType
@@ -120,8 +118,6 @@ class DynamicType:
         """
         # XXX hack around a bug(?) in BeforeTraverse.MultiHook
         REQUEST = arg2 or arg1
-
-        notify(BeforeTraverseEvent(self, REQUEST))
 
         if REQUEST['REQUEST_METHOD'] not in ('GET', 'POST'):
             return

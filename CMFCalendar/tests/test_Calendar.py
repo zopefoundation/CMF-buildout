@@ -109,6 +109,7 @@ class CalendarRequestTests(ZopeTestCase.FunctionalTestCase):
 
     def afterSetUp(self):
         setSite(self.app.site)
+        self.app.site.setupCurrentSkin(self.app.REQUEST)
         newSecurityManager(None, UnrestrictedUser('god', '', ['Manager'], ''))
 
         # sessioning setup

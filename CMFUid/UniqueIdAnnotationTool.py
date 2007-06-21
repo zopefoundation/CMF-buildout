@@ -27,7 +27,6 @@ from OFS.SimpleItem import SimpleItem
 from zope.component import queryUtility
 from zope.interface import implements
 
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
@@ -110,8 +109,7 @@ def handleUidAnnotationEvent(ob, event):
                 # assign new uid
                 uid_handler.register(ob)
         
-class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager,
-                             ActionProviderBase):
+class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager):
 
     __doc__ = __doc__ # copy from module
 
@@ -119,7 +117,6 @@ class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager,
 
     manage_options = (
         PropertyManager.manage_options +
-        ActionProviderBase.manage_options +
         SimpleItem.manage_options
     )
 

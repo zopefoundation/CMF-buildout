@@ -24,11 +24,9 @@ from zope.interface.verify import verifyClass
 class UndoToolTests(unittest.TestCase):
 
     def test_interfaces(self):
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IUndoTool
         from Products.CMFCore.UndoTool import UndoTool
 
-        verifyClass(IActionProvider, UndoTool)
         verifyClass(IUndoTool, UndoTool)
 
 

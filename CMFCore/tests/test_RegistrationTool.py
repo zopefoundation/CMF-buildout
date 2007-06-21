@@ -29,11 +29,9 @@ class RegistrationToolTests(unittest.TestCase):
         return RegistrationTool()
 
     def test_interfaces(self):
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IRegistrationTool
         from Products.CMFCore.RegistrationTool import RegistrationTool
 
-        verifyClass(IActionProvider, RegistrationTool)
         verifyClass(IRegistrationTool, RegistrationTool)
 
     def test_generatePassword(self):

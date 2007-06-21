@@ -25,7 +25,6 @@ from OFS.SimpleItem import SimpleItem
 from zope.component import getUtility
 from zope.interface import implements
 
-from ActionProviderBase import ActionProviderBase
 from interfaces import IMembershipTool
 from interfaces import IRegistrationTool
 from permissions import AddPortalMember
@@ -38,7 +37,7 @@ from utils import Message as _
 from utils import UniqueObject
 
 
-class RegistrationTool(UniqueObject, SimpleItem, ActionProviderBase):
+class RegistrationTool(UniqueObject, SimpleItem):
 
     """ Create and modify users by making calls to portal_membership.
     """
@@ -53,10 +52,12 @@ class RegistrationTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     security = ClassSecurityInfo()
 
-    manage_options = (ActionProviderBase.manage_options +
-                     ({ 'label' : 'Overview', 'action' : 'manage_overview' }
-                     ,{ 'label' : 'Configure', 'action' : 'manage_configuration' }
-                     ) + SimpleItem.manage_options)
+    manage_options = ( ({'label': 'Overview',
+                         'action': 'manage_overview'},
+                        {'label': 'Configure',
+                         'action': 'manage_configuration'})
+                     + SimpleItem.manage_options
+                     )
 
     #
     #   ZMI methods

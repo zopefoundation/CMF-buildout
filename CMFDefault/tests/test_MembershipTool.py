@@ -42,11 +42,9 @@ class MembershipToolTests(unittest.TestCase):
         self.site._setObject( 'portal_membership', self._makeOne() )
 
     def test_interfaces(self):
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFDefault.interfaces import IMembershipTool
         from Products.CMFDefault.MembershipTool import MembershipTool
 
-        verifyClass(IActionProvider, MembershipTool)
         verifyClass(IMembershipTool, MembershipTool)
 
     def test_MembersFolder_methods(self):

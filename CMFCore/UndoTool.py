@@ -21,7 +21,6 @@ from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
 
-from ActionProviderBase import ActionProviderBase
 from exceptions import AccessControl_Unauthorized
 from interfaces import IUndoTool
 from permissions import ListUndoableChanges
@@ -33,7 +32,7 @@ from utils import registerToolInterface
 from utils import UniqueObject
 
 
-class UndoTool(UniqueObject, SimpleItem, ActionProviderBase):
+class UndoTool(UniqueObject, SimpleItem):
 
     """ This tool is used to undo changes.
     """
@@ -45,11 +44,11 @@ class UndoTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     security = ClassSecurityInfo()
 
-    manage_options = ( ActionProviderBase.manage_options +
-                       SimpleItem.manage_options +
-                       ({ 'label' : 'Overview', 'action' : 'manage_overview' }
-                     ,
-                     ))
+    manage_options = ( SimpleItem.manage_options
+                     + ({'label': 'Overview',
+                         'action': 'manage_overview'},)
+                     )
+
     #
     #   ZMI methods
     #

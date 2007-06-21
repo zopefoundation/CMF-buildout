@@ -49,10 +49,8 @@ class RegistrationToolTests(RequestTest):
         RequestTest.tearDown(self)
 
     def test_interfaces(self):
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IRegistrationTool
 
-        verifyClass(IActionProvider, self._getTargetClass())
         verifyClass(IRegistrationTool, self._getTargetClass())
 
     def test_spamcannon_collector_243( self ):

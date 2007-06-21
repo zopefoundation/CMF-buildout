@@ -80,10 +80,8 @@ class MemberDataToolTests(unittest.TestCase):
         cleanUp()
 
     def test_interfaces(self):
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.MemberDataTool import MemberDataTool
 
-        verifyClass(IActionProvider, MemberDataTool)
         verifyClass(IMemberDataTool, MemberDataTool)
 
     def test_deleteMemberData(self):

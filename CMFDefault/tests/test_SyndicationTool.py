@@ -45,10 +45,8 @@ class SyndicationToolTests(SecurityTest):
         SecurityTest.tearDown(self)
 
     def test_interfaces(self):
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import ISyndicationTool
 
-        verifyClass(IActionProvider, self._getTargetClass())
         verifyClass(ISyndicationTool, self._getTargetClass())
 
     def test_empty(self):

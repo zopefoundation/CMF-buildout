@@ -38,11 +38,9 @@ from Products.CMFCore.tests.base.testcase import SecurityTest
 class MembershipToolTests(unittest.TestCase):
 
     def test_interfaces(self):
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IMembershipTool
         from Products.CMFCore.MembershipTool import MembershipTool
 
-        verifyClass(IActionProvider, MembershipTool)
         verifyClass(IMembershipTool, MembershipTool)
 
 

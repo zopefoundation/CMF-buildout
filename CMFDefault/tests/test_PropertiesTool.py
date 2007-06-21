@@ -24,11 +24,9 @@ from zope.interface.verify import verifyClass
 class PropertiesToolTests(unittest.TestCase):
 
     def test_interfaces(self):
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IPropertiesTool
         from Products.CMFDefault.PropertiesTool import PropertiesTool
 
-        verifyClass(IActionProvider, PropertiesTool)
         verifyClass(IPropertiesTool, PropertiesTool)
 
 

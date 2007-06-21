@@ -49,11 +49,9 @@ class DiscussionToolTests(unittest.TestCase):
         cleanUp()
 
     def test_interfaces(self):
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IDiscussionTool
         from Products.CMFDefault.DiscussionTool import DiscussionTool
 
-        verifyClass(IActionProvider, DiscussionTool)
         verifyClass(IDiscussionTool, DiscussionTool)
 
     def test_overrideDiscussionFor(self):

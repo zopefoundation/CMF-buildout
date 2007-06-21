@@ -23,7 +23,6 @@ from OFS.SimpleItem import SimpleItem
 from zope.component import getUtility
 from zope.interface import implements
 
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces import IDiscussionResponse
 from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.interfaces import IMembershipTool
@@ -40,7 +39,7 @@ from utils import _dtmldir
 _marker = []
 
 
-class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
+class DiscussionTool(UniqueObject, SimpleItem):
 
     """ Links content to discussions.
     """
@@ -52,10 +51,10 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
 
     security = ClassSecurityInfo()
 
-    manage_options = (ActionProviderBase.manage_options +
-                     ({ 'label' : 'Overview', 'action' : 'manage_overview' }
-                     ,
-                     ) + SimpleItem.manage_options)
+    manage_options = ( ({'label': 'Overview',
+                         'action': 'manage_overview'},)
+                     + SimpleItem.manage_options
+                     )
 
     #
     #   ZMI methods

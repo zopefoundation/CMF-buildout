@@ -27,7 +27,6 @@ from zope.component import queryUtility
 from zope.interface import implements
 from ZPublisher.Converters import type_converters
 
-from ActionProviderBase import ActionProviderBase
 from exceptions import BadRequest
 from interfaces import IMemberData
 from interfaces import IMemberDataTool
@@ -43,8 +42,7 @@ from utils import UniqueObject
 _marker = []  # Create a new marker object.
 
 
-class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
-                     ActionProviderBase):
+class MemberDataTool(UniqueObject, SimpleItem, PropertyManager):
 
     """ This tool wraps user objects, making them act as Member objects.
     """
@@ -58,14 +56,10 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
 
     security = ClassSecurityInfo()
 
-    manage_options=( ActionProviderBase.manage_options +
-                     ({ 'label' : 'Overview'
-                       , 'action' : 'manage_overview'
-                       }
-                     , { 'label' : 'Contents'
-                       , 'action' : 'manage_showContents'
-                       }
-                     )
+    manage_options=( ({'label': 'Overview',
+                       'action': 'manage_overview'},
+                      {'label': 'Contents',
+                       'action': 'manage_showContents'})
                    + PropertyManager.manage_options
                    + SimpleItem.manage_options
                    )

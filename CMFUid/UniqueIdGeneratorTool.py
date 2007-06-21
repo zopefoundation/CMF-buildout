@@ -23,14 +23,13 @@ from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
 
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
 from Products.CMFUid.interfaces import IUniqueIdGenerator
 
 
-class UniqueIdGeneratorTool(UniqueObject, SimpleItem, ActionProviderBase):
+class UniqueIdGeneratorTool(UniqueObject, SimpleItem):
 
     """Generator of unique ids.
 

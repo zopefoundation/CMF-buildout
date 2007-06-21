@@ -30,7 +30,6 @@ from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from zope.component import getUtility
 from zope.interface import implements
 
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import UniqueObject
@@ -47,7 +46,7 @@ UID_ATTRIBUTE_NAME = 'cmf_uid'
 _wwwdir = os.path.join( package_home( globals() ), 'www' )
 
 
-class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
+class UniqueIdHandlerTool(UniqueObject, SimpleItem):
 
     __doc__ = __doc__ # copy from module
 
@@ -56,11 +55,8 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
 
     id = 'portal_uidhandler'
 
-    manage_options = ( ActionProviderBase.manage_options
-                     + ( {'label':'Query',
-                          'action':'manage_queryObject'}
-                       ,
-                       )
+    manage_options = ( ({'label': 'Query',
+                         'action': 'manage_queryObject'},)
                      + SimpleItem.manage_options
                      )
 

@@ -141,10 +141,8 @@ class TestMetadataTool(unittest.TestCase):
         return Foo(), Bar()
 
     def test_interfaces(self):
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IMetadataTool
 
-        verifyClass(IActionProvider, self._getTargetClass())
         verifyClass(IMetadataTool, self._getTargetClass())
 
     def test_empty( self ):

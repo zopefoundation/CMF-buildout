@@ -83,8 +83,6 @@ class UniqueIdAnnotationToolTests(SecurityTest):
         sm.registerUtility( self.root.portal_uidannotation
                           , IUniqueIdAnnotationManagement
                           )
-        sm.registerUtility( self.root.portal_uidhandler
-                          , IUniqueIdHandler)
 
         self.root._setObject('dummy', DummyContent(id='dummy'))
         self.root._setObject('site', SimpleFolder('site'))

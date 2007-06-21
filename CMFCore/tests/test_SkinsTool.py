@@ -22,8 +22,6 @@ from zope.component import getSiteManager
 from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.interfaces import ISkinsTool
-
 
 class SkinsContainerTests(unittest.TestCase):
 
@@ -44,6 +42,7 @@ class SkinsToolTests(unittest.TestCase):
     def test_interfaces(self):
         from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import ISkinsContainer
+        from Products.CMFCore.interfaces import ISkinsTool
         from Products.CMFCore.SkinsTool import SkinsTool
 
         verifyClass(IActionProvider, SkinsTool)
@@ -78,11 +77,12 @@ class SkinnableTests(unittest.TestCase):
 
         class TestSkinnableObjectManager(SkinnableObjectManager):
             tool = SkinsTool()
-            sm = getSiteManager()
-            sm.registerUtility(tool, ISkinsTool)
             # This is needed otherwise REQUEST is the string
             # '<Special Object Used to Force Acquisition>'
             REQUEST = None
+            def getSkinsFolderName(self):
+                '''tool'''
+                return 'tool'
 
         return TestSkinnableObjectManager()
 

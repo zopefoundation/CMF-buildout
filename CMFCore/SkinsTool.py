@@ -36,13 +36,12 @@ from DirectoryView import ignore
 from DirectoryView import ignore_re
 from interfaces import IMembershipTool
 from interfaces import ISkinsTool
-from interfaces import IURLTool
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from permissions import View
 from SkinsContainer import SkinsContainer
 from utils import _dtmldir
-from utils import registerToolInterface
+from utils import getToolByName
 from utils import UniqueObject
 
 def modifiedOptions():
@@ -304,8 +303,10 @@ class SkinsTool(UniqueObject, SkinsContainer, Folder, ActionProviderBase):
     def updateSkinCookie(self):
         """ If needed, updates the skin cookie based on the member preference.
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool and uses self.REQUEST
         mtool = getUtility(IMembershipTool)
-        utool = getUtility(IURLTool)
+        utool = getToolByName(self, 'portal_url')
         member = mtool.getAuthenticatedMember()
         if hasattr(aq_base(member), 'portal_skin'):
             mskin = member.portal_skin
@@ -338,9 +339,11 @@ class SkinsTool(UniqueObject, SkinsContainer, Folder, ActionProviderBase):
     def clearSkinCookie(self):
         """ Expire the skin cookie.
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool and uses self.REQUEST
         req = self.REQUEST
         resp = req.RESPONSE
-        utool = getUtility(IURLTool)
+        utool = getToolByName(self, 'portal_url')
         portal_path = req['BASEPATH1'] + '/' + utool(1)
         resp.expireCookie(self.request_varname, path=portal_path)
 
@@ -370,4 +373,3 @@ class SkinsTool(UniqueObject, SkinsContainer, Folder, ActionProviderBase):
             self.default_skin = skinname
 
 InitializeClass(SkinsTool)
-registerToolInterface('portal_skins', ISkinsTool)

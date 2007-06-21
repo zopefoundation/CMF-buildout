@@ -16,8 +16,6 @@ $Id$
 """
 
 from zope.component import adapts
-from zope.component import getSiteManager
-from zope.component import getUtility
 
 from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
@@ -32,7 +30,7 @@ from Products.CMFCore.interfaces import IAction
 from Products.CMFCore.interfaces import IActionCategory
 from Products.CMFCore.interfaces import IActionProvider
 from Products.CMFCore.interfaces import IActionsTool
-from Products.CMFCore.utils import getToolInterface
+from Products.CMFCore.utils import getToolByName
 
 _SPECIAL_PROVIDERS = ('portal_actions', 'portal_types', 'portal_workflow')
 
@@ -145,9 +143,8 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
     def _extractOldstyleActions(self, provider_id):
         # BBB: for CMF 1.6 profiles
         fragment = self._doc.createDocumentFragment()
-        provider_iface = getToolInterface(provider_id)
-        provider = getUtility(provider_iface)
 
+        provider = getToolByName(self.context, provider_id)
         if not IActionProvider.providedBy(provider):
             return fragment
 
@@ -246,16 +243,16 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
 def importActionProviders(context):
     """Import actions tool.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.getUtility(IActionsTool)
+    site = context.getSite()
+    tool = getToolByName(site, 'portal_actions')
 
     importObjects(tool, '', context)
 
 def exportActionProviders(context):
     """Export actions tool.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.queryUtility(IActionsTool)
+    site = context.getSite()
+    tool = getToolByName(site, 'portal_actions', None)
     if tool is None:
         logger = context.getLogger('actions')
         logger.info('Nothing to export.')

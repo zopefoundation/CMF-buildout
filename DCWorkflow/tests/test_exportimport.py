@@ -18,8 +18,6 @@ $Id$
 import unittest
 import Testing
 
-from zope.component import getSiteManager
-
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
@@ -29,7 +27,6 @@ from Products.CMFCore.exportimport.tests.test_workflow \
         import _EMPTY_TOOL_EXPORT
 from Products.CMFCore.exportimport.tests.test_workflow \
         import _WorkflowSetup as WorkflowSetupBase
-from Products.CMFCore.interfaces import IConfigurableWorkflowTool
 from Products.CMFCore.testing import DummyWorkflow
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.DCWorkflow.testing import ExportImportZCMLLayer
@@ -76,9 +73,7 @@ class _WorkflowSetup(WorkflowSetupBase):
 
     def _initDCWorkflow( self, workflow_id ):
 
-        sm = getSiteManager()
         wf_tool = self.root.site.portal_workflow
-        sm.registerUtility(wf_tool, IConfigurableWorkflowTool)
         wf_tool._setObject( workflow_id, DCWorkflowDefinition( workflow_id ) )
 
         return wf_tool._getOb( workflow_id )

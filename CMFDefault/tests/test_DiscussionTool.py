@@ -24,7 +24,6 @@ from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
@@ -45,7 +44,6 @@ class DiscussionToolTests(unittest.TestCase):
         self.site._setObject( 'portal_membership', DummyTool() )
         sm.registerUtility(self.site.portal_membership, IMembershipTool)
         self.site._setObject( 'portal_types', DummyTool() )
-        sm.registerUtility(self.site.portal_types, ITypesTool)
 
     def tearDown(self):
         cleanUp()

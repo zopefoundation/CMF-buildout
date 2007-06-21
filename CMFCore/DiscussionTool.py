@@ -27,16 +27,15 @@ from zope.component import getUtility
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
-from interfaces import ICatalogTool
 from interfaces import IMembershipTool
 from interfaces import IOldstyleDiscussable
 from interfaces import IOldstyleDiscussionTool
-from interfaces import ITypesTool
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from permissions import ReplyToItem
 from permissions import View
 from utils import _dtmldir
+from utils import getToolByName
 from utils import UniqueObject
 
 
@@ -92,7 +91,7 @@ class OldDiscussable(Implicit):
             Often, the actual objects are not needed.  This is less expensive
             than fetching the objects.
         """
-        catalog = getUtility(ICatalogTool)
+        catalog = getToolByName(self.content, 'portal_catalog')
         return catalog.searchResults(in_reply_to=
                                       urllib.unquote('/'+self.absolute_url(1)))
 
@@ -102,7 +101,7 @@ class OldDiscussable(Implicit):
             Return a sequence of the DiscussionResponse objects which are
             associated with this Discussable
         """
-        catalog = getUtility(ICatalogTool)
+        catalog = getToolByName(self.content, 'portal_catalog')
         results = self.getReplyResults()
         rids    = map(lambda x: x.data_record_id_, results)
         objects = map(catalog.getobject, rids)
@@ -154,7 +153,7 @@ class DiscussionTool(UniqueObject, SimpleItem, ActionProviderBase):
         '''
         if hasattr( content, 'allow_discussion' ):
             return content.allow_discussion
-        typeInfo = getUtility(ITypesTool).getTypeInfo( content )
+        typeInfo = content.getTypeInfo()
         if typeInfo:
             return typeInfo.allowDiscussion()
         return 0

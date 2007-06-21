@@ -22,10 +22,8 @@ from csv import reader
 from ConfigParser import ConfigParser
 from StringIO import StringIO
 
-from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.interfaces import ITypesTool
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
@@ -752,9 +750,7 @@ def _makeFolder(id, site_folder=False):
     folder = PortalFolder(id)
     folder.portal_type = TEST_FOLDER
     if site_folder:
-        sm = getSiteManager()
         tool = folder.portal_types = TypesTool()
-        sm.registerUtility(tool, ITypesTool)
         tool._setObject(TEST_CSV_AWARE, _TypeInfo(TEST_CSV_AWARE))
         tool._setObject(TEST_INI_AWARE, _TypeInfo(TEST_INI_AWARE))
         tool._setObject(TEST_CONTENT, _TypeInfo(TEST_CONTENT))

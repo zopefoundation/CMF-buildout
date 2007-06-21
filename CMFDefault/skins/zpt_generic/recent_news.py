@@ -2,11 +2,11 @@
 ##
 from Products.PythonScripts.standard import structured_text
 from ZTUtils import Batch
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
 
-ctool = getToolByInterfaceName('Products.CMFCore.interfaces.ICatalogTool')
-utool = getToolByInterfaceName('Products.CMFCore.interfaces.IURLTool')
+ctool = getToolByName(script, 'portal_catalog')
+utool = getToolByName(script, 'portal_url')
 portal_url = utool()
 
 

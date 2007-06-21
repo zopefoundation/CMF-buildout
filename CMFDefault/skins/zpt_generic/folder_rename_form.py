@@ -1,11 +1,11 @@
 ##parameters=b_start=0, key='', reverse=0, ids=(), new_ids=(), rename='', cancel=''
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import html_marshal
 from Products.CMFDefault.utils import Message as _
 
-utool = getToolByInterfaceName('Products.CMFCore.interfaces.IURLTool')
+utool = getToolByName(script, 'portal_url')
 portal_url = utool()
 
 

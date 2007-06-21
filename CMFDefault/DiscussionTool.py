@@ -27,7 +27,6 @@ from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces import IDiscussionResponse
 from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
@@ -103,7 +102,7 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
         """
         if hasattr( aq_base(content), 'allow_discussion' ):
             return bool(content.allow_discussion)
-        typeInfo = getUtility(ITypesTool).getTypeInfo( content )
+        typeInfo = content.getTypeInfo()
         if typeInfo:
             return bool( typeInfo.allowDiscussion() )
         return False

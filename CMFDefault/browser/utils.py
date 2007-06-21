@@ -22,7 +22,7 @@ from zope.component import getUtility
 
 from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import IPropertiesTool
-from Products.CMFCore.interfaces import IURLTool
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.permissions import View
 from Products.CMFDefault.utils import getBrowserCharset
 from Products.CMFDefault.utils import toUnicode
@@ -67,13 +67,17 @@ class ViewBase(BrowserView):
     # helpers
 
     @memoize
+    def _getTool(self, name):
+        return getToolByName(self.context, name)
+
+    @memoize
     def _checkPermission(self, permission):
         mtool = getUtility(IMembershipTool)
         return mtool.checkPermission(permission, self.context)
 
     @memoize
     def _getPortalURL(self):
-        utool = getUtility(IURLTool)
+        utool = self._getTool('portal_url')
         return utool()
 
     @memoize

@@ -18,13 +18,11 @@ $Id$
 import unittest
 import Testing
 
-from zope.component import getSiteManager
 from zope.interface import implements
 
 from Products.CMFCore.interfaces import ICallableOpaqueItem
 from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
 from Products.CMFCore.interfaces import IContentish
-from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.PortalFolder import PortalFolder
 from Products.CMFCore.testing import TraversingEventZCMLLayer
 from Products.CMFCore.tests.base.dummy \
@@ -142,11 +140,9 @@ class ManageBeforeAfterTests(SecurityTest):
         SecurityTest.setUp(self)
 
         root = self.root
-        sm = getSiteManager()
 
         # setting up types tool
         root._setObject( 'portal_types', TypesTool() )
-        sm.registerUtility(root.portal_types, ITypesTool)
 
         # setup portal
         try:

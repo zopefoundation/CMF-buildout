@@ -24,7 +24,6 @@ from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.interfaces import IURLTool
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
@@ -46,7 +45,6 @@ class FavoriteTests(ConformsToContent, unittest.TestCase):
         sm.registerUtility(self.site, ISiteRoot)
         sm.registerUtility(DummyTool(), IMembershipTool)
         self.site._setObject( 'portal_url', DummyTool() )
-        sm.registerUtility(self.site.portal_url, IURLTool)
 
     def tearDown(self):
         cleanUp()

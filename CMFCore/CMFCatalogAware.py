@@ -26,17 +26,15 @@ from OFS.interfaces import IObjectClonedEvent
 from OFS.interfaces import IObjectWillBeMovedEvent
 from zope.app.container.interfaces import IObjectAddedEvent
 from zope.app.container.interfaces import IObjectMovedEvent
-from zope.component import queryUtility
 from zope.component import subscribers
 
 from interfaces import ICallableOpaqueItem
-from interfaces import ICatalogTool
-from interfaces import IConfigurableWorkflowTool
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from permissions import ModifyPortalContent
 from utils import _dtmldir
 from utils import _getAuthenticatedUser
+from utils import getToolByName
 
 logger = logging.getLogger('CMFCore.CMFCatalogAware')
 
@@ -53,10 +51,10 @@ class CMFCatalogAware(Base):
     # for a given content type
 
     def _getCatalogTool(self):
-        return queryUtility(ICatalogTool)
+        return getToolByName(self, 'portal_catalog', None)
 
     def _getWorkflowTool(self):
-        return queryUtility(IConfigurableWorkflowTool)
+        return getToolByName(self, 'portal_workflow', None)
 
     # Cataloging methods
     # ------------------

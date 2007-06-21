@@ -30,7 +30,6 @@ from interfaces import IURLTool
 from permissions import ManagePortal
 from permissions import View
 from utils import _dtmldir
-from utils import registerToolInterface
 from utils import UniqueObject
 
 
@@ -68,6 +67,8 @@ class URLTool(UniqueObject, SimpleItem, ActionProviderBase):
     def __call__(self, relative=0, *args, **kw):
         """ Get by default the absolute URL of the portal.
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # absolute_url() depends implicitly on REQUEST
         return self.getPortalObject().absolute_url(relative=relative)
 
     security.declarePublic('getPortalObject')
@@ -104,4 +105,3 @@ class URLTool(UniqueObject, SimpleItem, ActionProviderBase):
         return '/'.join( self.getPortalObject().getPhysicalPath() )
 
 InitializeClass(URLTool)
-registerToolInterface('portal_url', IURLTool)

@@ -28,7 +28,6 @@ from interfaces import IActionProvider
 from interfaces import IActionsTool
 from permissions import ManagePortal
 from utils import _dtmldir
-from utils import registerToolInterface
 from utils import UniqueObject
 
 
@@ -39,6 +38,8 @@ class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
         Weave together the various sources of "actions" which are apropos
         to the current user and context.
     """
+    # XXX: this class violates the rules for tools/utilities:
+    # ActionProviderBase depends implicitly on REQUEST
 
     implements(IActionsTool)
 
@@ -178,4 +179,3 @@ class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
         return filtered_actions
 
 InitializeClass(ActionsTool)
-registerToolInterface('portal_actions', IActionsTool)

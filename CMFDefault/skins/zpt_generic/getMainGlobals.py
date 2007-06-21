@@ -1,18 +1,17 @@
 ##parameters=
 ##
-
 from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import getBrowserCharset
 
-atool = getToolByInterfaceName('Products.CMFCore.interfaces.IActionsTool')
+atool = getToolByName(script, 'portal_actions')
 caltool_iface = 'Products.CMFCalendar.interfaces.ICalendarTool'
 caltool = getToolByInterfaceName(caltool_iface, None)
 mtool = getToolByInterfaceName('Products.CMFCore.interfaces.IMembershipTool')
 ptool = getToolByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
-utool = getToolByInterfaceName('Products.CMFCore.interfaces.IURLTool')
-wtool_iface = 'Products.CMFCore.interfaces.IConfigurableWorkflowTool'
-wtool = getToolByInterfaceName(wtool_iface)
+utool = getToolByName(script, 'portal_url')
+wtool = getToolByName(script, 'portal_workflow')
 portal_object = utool.getPortalObject()
 
 if not 'charset' in context.REQUEST.RESPONSE.getHeader('content-type'):

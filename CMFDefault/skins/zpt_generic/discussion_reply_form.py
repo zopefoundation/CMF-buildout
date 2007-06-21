@@ -1,12 +1,12 @@
 ##parameters=add='', edit='', preview=''
 ##
 from Products.PythonScripts.standard import structured_text
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import html_marshal
 from Products.CMFDefault.utils import Message as _
 
-atool = getToolByInterfaceName('Products.CMFCore.interfaces.IActionsTool')
+atool = getToolByName(script, 'portal_actions')
 
 
 form = context.REQUEST.form

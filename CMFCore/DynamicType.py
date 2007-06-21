@@ -20,14 +20,11 @@ from urllib import quote
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from zope.app.publisher.browser import queryDefaultViewName
-from zope.component import getUtility
 from zope.component import queryMultiAdapter
-from zope.component import queryUtility
 from zope.interface import implements
 
 from interfaces import IDynamicType
-from interfaces import ITypesTool
-from interfaces import IURLTool
+from utils import getToolByName
 
 
 class DynamicType:
@@ -67,7 +64,7 @@ class DynamicType:
     def getTypeInfo(self):
         """ Get the TypeInformation object specified by the portal type.
         """
-        tool = queryUtility(ITypesTool)
+        tool = getToolByName(self, 'portal_types', None)
         if tool is None:
             return None
         return tool.getTypeInfo(self)  # Can return None.
@@ -103,7 +100,7 @@ class DynamicType:
                     return icon
                 else:
                     # Relative to REQUEST['BASEPATH1']
-                    portal_url = getUtility(IURLTool)
+                    portal_url = getToolByName( self, 'portal_url' )
                     res = portal_url(relative=1) + '/' + icon
                     while res[:1] == '/':
                         res = res[1:]

@@ -46,7 +46,6 @@ from permissions import View
 from utils import _checkPermission
 from utils import _dtmldir
 from utils import _wwwdir
-from utils import registerToolInterface
 from utils import SimpleItemWithProperties
 from utils import UniqueObject
 
@@ -432,6 +431,8 @@ class FactoryTypeInformation(TypeInformation):
 
         Returns the object without calling _finishConstruction().
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on self.REQUEST
         id = str(id)
 
         if self.product:
@@ -744,4 +745,3 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
         return rval
 
 InitializeClass(TypesTool)
-registerToolInterface('portal_types', ITypesTool)

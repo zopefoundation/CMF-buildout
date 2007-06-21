@@ -15,26 +15,25 @@
 $Id$
 """
 
-from Products.CMFCore.interfaces import ICatalogTool
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 
-from zope.component import getSiteManager
+from Products.CMFCore.utils import getToolByName
 
 
 def importCatalogTool(context):
     """Import catalog tool.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.getUtility(ICatalogTool)
+    site = context.getSite()
+    tool = getToolByName(site, 'portal_catalog')
 
     importObjects(tool, '', context)
 
 def exportCatalogTool(context):
     """Export catalog tool.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.queryUtility(ICatalogTool)
+    site = context.getSite()
+    tool = getToolByName(site, 'portal_catalog', None)
     if tool is None:
         logger = context.getLogger('catalog')
         logger.info('Nothing to export.')

@@ -24,20 +24,18 @@ from Acquisition import aq_base
 from DateTime import DateTime
 from OFS.Folder import Folder
 from Products.StandardCacheManagers import RAMCacheManager
+from zope.app.component.hooks import setHooks
+from zope.component import getSiteManager
 
 from Products.CMFCore.FSDTMLMethod import FSDTMLMethod
 from Products.CMFCore.FSMetadata import FSMetadata
 from Products.CMFCore.interfaces import ICachingPolicyManager
-from Products.CMFCore.interfaces import ISkinsTool
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
 from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFCore.tests.base.dummy import DummyContent
-
-from zope.app.component.hooks import setHooks
-from zope.component import getSiteManager
 
 
 class FSDTMLMaker(FSDVTest):
@@ -122,8 +120,6 @@ class FSDTMLMethodCustomizationTests( SecurityTest, FSDTMLMaker ):
 
         self.root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
         self.skins = self.root.portal_skins
-        sm = getSiteManager()
-        sm.registerUtility(self.skins, ISkinsTool)
 
         self.skins._setObject( 'custom', Folder( 'custom' ) )
         self.custom = self.skins.custom

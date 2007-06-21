@@ -22,16 +22,14 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from Globals import PersistentMapping
 from OFS.SimpleItem import SimpleItem
-from zope.component import getUtility
 from zope.interface import implements
 from ZPublisher.mapply import mapply
 
 from interfaces import IContentTypeRegistry
 from interfaces import IContentTypeRegistryPredicate
-from interfaces import ITypesTool
 from permissions import ManagePortal
 from utils import _dtmldir
-from utils import registerToolInterface
+from utils import getToolByName
 
 
 class MajorMinorPredicate( SimpleItem ):
@@ -433,11 +431,13 @@ class ContentTypeRegistry( SimpleItem ):
     def doTestRegistry( self, name, content_type, body, REQUEST ):
         """
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         typeName = self.findTypeName( name, content_type, body )
         if typeName is None:
             typeName = '<unknown>'
         else:
-            types_tool = getUtility(ITypesTool)
+            types_tool = getToolByName(self, 'portal_types')
             typeName = types_tool.getTypeInfo(typeName).Title()
         REQUEST[ 'RESPONSE' ].redirect( self.absolute_url()
                                + '/manage_testRegistry'
@@ -550,7 +550,7 @@ class ContentTypeRegistry( SimpleItem ):
         return None
 
 InitializeClass( ContentTypeRegistry )
-registerToolInterface('content_type_registry', IContentTypeRegistry)
+
 
 def manage_addRegistry( self, REQUEST=None ):
     """

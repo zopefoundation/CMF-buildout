@@ -24,7 +24,6 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from Products.PluginIndexes.common import safe_callable
 from Products.ZCatalog.ZCatalog import ZCatalog
-from zope.component import queryUtility
 from zope.interface import implements
 from zope.interface import providedBy
 from zope.interface.declarations import getObjectSpecification
@@ -33,7 +32,6 @@ from zope.interface.declarations import ObjectSpecificationDescriptor
 
 from ActionProviderBase import ActionProviderBase
 from interfaces import ICatalogTool
-from interfaces import IConfigurableWorkflowTool
 from interfaces import IIndexableObjectWrapper
 from permissions import AccessInactivePortalContent
 from permissions import ManagePortal
@@ -42,7 +40,7 @@ from utils import _checkPermission
 from utils import _dtmldir
 from utils import _getAuthenticatedUser
 from utils import _mergedLocalRoles
-from utils import registerToolInterface
+from utils import getToolByName
 from utils import UniqueObject
 
 
@@ -246,7 +244,9 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
                        pghandler=None):
         # Wraps the object with workflow and accessibility
         # information just before cataloging.
-        wftool = queryUtility(IConfigurableWorkflowTool)
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
+        wftool = getToolByName(self, 'portal_workflow', None)
         if wftool is not None:
             vars = wftool.getCatalogVariablesFor(obj)
         else:
@@ -291,4 +291,3 @@ class CatalogTool(UniqueObject, ZCatalog, ActionProviderBase):
         self.catalog_object(object, uid, idxs, update_metadata)
 
 InitializeClass(CatalogTool)
-registerToolInterface('portal_catalog', ICatalogTool)

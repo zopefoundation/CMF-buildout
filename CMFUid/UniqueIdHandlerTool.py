@@ -31,9 +31,8 @@ from zope.component import getUtility
 from zope.interface import implements
 
 from Products.CMFCore.ActionProviderBase import ActionProviderBase
-from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.permissions import ManagePortal
-from Products.CMFCore.utils import registerToolInterface
+from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import UniqueObject
 
 from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
@@ -78,7 +77,9 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
     security = ClassSecurityInfo()
 
     def _reindexObject(self, obj):
-        catalog = getUtility(ICatalogTool)
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
+        catalog = getToolByName(self, 'portal_catalog')
         catalog.reindexObject(obj, idxs=[self.UID_ATTRIBUTE_NAME])
 
     def _setUid(self, obj, uid):
@@ -165,6 +166,8 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         """This helper method does the "hard work" of querying the catalog
            and interpreting the results.
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         if uid is None:
             return default
 
@@ -172,7 +175,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         generator = getUtility(IUniqueIdGenerator)
         uid = generator.convert(uid)
 
-        catalog = getUtility(ICatalogTool)
+        catalog = getToolByName(self, 'portal_catalog')
         searchMethod = getattr(catalog, searchMethodName)
         result = searchMethod({self.UID_ATTRIBUTE_NAME: uid})
         len_result = len(result)
@@ -253,4 +256,3 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
     manage_queryObject = PageTemplateFile('queryUID.pt', _wwwdir)
 
 InitializeClass(UniqueIdHandlerTool)
-registerToolInterface('portal_uidhandler', IUniqueIdHandler)

@@ -2,10 +2,10 @@
 ##parameters=
 ##title=Build title which includes site title
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
 
-utool = getToolByInterfaceName('Products.CMFCore.interfaces.IURLTool')
+utool = getToolByName(script, 'portal_url')
 
 site_title = utool.getPortalObject().Title()
 page_title = context.Title()

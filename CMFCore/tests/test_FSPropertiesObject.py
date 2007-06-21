@@ -1,11 +1,10 @@
 import unittest
 
 from Acquisition import aq_base
-from zope.component import getSiteManager
 
-from Products.CMFCore.interfaces import ISkinsTool
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import SecurityTest
+
 
 class FSPOTests(SecurityTest, FSDVTest):
 
@@ -31,8 +30,6 @@ class FSPOTests(SecurityTest, FSDVTest):
 
         self.root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
         skins = self.root.portal_skins
-        sm = getSiteManager()
-        sm.registerUtility(skins, ISkinsTool)
 
         skins._setObject( 'custom', Folder( 'custom' ) )
         custom = skins.custom

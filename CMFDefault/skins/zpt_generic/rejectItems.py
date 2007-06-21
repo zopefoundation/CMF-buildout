@@ -7,12 +7,9 @@
 ##parameters=items, comment=''
 ##title=
 ##
+from Products.CMFCore.utils import getToolByName
 
-from Products.CMFCore.utils import getToolByInterfaceName
-
-wtool_iface = 'Products.CMFCore.interfaces.IConfigurableWorkflowTool'
-wtool = getToolByInterfaceName(wtool_iface)
-
+wtool = getToolByName(script, 'portal_workflow')
 for path in items:
     object = context.restrictedTraverse( path )
     wtool.doActionFor( object, 'reject', comment=comment )

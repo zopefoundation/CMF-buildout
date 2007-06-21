@@ -82,7 +82,7 @@ class CalendarTool (UniqueObject, SimpleItem):
                           , use_session
                           , show_states=None
                           , firstweekday=None
-                          ):
+                          , REQUEST=None):
         """ Change the configuration of the calendar tool 
         """
         self.calendar_types = tuple(show_types)
@@ -102,8 +102,8 @@ class CalendarTool (UniqueObject, SimpleItem):
                 # Do nothing with illegal values
                 pass
 
-        if hasattr(self.REQUEST, 'RESPONSE'):
-            self.REQUEST.RESPONSE.redirect('manage_configure')
+        if hasattr(REQUEST, 'RESPONSE'):
+            REQUEST.RESPONSE.redirect('manage_configure')
 
     security.declarePrivate('_getCalendar')
     def _getCalendar(self):

@@ -25,7 +25,7 @@ from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
 
 from interfaces import IMembershipTool
-from interfaces import ISiteRoot
+from utils import getToolByName
 
 
 class Expression(Persistent):
@@ -66,7 +66,8 @@ def getExprContext(context, object=None):
     else:
         ec = None
     if ec is None:
-        portal = getUtility(ISiteRoot)
+        utool = getToolByName(context, 'portal_url')
+        portal = utool.getPortalObject()
         if object is None or not hasattr(object, 'aq_base'):
             folder = portal
         else:

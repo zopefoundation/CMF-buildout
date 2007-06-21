@@ -75,11 +75,9 @@ class URLTool(UniqueObject, SimpleItem, ActionProviderBase):
     def getPortalObject(self):
         """ Get the portal object itself.
         """
-        site = queryUtility(ISiteRoot)
-        if site is None:
-            # fallback
-            return aq_parent(aq_inner(self))
-        return site
+        # XXX: this method violates the rules for tools/utilities:
+        # queryUtility(ISiteRoot) doesn't work because we need the REQUEST
+        return aq_parent( aq_inner(self) )
 
     security.declarePublic('getRelativeContentPath')
     def getRelativeContentPath(self, content):

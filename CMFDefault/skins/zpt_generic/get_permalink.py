@@ -20,7 +20,7 @@ if uidtool is not None:
     
     if showPermalink and not isFolderish:
         # returns the uid (generates one if necessary)
-        urltool = getToolByName(context, 'portal_url')
+        utool = getToolByName(context, 'portal_url')
         uid = uidtool.register(context)
         url = "%s/permalink/%s" % (utool(), uid)
         return url

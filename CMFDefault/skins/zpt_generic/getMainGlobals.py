@@ -6,8 +6,7 @@ from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import getBrowserCharset
 
 atool = getToolByName(script, 'portal_actions')
-caltool_iface = 'Products.CMFCalendar.interfaces.ICalendarTool'
-caltool = getToolByInterfaceName(caltool_iface, None)
+caltool = getToolByName(script, 'portal_calendar', None)
 mtool = getToolByInterfaceName('Products.CMFCore.interfaces.IMembershipTool')
 ptool = getToolByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
 utool = getToolByName(script, 'portal_url')

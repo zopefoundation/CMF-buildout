@@ -1,9 +1,9 @@
 ##parameters=
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
 
-caltool = getToolByInterfaceName('Products.CMFCalendar.interfaces.ICalendarTool')
+caltool = getToolByName(script, 'portal_calendar')
 
 options = {}
 base_url = script.absolute_url()

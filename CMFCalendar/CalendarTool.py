@@ -24,7 +24,7 @@ from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
-from Products.CMFCore.utils import registerToolInterface
+from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import UniqueObject
 
 from interfaces import ICalendarTool
@@ -48,6 +48,7 @@ def unique_results(results):
 
 
 class CalendarTool (UniqueObject, SimpleItem):
+
     """ A tool for encapsulating how calendars work and are displayed """
 
     id = 'portal_calendar'
@@ -82,9 +83,11 @@ class CalendarTool (UniqueObject, SimpleItem):
                           , use_session
                           , show_states=None
                           , firstweekday=None
-                          , REQUEST=None):
+                          ):
         """ Change the configuration of the calendar tool 
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on self.REQUEST
         self.calendar_types = tuple(show_types)
         self.use_session = bool(use_session)
 
@@ -102,8 +105,8 @@ class CalendarTool (UniqueObject, SimpleItem):
                 # Do nothing with illegal values
                 pass
 
-        if hasattr(REQUEST, 'RESPONSE'):
-            REQUEST.RESPONSE.redirect('manage_configure')
+        if hasattr(self.REQUEST, 'RESPONSE'):
+            self.REQUEST.RESPONSE.redirect('manage_configure')
 
     security.declarePrivate('_getCalendar')
     def _getCalendar(self):
@@ -193,13 +196,16 @@ class CalendarTool (UniqueObject, SimpleItem):
     def catalog_getevents(self, year, month):
         """ given a year and month return a list of days that have events 
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         year = int(year)
         month = int(month)
         last_day = self._getCalendar().monthrange(year, month)[1]
         first_date = self.getBeginAndEndTimes(1, month, year)[0]
         last_date = self.getBeginAndEndTimes(last_day, month, year)[1]
 
-        query = self.portal_catalog(
+        ctool = getToolByName(self, 'portal_catalog')
+        query = ctool(
                         portal_type=self.getCalendarTypes(),
                         review_state=self.getCalendarStates(),
                         start={'query': last_date, 'range': 'max'},
@@ -280,7 +286,8 @@ class CalendarTool (UniqueObject, SimpleItem):
             B) End on this day  OR
             C) Start before this day  AND  end after this day
         """
-        catalog = self.portal_catalog
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         day, month, year = ( int(thisDay.day())
                            , int(thisDay.month())
                            , int(thisDay.year())
@@ -292,21 +299,22 @@ class CalendarTool (UniqueObject, SimpleItem):
         after_midnight = DateTime(after_midnight_str)
 
         # Get all events that Start on this day
-        query = self.portal_catalog(
+        ctool = getToolByName(self, 'portal_catalog')
+        query = ctool(
                         portal_type=self.getCalendarTypes(),
                         review_state=self.getCalendarStates(),
                         start={'query': (first_date, last_date),
                                'range': 'minmax'} )
 
         # Get all events that End on this day
-        query += self.portal_catalog(
+        query += ctool(
                          portal_type=self.getCalendarTypes(),
                          review_state=self.getCalendarStates(),
                          end={'query': (after_midnight, last_date),
                               'range': 'minmax'} )
 
         # Get all events that Start before this day AND End after this day
-        query += self.portal_catalog(
+        query += ctool(
                          portal_type=self.getCalendarTypes(),
                          review_state=self.getCalendarStates(),
                          start={'query': first_date, 'range': 'max'},
@@ -368,10 +376,13 @@ class CalendarTool (UniqueObject, SimpleItem):
         
         start_date is expected to be a DateTime instance
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         if start_date is None:
             start_date = DateTime()
 
-        query = self.portal_catalog(
+        ctool = getToolByName(self, 'portal_catalog')
+        query = ctool(
                     portal_type=self.getCalendarTypes(),
                     review_state=self.getCalendarStates(),
                     start={'query': start_date, 'range': 'min'},
@@ -382,6 +393,4 @@ class CalendarTool (UniqueObject, SimpleItem):
             results.sort(sort_by_date)
             return results[0]
 
-
 InitializeClass(CalendarTool)
-registerToolInterface('portal_calendar', ICalendarTool)

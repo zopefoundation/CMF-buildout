@@ -16,13 +16,10 @@ $Id$
 """
 
 from DateTime.DateTime import DateTime
-from zope.component import getUtility
 
 from Products.CMFDefault.browser.utils import decode
 from Products.CMFDefault.browser.utils import memoize
 from Products.CMFDefault.browser.utils import ViewBase
-
-from Products.CMFCalendar.interfaces import ICalendarTool
 
 
 class CalendarView(ViewBase):
@@ -95,7 +92,7 @@ class CalendarView(ViewBase):
     def listItemInfos(self):
         """ List item infos for all event catalog records for a specific day.
         """
-        caltool = getUtility(ICalendarTool)
+        caltool = self._getTool('portal_calendar')
         thisDay = self.viewDay()
 
         items = [ {'title': item.Title,
@@ -115,7 +112,7 @@ class CalendarBoxView(ViewBase):
     def getMonthAndYear(self):
         """ Retrieve month/year tuple
         """
-        caltool = getUtility(ICalendarTool)
+        caltool = self._getTool('portal_calendar')
         current = DateTime()
         session = None
 
@@ -149,7 +146,7 @@ class CalendarBoxView(ViewBase):
     def getNextMonthLink(self, base_url, month, year):
         """ Return URL for the next month link
         """
-        caltool = getUtility(ICalendarTool)
+        caltool = self._getTool('portal_calendar')
         nextMonthTime = caltool.getNextMonth(month, year)
 
         x = '%s?month:int=%d&year:int=%d' % ( base_url
@@ -162,7 +159,7 @@ class CalendarBoxView(ViewBase):
     def getPreviousMonthLink(self, base_url, month, year):
         """ Return URL for the previous month link
         """
-        caltool = getUtility(ICalendarTool)
+        caltool = self._getTool('portal_calendar')
         prevMonthTime = caltool.getPreviousMonth(month, year)
 
         x = '%s?month:int=%d&year:int=%d' % ( base_url

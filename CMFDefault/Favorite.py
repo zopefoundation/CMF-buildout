@@ -28,11 +28,7 @@ from zope.component.factory import Factory
 from zope.interface import implements
 
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.interfaces import IURLTool
-try:
-    from Products.CMFUid.interfaces import IUniqueIdHandler
-except ImportError:
-    IUniqueIdHandler = None
+from Products.CMFCore.utils import getToolByName
 
 from DublinCore import DefaultDublinCoreImpl
 from interfaces import IFavorite
@@ -75,7 +71,7 @@ class Favorite(Link):
         the unique id handler tool is available.
         """
         # check for unique id handler tool
-        handler = IUniqueIdHandler and queryUtility(IUniqueIdHandler)
+        handler = getToolByName(self, 'portal_uidhandler', None)
         if handler is None:
             return
 
@@ -87,7 +83,7 @@ class Favorite(Link):
         the unique id handler tool is available.
         """
         # check for unique id handler tool
-        handler = IUniqueIdHandler and queryUtility(IUniqueIdHandler)
+        handler = getToolByName(self, 'portal_uidhandler', None)
         if handler is None:
             return
 
@@ -118,7 +114,7 @@ class Favorite(Link):
     def _getRemoteUrlTheOldWay(self):
         """Build the url without having taking the uid into account
         """
-        portal_url = getUtility(IURLTool)
+        portal_url = getToolByName(self, 'portal_url')
         if self.remote_url:
             return portal_url() + '/' + self.remote_url
         else:
@@ -160,7 +156,7 @@ class Favorite(Link):
             t=('', '') + tokens[2:]
             remote_url=urlparse.urlunparse(t)
         # if URL begins with site URL, remove site URL
-        portal_url = getUtility(IURLTool).getPortalPath()
+        portal_url = getToolByName(self, 'portal_url').getPortalPath()
         i = remote_url.find(portal_url)
         if i==0:
             remote_url=remote_url[len(portal_url):]

@@ -32,14 +32,13 @@ from zope.event import notify
 
 from ActionProviderBase import ActionProviderBase
 from interfaces import IConfigurableWorkflowTool
-from interfaces import ITypesTool
 from interfaces import IWorkflowDefinition
 from interfaces import IWorkflowTool
 from interfaces.portal_workflow import portal_workflow as z2IWorkflowTool
 from permissions import ManagePortal
 from utils import _dtmldir
+from utils import getToolByName
 from utils import Message as _
-from utils import registerToolInterface
 from utils import UniqueObject
 from utils import postonly
 from WorkflowCore import ObjectDeleted
@@ -487,7 +486,9 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
     def getDefaultChainFor(self, ob):
         """ Get the default chain, if applicable, for ob.
         """
-        types_tool = queryUtility(ITypesTool)
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
+        types_tool = getToolByName( self, 'portal_types', None )
         if ( types_tool is not None
             and types_tool.getTypeInfo( ob ) is not None ):
             return self._default_chain
@@ -535,7 +536,9 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
 
         """ List the portal types which are available.
         """
-        pt = queryUtility(ITypesTool)
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
+        pt = getToolByName(self, 'portal_types', None)
         if pt is None:
             return ()
         else:
@@ -642,5 +645,4 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
             ob.reindexObjectSecurity()
 
 InitializeClass(WorkflowTool)
-registerToolInterface('portal_workflow', IWorkflowTool)
 

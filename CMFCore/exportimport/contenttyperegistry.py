@@ -16,17 +16,14 @@ $Id$
 """
 
 from zope.component import adapts
-from zope.component import getSiteManager
-from zope.component import getUtility
-from zope.component import queryUtility
 
-from Products.CMFCore.interfaces import IContentTypeRegistry
 from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import IContentTypeRegistry
+from Products.CMFCore.utils import getToolByName
 
 
 class ContentTypeRegistryXMLAdapter(XMLAdapterBase):
@@ -114,16 +111,16 @@ class ContentTypeRegistryXMLAdapter(XMLAdapterBase):
 def importContentTypeRegistry(context):
     """Import content type registry settings from an XML file.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.getUtility(IContentTypeRegistry)
+    site = context.getSite()
+    tool = getToolByName(site, 'content_type_registry')
 
     importObjects(tool, '', context)
 
 def exportContentTypeRegistry(context):
     """Export content type registry settings as an XML file.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.queryUtility(IContentTypeRegistry)
+    site = context.getSite()
+    tool = getToolByName(site, 'content_type_registry', None)
     if tool is None:
         logger = context.getLogger('contenttypes')
         logger.info('Nothing to export.')

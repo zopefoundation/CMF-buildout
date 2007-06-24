@@ -33,7 +33,6 @@ from zope.testing.cleanup import cleanUp
 from Products.CMFCore.FSPageTemplate import FSPageTemplate
 from Products.CMFCore.FSMetadata import FSMetadata
 from Products.CMFCore.interfaces import ICachingPolicyManager
-from Products.CMFCore.interfaces import ISkinsTool
 from Products.CMFCore.testing import TraversingZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
 from Products.CMFCore.tests.base.testcase import FSDVTest
@@ -168,8 +167,6 @@ class FSPageTemplateCustomizationTests( SecurityTest, FSPTMaker ):
 
         self.root._setObject( 'portal_skins', Folder( 'portal_skins' ) )
         self.skins = self.root.portal_skins
-        sm = getSiteManager()
-        sm.registerUtility(self.skins, ISkinsTool)
 
         self.skins._setObject( 'custom', Folder( 'custom' ) )
         self.custom = self.skins.custom

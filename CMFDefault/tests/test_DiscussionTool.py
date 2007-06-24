@@ -23,7 +23,6 @@ from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
@@ -44,29 +43,23 @@ class DiscussionToolTests(unittest.TestCase):
         self.site._setObject( 'portal_membership', DummyTool() )
         sm.registerUtility(self.site.portal_membership, IMembershipTool)
         self.site._setObject( 'portal_types', DummyTool() )
-        sm.registerUtility(self.site.portal_types, ITypesTool)
 
     def tearDown(self):
         cleanUp()
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
         from Products.CMFCore.interfaces.portal_discussion \
                 import portal_discussion as IDiscussionTool
         from Products.CMFDefault.DiscussionTool import DiscussionTool
 
-        verifyClass(IActionProvider, DiscussionTool)
         verifyClass(IDiscussionTool, DiscussionTool)
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IDiscussionTool
         from Products.CMFDefault.DiscussionTool import DiscussionTool
 
-        verifyClass(IActionProvider, DiscussionTool)
         verifyClass(IDiscussionTool, DiscussionTool)
 
     def test_overrideDiscussionFor(self):

@@ -23,16 +23,15 @@ from DateTime import DateTime
 from Globals import InitializeClass
 
 from zope.component import getUtility
-from zope.component import queryUtility
 from zope.interface import implements
 
-from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import IWorkflowDefinition
 from Products.CMFCore.interfaces.portal_workflow \
         import WorkflowDefinition as z2IWorkflowDefinition
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import _modifyPermissionMappings
+from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import SimpleItemWithProperties
 
 from exceptions import AccessControl_Unauthorized
@@ -159,7 +158,7 @@ class DefaultWorkflowDefinition (SimpleItemWithProperties):
             return None
 
         actions = []
-        catalog = queryUtility(ICatalogTool)
+        catalog = getToolByName(self, 'portal_catalog', None)
         if catalog is None:
             return actions
 

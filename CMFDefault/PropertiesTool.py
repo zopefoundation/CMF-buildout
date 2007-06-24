@@ -24,7 +24,6 @@ from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import implements
 
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces.portal_properties \
@@ -36,20 +35,19 @@ from permissions import ManagePortal
 from utils import _dtmldir
 
 
-class PropertiesTool(UniqueObject, SimpleItem, ActionProviderBase):
+class PropertiesTool(UniqueObject, SimpleItem):
 
     implements(IPropertiesTool)
-    __implements__ = (z2IPropertiesTool, ActionProviderBase.__implements__)
+    __implements__ = (z2IPropertiesTool, )
 
     id = 'portal_properties'
     meta_type = 'Default Properties Tool'
 
     security = ClassSecurityInfo()
 
-    manage_options = ( ActionProviderBase.manage_options +
-                      ({ 'label' : 'Overview', 'action' : 'manage_overview' }
-                      ,
-                     ) + SimpleItem.manage_options
+    manage_options = ( ({'label': 'Overview',
+                         'action': 'manage_overview'},)
+                     + SimpleItem.manage_options
                      )
 
     #

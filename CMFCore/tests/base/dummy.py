@@ -263,6 +263,8 @@ class DummyFolder(DummyObject):
     def all_meta_types(self):
         return ({'name': 'Dummy', 'permission': 'addFoo'},)
 
+    def getTypeInfo(self):
+        return self.portal_types.getTypeInfo(self)  # Can return None.
 
 class DummySite(DummyFolder):
     """ A dummy portal folder.

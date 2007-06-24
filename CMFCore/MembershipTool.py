@@ -32,7 +32,6 @@ from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import implements
 
-from ActionProviderBase import ActionProviderBase
 from exceptions import AccessControl_Unauthorized
 from exceptions import BadRequest
 from interfaces import IMemberDataTool
@@ -58,7 +57,7 @@ from utils import postonly
 logger = logging.getLogger('CMFCore.MembershipTool')
 
 
-class MembershipTool(UniqueObject, Folder, ActionProviderBase):
+class MembershipTool(UniqueObject, Folder):
 
     """ This tool accesses member data through an acl_users object.
 
@@ -67,7 +66,7 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
     """
 
     implements(IMembershipTool)
-    __implements__ = (z2IMembershipTool, ActionProviderBase.__implements__)
+    __implements__ = (z2IMembershipTool, )
 
     id = 'portal_membership'
     meta_type = 'CMF Membership Tool'
@@ -78,7 +77,6 @@ class MembershipTool(UniqueObject, Folder, ActionProviderBase):
     manage_options=( ({ 'label' : 'Configuration'
                      , 'action' : 'manage_mapRoles'
                      },) +
-                     ActionProviderBase.manage_options +
                    ( { 'label' : 'Overview'
                      , 'action' : 'manage_overview'
                      },

@@ -32,7 +32,6 @@ from interfaces.portal_url import portal_url as z2IURLTool
 from permissions import ManagePortal
 from permissions import View
 from utils import _dtmldir
-from utils import registerToolInterface
 from utils import UniqueObject
 
 
@@ -71,17 +70,17 @@ class URLTool(UniqueObject, SimpleItem, ActionProviderBase):
     def __call__(self, relative=0, *args, **kw):
         """ Get by default the absolute URL of the portal.
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # absolute_url() depends implicitly on REQUEST
         return self.getPortalObject().absolute_url(relative=relative)
 
     security.declarePublic('getPortalObject')
     def getPortalObject(self):
         """ Get the portal object itself.
         """
-        site = queryUtility(ISiteRoot)
-        if site is None:
-            # fallback
-            return aq_parent(aq_inner(self))
-        return site
+        # XXX: this method violates the rules for tools/utilities:
+        # queryUtility(ISiteRoot) doesn't work because we need the REQUEST
+        return aq_parent( aq_inner(self) )
 
     security.declarePublic('getRelativeContentPath')
     def getRelativeContentPath(self, content):
@@ -107,4 +106,3 @@ class URLTool(UniqueObject, SimpleItem, ActionProviderBase):
         return '/'.join( self.getPortalObject().getPhysicalPath() )
 
 InitializeClass(URLTool)
-registerToolInterface('portal_url', IURLTool)

@@ -22,7 +22,6 @@ from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
 
 from zope.component import queryUtility
-from ActionProviderBase import ActionProviderBase
 from exceptions import AccessControl_Unauthorized
 from interfaces import ISiteRoot
 from interfaces import IUndoTool
@@ -36,24 +35,24 @@ from utils import registerToolInterface
 from utils import UniqueObject
 
 
-class UndoTool(UniqueObject, SimpleItem, ActionProviderBase):
+class UndoTool(UniqueObject, SimpleItem):
 
     """ This tool is used to undo changes.
     """
 
     implements(IUndoTool)
-    __implements__ = (z2IUndoTool, ActionProviderBase.__implements__)
+    __implements__ = (z2IUndoTool, )
 
     id = 'portal_undo'
     meta_type = 'CMF Undo Tool'
 
     security = ClassSecurityInfo()
 
-    manage_options = ( ActionProviderBase.manage_options +
-                       SimpleItem.manage_options +
-                       ({ 'label' : 'Overview', 'action' : 'manage_overview' }
-                     ,
-                     ))
+    manage_options = ( SimpleItem.manage_options
+                     + ({'label': 'Overview',
+                         'action': 'manage_overview'},)
+                     )
+
     #
     #   ZMI methods
     #
@@ -72,7 +71,7 @@ class UndoTool(UniqueObject, SimpleItem, ActionProviderBase):
         '''
         # arg list for undoable_transactions() changed in Zope 2.2.
         portal = queryUtility(ISiteRoot)
-        if site is None:
+        if portal is None:
             # fallback
             portal = self.aq_inner.aq_parent
 

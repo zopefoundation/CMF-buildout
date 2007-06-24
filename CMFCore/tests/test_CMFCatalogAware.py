@@ -23,13 +23,10 @@ from AccessControl.SecurityManagement import newSecurityManager
 from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
 
-from zope.component import getSiteManager
 from zope.interface import implements
 
 from Products.CMFCore.CMFCatalogAware import CMFCatalogAware
 from Products.CMFCore.exceptions import NotFound
-from Products.CMFCore.interfaces import ICatalogTool
-from Products.CMFCore.interfaces import IConfigurableWorkflowTool
 from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.testing import EventZCMLLayer
 from Products.CMFCore.testing import TraversingZCMLLayer
@@ -126,11 +123,8 @@ class CMFCatalogAwareTests(unittest.TestCase, LogInterceptor):
         self.root = DummyRoot('')
         self.root.site = SimpleFolder('site')
         self.site = self.root.site
-        sm = getSiteManager(self.site)
         self.site._setObject('portal_catalog', DummyCatalog())
-        sm.registerUtility(self.site.portal_catalog, ICatalogTool)
         self.site._setObject('portal_workflow', DummyWorkflowTool())
-        sm.registerUtility(self.site.portal_workflow, IConfigurableWorkflowTool)
         self.site.foo = TheClass('foo')
 
     def tearDown(self):
@@ -229,10 +223,8 @@ class CMFCatalogAware_CopySupport_Tests(SecurityRequestTest):
 
     def _makeSite(self):
         self.app._setObject('site', SimpleFolder('site'))
-        sm = getSiteManager(self.app.site)
         site = self.app._getOb('site')
         site._setObject('portal_catalog', DummyCatalog())
-        sm.registerUtility(site.portal_catalog, ICatalogTool)
         site._setObject('portal_workflow', DummyWorkflowTool())
         # Hack, we need a _p_mtime for the file, so we make sure that it
         # has one. We use a subtransaction, which means we can rollback

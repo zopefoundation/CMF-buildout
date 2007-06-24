@@ -33,7 +33,6 @@ from zope.schema import URI
 from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.interfaces import IMutableDublinCore
 from Products.CMFCore.interfaces import IMutableMinimalDublinCore
-from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFDefault.formlib.form import ContentEditFormBase
 from Products.CMFDefault.formlib.schema import ProxyFieldProperty
 from Products.CMFDefault.formlib.schema import SchemaAdapterBase
@@ -262,8 +261,8 @@ class MetadataEditView(ContentEditFormBase):
 
     def handle_change_success(self, action, data):
         self._handle_success(action, data)
-        return self._setRedirect(ITypesTool, 'object/metadata')
+        return self._setRedirect('portal_types', 'object/metadata')
 
     def handle_change_and_edit_success(self, action, data):
         self._handle_success(action, data)
-        return self._setRedirect(ITypesTool, 'object/edit')
+        return self._setRedirect('portal_types', 'object/edit')

@@ -40,22 +40,17 @@ class MembershipToolTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
         from Products.CMFCore.interfaces.portal_membership \
                 import portal_membership as IMembershipTool
         from Products.CMFCore.MembershipTool import MembershipTool
 
-        verifyClass(IActionProvider, MembershipTool)
         verifyClass(IMembershipTool, MembershipTool)
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
-        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import IMembershipTool
         from Products.CMFCore.MembershipTool import MembershipTool
 
-        verifyClass(IActionProvider, MembershipTool)
         verifyClass(IMembershipTool, MembershipTool)
 
 

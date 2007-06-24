@@ -32,7 +32,6 @@ from zope.app.container.interfaces import IObjectMovedEvent
 from OFS.interfaces import IObjectWillBeMovedEvent
 
 from interfaces import ICookieCrumbler
-from utils import registerToolInterface
 
 
 # Constants.
@@ -131,6 +130,8 @@ class CookieCrumbler(Folder):
 
     security.declarePrivate('defaultSetAuthCookie')
     def defaultSetAuthCookie(self, resp, cookie_name, cookie_value):
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on self.REQUEST
         kw = {}
         req = getattr(self, 'REQUEST', None)
         if req is not None and req.get('SERVER_URL', '').startswith('https:'):
@@ -233,7 +234,7 @@ class CookieCrumbler(Folder):
 
     def __call__(self, container, req):
         '''The __before_publishing_traverse__ hook.'''
-        resp = self.REQUEST['RESPONSE']
+        resp = req['RESPONSE']
         try:
             attempt = self.modifyRequest(req, resp)
         except CookieCrumblerDisabled:
@@ -267,6 +268,8 @@ class CookieCrumbler(Folder):
 
     security.declarePublic('credentialsChanged')
     def credentialsChanged(self, user, name, pw):
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on self.REQUEST
         ac = encodestring('%s:%s' % (name, pw)).rstrip()
         method = self.getCookieMethod( 'setAuthCookie'
                                        , self.defaultSetAuthCookie )
@@ -274,6 +277,8 @@ class CookieCrumbler(Folder):
         method( resp, self.auth_cookie, quote( ac ) )
 
     def _cleanupResponse(self):
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on self.REQUEST
         resp = self.REQUEST['RESPONSE']
         # No errors of any sort may propagate, and we don't care *what*
         # they are, even to log them.
@@ -315,6 +320,8 @@ class CookieCrumbler(Folder):
         '''
         Redirects to the login page.
         '''
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on self.REQUEST
         req = self.REQUEST
         resp = req['RESPONSE']
         attempt = getattr(req, '_cookie_auth', ATTEMPT_NONE)
@@ -359,6 +366,8 @@ class CookieCrumbler(Folder):
         '''
         Logs out the user and redirects to the logout page.
         '''
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on self.REQUEST
         req = self.REQUEST
         resp = req['RESPONSE']
         method = self.getCookieMethod( 'expireAuthCookie'
@@ -383,7 +392,7 @@ class CookieCrumbler(Folder):
         return id
 
 Globals.InitializeClass(CookieCrumbler)
-registerToolInterface('cookie_authentication', ICookieCrumbler)
+
 
 def handleCookieCrumblerEvent(ob, event):
     """ Event subscriber for (un)registering a CC as a before traverse hook.

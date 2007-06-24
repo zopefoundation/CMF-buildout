@@ -27,6 +27,7 @@ from Products.GenericSetup.utils import PropertyManagerHelpers
 from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import ICookieCrumbler
+from Products.CMFCore.utils import getToolByName
 
 
 class CookieCrumblerXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
@@ -63,16 +64,16 @@ class CookieCrumblerXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
 def importCookieCrumbler(context):
     """Import cookie crumbler settings from an XML file.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.getUtility(ICookieCrumbler)
+    site = context.getSite()
+    tool = getToolByName(site, 'cookie_authentication')
 
     importObjects(tool, '', context)
 
 def exportCookieCrumbler(context):
     """Export cookie crumbler settings as an XML file.
     """
-    sm = getSiteManager(context.getSite())
-    tool = queryUtility(ICookieCrumbler)
+    site = context.getSite()
+    tool = getToolByName(site, 'cookie_authentication', None)
     if tool is None:
         logger = context.getLogger('cookies')
         logger.info('Nothing to export.')

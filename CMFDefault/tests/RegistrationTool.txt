@@ -43,7 +43,7 @@ RegistrationTool
 
   mailPassword sends a password reminder and returns a response page::
 
-    >>> rtool.mailPassword('foo', None)
+    >>> rtool.mailPassword('foo', app.REQUEST)
     'done'
 
     >>> getUtility(IMailHost).lastMessage
@@ -51,7 +51,7 @@ RegistrationTool
 
   registeredNotify sends a welcome message::
 
-    >>> rtool.registeredNotify('foo')
+    >>> rtool.registeredNotify('foo', app.REQUEST)
 
     >>> getUtility(IMailHost).lastMessage
     'Welcome: foo, secret, foo@example.org'

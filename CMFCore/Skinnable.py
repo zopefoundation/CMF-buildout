@@ -21,17 +21,12 @@ $Id$
 import logging
 from thread import get_ident
 from warnings import warn
-from zope.component import getSiteManager
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 from Globals import InitializeClass
 from OFS.ObjectManager import ObjectManager
 from ZODB.POSException import ConflictError
-
-from zope.component import queryUtility
-
-from Products.CMFCore.interfaces import ISkinsTool
 
 logger = logging.getLogger('CMFCore.Skinnable')
 
@@ -70,9 +65,6 @@ class SkinnableObjectManager(ObjectManager):
     security.declarePrivate('getSkinsFolderName')
     def getSkinsFolderName(self):
         # Not implemented.
-        warn('getSkinsFolderName is deprecated and will be removed in '
-             'CMF 2.3, please use "getUtility(ISkinsTool)" to retrieve '
-             'the skins tool object.', DeprecationWarning, stacklevel=2)
         return None
 
     def __getattr__(self, name):
@@ -108,25 +100,27 @@ class SkinnableObjectManager(ObjectManager):
         """Returns the requested skin.
         """
         skinob = None
-        sf = queryUtility(ISkinsTool)
+        sfn = self.getSkinsFolderName()
 
-        if sf is not None:
-           if name is not None:
-               skinob = sf.getSkinByName(name)
-           if skinob is None:
-               skinob = sf.getSkinByName(sf.getDefaultSkin())
+        if sfn is not None:
+            sf = getattr(self, sfn, None)
+            if sf is not None:
+               if name is not None:
+                   skinob = sf.getSkinByName(name)
                if skinob is None:
-                   skinob = sf.getSkinByPath('')
-
+                   skinob = sf.getSkinByName(sf.getDefaultSkin())
+                   if skinob is None:
+                       skinob = sf.getSkinByPath('')
         return skinob
 
     security.declarePublic('getSkinNameFromRequest')
     def getSkinNameFromRequest(self, REQUEST=None):
         '''Returns the skin name from the Request.'''
-        sf = queryUtility(ISkinsTool)
-
-        if sf is not None:
-            return REQUEST.get(sf.getRequestVarname(), None)
+        sfn = self.getSkinsFolderName()
+        if sfn is not None:
+            sf = getattr(self, sfn, None)
+            if sf is not None:
+                return REQUEST.get(sf.getRequestVarname(), None)
 
     security.declarePublic('changeSkin')
     def changeSkin(self, skinname, REQUEST=_MARKER):
@@ -157,9 +151,11 @@ class SkinnableObjectManager(ObjectManager):
             if skinname is not None:
                 return skinname
         # nothing here, so assume the default skin
-        sf = queryUtility(ISkinsTool)
-        if sf is not None:
-            return sf.getDefaultSkin()
+        sfn = self.getSkinsFolderName()
+        if sfn is not None:
+            sf = getattr(self, sfn, None)
+            if sf is not None:
+                return sf.getDefaultSkin()
         # and if that fails...
         return None
 

@@ -21,7 +21,6 @@ import Testing
 from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -59,12 +58,10 @@ class UniqueIdHandlerTests(SecurityTest):
         self.root._setObject('dummy2', DummyContent(id='dummy2'))
 
         sm = getSiteManager()
-        sm.registerUtility(self.root.portal_catalog, ICatalogTool)
         sm.registerUtility( self.root.portal_uidannotation
                           , IUniqueIdAnnotationManagement
                           )
         sm.registerUtility(self.root.portal_uidgenerator, IUniqueIdGenerator)
-        sm.registerUtility(self.root.portal_uidhandler, IUniqueIdHandler)
 
     def tearDown(self):
         cleanUp()

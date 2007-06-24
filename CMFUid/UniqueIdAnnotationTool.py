@@ -31,8 +31,8 @@ from zope.component import queryUtility
 from zope.interface import implements
 
 from Products.CMFCore.utils import UniqueObject
+from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
 
 from Products.CMFUid.interfaces import IUniqueIdAnnotation
 from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
@@ -78,7 +78,7 @@ def handleUidAnnotationEvent(ob, event):
     if IObjectAddedEvent.providedBy(event):
         if event.newParent is not None:
             anno_tool = queryUtility(IUniqueIdAnnotationManagement)
-            uid_handler = queryUtility(IUniqueIdHandler)
+            uid_handler = getToolByName(ob, 'portal_uidhandler', None)
             if anno_tool is not None:
                 remove_on_add = anno_tool.getProperty('remove_on_add',False)
                 remove_on_clone = anno_tool.getProperty('remove_on_clone',False)
@@ -96,7 +96,8 @@ def handleUidAnnotationEvent(ob, event):
                  
     elif IObjectClonedEvent.providedBy(event):
         anno_tool = queryUtility(IUniqueIdAnnotationManagement)
-        uid_handler = queryUtility(IUniqueIdHandler)
+        uid_handler = getToolByName(ob, 'portal_uidhandler', None)
+
         if anno_tool is not None:
             remove_on_clone = anno_tool.getProperty('remove_on_clone', False)
             assign_on_clone = anno_tool.getProperty('assign_on_clone', False)
@@ -110,20 +111,17 @@ def handleUidAnnotationEvent(ob, event):
                 # assign new uid
                 uid_handler.register(ob)
         
-class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager,
-                             ActionProviderBase):
+class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager):
 
     __doc__ = __doc__ # copy from module
 
     implements(IUniqueIdAnnotationManagement)
     __implements__ = (
-        ActionProviderBase.__implements__,
         SimpleItem.__implements__,
     )
 
     manage_options = (
         PropertyManager.manage_options +
-        ActionProviderBase.manage_options +
         SimpleItem.manage_options
     )
 

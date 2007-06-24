@@ -23,9 +23,7 @@ from Acquisition import Implicit
 
 from zope.component import getSiteManager
 
-from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.interfaces import ISyndicationTool
-from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.testing import ConformsToFolder
 from Products.CMFCore.testing import EventZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -145,7 +143,6 @@ class TestTopic(ConformsToFolder, SecurityTest):
     def _initSite(self, max_items=15, index_ids=()):
         sm = getSiteManager()
         self.site.portal_catalog = DummyCatalog( index_ids )
-        sm.registerUtility(self.site.portal_catalog, ICatalogTool)
         self.site.portal_syndication = DummySyndicationTool( max_items )
         sm.registerUtility(self.site.portal_syndication, ISyndicationTool)
 
@@ -204,9 +201,7 @@ class TestTopic(ConformsToFolder, SecurityTest):
         self.assertEqual( query[ 'baz' ], 43 )
 
     def test_Nested( self ):
-        sm = getSiteManager()
         self.site._setObject( 'portal_types', TypesTool() )
-        sm.registerUtility(self.site.portal_types, ITypesTool)
         self.site.portal_types._setObject('Topic', FTI(id='Topic',
                                       product='CMFTopic', factory='addTopic'))
         topic = self._makeOne('top')

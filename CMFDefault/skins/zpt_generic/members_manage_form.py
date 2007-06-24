@@ -2,11 +2,12 @@
 ##
 from ZTUtils import Batch
 from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import html_marshal
 from Products.CMFDefault.utils import Message as _
 
-atool = getToolByInterfaceName('Products.CMFCore.interfaces.IActionsTool')
+atool = getToolByName(script, 'portal_actions')
 mtool = getToolByInterfaceName('Products.CMFCore.interfaces.IMembershipTool')
 
 

@@ -31,10 +31,8 @@ from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from zope.component import getUtility
 from zope.interface import implements
 
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
-from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.permissions import ManagePortal
-from Products.CMFCore.utils import registerToolInterface
+from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import UniqueObject
 
 from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
@@ -49,24 +47,20 @@ UID_ATTRIBUTE_NAME = 'cmf_uid'
 _wwwdir = os.path.join( package_home( globals() ), 'www' )
 
 
-class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
+class UniqueIdHandlerTool(UniqueObject, SimpleItem):
 
     __doc__ = __doc__ # copy from module
 
     implements(IUniqueIdHandler, IUniqueIdBrainQuery,
                IUniqueIdUnrestrictedQuery)
     __implements__ = (
-        ActionProviderBase.__implements__,
         SimpleItem.__implements__,
     )
 
     id = 'portal_uidhandler'
 
-    manage_options = ( ActionProviderBase.manage_options
-                     + ( {'label':'Query',
-                          'action':'manage_queryObject'}
-                       ,
-                       )
+    manage_options = ( ({'label': 'Query',
+                         'action': 'manage_queryObject'},)
                      + SimpleItem.manage_options
                      )
 
@@ -85,7 +79,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
     def _reindexObject(self, obj):
         # add uid index and colums to catalog if not yet done
         UID_ATTRIBUTE_NAME = self.UID_ATTRIBUTE_NAME
-        catalog = getUtility(ICatalogTool)
+        catalog = getToolByName(obj, 'portal_catalog')
         if UID_ATTRIBUTE_NAME not in catalog.indexes():
             catalog.addIndex(UID_ATTRIBUTE_NAME, 'FieldIndex')
             catalog.addColumn(UID_ATTRIBUTE_NAME)
@@ -177,6 +171,8 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         """This helper method does the "hard work" of querying the catalog
            and interpreting the results.
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         if uid is None:
             return default
 
@@ -184,7 +180,7 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
         generator = getUtility(IUniqueIdGenerator)
         uid = generator.convert(uid)
 
-        catalog = getUtility(ICatalogTool)
+        catalog = getToolByName(self, 'portal_catalog')
         searchMethod = getattr(catalog, searchMethodName)
         result = searchMethod({self.UID_ATTRIBUTE_NAME: uid})
         len_result = len(result)
@@ -265,5 +261,4 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem, ActionProviderBase):
     manage_queryObject = PageTemplateFile('queryUID.pt', _wwwdir)
 
 InitializeClass(UniqueIdHandlerTool)
-registerToolInterface('portal_uidhandler', IUniqueIdHandler)
 

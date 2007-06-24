@@ -19,8 +19,6 @@ import unittest
 import Testing
 
 from OFS.Folder import Folder
-
-from zope.component import getSiteManager
 from zope.interface import implements
 
 from Products.GenericSetup.testing import BodyAdapterTestCase
@@ -165,10 +163,6 @@ class _WorkflowSetup(BaseRegistryTests):
         self.root.site = Folder(id='site')
         site = self.root.site
         self.root.site.portal_workflow = DummyWorkflowTool()
-        sm = getSiteManager()
-        sm.registerUtility( self.root.site.portal_workflow
-                          , IConfigurableWorkflowTool
-                          )
         return site
 
 

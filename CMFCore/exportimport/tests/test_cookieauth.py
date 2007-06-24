@@ -20,15 +20,12 @@ import Testing
 
 from OFS.Folder import Folder
 
-from zope.component import getSiteManager
-
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
 from Products.CMFCore.CookieCrumbler import CookieCrumbler
-from Products.CMFCore.interfaces import ICookieCrumbler
 from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _COOKIECRUMBLER_BODY = """\
@@ -105,9 +102,6 @@ class _CookieCrumblerSetup(BaseRegistryTests):
         site = self.root.site
         cc = site.cookie_authentication = CookieCrumbler('foo_cookiecrumbler')
 
-        sm = getSiteManager()
-        sm.registerUtility(site.cookie_authentication, ICookieCrumbler)
- 
         if use_changed:
             cc.auth_cookie = 'value1'
             cc.cache_header_value = 'value2'

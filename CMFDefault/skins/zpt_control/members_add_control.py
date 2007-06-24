@@ -18,7 +18,7 @@ except ValueError, errmsg:
     return context.setStatus(False, errmsg)
 else:
     if ptool.getProperty('validate_email') or send_password:
-        rtool.registeredNotify(member_id)
+        rtool.registeredNotify(member_id, context.REQUEST)
     if mtool.checkPermission(ManageUsers, mtool):
         return context.setStatus(True, _(u'Member registered.'))
     else:

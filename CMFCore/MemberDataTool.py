@@ -28,7 +28,6 @@ from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import implements
 
-from ActionProviderBase import ActionProviderBase
 from exceptions import BadRequest
 from interfaces import IMemberData
 from interfaces import IMemberDataTool
@@ -48,30 +47,24 @@ from utils import UniqueObject
 _marker = []  # Create a new marker object.
 
 
-class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
-                     ActionProviderBase):
+class MemberDataTool(UniqueObject, SimpleItem, PropertyManager):
 
     """ This tool wraps user objects, making them act as Member objects.
     """
 
     implements(IMemberDataTool)
-    __implements__ = (z2IMemberDataTool, ActionProviderBase.__implements__)
+    __implements__ = (z2IMemberDataTool, )
 
     id = 'portal_memberdata'
     meta_type = 'CMF Member Data Tool'
-    _v_temps = None
     _properties = ()
 
     security = ClassSecurityInfo()
 
-    manage_options=( ActionProviderBase.manage_options +
-                     ({ 'label' : 'Overview'
-                       , 'action' : 'manage_overview'
-                       }
-                     , { 'label' : 'Contents'
-                       , 'action' : 'manage_showContents'
-                       }
-                     )
+    manage_options=( ({'label': 'Overview',
+                       'action': 'manage_overview'},
+                      {'label': 'Contents',
+                       'action': 'manage_showContents'})
                    + PropertyManager.manage_options
                    + SimpleItem.manage_options
                    )
@@ -184,7 +177,7 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
     def pruneMemberDataContents(self):
         """ Delete data contents of all members not listet in acl_users.
         """
-        membertool= getUtility(IMembershipTool)
+        membertool = getUtility(IMembershipTool)
         members = self._members
         user_list = membertool.listMemberIds()
 
@@ -200,27 +193,12 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager,
         '''
         id = u.getId()
         members = self._members
-        if not members.has_key(id):
-            # Get a temporary member that might be
-            # registered later via registerMemberData().
-            temps = self._v_temps
-            if temps is not None and temps.has_key(id):
-                m = temps[id]
-            else:
-                base = aq_base(self)
-                m = MemberData(base, id)
-                if temps is None:
-                    self._v_temps = {id:m}
-                    if hasattr(self, 'REQUEST'):
-                        # No REQUEST during tests.
-                        self.REQUEST._hold(CleanupTemp(self))
-                else:
-                    temps[id] = m
-        else:
-            m = members[id]
+        if not id in members:
+            base = aq_base(self)
+            members[id] = MemberData(base, id)
         # Return a wrapper with self as containment and
         # the user as context.
-        return m.__of__(self).__of__(u)
+        return members[id].__of__(self).__of__(u)
 
     security.declarePrivate('registerMemberData')
     def registerMemberData(self, m, id):
@@ -243,21 +221,6 @@ InitializeClass(MemberDataTool)
 registerToolInterface('portal_memberdata', IMemberDataTool)
 
 
-class CleanupTemp:
-
-    """Used to cleanup _v_temps at the end of the request."""
-
-    def __init__(self, tool):
-        self._tool = tool
-
-    def __del__(self):
-        try:
-            del self._tool._v_temps
-        except (AttributeError, KeyError):
-            # The object has already been deactivated.
-            pass
-
-
 class MemberData(SimpleItem):
 
     implements(IMemberData)
@@ -267,17 +230,11 @@ class MemberData(SimpleItem):
 
     def __init__(self, tool, id):
         self.id = id
-        # Make a temporary reference to the tool.
-        # The reference will be removed by notifyModified().
-        self._tool = tool
 
     security.declarePrivate('notifyModified')
     def notifyModified(self):
         # Links self to parent for full persistence.
-        tool = getattr(self, '_tool', None)
-        if tool is not None:
-            del self._tool
-            tool.registerMemberData(self, self.getId())
+        self.getTool().registerMemberData(self, self.getId())
 
     security.declarePublic('getUser')
     def getUser(self):

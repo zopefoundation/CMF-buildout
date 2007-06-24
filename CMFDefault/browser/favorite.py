@@ -19,14 +19,13 @@ import urlparse
 
 from zope.app.form.browser import BytesWidget
 from zope.component import adapts
-from zope.component import getUtility
 from zope.formlib import form
 from zope.interface import implements
 from zope.interface import Interface
 from zope.schema import BytesLine
 from zope.schema import TextLine
 
-from Products.CMFCore.interfaces import IURLTool
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.formlib.form import ContentEditFormBase
 from Products.CMFDefault.formlib.schema import ProxyFieldProperty
 from Products.CMFDefault.formlib.schema import SchemaAdapterBase
@@ -83,7 +82,7 @@ class FavoriteURIWidget(BytesWidget):
             value = urlparse.urlunparse(tokens)
         # if URL begins with site URL, remove site URL
         obj = self.context.context.context
-        portal_url = getUtility(IURLTool)
+        portal_url = getToolByName(obj, 'portal_url').getPortalPath()
         if value.startswith(portal_url):
             value = value[len(portal_url):]
         # if site is still absolute, make it relative

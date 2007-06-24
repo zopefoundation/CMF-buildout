@@ -24,7 +24,6 @@ from ZTUtils import make_query
 
 from Products.CMFCore.interfaces import IDynamicType
 from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFDefault.exceptions import CopyError
 from Products.CMFDefault.exceptions import zExceptions_Unauthorized
 from Products.CMFDefault.permissions import AddPortalContent
@@ -48,8 +47,8 @@ class FormViewBase(ViewBase):
 
     # helpers
 
-    def _setRedirect(self, provider_iface, action_path, keys=''):
-        provider = getUtility(provider_iface)
+    def _setRedirect(self, provider_id, action_path, keys=''):
+        provider = self._getTool(provider_id)
         try:
             target = provider.getActionInfo(action_path, self.context)['url']
         except ValueError:
@@ -271,73 +270,73 @@ class FolderContentsView(BatchViewBase, FormViewBase):
                  'title': _(u'New...'),
                  'permissions': (ViewManagementScreens, AddPortalContent),
                  'conditions': ('checkAllowedContentTypes',),
-                 'redirect': (ITypesTool, 'object/new')},
+                 'redirect': ('portal_types', 'object/new')},
                 {'id': 'items_rename',
                  'title': _(u'Rename...'),
                  'permissions': (ViewManagementScreens, AddPortalContent),
                  'conditions': ('checkItems', 'checkAllowedContentTypes'),
                  'transform': ('validateItemIds',),
-                 'redirect': (ITypesTool, 'object/rename_items',
+                 'redirect': ('portal_types', 'object/rename_items',
                               'b_start, ids, key, reverse')},
                 {'id': 'items_cut',
                  'title': _(u'Cut'),
                  'permissions': (ViewManagementScreens,),
                  'conditions': ('checkItems',),
                  'transform': ('validateItemIds', 'cut_control'),
-                 'redirect': (ITypesTool, 'object/folderContents',
+                 'redirect': ('portal_types', 'object/folderContents',
                               'b_start, key, reverse')},
                 {'id': 'items_copy',
                  'title': _(u'Copy'),
                  'permissions': (ViewManagementScreens,),
                  'conditions': ('checkItems',),
                  'transform': ('validateItemIds', 'copy_control'),
-                 'redirect': (ITypesTool, 'object/folderContents',
+                 'redirect': ('portal_types', 'object/folderContents',
                               'b_start, key, reverse')},
                 {'id': 'items_paste',
                  'title': _(u'Paste'),
                  'permissions': (ViewManagementScreens, AddPortalContent),
                  'conditions': ('checkClipboardData',),
                  'transform': ('validateClipboardData', 'paste_control'),
-                 'redirect': (ITypesTool, 'object/folderContents',
+                 'redirect': ('portal_types', 'object/folderContents',
                               'b_start, key, reverse')},
                 {'id': 'items_delete',
                  'title': _(u'Delete'),
                  'permissions': (ViewManagementScreens, DeleteObjects),
                  'conditions': ('checkItems',),
                  'transform': ('validateItemIds', 'delete_control'),
-                 'redirect': (ITypesTool, 'object/folderContents',
+                 'redirect': ('portal_types', 'object/folderContents',
                               'b_start, key, reverse')},
                 {'id': 'items_sort',
                  'permissions': (ManageProperties,),
                  'transform': ('sort_control',),
-                 'redirect': (ITypesTool, 'object/folderContents',
+                 'redirect': ('portal_types', 'object/folderContents',
                               'b_start')},
                 {'id': 'items_up',
                  'permissions': (ManageProperties,),
                  'transform': ('validateItemIds', 'up_control'),
-                 'redirect': (ITypesTool, 'object/folderContents',
+                 'redirect': ('portal_types', 'object/folderContents',
                               'b_start, key, reverse')},
                 {'id': 'items_down',
                  'permissions': (ManageProperties,),
                  'transform': ('validateItemIds', 'down_control'),
-                 'redirect': (ITypesTool, 'object/folderContents',
+                 'redirect': ('portal_types', 'object/folderContents',
                               'b_start, key, reverse')},
                 {'id': 'items_top',
                  'permissions': (ManageProperties,),
                  'transform': ('validateItemIds', 'top_control'),
-                 'redirect': (ITypesTool, 'object/folderContents',
+                 'redirect': ('portal_types', 'object/folderContents',
                               'b_start, key, reverse')},
                 {'id': 'items_bottom',
                  'permissions': (ManageProperties,),
                  'transform': ('validateItemIds', 'bottom_control'),
-                 'redirect': (ITypesTool, 'object/folderContents',
+                 'redirect': ('portal_types', 'object/folderContents',
                               'b_start, key, reverse')},
                 {'id': 'set_view_filter',
                  'transform': ('set_filter_control',),
-                 'redirect': (ITypesTool, 'object/folderContents')},
+                 'redirect': ('portal_types', 'object/folderContents')},
                 {'id': 'clear_view_filter',
                  'transform': ('clear_filter_control',),
-                 'redirect': (ITypesTool, 'object/folderContents')})
+                 'redirect': ('portal_types', 'object/folderContents')})
 
     # helpers
 

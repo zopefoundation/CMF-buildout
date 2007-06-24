@@ -31,7 +31,6 @@ from Products.CMFCore.interfaces import IActionsTool
 from Products.CMFCore.interfaces.portal_actions \
     import ActionProvider as IActionProvider
 from Products.CMFCore.tests.base.dummy import DummySite
-from Products.CMFCore.utils import registerToolInterface
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.testing import NodeAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
@@ -202,14 +201,6 @@ _REMOVE_IMPORT = """\
 </object>
 """
 
-class IFoo(Interface):
-    """ Foo interface """
-registerToolInterface('portal_foo', IFoo)
-
-class IBar(Interface):
-    """ Bar interface """
-registerToolInterface('portal_bar', IBar)
-
 
 class DummyTool(OrderedFolder, ActionProviderBase):
 
@@ -341,7 +332,6 @@ class ActionsToolXMLAdapterTests(BodyAdapterTestCase):
         self.assertEqual(obj.action_providers[0], 'portal_actions')
 
     def setUp(self):
-        from Products.CMFCore.interfaces import IActionsTool
         from Products.CMFCore.ActionsTool import ActionsTool
 
         BodyAdapterTestCase.setUp(self)
@@ -350,16 +340,10 @@ class ActionsToolXMLAdapterTests(BodyAdapterTestCase):
         self._obj = site.portal_actions
         self._BODY = _ACTIONSTOOL_BODY
 
-        # utility registration
-        sm = getSiteManager()
-        sm.registerUtility(self._obj, IActionsTool)
-
 
 class _ActionSetup(BaseRegistryTests):
 
     def _initSite(self, foo=2, bar=2):
-        from zope.component import getSiteManager
-
         self.root.site = DummySite('site')
         site = self.root.site
         site.portal_membership = DummyMembershipTool()
@@ -367,12 +351,8 @@ class _ActionSetup(BaseRegistryTests):
         site.portal_actions = DummyActionsTool()
         site.portal_actions.addActionProvider('portal_actions')
 
-        sm = getSiteManager(site)
-        sm.registerUtility(site.portal_actions, IActionsTool)
-
         if foo > 0:
             site.portal_foo = DummyTool()
-            sm.registerUtility(site.portal_foo, IFoo)
 
         if foo > 1:
             site.portal_foo.addAction(id='foo',
@@ -386,7 +366,6 @@ class _ActionSetup(BaseRegistryTests):
 
         if bar > 0:
             site.portal_bar = DummyTool()
-            sm.registerUtility(site.portal_bar, IBar)
 
         if bar > 1:
             site.portal_bar.addAction(id='bar',

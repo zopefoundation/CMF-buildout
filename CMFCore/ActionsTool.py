@@ -30,7 +30,6 @@ from interfaces.portal_actions import ActionProvider as z2IActionProvider
 from interfaces.portal_actions import portal_actions as z2IActionsTool
 from permissions import ManagePortal
 from utils import _dtmldir
-from utils import registerToolInterface
 from utils import UniqueObject
 
 
@@ -41,6 +40,8 @@ class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
         Weave together the various sources of "actions" which are apropos
         to the current user and context.
     """
+    # XXX: this class violates the rules for tools/utilities:
+    # ActionProviderBase depends implicitly on REQUEST
 
     implements(IActionsTool)
     __implements__ = (z2IActionsTool, OrderedFolder.__implements__,
@@ -184,4 +185,3 @@ class ActionsTool(UniqueObject, IFAwareObjectManager, OrderedFolder,
         return filtered_actions
 
 InitializeClass(ActionsTool)
-registerToolInterface('portal_actions', IActionsTool)

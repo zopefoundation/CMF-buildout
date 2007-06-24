@@ -16,7 +16,6 @@ $Id$
 """
 
 from zope.component import adapts
-from zope.component import getSiteManager
 
 from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
@@ -28,6 +27,7 @@ from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFCore.interfaces import ITypesTool
+from Products.CMFCore.utils import getToolByName
 
 
 class TypeInformationXMLAdapter(XMLAdapterBase, PropertyManagerHelpers):
@@ -177,16 +177,16 @@ class TypesToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers,
 def importTypesTool(context):
     """Import types tool and content types from XML files.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.getUtility(ITypesTool)
+    site = context.getSite()
+    tool = getToolByName(site, 'portal_types')
 
     importObjects(tool, '', context)
 
 def exportTypesTool(context):
     """Export types tool content types as a set of XML files.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.queryUtility(ITypesTool)
+    site = context.getSite()
+    tool = getToolByName(site, 'portal_types', None)
     if tool is None:
         logger = context.getLogger('types')
         logger.info('Nothing to export.')

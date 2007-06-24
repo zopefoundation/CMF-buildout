@@ -149,7 +149,7 @@ class RegistrationTool(BaseTool):
         kw = {'member': member, 'password': member.getPassword()}
 
         if getattr(aq_base(method), 'isDocTemp', 0):
-            mail_text = method(self, self.REQUEST, **kw)
+            mail_text = method(self, REQUEST, **kw)
         else:
             mail_text = method(**kw)
 
@@ -159,7 +159,7 @@ class RegistrationTool(BaseTool):
         return self.mail_password_response( self, REQUEST )
 
     security.declarePublic( 'registeredNotify' )
-    def registeredNotify( self, new_member_id, password=None ):
+    def registeredNotify(self, new_member_id, REQUEST, password=None):
         """ Handle mailing the registration / welcome message.
         """
         membership = getUtility(IMembershipTool)
@@ -181,7 +181,7 @@ class RegistrationTool(BaseTool):
         kw = {'member': member, 'password': password, 'email': email}
 
         if getattr(aq_base(method), 'isDocTemp', 0):
-            mail_text = method(self, self.REQUEST, **kw)
+            mail_text = method(self, REQUEST, **kw)
         else:
             mail_text = method(**kw)
 

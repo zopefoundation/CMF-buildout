@@ -6,9 +6,6 @@
      interface="Products.CMFUid.interfaces.IUniqueIdGenerator"
      object="/portal_uidgenerator"/>
   <utility
-     interface="Products.CMFUid.interfaces.IUniqueIdHandler"
-     object="/portal_uidhandler"/>
-  <utility
      interface="Products.CMFUid.interfaces.IUniqueIdAnnotationManagement"
      object="/portal_uidannotation"/>
  </utilities>

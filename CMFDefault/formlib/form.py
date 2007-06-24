@@ -22,14 +22,12 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.Five.formlib.formbase import PageDisplayForm
 from Products.Five.formlib.formbase import PageForm
 from zope.datetime import parseDatetimetz
-from zope.component import getUtility
 from zope.formlib import form
 from zope.i18n.interfaces import IUserPreferredLanguages
 from zope.i18n.locales import LoadLocaleError
 from zope.i18n.locales import locales
 from ZTUtils import make_query
 
-from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFDefault.utils import Message as _
 from Products.CMFDefault.utils import translate
 from Products.CMFDefault.browser.utils import ViewBase
@@ -64,8 +62,8 @@ class EditFormBase(PageForm, ViewBase):
         self.request = request
         self.request.locale = getLocale(request)
 
-    def _setRedirect(self, provider_iface, action_path, keys=''):
-        provider = getUtility(provider_iface)
+    def _setRedirect(self, provider_id, action_path, keys=''):
+        provider = self._getTool(provider_id)
         try:
             target = provider.getActionInfo(action_path, self.context)['url']
         except ValueError:
@@ -149,11 +147,11 @@ class ContentEditFormBase(EditFormBase):
 
     def handle_change_success(self, action, data):
         self._handle_success(action, data)
-        return self._setRedirect(ITypesTool, 'object/edit')
+        return self._setRedirect('portal_types', 'object/edit')
 
     def handle_change_and_view_success(self, action, data):
         self._handle_success(action, data)
-        return self._setRedirect(ITypesTool, 'object/view')
+        return self._setRedirect('portal_types', 'object/view')
 
 
 class DisplayFormBase(PageDisplayForm, ViewBase):

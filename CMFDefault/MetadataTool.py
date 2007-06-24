@@ -24,7 +24,6 @@ from OFS.Folder import Folder
 from OFS.SimpleItem import SimpleItem
 from zope.interface import implements
 
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces import IMetadataTool
 from Products.CMFCore.interfaces.portal_metadata \
         import portal_metadata as z2IMetadataTool
@@ -368,14 +367,13 @@ _DCMI_ELEMENT_SPECS = ( ( 'Title', 0 )
                       , ( 'Rights', 0 )
                       )
 
-class MetadataTool( UniqueObject, Folder, ActionProviderBase ):
+class MetadataTool(UniqueObject, Folder):
 
     implements(IMetadataTool)
-    __implements__ = (z2IMetadataTool, ActionProviderBase.__implements__)
+    __implements__ = (z2IMetadataTool, )
 
     id = 'portal_metadata'
     meta_type = 'Default Metadata Tool'
-    _actions = ()
 
     _DCMI = None
     def _get_DCMI( self ):
@@ -424,9 +422,7 @@ class MetadataTool( UniqueObject, Folder, ActionProviderBase ):
                          , 'action'     : 'manage_overview'
                          }
                        )
-                     + Folder.manage_options[:1]
-                     + ActionProviderBase.manage_options +
-                       Folder.manage_options[1:]
+                     + Folder.manage_options
                      )
 
     security.declareProtected(ManagePortal, 'manage_overview')

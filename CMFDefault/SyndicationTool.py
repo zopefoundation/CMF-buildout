@@ -26,7 +26,6 @@ from OFS.SimpleItem import SimpleItem
 
 from zope.interface import implements
 
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces import ISyndicationTool
 from Products.CMFCore.PortalFolder import PortalFolderBase
 from Products.CMFCore.utils import _checkPermission
@@ -40,7 +39,7 @@ from SyndicationInfo import SyndicationInformation
 from utils import _dtmldir
 
 
-class SyndicationTool(UniqueObject, SimpleItem, ActionProviderBase):
+class SyndicationTool(UniqueObject, SimpleItem):
 
     """
         The syndication tool manages the site-wide policy for
@@ -48,7 +47,7 @@ class SyndicationTool(UniqueObject, SimpleItem, ActionProviderBase):
     """
 
     implements(ISyndicationTool)
-    __implements__ = ActionProviderBase.__implements__
+    __implements__ = SimpleItem.__implements__
 
     id = 'portal_syndication'
     meta_type = 'Default Syndication Tool'
@@ -63,8 +62,7 @@ class SyndicationTool(UniqueObject, SimpleItem, ActionProviderBase):
     max_items = 15
 
     #ZMI Methods
-    manage_options = ( ActionProviderBase.manage_options
-                     + ( { 'label'  : 'Overview'
+    manage_options = ( ( { 'label'  : 'Overview'
                          , 'action' : 'overview'
                          , 'help'   : ( 'CMFDefault'
                                       , 'Syndication-Tool_Overview.stx' )
@@ -361,7 +359,7 @@ class SyndicationTool(UniqueObject, SimpleItem, ActionProviderBase):
             raise 'Syndication is not Allowed'
 
         if obj is None:
-            when = syUpdateBase
+            when = self.syUpdateBase
             return when.HTML4()
 
         syInfo = getattr(obj, 'syndication_information',

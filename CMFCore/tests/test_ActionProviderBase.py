@@ -22,7 +22,6 @@ from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
@@ -68,7 +67,7 @@ class ActionProviderBaseTests(SecurityRequestTest):
         SecurityRequestTest.setUp(self)
         self.site = DummySite('site').__of__(self.root)
         sm = getSiteManager()
-        sm.registerUtility(self.site, ISiteRoot)
+        utool = self.site._setObject( 'portal_url', DummyTool() )
         sm.registerUtility(DummyTool(), IMembershipTool)
 
     def tearDown(self):

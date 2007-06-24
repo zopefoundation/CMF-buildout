@@ -17,11 +17,7 @@ $Id$
 
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-
 from zope.component import adapts
-from zope.component import getSiteManager
-from zope.component import getUtility
-from zope.component import queryUtility
 
 from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
@@ -32,6 +28,7 @@ from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import IDirectoryView
 from Products.CMFCore.interfaces import ISkinsTool
+from Products.CMFCore.utils import getToolByName
 
 
 class DirectoryViewNodeAdapter(NodeAdapterBase):
@@ -221,16 +218,16 @@ class SkinsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
 def importSkinsTool(context):
     """Import skins tool FSDirViews and skin paths from an XML file.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.getUtility(ISkinsTool)
+    site = context.getSite()
+    tool = getToolByName(site, 'portal_skins')
 
     importObjects(tool, '', context)
 
 def exportSkinsTool(context):
     """Export skins tool FSDVs and skin paths as an XML file.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.queryUtility(ISkinsTool)
+    site = context.getSite()
+    tool = getToolByName(site, 'portal_skins', None)
     if tool is None:
         logger = context.getLogger('skins')
         logger.info('Nothing to export.')

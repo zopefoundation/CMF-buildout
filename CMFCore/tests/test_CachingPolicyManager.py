@@ -31,7 +31,6 @@ from zope.component import getSiteManager
 
 from Products.CMFCore.FSPageTemplate import FSPageTemplate
 from Products.CMFCore.FSDTMLMethod import FSDTMLMethod
-from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.testing import FunctionalZCMLLayer
 from Products.CMFCore.testing import TraversingZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
@@ -655,10 +654,8 @@ class CachingPolicyManager304Tests(RequestTest, FSDVTest):
         now = DateTime()
 
         # Create a fake portal and the tools we need
-        sm = getSiteManager()
         self.portal = DummySite(id='portal').__of__(self.root)
         self.portal._setObject('portal_types', DummyTool())
-        sm.registerUtility(self.portal.portal_types, ITypesTool)
 
         # This is a FSPageTemplate that will be used as the View for
         # our content objects. It doesn't matter what it returns.

@@ -46,13 +46,10 @@ class MembershipToolTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
-        from Products.CMFCore.interfaces.portal_actions \
-                import ActionProvider as IActionProvider
         from Products.CMFDefault.interfaces.portal_membership \
                 import portal_membership as IMembershipTool
         from Products.CMFDefault.MembershipTool import MembershipTool
 
-        verifyClass(IActionProvider, MembershipTool)
         verifyClass(IMembershipTool, MembershipTool)
 
     def test_z3interfaces(self):
@@ -61,7 +58,6 @@ class MembershipToolTests(unittest.TestCase):
         from Products.CMFDefault.interfaces import IMembershipTool
         from Products.CMFDefault.MembershipTool import MembershipTool
 
-        verifyClass(IActionProvider, MembershipTool)
         verifyClass(IMembershipTool, MembershipTool)
 
     def test_MembersFolder_methods(self):
@@ -98,8 +94,6 @@ class MembershipToolSecurityTests(SecurityTest):
         members = self.site._setObject( 'Members', PortalFolder('Members') )
         acl_users = self.site._setObject( 'acl_users', DummyUserFolder() )
         wtool = self.site._setObject( 'portal_workflow', DummyTool() )
-        sm = getSiteManager()
-        sm.registerUtility(self.site.portal_workflow, IConfigurableWorkflowTool)
 
         # permission
         mtool.createMemberArea('user_foo')

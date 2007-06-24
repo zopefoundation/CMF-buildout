@@ -316,21 +316,23 @@ class MembershipTool(UniqueObject, Folder):
         return _checkPermission(permissionName, object)
 
     security.declarePublic('credentialsChanged')
-    def credentialsChanged(self, password):
+    def credentialsChanged(self, password, REQUEST=None):
         '''
         Notifies the authentication mechanism that this user has changed
         passwords.  This can be used to update the authentication cookie.
         Note that this call should *not* cause any change at all to user
         databases.
         '''
+        if REQUEST is None:
+            raise TypeError('new REQUEST argument required')
+
         if not self.isAnonymousUser():
             acl_users = self.acl_users
             user = _getAuthenticatedUser(self)
             name = user.getUserName()
             # this really does need to be the user name, and not the user id,
             # because we're dealing with authentication credentials
-            req = self.REQUEST
-            p = getattr(req, '_credentials_changed_path', None)
+            p = getattr(REQUEST, '_credentials_changed_path', None)
             if p is not None:
                 # Use an interface provided by CookieCrumbler.
                 change = self.restrictedTraverse(p)

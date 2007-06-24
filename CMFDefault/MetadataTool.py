@@ -16,7 +16,6 @@ $Id$
 """
 
 from AccessControl import ClassSecurityInfo
-from AccessControl import getSecurityManager
 from Globals import DTMLFile
 from Globals import InitializeClass
 from Globals import PersistentMapping
@@ -38,6 +37,7 @@ from utils import _dtmldir
 
 
 class MetadataElementPolicy( SimpleItem ):
+
     """ Represent a type-specific policy about a particular metadata element.
     """
 
@@ -115,8 +115,10 @@ InitializeClass( MetadataElementPolicy )
 
 
 class ElementSpec( SimpleItem ):
+
     """ Represent all the tool knows about a single metadata element.
     """
+
     security = ClassSecurityInfo()
 
     #
@@ -143,7 +145,7 @@ class ElementSpec( SimpleItem ):
     security.declareProtected(View , 'getPolicy')
     def getPolicy( self, typ=None ):
         """ Find the policy for this element for objects of the given type.
-        
+
         o Return a default, if none found.
         """
         try:
@@ -175,7 +177,7 @@ class ElementSpec( SimpleItem ):
     security.declareProtected(ManagePortal, 'removePolicy')
     def removePolicy( self, typ ):
         """ Remove the policy from this element for objects of the given type.
-        
+
         o Do *not* remvoe the default, however.
         """
         if typ is None:
@@ -186,8 +188,10 @@ InitializeClass( ElementSpec )
 
 
 class MetadataSchema( SimpleItem ):
+
     """ Describe a metadata schema.
     """
+
     security = ClassSecurityInfo()
 
     meta_type = 'Metadata Schema'
@@ -278,7 +282,7 @@ class MetadataSchema( SimpleItem ):
                            , REQUEST=None
                            ):
         """ Update a policy for one of our elements 
-        
+
         o 'content_type' will be '<default>' when we edit the default.
         """
         if content_type == '<default>':
@@ -348,7 +352,7 @@ class MetadataSchema( SimpleItem ):
     security.declareProtected(ManagePortal, 'listPolicies')
     def listPolicies( self, typ=None ):
         """ Show all policies for a given content type
-        
+
         o If 'typ' is none, return the list of default policies.
         """
         result = []
@@ -618,4 +622,3 @@ class MetadataTool(UniqueObject, Folder):
 
 InitializeClass( MetadataTool )
 registerToolInterface('portal_metadata', IMetadataTool)
-

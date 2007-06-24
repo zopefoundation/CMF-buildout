@@ -27,7 +27,6 @@ from Globals import MessageDialog
 from Globals import PersistentMapping
 from OFS.Folder import Folder
 from ZODB.POSException import ConflictError
-
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import implements
@@ -324,13 +323,16 @@ class MembershipTool(UniqueObject, Folder):
         return _checkPermission(permissionName, object)
 
     security.declarePublic('credentialsChanged')
-    def credentialsChanged(self, password):
+    def credentialsChanged(self, password, REQUEST=None):
         '''
         Notifies the authentication mechanism that this user has changed
         passwords.  This can be used to update the authentication cookie.
         Note that this call should *not* cause any change at all to user
         databases.
         '''
+        if REQUEST is None:
+            raise TypeError('new REQUEST argument required')
+
         if not self.isAnonymousUser():
             acl_users = self.acl_users
             user = _getAuthenticatedUser(self)
@@ -341,8 +343,7 @@ class MembershipTool(UniqueObject, Folder):
                 # Use an interface provided by LoginManager.
                 acl_users.credentialsChanged(user, name, password)
             else:
-                req = self.REQUEST
-                p = getattr(req, '_credentials_changed_path', None)
+                p = getattr(REQUEST, '_credentials_changed_path', None)
                 if p is not None:
                     # Use an interface provided by CookieCrumbler.
                     change = self.restrictedTraverse(p)

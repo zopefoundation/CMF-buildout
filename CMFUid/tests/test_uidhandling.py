@@ -23,7 +23,6 @@ from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyFolder
-from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.testcase import SecurityTest
 from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
 from Products.CMFUid.interfaces import IUniqueIdGenerator
@@ -72,8 +71,9 @@ class UniqueIdHandlerTests(SecurityTest):
         from Products.CMFUid.interfaces import IUniqueIdBrainQuery
         from Products.CMFUid.interfaces import IUniqueIdHandler
         from Products.CMFUid.interfaces import IUniqueIdUnrestrictedQuery
-        verifyClass(IUniqueIdHandler, self._getTargetClass())
+
         verifyClass(IUniqueIdBrainQuery, self._getTargetClass())
+        verifyClass(IUniqueIdHandler, self._getTargetClass())
         verifyClass(IUniqueIdUnrestrictedQuery, self._getTargetClass())
 
     def test_getUidOfNotYetRegisteredObject(self):

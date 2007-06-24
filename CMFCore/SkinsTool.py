@@ -27,7 +27,6 @@ from OFS.Image import Image
 from OFS.ObjectManager import REPLACEABLE
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from Products.PythonScripts.PythonScript import PythonScript
-
 from zope.component import getUtility
 from zope.interface import implements
 
@@ -37,7 +36,6 @@ from DirectoryView import ignore
 from DirectoryView import ignore_re
 from interfaces import IMembershipTool
 from interfaces import ISkinsTool
-from interfaces import IURLTool
 from interfaces.portal_skins import portal_skins as z2ISkinsTool
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
@@ -46,7 +44,6 @@ from SkinsContainer import SkinsContainer
 from utils import _dtmldir
 from utils import getToolByName
 from utils import UniqueObject
-
 
 def modifiedOptions():
     # Remove the existing "Properties" option and add our own.
@@ -379,4 +376,3 @@ class SkinsTool(UniqueObject, SkinsContainer, Folder, ActionProviderBase):
             self.default_skin = skinname
 
 InitializeClass(SkinsTool)
-

@@ -25,11 +25,11 @@ from Products.CMFCore.ActionInformation import Action
 from Products.CMFCore.ActionInformation import ActionCategory
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.Expression import Expression
+from Products.CMFCore.interfaces import IMembershipTool
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.MembershipTool import MembershipTool
 from Products.CMFCore.tests.base.testcase import SecurityRequestTest
 from Products.CMFCore.URLTool import URLTool
-from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import ISiteRoot
 
 
 class ActionsToolTests(unittest.TestCase):

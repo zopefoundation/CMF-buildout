@@ -25,10 +25,8 @@ from Globals import InitializeClass
 from Globals import PersistentMapping
 from OFS.Folder import Folder
 from OFS.ObjectManager import IFAwareObjectManager
-
-from zope.component import queryUtility
-from zope.interface import implements
 from zope.event import notify
+from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
 from interfaces import IConfigurableWorkflowTool
@@ -41,12 +39,12 @@ from utils import getToolByName
 from utils import Message as _
 from utils import UniqueObject
 from utils import postonly
+from WorkflowCore import ActionRaisedExceptionEvent
+from WorkflowCore import ActionSucceededEvent
+from WorkflowCore import ActionWillBeInvokedEvent
 from WorkflowCore import ObjectDeleted
 from WorkflowCore import ObjectMoved
 from WorkflowCore import WorkflowException
-from WorkflowCore import ActionWillBeInvokedEvent
-from WorkflowCore import ActionRaisedExceptionEvent
-from WorkflowCore import ActionSucceededEvent
 
 _marker = []  # Create a new marker object.
 
@@ -645,4 +643,3 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
             ob.reindexObjectSecurity()
 
 InitializeClass(WorkflowTool)
-

@@ -34,7 +34,6 @@ from ZPublisher.HTTPResponse import HTTPResponse
 
 from Products.CMFCore.DynamicType import DynamicType
 from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import ITypesTool
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.tests.base.dummy import DummyObject
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -72,6 +71,7 @@ class DynamicTypeTests(unittest.TestCase):
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
         from Products.CMFCore.interfaces import IDynamicType
+
         verifyClass(IDynamicType, DynamicType)
 
 

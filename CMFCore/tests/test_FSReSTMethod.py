@@ -134,7 +134,6 @@ class FSReSTMethodTests(RequestTest, FSReSTMaker):
         from webdav.common import rfc1123_date
         from Products.CMFCore.tests.base.dummy \
             import DummyCachingManagerWithPolicy
-        from Products.CMFCore.tests.base.dummy import DummyContent
 
         mod_time = DateTime()
         self.root.caching_policy_manager = DummyCachingManagerWithPolicy()

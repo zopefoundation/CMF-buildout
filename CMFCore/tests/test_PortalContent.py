@@ -21,8 +21,6 @@ import Testing
 from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import aq_base
 from OFS.Folder import Folder
-
-from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.exceptions import NotFound

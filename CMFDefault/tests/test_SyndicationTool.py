@@ -19,8 +19,6 @@ import unittest
 import Testing
 
 from DateTime.DateTime import DateTime
-
-from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.testcase import SecurityTest

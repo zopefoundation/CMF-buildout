@@ -22,14 +22,11 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from Globals import PersistentMapping
 from OFS.SimpleItem import SimpleItem
-from ZPublisher.mapply import mapply
-
-from zope.component import getUtility
 from zope.interface import implements
+from ZPublisher.mapply import mapply
 
 from interfaces import IContentTypeRegistry
 from interfaces import IContentTypeRegistryPredicate
-from interfaces import ITypesTool
 from interfaces.ContentTypeRegistry \
         import ContentTypeRegistry as z2IContentTypeRegistry
 from interfaces.ContentTypeRegistry \
@@ -40,6 +37,7 @@ from utils import getToolByName
 
 
 class MajorMinorPredicate( SimpleItem ):
+
     """
         Predicate matching on 'major/minor' content types.
         Empty major or minor implies wildcard (all match).
@@ -127,7 +125,9 @@ class MajorMinorPredicate( SimpleItem ):
 
 InitializeClass( MajorMinorPredicate )
 
+
 class ExtensionPredicate( SimpleItem ):
+
     """
         Predicate matching on filename extensions.
     """
@@ -190,7 +190,9 @@ class ExtensionPredicate( SimpleItem ):
 
 InitializeClass( ExtensionPredicate )
 
+
 class MimeTypeRegexPredicate( SimpleItem ):
+
     """
         Predicate matching only on 'typ', using regex matching for
         string patterns (other objects conforming to 'match' can
@@ -247,7 +249,9 @@ class MimeTypeRegexPredicate( SimpleItem ):
 
 InitializeClass( MimeTypeRegexPredicate )
 
+
 class NameRegexPredicate( SimpleItem ):
+
     """
         Predicate matching only on 'name', using regex matching
         for string patterns (other objects conforming to 'match'
@@ -325,6 +329,7 @@ for klass in ( MajorMinorPredicate
 
 
 class ContentTypeRegistry( SimpleItem ):
+
     """
         Registry for rules which map PUT args to a CMF Type Object.
     """

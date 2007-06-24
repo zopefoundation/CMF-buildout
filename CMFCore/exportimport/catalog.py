@@ -19,8 +19,6 @@ from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import importObjects
 
 from Products.CMFCore.utils import getToolByName
-from zope.component import getUtility
-from zope.component import queryUtility
 
 
 def importCatalogTool(context):

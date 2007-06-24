@@ -19,7 +19,6 @@ import unittest
 import Testing
 
 import Acquisition
-
 from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 

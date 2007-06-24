@@ -15,33 +15,35 @@
 $Id$
 """
 
-from OFS.SimpleItem import SimpleItem
-from Globals import InitializeClass, DTMLFile
-from Acquisition import Implicit
-from AccessControl import ClassSecurityInfo
+import urllib
 
+from AccessControl import ClassSecurityInfo
+from Acquisition import Implicit
+from DateTime.DateTime import DateTime
+from Globals import DTMLFile
+from Globals import InitializeClass
+from OFS.SimpleItem import SimpleItem
 from zope.component import getUtility
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
+from interfaces import IMembershipTool
+from interfaces import IOldstyleDiscussable
+from interfaces import IOldstyleDiscussionTool
+from interfaces.Discussions import OldDiscussable as z2IOldstyleDiscussable
+from interfaces.portal_discussion \
+        import oldstyle_portal_discussion as z2IOldstyleDiscussionTool
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from permissions import ReplyToItem
 from permissions import View
-from interfaces import ICatalogTool
-from interfaces import IMembershipTool
-from interfaces import IOldstyleDiscussable
-from interfaces import IOldstyleDiscussionTool
-from interfaces import ITypesTool
-from interfaces.Discussions import OldDiscussable as z2IOldstyleDiscussable
-from interfaces.portal_discussion \
-        import oldstyle_portal_discussion as z2IOldstyleDiscussionTool
 from utils import _dtmldir
 from utils import getToolByName
 from utils import UniqueObject
 
 
 class OldDiscussable(Implicit):
+
     """
         Adapter for PortalContent to implement "old-style" discussions.
     """
@@ -50,7 +52,6 @@ class OldDiscussable(Implicit):
     __implements__ = z2IOldstyleDiscussable
 
     security = ClassSecurityInfo()
-    
 
     def __init__( self, content ):
         self.content = content
@@ -132,7 +133,7 @@ class DiscussionTool(UniqueObject, SimpleItem, ActionProviderBase):
     security = ClassSecurityInfo()
 
     manage_options = ( { 'label' : 'Overview', 'action' : 'manage_overview' }
-                     , 
+                     ,
                      ) + SimpleItem.manage_options
 
     #

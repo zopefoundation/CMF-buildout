@@ -41,7 +41,7 @@ class TestMetadataElementPolicy(unittest.TestCase):
 
     def test_edit_single_valued( self ):
         sv_policy = self._makeOne( 0 )
-        sv_policy.edit( 1, 1, 'xxx', 0, '' ) 
+        sv_policy.edit( 1, 1, 'xxx', 0, '' )
         self.failIf( sv_policy.isMultiValued() )
         self.failUnless( sv_policy.isRequired() )
         self.failUnless( sv_policy.supplyDefault() )
@@ -384,8 +384,6 @@ class TestMetadataTool(unittest.TestCase):
         self.assertRaises( MetadataError, tool.setInitialMetadata, foo )
 
     def test_initialValues_explicit_mutliple_types( self ):
-        from Products.CMFDefault.exceptions import MetadataError
-
         tool = self._makeOne()
         dcmi = tool.DCMI
         foo, bar = self._makeTestObjects()
@@ -492,7 +490,6 @@ class TestMetadataTool(unittest.TestCase):
     def test_migration( self ):
         # Test that we forward-migrate old-style DCMI policies.
         from Products.CMFDefault.MetadataTool import ElementSpec
-        from Products.CMFDefault.MetadataTool import _DCMI_ELEMENT_SPECS
 
         tool = self._makeOne()
         tool.element_specs = { 'Title' : ElementSpec( 0 )

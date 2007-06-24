@@ -54,7 +54,7 @@ class RegistrationTool(BaseTool):
         # the template will be made with a blank To:, this is bad
         if email is None:
             msg = _(u'No email address is registered for member: '
-                    u'${member_id}', mapping={'member_id': new_member_id})
+                    u'${member_id}', mapping={'member_id': member.getId()})
             raise ValueError(msg)
 
         checkEmailAddress(email)
@@ -213,4 +213,3 @@ class RegistrationTool(BaseTool):
 
 InitializeClass(RegistrationTool)
 registerToolInterface('portal_registration', IRegistrationTool)
-

@@ -24,8 +24,6 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from Products.PluginIndexes.common import safe_callable
 from Products.ZCatalog.ZCatalog import ZCatalog
-
-from zope.component import queryUtility
 from zope.interface import implements
 from zope.interface import providedBy
 from zope.interface.declarations import getObjectSpecification
@@ -35,7 +33,6 @@ from zope.interface.declarations import ObjectSpecificationDescriptor
 from ActionProviderBase import ActionProviderBase
 from interfaces import ICatalogTool
 from interfaces import IIndexableObjectWrapper
-from interfaces import IConfigurableWorkflowTool
 from interfaces.portal_catalog \
         import IndexableObjectWrapper as z2IIndexableObjectWrapper
 from interfaces.portal_catalog import portal_catalog as z2ICatalogTool

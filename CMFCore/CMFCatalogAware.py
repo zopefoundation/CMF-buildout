@@ -24,24 +24,19 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.interfaces import IObjectClonedEvent
 from OFS.interfaces import IObjectWillBeMovedEvent
-
 from zope.app.container.interfaces import IObjectAddedEvent
 from zope.app.container.interfaces import IObjectMovedEvent
 from zope.component import subscribers
 
+from interfaces import ICallableOpaqueItem
+from interfaces.IOpaqueItems \
+        import ICallableOpaqueItem as z2ICallableOpaqueItem
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
 from permissions import ModifyPortalContent
 from utils import _dtmldir
 from utils import _getAuthenticatedUser
 from utils import getToolByName
-
-from interfaces import ICallableOpaqueItem
-from interfaces import ICatalogTool
-from interfaces import IConfigurableWorkflowTool
-from interfaces.IOpaqueItems \
-        import ICallableOpaqueItem as z2ICallableOpaqueItem
-
 
 logger = logging.getLogger('CMFCore.CMFCatalogAware')
 

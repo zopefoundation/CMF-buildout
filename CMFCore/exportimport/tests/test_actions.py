@@ -18,11 +18,9 @@ $Id$
 import unittest
 import Testing
 
-from Acquisition import Implicit
 from Acquisition import aq_parent
+from Acquisition import Implicit
 from OFS.OrderedFolder import OrderedFolder
-
-from zope.component import getSiteManager
 from zope.interface import implements
 from zope.interface import Interface
 
@@ -30,14 +28,13 @@ from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.interfaces import IActionsTool
 from Products.CMFCore.interfaces.portal_actions \
     import ActionProvider as IActionProvider
+from Products.CMFCore.testing import ExportImportZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.GenericSetup.testing import BodyAdapterTestCase
 from Products.GenericSetup.testing import NodeAdapterTestCase
 from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
-
-from Products.CMFCore.testing import ExportImportZCMLLayer
 
 _ACTION_XML = """\
 <object name="foo_action" meta_type="CMF Action">

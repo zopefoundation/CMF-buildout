@@ -27,9 +27,6 @@ from Products.CMFCore.exportimport.tests.test_workflow \
         import _EMPTY_TOOL_EXPORT
 from Products.CMFCore.exportimport.tests.test_workflow \
         import _WorkflowSetup as WorkflowSetupBase
-from Products.CMFCore.exportimport.tests.test_workflow \
-        import DummyWorkflowTool
-from Products.CMFCore.interfaces import IConfigurableWorkflowTool
 from Products.CMFCore.testing import DummyWorkflow
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.DCWorkflow.testing import ExportImportZCMLLayer
@@ -783,8 +780,6 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
     def test_parseWorkflowXML_normal_variables( self ):
 
-        from Products.DCWorkflow.exportimport import TRIGGER_TYPES
-
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
         WF_DESCRIPTION = 'Normal workflow'
@@ -863,8 +858,6 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
     def test_parseWorkflowXML_normal_worklists( self ):
 
-        from Products.DCWorkflow.exportimport import TRIGGER_TYPES
-
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
         WF_DESCRIPTION = 'Normal workflow'
@@ -927,8 +920,6 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
 
     def test_parseWorkflowXML_normal_permissions( self ):
 
-        from Products.DCWorkflow.exportimport import TRIGGER_TYPES
-
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'
         WF_DESCRIPTION = 'Normal workflow'
@@ -965,8 +956,6 @@ class WorkflowDefinitionConfiguratorTests( _WorkflowSetup, _GuardChecker ):
             self.failUnless( permission in _WF_PERMISSIONS )
 
     def test_parseWorkflowXML_normal_scripts( self ):
-
-        from Products.DCWorkflow.exportimport import TRIGGER_TYPES
 
         WF_ID = 'normal'
         WF_TITLE = 'Normal DCWorkflow'

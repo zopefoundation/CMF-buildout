@@ -19,14 +19,13 @@ import unittest
 import Testing
 
 import transaction
-from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl import SecurityManager
 from AccessControl import Unauthorized
+from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import aq_base
 from Acquisition import Implicit
 from DateTime import DateTime
 from OFS.Image import manage_addFile
-
 from zope.component import getSiteManager
 from zope.component.interfaces import IFactory
 from zope.interface import implements

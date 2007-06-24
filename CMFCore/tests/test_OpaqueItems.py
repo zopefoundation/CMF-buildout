@@ -99,8 +99,10 @@ class OpaqueBase:
 
 
 class Marker(OpaqueBase):
+
     """ Opaque item without manage_after/before hookes but marked as callable
     """
+
     implements(ICallableOpaqueItem)
     __implements__ = (
         z2ICallableOpaqueItem,
@@ -108,8 +110,10 @@ class Marker(OpaqueBase):
 
 
 class Hooks(OpaqueBase):
+
     """ Opaque item with manage_after/before hooks but not marked as callable
     """
+
     implements(ICallableOpaqueItemEvents)
     __implements__ = (
         z2ICallableOpaqueItemEvents,
@@ -129,6 +133,7 @@ class Hooks(OpaqueBase):
 
 
 class MarkerAndHooks(Marker, Hooks):
+
     """ Opaque item with manage_after/before hookes and marked as callable
     """
     __implements__ = Marker.__implements__ + Hooks.__implements__

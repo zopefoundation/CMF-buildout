@@ -25,9 +25,8 @@ from DocumentTemplate.DT_Util import TemplateDict
 from Globals import InitializeClass
 from OFS.Folder import Folder
 from OFS.ObjectManager import bad_id
-
-from zope.interface import implements
 from zope.event import notify
+from zope.interface import implements
 
 # CMFCore
 from Products.CMFCore.interfaces import IWorkflowDefinition
@@ -39,17 +38,17 @@ from Products.CMFCore.WorkflowCore import ObjectMoved
 from Products.CMFCore.WorkflowCore import WorkflowException
 
 # DCWorkflow
+from events import BeforeTransitionEvent, AfterTransitionEvent
+from Expression import createExprContext
+from Expression import StateChangeInfo
 from interfaces import IDCWorkflowDefinition
 from permissions import ManagePortal
-from utils import Message as _
-from utils import modifyRolesForPermission
-from utils import modifyRolesForGroup
-from WorkflowUIMixin import WorkflowUIMixin
 from Transitions import TRIGGER_AUTOMATIC
 from Transitions import TRIGGER_USER_ACTION
-from Expression import StateChangeInfo
-from Expression import createExprContext
-from events import BeforeTransitionEvent, AfterTransitionEvent
+from utils import Message as _
+from utils import modifyRolesForGroup
+from utils import modifyRolesForPermission
+from WorkflowUIMixin import WorkflowUIMixin
 
 def checkId(id):
     res = bad_id(id)
@@ -470,7 +469,7 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
             msg = _(u'Destination state undefined: ${state_id}',
                     mapping={'state_id': new_state})
             raise WorkflowException(msg)
-        
+
         # Fire "before" event
         notify(BeforeTransitionEvent(ob, self, old_sdef, new_sdef, tdef, former_status, kwargs))
 

@@ -20,7 +20,6 @@ from Acquisition import aq_base
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
-
 from zope.component import getUtility
 from zope.interface import implements
 
@@ -39,11 +38,10 @@ from exceptions import AccessControl_Unauthorized
 from exceptions import DiscussionNotAllowed
 from permissions import ManagePortal
 from permissions import ModifyPortalContent
-from permissions import ReplyToItem
 from utils import _dtmldir
 
-
 _marker = []
+
 
 class DiscussionTool(UniqueObject, SimpleItem):
 
@@ -129,4 +127,3 @@ class DiscussionTool(UniqueObject, SimpleItem):
 
 InitializeClass( DiscussionTool )
 registerToolInterface('portal_discussion', IDiscussionTool)
-

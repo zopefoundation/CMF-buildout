@@ -16,6 +16,6 @@ mtool.setPassword(password, domains, REQUEST=context.REQUEST)
 if member.getProperty('last_login_time') == DateTime('1999/01/01'):
     member.setProperties(last_login_time='2000/01/01')
 
-mtool.credentialsChanged(password)
+mtool.credentialsChanged(password, context.REQUEST)
 
 return context.setStatus(True, _(u'Password changed.'))

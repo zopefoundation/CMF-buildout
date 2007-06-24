@@ -683,7 +683,7 @@ class IMembershipTool(Interface):
         o Permission:  Public
         """
 
-    def credentialsChanged(password):
+    def credentialsChanged(password, REQUEST=None):
         """ Notify the authentication mechanism that this user has
             changed passwords.
 

@@ -25,7 +25,6 @@ from zope.interface import implements
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
 from interfaces import ICalendarTool

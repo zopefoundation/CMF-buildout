@@ -16,13 +16,11 @@ $Id$
 """
 
 from csv import reader
-from csv import register_dialect
 from csv import writer
 from ConfigParser import ConfigParser
 from StringIO import StringIO
 
 from zope.interface import implements
-from zope.interface import directlyProvides
 
 from Products.GenericSetup.interfaces import IFilesystemExporter
 from Products.GenericSetup.interfaces import IFilesystemImporter

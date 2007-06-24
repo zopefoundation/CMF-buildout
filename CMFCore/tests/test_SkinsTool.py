@@ -49,21 +49,26 @@ class SkinsToolTests(unittest.TestCase):
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass
+        from Products.CMFCore.interfaces.portal_actions \
+                import ActionProvider as IActionProvider
         from Products.CMFCore.interfaces.portal_skins \
                 import portal_skins as ISkinsTool
         from Products.CMFCore.interfaces.portal_skins \
                 import SkinsContainer as ISkinsContainer
         from Products.CMFCore.SkinsTool import SkinsTool
 
+        verifyClass(IActionProvider, SkinsTool)
         verifyClass(ISkinsContainer, SkinsTool)
         verifyClass(ISkinsTool, SkinsTool)
 
     def test_z3interfaces(self):
         from zope.interface.verify import verifyClass
+        from Products.CMFCore.interfaces import IActionProvider
         from Products.CMFCore.interfaces import ISkinsContainer
         from Products.CMFCore.interfaces import ISkinsTool
         from Products.CMFCore.SkinsTool import SkinsTool
 
+        verifyClass(IActionProvider, SkinsTool)
         verifyClass(ISkinsContainer, SkinsTool)
         verifyClass(ISkinsTool, SkinsTool)
 
@@ -97,10 +102,13 @@ class SkinnableTests(unittest.TestCase):
             tool = SkinsTool()
             # This is needed otherwise REQUEST is the string
             # '<Special Object Used to Force Acquisition>'
-            REQUEST = None 
-        
+            REQUEST = None
+            def getSkinsFolderName(self):
+                '''tool'''
+                return 'tool'
+
         return TestSkinnableObjectManager()
-    
+
     def tearDown(self):
         from Products.CMFCore.Skinnable import SKINDATA
         SKINDATA.clear()
@@ -114,17 +122,15 @@ class SkinnableTests(unittest.TestCase):
 
         som.tool.addSkinSelection('skinA', pathA)
         som.tool.addSkinSelection('skinB', pathB)
-        
+
         som.tool.manage_properties(default_skin='skinA')
 
-        # XXX For some reason these tests don't work.
-
         # Expect the default skin name to be returned
-        # self.failUnless(som.getCurrentSkinName() == 'skinA')
+        self.failUnless(som.getCurrentSkinName() == 'skinA')
 
         # after a changeSkin the new skin name should be returned
-        # som.changeSkin('skinB', som.REQUEST)
-        # self.failUnless(som.getCurrentSkinName() == 'skinB')
+        som.changeSkin('skinB', som.REQUEST)
+        self.failUnless(som.getCurrentSkinName() == 'skinB')
 
 
 def test_suite():

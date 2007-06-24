@@ -22,8 +22,10 @@ from Acquisition import aq_base, aq_inner, aq_parent
 from Acquisition import Implicit
 from Globals import InitializeClass
 from Globals import Persistent
+from OFS.interfaces import IObjectClonedEvent
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
+from zope.app.container.interfaces import IObjectAddedEvent
 from zope.component import queryUtility
 from zope.interface import implements
 
@@ -35,8 +37,6 @@ from Products.CMFUid.interfaces import IUniqueIdAnnotation
 from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
 from Products.CMFUid.interfaces import UniqueIdError
 
-from OFS.interfaces import IObjectClonedEvent
-from zope.app.container.interfaces import IObjectAddedEvent
 
 class UniqueIdAnnotation(Persistent, Implicit):
 

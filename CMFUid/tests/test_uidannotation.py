@@ -18,30 +18,29 @@ $Id$
 import unittest
 import Testing
 
+import transaction
+from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import Implicit
 
 from zope.component import getSiteManager
 from zope.component import getUtility
-from zope.interface.verify import verifyClass
 from zope.interface import implements
+from zope.interface.verify import verifyClass
 
 from Products.CMFCore.PortalFolder import PortalFolder
-from Products.CMFUid.testing import UidEventZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.testcase import SecurityTest
+from Products.CMFCore.tests.test_CMFCatalogAware import SimpleFolder
+from Products.CMFCore.tests.test_CMFCatalogAware import TheClass
+from Products.CMFCore.tests.test_PortalFolder import _AllowedUser
+from Products.CMFCore.tests.test_PortalFolder import _SensitiveSecurityPolicy
 from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
 from Products.CMFUid.interfaces import IUniqueIdHandler
 from Products.CMFUid.interfaces import UniqueIdError
-
-from Products.CMFCore.tests.test_PortalFolder import _AllowedUser
-from Products.CMFCore.tests.test_PortalFolder import _SensitiveSecurityPolicy
-from AccessControl.SecurityManagement import newSecurityManager
-from Products.CMFCore.tests.test_CMFCatalogAware import TheClass
-from Products.CMFCore.tests.test_CMFCatalogAware import SimpleFolder
-
-import transaction
+from Products.CMFUid.testing import UidEventZCMLLayer
 
 UID_ATTRNAME = 'cmf_uid'
+
 
 class DummyUniqueIdHandlerTool(Implicit):
 
@@ -63,6 +62,7 @@ class DummyUniqueIdHandlerTool(Implicit):
            delattr(ob, UID_ATTRNAME)
         except AttributeError:
            raise UniqueIdError
+
 
 class UniqueIdAnnotationToolTests(SecurityTest):
 

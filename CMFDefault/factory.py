@@ -58,12 +58,10 @@ def addConfiguredSite(dispatcher, site_id, profile_id, snapshot=True,
     site._setObject(_TOOL_ID, SetupTool(_TOOL_ID))
     setup_tool = getattr(site, _TOOL_ID)
 
-    setup_tool.setImportContext( 'profile-%s' % profile_id )
-    setup_tool.runAllImportSteps()
+    setup_tool.setBaselineContext('profile-%s' % profile_id)
+    setup_tool.runAllImportStepsFromProfile('profile-%s' % profile_id)
     for extension_id in extension_ids:
-        setup_tool.setImportContext( 'profile-%s' % extension_id )
-        setup_tool.runAllImportSteps()
-    setup_tool.setImportContext( 'profile-%s' % profile_id )
+        setup_tool.runAllImportStepsFromProfile('profile-%s' % extension_id)
 
     if snapshot is True:
         setup_tool.createSnapshot( 'initial_configuration' )

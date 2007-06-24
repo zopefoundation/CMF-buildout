@@ -23,8 +23,6 @@ from Globals import package_home
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 from zope.component import getSiteManager
-from zope.component import getUtility
-from zope.component import queryUtility
 
 from Products.GenericSetup.utils import CONVERTER
 from Products.GenericSetup.utils import DEFAULT

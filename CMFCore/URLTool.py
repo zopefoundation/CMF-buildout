@@ -22,11 +22,9 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 
-from zope.component import queryUtility
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
-from interfaces import ISiteRoot
 from interfaces import IURLTool
 from interfaces.portal_url import portal_url as z2IURLTool
 from permissions import ManagePortal

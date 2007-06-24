@@ -24,9 +24,7 @@ from zope.interface import implements
 from zope.interface import Interface
 from zope.schema import Choice
 from zope.schema import Datetime
-from zope.schema import Field
 from zope.schema import Set
-from zope.schema import Tuple
 from zope.schema import Text
 from zope.schema import TextLine
 from zope.schema import URI

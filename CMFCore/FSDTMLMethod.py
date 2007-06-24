@@ -172,7 +172,7 @@ class FSDTMLMethod(RestrictedDTML, RoleManager, FSObject, Globals.HTML):
         '''
         ks = []
         for key in keys:
-            key = strip(str(key))
+            key = str(key).strip()
             if key:
                 ks.append(key)
         self._cache_namespace_keys = tuple(ks)

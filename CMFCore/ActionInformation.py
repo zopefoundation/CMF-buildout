@@ -37,7 +37,6 @@ from interfaces import IMembershipTool
 from interfaces.portal_actions import ActionInfo as z2IActionInfo
 from permissions import View
 from utils import _checkPermission
-from utils import _wwwdir
 
 
 _unchanged = [] # marker

@@ -16,10 +16,8 @@ $Id$
 """
 
 from zope.component import adapts
-from zope.component import getUtility
 from zope.component import getSiteManager
 from zope.component import queryMultiAdapter
-from zope.component import queryUtility
 
 from Products.GenericSetup.interfaces import INode
 from Products.GenericSetup.interfaces import ISetupEnviron

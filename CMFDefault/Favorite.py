@@ -23,7 +23,6 @@ from Globals import InitializeClass
 from zope.app.container.interfaces import IObjectAddedEvent
 from zope.component import adapter
 from zope.component import getUtility
-from zope.component import queryUtility
 from zope.component.factory import Factory
 from zope.interface import implements
 

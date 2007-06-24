@@ -19,9 +19,11 @@ from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
+from zope.component import queryUtility
 from zope.interface import implements
 
 from exceptions import AccessControl_Unauthorized
+from interfaces import ISiteRoot
 from interfaces import IUndoTool
 from permissions import ListUndoableChanges
 from permissions import ManagePortal
@@ -66,7 +68,11 @@ class UndoTool(UniqueObject, SimpleItem):
         '''Lists all transaction IDs the user is allowed to undo.
         '''
         # arg list for undoable_transactions() changed in Zope 2.2.
-        portal = self.aq_inner.aq_parent
+        portal = queryUtility(ISiteRoot)
+        if portal is None:
+            # fallback
+            portal = self.aq_inner.aq_parent
+
         transactions = portal.undoable_transactions(
             first_transaction=first_transaction,
             last_transaction=last_transaction,

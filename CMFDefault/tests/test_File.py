@@ -20,10 +20,8 @@ import Testing
 
 from os.path import join as path_join
 
-from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.interfaces import ICachingPolicyManager
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
@@ -107,10 +105,6 @@ class CachingTests(RequestTest):
 
     def _setupCachingPolicyManager(self, cpm_object):
         self.root.caching_policy_manager = cpm_object
-        sm = getSiteManager()
-        sm.registerUtility( self.root.caching_policy_manager
-                          , ICachingPolicyManager
-                          )
 
     def tearDown(self):
         cleanUp()

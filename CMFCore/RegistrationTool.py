@@ -22,11 +22,8 @@ from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
-
-from zope.component import getUtility
 from zope.interface import implements
 
-from interfaces import IMembershipTool
 from interfaces import IRegistrationTool
 from interfaces.portal_registration \
         import portal_registration as z2IRegistrationTool
@@ -36,6 +33,7 @@ from permissions import ManagePortal
 from utils import _checkPermission
 from utils import _dtmldir
 from utils import _limitGrantedRoles
+from utils import getToolByName
 from utils import Message as _
 from utils import UniqueObject
 from utils import postonly
@@ -144,6 +142,8 @@ class RegistrationTool(UniqueObject, SimpleItem):
         role that can always be granted); these conditions should be
         detected before the fact so that a cleaner message can be printed.
         '''
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         if not self.isMemberIdAllowed(id):
             raise ValueError(_(u'The login name you selected is already in '
                                u'use or is not valid. Please choose another.'))
@@ -161,7 +161,7 @@ class RegistrationTool(UniqueObject, SimpleItem):
         # Anyone is always allowed to grant the 'Member' role.
         _limitGrantedRoles(roles, self, ('Member',))
 
-        membership = getUtility(IMembershipTool)
+        membership = getToolByName(self, 'portal_membership')
         membership.addMember(id, password, roles, domains, properties)
 
         member = membership.getMemberById(id)
@@ -173,11 +173,13 @@ class RegistrationTool(UniqueObject, SimpleItem):
     def isMemberIdAllowed(self, id):
         '''Returns 1 if the ID is not in use and is not reserved.
         '''
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         if len(id) < 1 or id == 'Anonymous User':
             return 0
         if not self._ALLOWED_MEMBER_ID_PATTERN.match( id ):
             return 0
-        membership = getUtility(IMembershipTool)
+        membership = getToolByName(self, 'portal_membership')
         if membership.getMemberById(id) is not None:
             return 0
         return 1

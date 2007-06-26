@@ -22,17 +22,12 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
-from ZPublisher.Converters import type_converters
-
-from zope.component import getUtility
-from zope.component import queryUtility
 from zope.interface import implements
+from ZPublisher.Converters import type_converters
 
 from exceptions import BadRequest
 from interfaces import IMemberData
 from interfaces import IMemberDataTool
-from interfaces import IMembershipTool
-from interfaces import IRegistrationTool
 from interfaces.portal_memberdata import MemberData as z2IMemberData
 from interfaces.portal_memberdata \
         import portal_memberdata as z2IMemberDataTool
@@ -40,6 +35,7 @@ from permissions import ManagePortal
 from permissions import SetOwnProperties
 from permissions import ViewManagementScreens
 from utils import _dtmldir
+from utils import getToolByName
 from utils import registerToolInterface
 from utils import UniqueObject
 
@@ -97,7 +93,9 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager):
         Return the number of members stored in the _members
         BTree and some other useful info
         '''
-        membertool   = getUtility(IMembershipTool)
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
+        membertool   = getToolByName(self, 'portal_membership')
         members      = self._members
         user_list    = membertool.listMemberIds()
         member_list  = members.keys()
@@ -114,12 +112,14 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager):
     security.declarePrivate('searchMemberData')
     def searchMemberData(self, search_param, search_term, attributes=()):
         """ Search members. """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         res = []
 
         if not search_param:
             return res
 
-        membership = getUtility(IMembershipTool)
+        membership = getToolByName(self, 'portal_membership')
 
         if len(attributes) == 0:
             attributes = ('id', 'email')
@@ -150,12 +150,14 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager):
     security.declarePrivate( 'searchMemberDataContents' )
     def searchMemberDataContents( self, search_param, search_term ):
         """ Search members. This method will be deprecated soon. """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         res = []
 
         if search_param == 'username':
             search_param = 'id'
 
-        mtool   = getUtility(IMembershipTool)
+        mtool   = getToolByName(self, 'portal_membership')
 
         for member_id in self._members.keys():
 
@@ -177,7 +179,9 @@ class MemberDataTool(UniqueObject, SimpleItem, PropertyManager):
     def pruneMemberDataContents(self):
         """ Delete data contents of all members not listet in acl_users.
         """
-        membertool = getUtility(IMembershipTool)
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
+        membertool = getToolByName(self, 'portal_membership')
         members = self._members
         user_list = membertool.listMemberIds()
 
@@ -277,10 +281,12 @@ class MemberData(SimpleItem):
         Accepts either keyword arguments or a mapping for the "properties"
         argument.
         '''
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         if properties is None:
             properties = kw
-        membership = getUtility(IMembershipTool)
-        registration = queryUtility(IRegistrationTool)
+        membership = getToolByName(self, 'portal_membership')
+        registration = getToolByName(self, 'portal_registration', None)
         if not membership.isAnonymousUser():
             member = membership.getAuthenticatedMember()
             if registration:

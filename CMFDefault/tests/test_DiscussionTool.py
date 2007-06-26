@@ -18,11 +18,8 @@ $Id$
 import unittest
 import Testing
 
-from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.interfaces import IDiscussionTool
-from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
@@ -37,11 +34,8 @@ class DiscussionToolTests(unittest.TestCase):
 
     def setUp(self):
         self.site = DummySite('site')
-        sm = getSiteManager()
         self.site._setObject( 'portal_discussion', self._makeOne() )
-        sm.registerUtility(self.site.portal_discussion, IDiscussionTool)
         self.site._setObject( 'portal_membership', DummyTool() )
-        sm.registerUtility(self.site.portal_membership, IMembershipTool)
         self.site._setObject( 'portal_types', DummyTool() )
 
     def tearDown(self):

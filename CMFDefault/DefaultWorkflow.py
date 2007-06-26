@@ -21,10 +21,8 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from DateTime import DateTime
 from Globals import InitializeClass
-from zope.component import getUtility
 from zope.interface import implements
 
-from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import IWorkflowDefinition
 from Products.CMFCore.interfaces.portal_workflow \
         import WorkflowDefinition as z2IWorkflowDefinition
@@ -100,7 +98,7 @@ class DefaultWorkflowDefinition(SimpleItemWithProperties):
         content = info.object
         content_url = info.object_url
         content_creator = content.Creator()
-        pm = getUtility(IMembershipTool)
+        pm = getToolByName(self, 'portal_membership')
         current_user = pm.getAuthenticatedMember().getId()
         review_state = self.getReviewStateOf(content)
         actions = []
@@ -204,7 +202,7 @@ class DefaultWorkflowDefinition(SimpleItemWithProperties):
             elif review_state == 'private':
                 raise AccessControl_Unauthorized('Already private')
             content_creator = ob.Creator()
-            pm = getUtility(IMembershipTool)
+            pm = getToolByName(self, 'portal_membership')
             current_user = pm.getAuthenticatedMember().getId()
             if (content_creator != current_user) and not allow_review:
                 raise AccessControl_Unauthorized('Not creator or reviewer')
@@ -251,7 +249,7 @@ class DefaultWorkflowDefinition(SimpleItemWithProperties):
     security.declarePrivate('setReviewStateOf')
     def setReviewStateOf(self, ob, review_state, action, comment):
         tool = aq_parent(aq_inner(self))
-        pm = getUtility(IMembershipTool)
+        pm = getToolByName(self, 'portal_membership')
         current_user = pm.getAuthenticatedMember().getId()
         status = {
             'actor': current_user,

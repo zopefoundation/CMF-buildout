@@ -21,7 +21,6 @@ import Testing
 from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -42,7 +41,7 @@ class FavoriteTests(ConformsToContent, unittest.TestCase):
         sm = getSiteManager()
         self.site = DummySite('site')
         sm.registerUtility(self.site, ISiteRoot)
-        sm.registerUtility(DummyTool(), IMembershipTool)
+        self.site._setObject( 'portal_membership', DummyTool() )
         self.site._setObject( 'portal_url', DummyTool() )
 
     def tearDown(self):

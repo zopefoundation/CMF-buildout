@@ -19,12 +19,9 @@ from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base, aq_inner, aq_parent
 from Globals import InitializeClass
 from Globals import Persistent
-from zope.component import getUtility
-
 from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
 
-from interfaces import IMembershipTool
 from utils import getToolByName
 
 
@@ -90,7 +87,7 @@ def createExprContext(folder, portal, object):
     '''
     An expression context provides names for TALES expressions.
     '''
-    pm = getUtility(IMembershipTool)
+    pm = getToolByName(portal, 'portal_membership')
     if object is None:
         object_url = ''
     else:

@@ -18,12 +18,9 @@ $Id$
 import unittest
 import Testing
 
-from zope.component import getSiteManager
-
 from Products.CMFCore.ActionInformation import ActionInformation
 from Products.CMFCore.Expression import createExprContext
 from Products.CMFCore.Expression import Expression
-from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummyTool as DummyMembershipTool
 from Products.CMFCore.tests.base.testcase import SecurityTest
@@ -49,25 +46,19 @@ class ExpressionTests( SecurityTest ):
                                   , visible=1)
 
     def test_anonymous_ec(self):
-        sm = getSiteManager()
         self.portal.portal_membership = DummyMembershipTool()
-        sm.registerUtility(self.portal.portal_membership, IMembershipTool)
         ec = createExprContext(self.folder, self.portal, self.object)
         member = ec.contexts['member']
         self.failIf(member)
 
     def test_authenticatedUser_ec(self):
-        sm = getSiteManager()
         self.portal.portal_membership = DummyMembershipTool(anon=0)
-        sm.registerUtility(self.portal.portal_membership, IMembershipTool)
         ec = createExprContext(self.folder, self.portal, self.object)
         member = ec.contexts['member']
         self.assertEqual(member.getId(), 'dummy')
 
     def test_ec_context(self):
-        sm = getSiteManager()
         self.portal.portal_membership = DummyMembershipTool()
-        sm.registerUtility(self.portal.portal_membership, IMembershipTool)
         ec = createExprContext(self.folder, self.portal, self.object)
         object = ec.contexts['object']
         portal = ec.contexts['portal']

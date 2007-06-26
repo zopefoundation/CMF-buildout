@@ -23,11 +23,9 @@ from DateTime.DateTime import DateTime
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
-from zope.component import getUtility
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
-from interfaces import IMembershipTool
 from interfaces import IOldstyleDiscussable
 from interfaces import IOldstyleDiscussionTool
 from interfaces.Discussions import OldDiscussable as z2IOldstyleDiscussable
@@ -72,7 +70,7 @@ class OldDiscussable(Implicit):
         # It is not yet clear to me what the correct location for this hook is
 
         # Find the folder designated for replies, creating if missing
-        membershiptool = getUtility(IMembershipTool)
+        membershiptool = getToolByName(self.content, 'portal_membership')
         home = membershiptool.getHomeFolder()
         if not hasattr(home, 'Correspondence'):
             home.manage_addPortalFolder('Correspondence')

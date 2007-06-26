@@ -2,12 +2,13 @@
 ##title=Add a member
 ##
 from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.permissions import ManageUsers
 from Products.CMFDefault.utils import Message as _
 
-mtool = getToolByInterfaceName('Products.CMFCore.interfaces.IMembershipTool')
+mtool = getToolByName(script, 'portal_membership')
 ptool = getToolByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
-rtool = getToolByInterfaceName('Products.CMFCore.interfaces.IRegistrationTool')
+rtool = getToolByName(script, 'portal_registration')
 
 try:
     rtool.addMember( id=member_id, password=password,
@@ -18,7 +19,7 @@ except ValueError, errmsg:
     return context.setStatus(False, errmsg)
 else:
     if ptool.getProperty('validate_email') or send_password:
-        rtool.registeredNotify(member_id, context.REQUEST)
+        rtool.registeredNotify(member_id, REQUEST=context.REQUEST)
     if mtool.checkPermission(ManageUsers, mtool):
         return context.setStatus(True, _(u'Member registered.'))
     else:

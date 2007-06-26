@@ -17,13 +17,11 @@ $Id$
 
 from DocumentTemplate import sequence
 from Products.PythonScripts.standard import thousands_commas
-from zope.component import getUtility
 from ZTUtils import Batch
 from ZTUtils import LazyFilter
 from ZTUtils import make_query
 
 from Products.CMFCore.interfaces import IDynamicType
-from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFDefault.exceptions import CopyError
 from Products.CMFDefault.exceptions import zExceptions_Unauthorized
 from Products.CMFDefault.permissions import AddPortalContent
@@ -373,7 +371,7 @@ class FolderContentsView(BatchViewBase, FormViewBase):
     @memoize
     @decode
     def up_info(self):
-        mtool = getUtility(IMembershipTool)
+        mtool = self._getTool('portal_membership')
         allowed = mtool.checkPermission(ListFolderContents, self.context,
                                         'aq_parent')
         if allowed:

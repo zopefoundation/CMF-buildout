@@ -1,10 +1,10 @@
 ##parameters=title, text, **kw
 ##title=Reply to content
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import Message as _
 
-dtool = getToolByInterfaceName('Products.CMFCore.interfaces.IDiscussionTool')
+dtool = getToolByName(script, 'portal_discussion')
 
 talkback = dtool.getDiscussionFor(context)
 replyID = talkback.createReply(title=title, text=text)

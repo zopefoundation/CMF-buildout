@@ -15,6 +15,7 @@
 $Id$
 """
 import logging
+from warnings import warn
 
 from AccessControl import ClassSecurityInfo
 from AccessControl.User import nobody
@@ -28,14 +29,11 @@ from Globals import PersistentMapping
 from OFS.Folder import Folder
 from ZODB.POSException import ConflictError
 from zope.component import getUtility
-from zope.component import queryUtility
 from zope.interface import implements
 
 from exceptions import AccessControl_Unauthorized
 from exceptions import BadRequest
-from interfaces import IMemberDataTool
 from interfaces import IMembershipTool
-from interfaces import IRegistrationTool
 from interfaces import ISiteRoot
 from interfaces.portal_membership \
         import portal_membership as z2IMembershipTool
@@ -49,6 +47,7 @@ from permissions import View
 from utils import _checkPermission
 from utils import _dtmldir
 from utils import _getAuthenticatedUser
+from utils import getToolByName
 from utils import UniqueObject
 from utils import postonly
 
@@ -97,7 +96,9 @@ class MembershipTool(UniqueObject, Folder):
     def setPassword(self, password, domains=None, REQUEST=None):
         '''Allows the authenticated member to set his/her own password.
         '''
-        registration = queryUtility(IRegistrationTool)
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
+        registration = getToolByName(self, 'portal_registration', None)
         if not self.isAnonymousUser():
             member = self.getAuthenticatedMember()
             if registration:
@@ -127,6 +128,8 @@ class MembershipTool(UniqueObject, Folder):
         Provides an opportunity for a portal_memberdata tool to retrieve and
         store member data independently of the user object.
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         b = getattr(u, 'aq_base', None)
         if b is None:
             # u isn't wrapped at all.  Wrap it in self.acl_users.
@@ -145,7 +148,7 @@ class MembershipTool(UniqueObject, Folder):
                         portal_role not in u.roles):
                     u.roles.append(portal_role)
 
-        mdtool = queryUtility(IMemberDataTool)
+        mdtool = getToolByName(self, 'portal_memberdata', None)
         if mdtool is not None:
             try:
                 u = mdtool.wrapUser(u)
@@ -330,8 +333,13 @@ class MembershipTool(UniqueObject, Folder):
         Note that this call should *not* cause any change at all to user
         databases.
         '''
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on self.REQUEST
         if REQUEST is None:
-            raise TypeError('new REQUEST argument required')
+            REQUEST = self.REQUEST
+            warn("credentialsChanged should be called with 'REQUEST' as "
+                 "second argument. The BBB code will be removed in CMF 2.3.",
+                 DeprecationWarning, stacklevel=2)
 
         if not self.isAnonymousUser():
             acl_users = self.acl_users
@@ -411,7 +419,9 @@ class MembershipTool(UniqueObject, Folder):
     security.declareProtected(ListPortalMembers, 'searchMembers')
     def searchMembers( self, search_param, search_term ):
         """ Search the membership """
-        md = getUtility(IMemberDataTool)
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
+        md = getToolByName( self, 'portal_memberdata' )
 
         return md.searchMemberData( search_param, search_term )
 
@@ -497,6 +507,8 @@ class MembershipTool(UniqueObject, Folder):
                       delete_localroles=1, REQUEST=None):
         """ Delete members specified by member_ids.
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
 
         # Delete members in acl_users.
         acl_users = self.acl_users
@@ -517,7 +529,7 @@ class MembershipTool(UniqueObject, Folder):
                                  'permission for the underlying User Folder.')
 
         # Delete member data in portal_memberdata.
-        mdtool = queryUtility(IMemberDataTool)
+        mdtool = getToolByName(self, 'portal_memberdata', None)
         if mdtool is not None:
             for member_id in member_ids:
                 mdtool.deleteMemberData(member_id)

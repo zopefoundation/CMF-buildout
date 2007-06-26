@@ -20,7 +20,6 @@ from Globals import InitializeClass
 from Products.Five import BrowserView
 from zope.component import getUtility
 
-from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.permissions import View
@@ -72,7 +71,7 @@ class ViewBase(BrowserView):
 
     @memoize
     def _checkPermission(self, permission):
-        mtool = getUtility(IMembershipTool)
+        mtool = self._getTool('portal_membership')
         return mtool.checkPermission(permission, self.context)
 
     @memoize

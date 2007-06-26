@@ -25,11 +25,9 @@ from DateTime import DateTime
 from OFS.Folder import Folder
 from Products.StandardCacheManagers import RAMCacheManager
 from zope.app.component.hooks import setHooks
-from zope.component import getSiteManager
 
 from Products.CMFCore.FSDTMLMethod import FSDTMLMethod
 from Products.CMFCore.FSMetadata import FSMetadata
-from Products.CMFCore.interfaces import ICachingPolicyManager
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
 from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
 from Products.CMFCore.tests.base.testcase import FSDVTest
@@ -60,10 +58,6 @@ class FSDTMLMethodTests(RequestTest, FSDTMLMaker):
 
     def _setupCachingPolicyManager(self, cpm_object):
         self.root.caching_policy_manager = cpm_object
-        sm = getSiteManager(self.root)
-        sm.registerUtility( self.root.caching_policy_manager
-                          , ICachingPolicyManager
-                          )
 
     def test_Call( self ):
         script = self._makeOne( 'testDTML', 'testDTML.dtml' )

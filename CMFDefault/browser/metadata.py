@@ -18,7 +18,6 @@ $Id$
 from Acquisition import aq_self
 from zope.app.form.browser import DatetimeI18nWidget
 from zope.component import adapts
-from zope.component import getUtility
 from zope.formlib import form
 from zope.interface import implements
 from zope.interface import Interface
@@ -30,9 +29,9 @@ from zope.schema import TextLine
 from zope.schema import Tuple
 from zope.schema import URI
 
-from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.interfaces import IMutableDublinCore
 from Products.CMFCore.interfaces import IMutableMinimalDublinCore
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.formlib.form import ContentEditFormBase
 from Products.CMFDefault.formlib.schema import ProxyFieldProperty
 from Products.CMFDefault.formlib.schema import SchemaAdapterBase
@@ -173,7 +172,7 @@ class MetadataSchemaAdapter(SchemaAdapterBase):
         return getattr(context, 'allow_discussion', None)
 
     def _setAllowDiscussion(self, value):
-        dtool = getUtility(IDiscussionTool)
+        dtool = getToolByName(self.context, 'portal_discussion')
         dtool.overrideDiscussionFor(self.context, value)
 
     allow_discussion = property(_getAllowDiscussion, _setAllowDiscussion)

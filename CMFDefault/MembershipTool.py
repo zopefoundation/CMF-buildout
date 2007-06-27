@@ -26,7 +26,6 @@ from zope.interface import implements
 from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import _getAuthenticatedUser
-from Products.CMFCore.utils import registerToolInterface
 
 from Document import addDocument
 from interfaces import IMembershipTool
@@ -211,4 +210,3 @@ class MembershipTool(BaseTool):
             return None
 
 InitializeClass(MembershipTool)
-registerToolInterface('portal_membership', IMembershipTool)

@@ -26,7 +26,6 @@ from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import IRegistrationTool
 from Products.CMFCore.RegistrationTool import RegistrationTool as BaseTool
 from Products.CMFCore.utils import _checkPermission
-from Products.CMFCore.utils import registerToolInterface
 
 from permissions import ManagePortal
 from utils import checkEmailAddress
@@ -205,4 +204,3 @@ class RegistrationTool(BaseTool):
         return member
 
 InitializeClass(RegistrationTool)
-registerToolInterface('portal_registration', IRegistrationTool)

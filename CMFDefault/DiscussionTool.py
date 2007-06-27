@@ -26,7 +26,6 @@ from zope.interface import implements
 from Products.CMFCore.interfaces import IDiscussionResponse
 from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
 from DiscussionItem import DiscussionItemContainer
@@ -120,4 +119,3 @@ class DiscussionTool(UniqueObject, SimpleItem):
         return content.talkback
 
 InitializeClass( DiscussionTool )
-registerToolInterface('portal_discussion', IDiscussionTool)

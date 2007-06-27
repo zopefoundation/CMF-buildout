@@ -23,11 +23,9 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from zope.interface import implements
 
-from Products.CMFCore.ActionProviderBase import ActionProviderBase
 from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import _getAuthenticatedUser
-from Products.CMFCore.utils import registerToolInterface
 
 from Document import addDocument
 from interfaces import IMembershipTool
@@ -57,7 +55,7 @@ class MembershipTool( BaseTool ):
     """
 
     implements(IMembershipTool)
-    __implements__ = (z2IMembershipTool, ActionProviderBase.__implements__)
+    __implements__ = (z2IMembershipTool, )
 
     meta_type = 'Default Membership Tool'
     membersfolder_id = 'Members'
@@ -216,5 +214,4 @@ class MembershipTool( BaseTool ):
             return None
 
 InitializeClass(MembershipTool)
-registerToolInterface('portal_membership', IMembershipTool)
 

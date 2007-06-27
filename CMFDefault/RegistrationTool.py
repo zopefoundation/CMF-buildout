@@ -28,7 +28,6 @@ from Products.CMFCore.interfaces import IRegistrationTool
 from Products.CMFCore.RegistrationTool import RegistrationTool as BaseTool
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import postonly
 
 from permissions import ManagePortal
@@ -217,4 +216,3 @@ class RegistrationTool(BaseTool):
     editMember = postonly(editMember)
 
 InitializeClass(RegistrationTool)
-registerToolInterface('portal_registration', IRegistrationTool)

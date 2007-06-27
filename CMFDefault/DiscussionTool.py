@@ -29,7 +29,6 @@ from Products.CMFCore.interfaces.Discussions \
 from Products.CMFCore.interfaces.portal_discussion \
         import portal_discussion as z2IDiscussionTool
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
 from DiscussionItem import DiscussionItemContainer
@@ -127,4 +126,3 @@ class DiscussionTool(UniqueObject, SimpleItem):
         return content.talkback
 
 InitializeClass( DiscussionTool )
-registerToolInterface('portal_discussion', IDiscussionTool)

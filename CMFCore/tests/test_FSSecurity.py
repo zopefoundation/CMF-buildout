@@ -49,8 +49,8 @@ class FSSecurityBase(RequestTest, WritableFSDVTest, LogInterceptor):
                 self.assertEqual((acquire, expected), (acquired, got))
                 happy = 1
         if not happy:
-            raise ValueError("'%s' not found in permissions: %s"
-                             % (permissionname, all_names))
+            raise ValueError("'%s' not found in inherited permissions."
+                             % permissionname)
 
     def setUp( self ):
         # initialise skins

@@ -19,7 +19,6 @@ $Id$
 from AccessControl import ClassSecurityInfo
 from DocumentTemplate.DT_HTML import HTML as DTML_HTML
 from Globals import DTMLFile
-from Globals import HTML as Global_HTML
 from Globals import InitializeClass
 from OFS.DTMLDocument import DTMLDocument
 from StructuredText.StructuredText import HTML as STX_HTML

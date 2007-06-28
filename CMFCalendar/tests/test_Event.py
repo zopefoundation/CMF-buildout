@@ -145,7 +145,7 @@ class EventPUTTests(RequestTest):
         self.assertEqual( d.Title(), 'Test Event' )
         self.assertEqual( d.Format(), 'text/html' )
         self.assertEqual( d.Description().strip()
-                        , 'Fundraiser for disabled goldfish' 
+                        , 'Fundraiser for disabled goldfish'
                         )
         self.assertEqual( d.Subject(), ('Foosubject',) )
         self.assertEqual( d.Contributors(), ('Jim',) )

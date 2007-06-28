@@ -19,15 +19,15 @@ $Id$
 import OFS.Image
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
+from OFS.Cache import Cacheable
 from zope.component.factory import Factory
 from zope.interface import implements
-from OFS.Cache import Cacheable
 
 from Products.CMFCore.PortalContent import PortalContent
+from Products.CMFCore.utils import _checkConditionalGET
 from Products.CMFCore.utils import _OldCacheHeaders
 from Products.CMFCore.utils import _setCacheHeaders
 from Products.CMFCore.utils import _ViewEmulator
-from Products.CMFCore.utils import _checkConditionalGET
 from Products.GenericSetup.interfaces import IDAVAware
 
 from DublinCore import DefaultDublinCoreImpl
@@ -66,7 +66,7 @@ def addImage( self
                 , description, contributors, effective_date, expiration_date
                 , format, language, rights
                 )
-    
+
     # Add the Image instance to self
     self._setObject(id, iobj)
 

@@ -24,8 +24,8 @@ from os.path import join as path_join
 from re import compile
 from StringIO import StringIO
 
-from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from DocumentTemplate.DT_Util import html_quote
+from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.content import BASIC_HTML

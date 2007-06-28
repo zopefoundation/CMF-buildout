@@ -19,9 +19,9 @@ from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
+from zope.component import queryUtility
 from zope.interface import implements
 
-from zope.component import queryUtility
 from exceptions import AccessControl_Unauthorized
 from interfaces import ISiteRoot
 from interfaces import IUndoTool
@@ -119,4 +119,3 @@ class UndoTool(UniqueObject, SimpleItem):
 
 InitializeClass(UndoTool)
 registerToolInterface('portal_undo', IUndoTool)
-

@@ -150,7 +150,7 @@ class FriendlyDateCriterion( AbstractCriterion ):
                                           } ), )
                     else:
                         return ( ( field, { 'query': date.earliestTime()
-                                          , 'range': operation 
+                                          , 'range': operation
                                           } ), )
                 else:
                     # Value 0 means "Now", so get everything from now on

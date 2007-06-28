@@ -37,7 +37,6 @@ from permissions import ManageUsers
 from permissions import View
 from utils import _dtmldir
 
-
 DEFAULT_MEMBER_CONTENT = """\
 Default page for %s
 
@@ -49,7 +48,7 @@ Default page for %s
 """
 
 
-class MembershipTool( BaseTool ):
+class MembershipTool(BaseTool):
 
     """ Implement 'portal_membership' interface using "stock" policies.
     """
@@ -214,4 +213,3 @@ class MembershipTool( BaseTool ):
             return None
 
 InitializeClass(MembershipTool)
-

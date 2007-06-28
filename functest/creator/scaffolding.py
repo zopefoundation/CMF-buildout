@@ -15,7 +15,7 @@
     constructing the functional tests.
 """
 
-from Products.CMFCore.PortalFolder import PortalFolder
+import transaction
 
 def submit_news_setup( app, test_vars, result ):
     """
@@ -45,7 +45,7 @@ def submit_news_setup( app, test_vars, result ):
     if newsitem_id in folder.objectIds():
         folder.manage_delObjects( ids=[newsitem_id] )
     
-    get_transaction().commit()
+    transaction.commit()
 
     return 1
 
@@ -65,7 +65,7 @@ def submit_news_postcondition( app, test_vars, result ):
                                 % ( userid, newsitem_id ) )
     assert wf_tool.getInfoFor( newsitem, 'review_state' ) == 'pending'
     
-    get_transaction().commit()
+    transaction.commit()
 
     return 1
 
@@ -81,4 +81,4 @@ def submit_news_teardown( app, test_vars, result ):
     if newsitem_id in folder.objectIds():
         folder.manage_delObjects( ids=[newsitem_id] )
     
-    get_transaction().commit()
+    transaction.commit()

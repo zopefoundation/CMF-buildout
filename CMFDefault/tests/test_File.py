@@ -23,9 +23,9 @@ from os.path import join as path_join
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.testing import ConformsToContent
-from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
-from Products.CMFCore.tests.base.testcase import RequestTest 
+from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
+from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFDefault import tests
 
 TESTS_HOME = tests.__path__[0]
@@ -116,7 +116,7 @@ class CachingTests(RequestTest):
 
         from webdav.common import rfc1123_date
         from Products.CMFCore.tests.base.dummy import FAKE_ETAG
-        
+
         file = self._makeOne( 'test_file', 'test_file.swf', file=ref )
         file = file.__of__( self.root )
 
@@ -137,7 +137,7 @@ class CachingTests(RequestTest):
         path, ref = self._extractFile()
 
         from webdav.common import rfc1123_date
-        
+
         file = self._makeOne( 'test_file', 'test_file.swf', file=ref )
         file = file.__of__( self.root )
 

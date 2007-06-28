@@ -23,7 +23,6 @@ from DateTime import DateTime
 from Globals import HTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
-
 from zope.interface import implements
 
 from Products.CMFCore.interfaces import ISyndicationTool
@@ -389,4 +388,3 @@ class SyndicationTool(UniqueObject, SimpleItem):
 
 InitializeClass(SyndicationTool)
 registerToolInterface('portal_syndication', ISyndicationTool)
-

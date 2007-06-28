@@ -21,7 +21,6 @@ import Testing
 from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import Implicit
 from DateTime.DateTime import DateTime
-
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.tests.base.dummy import DummySite

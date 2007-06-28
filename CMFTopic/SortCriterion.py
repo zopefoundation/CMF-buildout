@@ -49,7 +49,7 @@ class SortCriterion( AbstractCriterion ):
         self.id = id
         self.index = index
         self.reversed = 0
-        
+
     # inherit permissions
     def Field( self ):
         """
@@ -64,14 +64,14 @@ class SortCriterion( AbstractCriterion ):
             used to edit this kind of criterion.
         """
         return 'sort_edit'
-    
+
     security.declareProtected( ChangeTopics, 'edit' )
     def edit( self, reversed ):
         """
             Update the value we are to match up against.
         """
         self.reversed = bool(reversed)
-    
+
     security.declareProtected(View, 'getCriteriaItems')
     def getCriteriaItems( self ):
         """

@@ -32,7 +32,6 @@ from zope.schema import Set
 from zope.schema import Tuple
 from zope.schema.interfaces import ISet
 from zope.schema.interfaces import ITuple
-from zope.schema.interfaces import ITextLine
 
 from Products.CMFCore.interfaces import IMetadataTool
 from Products.CMFDefault.exceptions import IllegalHTML

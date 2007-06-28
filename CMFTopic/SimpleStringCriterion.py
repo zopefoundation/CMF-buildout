@@ -45,21 +45,21 @@ class SimpleStringCriterion( AbstractCriterion ):
         self.id = id
         self.field = field
         self.value = ''
-        
+
     security.declareProtected( ChangeTopics, 'getEditForm' )
     def getEditForm( self ):
         """
             Return the skinned name of the edit form.
         """
         return 'ssc_edit'
-    
+
     security.declareProtected( ChangeTopics, 'edit' )
     def edit( self, value ):
         """
             Update the value we are to match up against.
         """
         self.value = str( value )
-    
+
     security.declareProtected(View, 'getCriteriaItems')
     def getCriteriaItems( self ):
         """
@@ -71,7 +71,6 @@ class SimpleStringCriterion( AbstractCriterion ):
             result.append( ( self.field, self.value ) )
 
         return tuple( result )
-
 
 InitializeClass( SimpleStringCriterion )
 

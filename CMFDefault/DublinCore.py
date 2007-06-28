@@ -36,9 +36,9 @@ from Products.CMFCore.utils import getToolByName
 
 from permissions import ModifyPortalContent
 from permissions import View
-from utils import tuplize
 from utils import _dtmldir
 from utils import semi_split
+from utils import tuplize
 
 _marker=[]
 

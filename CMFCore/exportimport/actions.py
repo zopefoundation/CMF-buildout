@@ -15,6 +15,8 @@
 $Id$
 """
 
+from zope.component import adapts
+
 from Products.GenericSetup.interfaces import ISetupEnviron
 from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import I18NURI
@@ -31,8 +33,6 @@ from Products.CMFCore.interfaces import IActionsTool
 from Products.CMFCore.interfaces.portal_actions \
         import ActionProvider as z2IActionProvider
 from Products.CMFCore.utils import getToolByName
-
-from zope.component import adapts
 
 _SPECIAL_PROVIDERS = ('portal_actions', 'portal_types', 'portal_workflow')
 
@@ -145,8 +145,8 @@ class ActionsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
     def _extractOldstyleActions(self, provider_id):
         # BBB: for CMF 1.6 profiles
         fragment = self._doc.createDocumentFragment()
-        provider = getToolByName(self.context, provider_id)
 
+        provider = getToolByName(self.context, provider_id)
         if not (IActionProvider.providedBy(provider) or
                 z2IActionProvider.isImplementedBy(provider)):
             return fragment

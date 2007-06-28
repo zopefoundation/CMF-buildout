@@ -39,7 +39,6 @@ from utils import getToolByName
 from utils import registerToolInterface
 from utils import UniqueObject
 
-
 _marker = []  # Create a new marker object.
 
 

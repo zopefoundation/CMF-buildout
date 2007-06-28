@@ -24,9 +24,8 @@ from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent, aq_inner, aq_base
 from Globals import InitializeClass
-from OFS.OrderSupport import OrderSupport
 from OFS.Folder import Folder
-
+from OFS.OrderSupport import OrderSupport
 from zope.component.factory import Factory
 from zope.interface import implements
 
@@ -506,9 +505,10 @@ manage_addPortalFolder = PortalFolder.manage_addPortalFolder.im_func
 
 
 class ContentFilter:
+
+    """Represent a predicate against a content object's metadata.
     """
-        Represent a predicate against a content object's metadata.
-    """
+
     MARKER = []
     filterSubject = []
     def __init__( self

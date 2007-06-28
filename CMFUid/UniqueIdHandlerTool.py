@@ -27,7 +27,6 @@ from Globals import InitializeClass
 from Globals import package_home
 from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-
 from zope.component import getUtility
 from zope.interface import implements
 
@@ -77,6 +76,8 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem):
     security = ClassSecurityInfo()
 
     def _reindexObject(self, obj):
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
         # add uid index and colums to catalog if not yet done
         UID_ATTRIBUTE_NAME = self.UID_ATTRIBUTE_NAME
         catalog = getToolByName(obj, 'portal_catalog')
@@ -261,4 +262,3 @@ class UniqueIdHandlerTool(UniqueObject, SimpleItem):
     manage_queryObject = PageTemplateFile('queryUID.pt', _wwwdir)
 
 InitializeClass(UniqueIdHandlerTool)
-

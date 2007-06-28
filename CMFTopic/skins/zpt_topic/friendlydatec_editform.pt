@@ -2,7 +2,7 @@
  <tr>
   <td width="20">
    <input type="checkbox" value="" name="criterion_ids:list" id=""
-        tal:attributes="value here/getId; id string:cb_${here/getId}">
+        tal:attributes="value here/getId; id string:cb_${here/getId}" />
   </td>
   <td align="left">
    <label for="" tal:attributes="for string:cb_${here/getId}">

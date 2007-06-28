@@ -20,15 +20,15 @@ $Id$
 import OFS.Image
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
+from OFS.Cache import Cacheable
 from zope.component.factory import Factory
 from zope.interface import implements
-from OFS.Cache import Cacheable
 
 from Products.CMFCore.PortalContent import PortalContent
+from Products.CMFCore.utils import _checkConditionalGET
 from Products.CMFCore.utils import _OldCacheHeaders
 from Products.CMFCore.utils import _setCacheHeaders
 from Products.CMFCore.utils import _ViewEmulator
-from Products.CMFCore.utils import _checkConditionalGET
 from Products.GenericSetup.interfaces import IDAVAware
 
 from DublinCore import DefaultDublinCoreImpl
@@ -67,7 +67,7 @@ def addFile( self
                , description, contributors, effective_date, expiration_date
                , format, language, rights
                )
-    
+
     # Add the File instance to self
     self._setObject(id, fobj)
 
@@ -216,10 +216,10 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
     security.declareProtected(View, 'download')
     def download(self, REQUEST, RESPONSE):
         """Download this item.
-        
+
         Calls OFS.Image.File.index_html to perform the actual transfer after
         first setting Content-Disposition to suggest a filename.
-        
+
         This method is deprecated, use the URL of this object itself. Because
         the default view of a File object is to download, rather than view,
         this method is obsolete. Also note that certain browsers do not deal

@@ -36,8 +36,8 @@ from permissions import View
 from utils import _checkPermission
 from utils import getToolByName
 
-
 _unchanged = [] # marker
+
 
 class ActionCategory(IFAwareObjectManager, OrderedFolder):
 
@@ -493,6 +493,7 @@ def getOAI(context, object=None):
 
 
 class oai:
+
     #Provided for backwards compatability
     # Provides information that may be needed when constructing the list of
     # available actions.
@@ -525,4 +526,3 @@ class oai:
         if hasattr(self, name):
             return getattr(self, name)
         raise KeyError, name
-

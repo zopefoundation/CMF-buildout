@@ -21,12 +21,11 @@ from Testing import ZopeTestCase
 from os.path import join as path_join
 from cStringIO import StringIO
 
-from zope.app.component.hooks import setSite
-from zope.testing.cleanup import cleanUp
-
 import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.User import UnrestrictedUser
+from zope.app.component.hooks import setSite
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.dummy import DummyCachingManager

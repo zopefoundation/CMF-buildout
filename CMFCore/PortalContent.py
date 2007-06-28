@@ -15,10 +15,10 @@
 $Id$
 """
 
-from Globals import InitializeClass
-from Acquisition import aq_base
-from OFS.SimpleItem import SimpleItem
 from AccessControl import ClassSecurityInfo
+from Acquisition import aq_base
+from Globals import InitializeClass
+from OFS.SimpleItem import SimpleItem
 from webdav.WriteLockInterface import WriteLockInterface as z2IWriteLock
 from zope.interface import implements
 

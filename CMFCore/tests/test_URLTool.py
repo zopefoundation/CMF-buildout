@@ -19,6 +19,7 @@ import unittest
 import Testing
 
 from zope.component import getSiteManager
+from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.tests.base.dummy import DummyContent
@@ -32,6 +33,9 @@ class URLToolTests(unittest.TestCase):
         self.site = DummySite(id='foo')
         sm = getSiteManager()
         sm.registerUtility(self.site, ISiteRoot)
+
+    def tearDown(self):
+        cleanUp()
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.URLTool import URLTool

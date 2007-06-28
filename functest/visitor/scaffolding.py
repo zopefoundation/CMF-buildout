@@ -18,7 +18,6 @@
 import string
 
 from Products.CMFCore.PortalFolder import PortalFolder
-from Products.CMFDefault.NewsItem import NewsItem
 
 #
 #   Fake out security (blech!)
@@ -26,6 +25,7 @@ from Products.CMFDefault.NewsItem import NewsItem
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 import Acquisition
+import transaction
 
 
 class FTUser( Acquisition.Implicit ):
@@ -276,7 +276,7 @@ def advanced_search_setup( app, test_vars, result ):
         Ensure that we have at least the one expected piece of content.
     """
     _setup_test_news( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()
     return 1
 
 def advanced_search_teardown( app, test_vars, result ):
@@ -284,7 +284,7 @@ def advanced_search_teardown( app, test_vars, result ):
         Ensure that we scrub any content we created.
     """
     _teardown_test_news( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()
 
 #
 #   become_member.zft
@@ -297,7 +297,7 @@ def become_member_setup( app, test_vars, result ):
     site        = app.unrestrictedTraverse( site_path )
 
     _scrubMember( site, userid, 1 )
-    get_transaction().commit()
+    transaction.commit()
     return 1
 
 def become_member_postcondition( app, test_vars, result ):
@@ -322,7 +322,7 @@ def become_member_teardown( app, test_vars, result ):
     site        = app.unrestrictedTraverse( site_path )
 
     _scrubMember( site, userid )
-    get_transaction().commit()
+    transaction.commit()
 
 #
 #   browse_news.zft
@@ -332,7 +332,7 @@ def browse_news_setup( app, test_vars, result ):
         Ensure that we have at least the one expected piece of content.
     """
     _setup_test_news( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()
     return 1
 
 def browse_news_teardown( app, test_vars, result ):
@@ -340,7 +340,7 @@ def browse_news_teardown( app, test_vars, result ):
         Ensure that we scrub any content we created.
     """
     _teardown_test_news( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()
 
 #
 #   browse_topic.zft
@@ -352,14 +352,14 @@ def browse_topic_setup( app, test_vars, result ):
     _setup_test_user( app, test_vars )
     _setup_test_news( app, test_vars )
     _setup_test_topic( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()
     return 1
 
 def browse_topic_teardown( app, test_vars, result ):
     _teardown_test_topic( app, test_vars )
     _teardown_test_news( app, test_vars )
     _teardown_test_user( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()
  
 #
 #   log_in.zft
@@ -368,14 +368,14 @@ def log_in_setup( app, test_vars, result ):
     """
     """
     _setup_test_user( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()
     return 1
 
 def log_in_teardown( app, test_vars, result ):
     """
     """
     _teardown_test_user( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()
 #
 #   provide_feeback.zft
 #
@@ -394,7 +394,7 @@ def provide_feedback_setup( app, test_vars, result ):
 
     _setup_test_news( app, test_vars )
     _setup_test_user( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()
     return 1
 
 def provide_feedback_postcondition( app, test_vars, result ):
@@ -415,7 +415,7 @@ def provide_feedback_teardown( app, test_vars, result ):
 
     _teardown_test_user( app, test_vars )
     _teardown_test_news( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()
 #
 #   quick_search.zft
 #
@@ -425,10 +425,10 @@ def quick_search_setup( app, test_vars, result ):
     # results page, merely that we can execute these requests.
     _setup_test_news( app, test_vars )
     _setup_test_user( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()
     return 1
 
 def quick_search_teardown( app, test_vars, result ):
     _teardown_test_user( app, test_vars )
     _teardown_test_news( app, test_vars )
-    get_transaction().commit()
+    transaction.commit()

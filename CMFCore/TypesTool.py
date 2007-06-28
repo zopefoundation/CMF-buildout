@@ -52,9 +52,7 @@ from utils import _wwwdir
 from utils import SimpleItemWithProperties
 from utils import UniqueObject
 
-
 logger = logging.getLogger('CMFCore.TypesTool')
-
 
 _marker = []  # Create a new marker.
 
@@ -753,4 +751,3 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
         return rval
 
 InitializeClass(TypesTool)
-

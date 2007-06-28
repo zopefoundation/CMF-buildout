@@ -16,6 +16,7 @@ $Id$
 """
 
 from AccessControl import ClassSecurityInfo
+from AccessControl.requestmethod import postonly
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Globals import DTMLFile
@@ -27,7 +28,6 @@ from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from ContainerTab import ContainerTab
 from permissions import ManagePortal
 from utils import _dtmldir
-from Products.CMFCore.utils import postonly
 
 
 class StateDefinition(SimpleItem):
@@ -197,6 +197,7 @@ class StateDefinition(SimpleItem):
                                      manage_tabs_message=manage_tabs_message,
                                      )
 
+    @postonly
     def setPermissions(self, REQUEST):
         """Set the permissions in REQUEST for this State."""
         pr = self.permission_roles
@@ -214,8 +215,8 @@ class StateDefinition(SimpleItem):
                 roles = tuple(roles)
             pr[p] = roles
         return self.manage_permissions(REQUEST, 'Permissions changed.')
-    setPermissions = postonly(setPermissions)
 
+    @postonly
     def setPermission(self, permission, acquired, roles, REQUEST=None):
         """Set a permission for this State."""
         pr = self.permission_roles
@@ -226,10 +227,10 @@ class StateDefinition(SimpleItem):
         else:
             roles = tuple(roles)
         pr[permission] = roles
-    setPermission = postonly(setPermission)
 
     manage_groups = PageTemplateFile('state_groups.pt', _dtmldir)
 
+    @postonly
     def setGroups(self, REQUEST, RESPONSE=None):
         """Set the group to role mappings in REQUEST for this State.
         """
@@ -250,7 +251,6 @@ class StateDefinition(SimpleItem):
             RESPONSE.redirect(
                 "%s/manage_groups?manage_tabs_message=Groups+changed."
                 % self.absolute_url())
-    setGroups = postonly(setGroups)
 
 InitializeClass(StateDefinition)
 

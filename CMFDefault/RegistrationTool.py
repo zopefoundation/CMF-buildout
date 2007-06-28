@@ -18,6 +18,7 @@ $Id$
 from warnings import warn
 
 from AccessControl import ClassSecurityInfo
+from AccessControl.requestmethod import postonly
 from Acquisition import aq_base
 from Globals import InitializeClass
 from Products.MailHost.interfaces import IMailHost
@@ -28,7 +29,6 @@ from Products.CMFCore.interfaces import IRegistrationTool
 from Products.CMFCore.RegistrationTool import RegistrationTool as BaseTool
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.utils import postonly
 
 from permissions import ManagePortal
 from utils import checkEmailAddress
@@ -198,6 +198,7 @@ class RegistrationTool(BaseTool):
         host.send( mail_text )
 
     security.declareProtected(ManagePortal, 'editMember')
+    @postonly
     def editMember(self, member_id, properties=None, password=None,
                    roles=None, domains=None, REQUEST=None):
         """ Edit a user's properties and security settings
@@ -213,6 +214,5 @@ class RegistrationTool(BaseTool):
         member.setSecurityProfile(password,roles,domains)
 
         return member
-    editMember = postonly(editMember)
 
 InitializeClass(RegistrationTool)

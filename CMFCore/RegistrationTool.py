@@ -19,6 +19,7 @@ import re
 from random import choice
 
 from AccessControl import ClassSecurityInfo
+from AccessControl.requestmethod import postonly
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
@@ -36,7 +37,6 @@ from utils import _limitGrantedRoles
 from utils import getToolByName
 from utils import Message as _
 from utils import UniqueObject
-from utils import postonly
 
 
 class RegistrationTool(UniqueObject, SimpleItem):
@@ -132,6 +132,7 @@ class RegistrationTool(UniqueObject, SimpleItem):
         return ''.join( [ choice(chars) for i in range(6) ] )
 
     security.declareProtected(AddPortalMember, 'addMember')
+    @postonly
     def addMember(self, id, password, roles=('Member',), domains='',
                   properties=None, REQUEST=None):
         '''Creates a PortalMember and returns it. The properties argument
@@ -167,7 +168,6 @@ class RegistrationTool(UniqueObject, SimpleItem):
         member = membership.getMemberById(id)
         self.afterAdd(member, id, password, properties)
         return member
-    addMember = postonly(addMember)
 
     security.declareProtected(AddPortalMember, 'isMemberIdAllowed')
     def isMemberIdAllowed(self, id):

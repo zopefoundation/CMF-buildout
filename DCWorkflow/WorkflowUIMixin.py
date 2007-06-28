@@ -20,6 +20,7 @@ import os
 from Globals import DTMLFile
 from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
+from AccessControl.requestmethod import postonly
 from Acquisition import aq_get
 
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
@@ -27,7 +28,6 @@ from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from permissions import ManagePortal
 from Guard import Guard
 from utils import _dtmldir
-from Products.CMFCore.utils import postonly
 
 try:
     #
@@ -54,6 +54,7 @@ class WorkflowUIMixin:
     manage_groups = PageTemplateFile('workflow_groups.pt', _dtmldir)
 
     security.declareProtected(ManagePortal, 'setProperties')
+    @postonly
     def setProperties(self, title, manager_bypass=0, props=None, 
                       REQUEST=None, description=''):
         """Sets basic properties.
@@ -69,7 +70,6 @@ class WorkflowUIMixin:
         if REQUEST is not None:
             return self.manage_properties(
                 REQUEST, manage_tabs_message='Properties changed.')
-    setProperties = postonly(setProperties)
 
     _permissions_form = DTMLFile('workflow_permissions', _dtmldir)
 
@@ -83,6 +83,7 @@ class WorkflowUIMixin:
                                       )
 
     security.declareProtected(ManagePortal, 'addManagedPermission')
+    @postonly
     def addManagedPermission(self, p, REQUEST=None):
         """Adds to the list of permissions to manage.
         """
@@ -94,9 +95,9 @@ class WorkflowUIMixin:
         if REQUEST is not None:
             return self.manage_permissions(
                 REQUEST, manage_tabs_message='Permission added.')
-    addManagedPermission = postonly(addManagedPermission)
 
     security.declareProtected(ManagePortal, 'delManagedPermissions')
+    @postonly
     def delManagedPermissions(self, ps, REQUEST=None):
         """Removes from the list of permissions to manage.
         """
@@ -108,7 +109,6 @@ class WorkflowUIMixin:
         if REQUEST is not None:
             return self.manage_permissions(
                 REQUEST, manage_tabs_message='Permission(s) removed.')
-    delManagedPermissions = postonly(delManagedPermissions)
 
     security.declareProtected(ManagePortal, 'getPossiblePermissions')
     def getPossiblePermissions(self):
@@ -138,6 +138,7 @@ class WorkflowUIMixin:
             return [g['id'] for g in groups]
 
     security.declareProtected(ManagePortal, 'addGroup')
+    @postonly
     def addGroup(self, group, RESPONSE=None, REQUEST=None):
         """Adds a group by name.
         """
@@ -148,9 +149,9 @@ class WorkflowUIMixin:
             RESPONSE.redirect(
                 "%s/manage_groups?manage_tabs_message=Added+group."
                 % self.absolute_url())
-    addGroup = postonly(addGroup)
 
     security.declareProtected(ManagePortal, 'delGroups')
+    @postonly
     def delGroups(self, groups, RESPONSE=None, REQUEST=None):
         """Removes groups by name.
         """
@@ -159,7 +160,6 @@ class WorkflowUIMixin:
             RESPONSE.redirect(
                 "%s/manage_groups?manage_tabs_message=Groups+removed."
                 % self.absolute_url())
-    delGroups = postonly(delGroups)
 
     security.declareProtected(ManagePortal, 'getAvailableRoles')
     def getAvailableRoles(self):
@@ -187,6 +187,7 @@ class WorkflowUIMixin:
         return self.valid_roles()
 
     security.declareProtected(ManagePortal, 'setRoles')
+    @postonly
     def setRoles(self, roles, RESPONSE=None, REQUEST=None):
         """Changes the list of roles mapped to groups by this workflow.
         """
@@ -199,7 +200,6 @@ class WorkflowUIMixin:
             RESPONSE.redirect(
                 "%s/manage_groups?manage_tabs_message=Roles+changed."
                 % self.absolute_url())
-    setRoles = postonly(setRoles)
 
     security.declareProtected(ManagePortal, 'getGuard')
     def getGuard(self):

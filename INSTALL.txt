@@ -2,14 +2,14 @@ Installing CMF 2.1
 
   Requirements
 
-    - Zope v. 2.10.2 or later
+    - Zope v. 2.10.4 or later
 
   Assumptions
 
     - New installation
 
     - Zope configured using INSTANCE_HOME, /var/zope, and
-      SOFTWARE_HOME, /usr/local/zope/Zope-2.10.2
+      SOFTWARE_HOME, /usr/local/zope/Zope-2.10.4
 
   Procedure
 

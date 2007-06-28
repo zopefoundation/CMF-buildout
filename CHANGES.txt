@@ -64,6 +64,8 @@ CMF 2.1.0-beta2 (unreleased)
 
   Other
 
+    - The CMF now depends on Zope 2.10.4 or higher.
+
     - CMFDefault: Adjusted factory.py to new GenericSetup version.
 
     - CMFUid.UniqueIdAnnotationTool: Annotation handling has been switched

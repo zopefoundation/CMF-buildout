@@ -18,6 +18,7 @@ import logging
 from warnings import warn
 
 from AccessControl import ClassSecurityInfo
+from AccessControl.requestmethod import postonly
 from AccessControl.User import nobody
 from Acquisition import aq_base
 from Acquisition import aq_inner
@@ -90,7 +91,8 @@ class MembershipTool(UniqueObject, Folder):
     manage_mapRoles = DTMLFile('membershipRolemapping', _dtmldir )
 
     security.declareProtected(SetOwnPassword, 'setPassword')
-    def setPassword(self, password, domains=None):
+    @postonly
+    def setPassword(self, password, domains=None, REQUEST=None):
         '''Allows the authenticated member to set his/her own password.
         '''
         registration = queryUtility(IRegistrationTool)
@@ -167,7 +169,8 @@ class MembershipTool(UniqueObject, Folder):
         return roles
 
     security.declareProtected(ManagePortal, 'setRoleMapping')
-    def setRoleMapping(self, portal_role, userfolder_role):
+    @postonly
+    def setRoleMapping(self, portal_role, userfolder_role, REQUEST=None):
         """
         set the mapping of roles between roles understood by
         the portal and roles coming from outside user sources
@@ -283,7 +286,8 @@ class MembershipTool(UniqueObject, Folder):
     createMemberarea = createMemberArea
 
     security.declareProtected(ManageUsers, 'deleteMemberArea')
-    def deleteMemberArea(self, member_id):
+    @postonly
+    def deleteMemberArea(self, member_id, REQUEST=None):
         """ Delete member area of member specified by member_id.
         """
         members = self.getMembersFolder()
@@ -417,7 +421,9 @@ class MembershipTool(UniqueObject, Folder):
         return tuple(local_roles)
 
     security.declareProtected(View, 'setLocalRoles')
-    def setLocalRoles(self, obj, member_ids, member_role, reindex=1):
+    @postonly
+    def setLocalRoles(self, obj, member_ids, member_role, reindex=1,
+                      REQUEST=None):
         """ Add local roles on an item.
         """
         if ( _checkPermission(ChangeLocalRoles, obj)
@@ -436,7 +442,9 @@ class MembershipTool(UniqueObject, Folder):
             obj.reindexObjectSecurity()
 
     security.declareProtected(View, 'deleteLocalRoles')
-    def deleteLocalRoles(self, obj, member_ids, reindex=1, recursive=0):
+    @postonly
+    def deleteLocalRoles(self, obj, member_ids, reindex=1, recursive=0,
+                         REQUEST=None):
         """ Delete local roles of specified members.
         """
         if _checkPermission(ChangeLocalRoles, obj):
@@ -465,8 +473,9 @@ class MembershipTool(UniqueObject, Folder):
             member.setMemberProperties(properties)
 
     security.declareProtected(ManageUsers, 'deleteMembers')
+    @postonly
     def deleteMembers(self, member_ids, delete_memberareas=1,
-                      delete_localroles=1):
+                      delete_localroles=1, REQUEST=None):
         """ Delete members specified by member_ids.
         """
 

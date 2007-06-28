@@ -19,6 +19,7 @@ import sys
 from warnings import warn
 
 from AccessControl import ClassSecurityInfo
+from AccessControl.requestmethod import postonly
 from Acquisition import aq_base, aq_inner, aq_parent
 from Globals import DTMLFile
 from Globals import InitializeClass
@@ -107,8 +108,8 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
             manage_tabs_message=manage_tabs_message)
 
     security.declareProtected( ManagePortal, 'manage_changeWorkflows')
+    @postonly
     def manage_changeWorkflows(self, default_chain, props=None, REQUEST=None):
-
         """ Changes which workflows apply to objects of which type.
         """
         if props is None:
@@ -357,7 +358,8 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
     #   'IConfigurableWorkflowTool' interface methods
     #
     security.declareProtected(ManagePortal, 'setDefaultChain')
-    def setDefaultChain(self, default_chain):
+    @postonly
+    def setDefaultChain(self, default_chain, REQUEST=None):
         """ Set the default chain for this tool.
         """
         default_chain = default_chain.replace(',', ' ')
@@ -371,7 +373,9 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
         self._default_chain = tuple(ids)
 
     security.declareProtected(ManagePortal, 'setChainForPortalTypes')
-    def setChainForPortalTypes(self, pt_names, chain, verify=True):
+    @postonly
+    def setChainForPortalTypes(self, pt_names, chain, verify=True,
+                               REQUEST=None):
         """ Set a chain for specific portal types.
         """
         cbt = self._chains_by_type
@@ -438,6 +442,7 @@ class WorkflowTool(UniqueObject, IFAwareObjectManager, Folder,
     #   Other methods
     #
     security.declareProtected(ManagePortal, 'updateRoleMappings')
+    @postonly
     def updateRoleMappings(self, REQUEST=None):
         """ Allow workflows to update the role-permission mappings.
         """

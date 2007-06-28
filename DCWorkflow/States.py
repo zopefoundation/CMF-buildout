@@ -16,6 +16,7 @@ $Id$
 """
 
 from AccessControl import ClassSecurityInfo
+from AccessControl.requestmethod import postonly
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Globals import DTMLFile
@@ -196,6 +197,7 @@ class StateDefinition(SimpleItem):
                                      manage_tabs_message=manage_tabs_message,
                                      )
 
+    @postonly
     def setPermissions(self, REQUEST):
         """Set the permissions in REQUEST for this State."""
         pr = self.permission_roles
@@ -214,7 +216,8 @@ class StateDefinition(SimpleItem):
             pr[p] = roles
         return self.manage_permissions(REQUEST, 'Permissions changed.')
 
-    def setPermission(self, permission, acquired, roles):
+    @postonly
+    def setPermission(self, permission, acquired, roles, REQUEST=None):
         """Set a permission for this State."""
         pr = self.permission_roles
         if pr is None:
@@ -227,6 +230,7 @@ class StateDefinition(SimpleItem):
 
     manage_groups = PageTemplateFile('state_groups.pt', _dtmldir)
 
+    @postonly
     def setGroups(self, REQUEST, RESPONSE=None):
         """Set the group to role mappings in REQUEST for this State.
         """

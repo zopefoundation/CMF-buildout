@@ -16,6 +16,7 @@ $Id$
 """
 
 from AccessControl import ClassSecurityInfo
+from AccessControl.requestmethod import postonly
 from Acquisition import aq_base
 from Globals import InitializeClass
 from Products.MailHost.interfaces import IMailHost
@@ -183,13 +184,9 @@ class RegistrationTool(BaseTool):
         host.send( mail_text )
 
     security.declareProtected(ManagePortal, 'editMember')
-    def editMember( self
-                  , member_id
-                  , properties=None
-                  , password=None
-                  , roles=None
-                  , domains=None
-                  ):
+    @postonly
+    def editMember(self, member_id, properties=None, password=None,
+                   roles=None, domains=None, REQUEST=None):
         """ Edit a user's properties and security settings
 
         o Checks should be done before this method is called using

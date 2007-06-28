@@ -6,7 +6,7 @@ from Products.CMFDefault.utils import Message as _
 
 mtool = getToolByInterfaceName('Products.CMFCore.interfaces.IMembershipTool')
 
-mtool.deleteMembers(ids)
+mtool.deleteMembers(ids, REQUEST=context.REQUEST)
 
 if len(ids) == 1:
     return context.setStatus(True, _(u'Selected member deleted.'))

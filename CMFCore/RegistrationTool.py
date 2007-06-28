@@ -19,6 +19,7 @@ import re
 from random import choice
 
 from AccessControl import ClassSecurityInfo
+from AccessControl.requestmethod import postonly
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
@@ -129,8 +130,9 @@ class RegistrationTool(UniqueObject, SimpleItem):
         return ''.join( [ choice(chars) for i in range(6) ] )
 
     security.declareProtected(AddPortalMember, 'addMember')
+    @postonly
     def addMember(self, id, password, roles=('Member',), domains='',
-                  properties=None):
+                  properties=None, REQUEST=None):
         '''Creates a PortalMember and returns it. The properties argument
         can be a mapping with additional member properties. Raises an
         exception if the given id already exists, the password does not

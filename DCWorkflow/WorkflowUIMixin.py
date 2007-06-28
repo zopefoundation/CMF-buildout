@@ -20,6 +20,7 @@ import os
 from Globals import DTMLFile
 from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
+from AccessControl.requestmethod import postonly
 from Acquisition import aq_get
 
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
@@ -53,6 +54,7 @@ class WorkflowUIMixin:
     manage_groups = PageTemplateFile('workflow_groups.pt', _dtmldir)
 
     security.declareProtected(ManagePortal, 'setProperties')
+    @postonly
     def setProperties(self, title, manager_bypass=0, props=None, 
                       REQUEST=None, description=''):
         """Sets basic properties.
@@ -81,6 +83,7 @@ class WorkflowUIMixin:
                                       )
 
     security.declareProtected(ManagePortal, 'addManagedPermission')
+    @postonly
     def addManagedPermission(self, p, REQUEST=None):
         """Adds to the list of permissions to manage.
         """
@@ -94,6 +97,7 @@ class WorkflowUIMixin:
                 REQUEST, manage_tabs_message='Permission added.')
 
     security.declareProtected(ManagePortal, 'delManagedPermissions')
+    @postonly
     def delManagedPermissions(self, ps, REQUEST=None):
         """Removes from the list of permissions to manage.
         """
@@ -134,7 +138,8 @@ class WorkflowUIMixin:
             return [g['id'] for g in groups]
 
     security.declareProtected(ManagePortal, 'addGroup')
-    def addGroup(self, group, RESPONSE=None):
+    @postonly
+    def addGroup(self, group, RESPONSE=None, REQUEST=None):
         """Adds a group by name.
         """
         if group not in self.getAvailableGroups():
@@ -146,7 +151,8 @@ class WorkflowUIMixin:
                 % self.absolute_url())
 
     security.declareProtected(ManagePortal, 'delGroups')
-    def delGroups(self, groups, RESPONSE=None):
+    @postonly
+    def delGroups(self, groups, RESPONSE=None, REQUEST=None):
         """Removes groups by name.
         """
         self.groups = tuple([g for g in self.groups if g not in groups])
@@ -181,7 +187,8 @@ class WorkflowUIMixin:
         return self.valid_roles()
 
     security.declareProtected(ManagePortal, 'setRoles')
-    def setRoles(self, roles, RESPONSE=None):
+    @postonly
+    def setRoles(self, roles, RESPONSE=None, REQUEST=None):
         """Changes the list of roles mapped to groups by this workflow.
         """
         avail = self.getAvailableRoles()

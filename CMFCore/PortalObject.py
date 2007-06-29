@@ -16,6 +16,7 @@ $Id$
 """
 
 from five.localsitemanager import find_next_sitemanager
+from five.localsitemanager.registry import FiveVerifyingAdapterLookup
 from five.localsitemanager.registry import PersistentComponents
 from Globals import InitializeClass
 from Products.Five.component.interfaces import IObjectManagerSite
@@ -61,11 +62,21 @@ class PortalObjectBase(PortalFolder, SkinnableObjectManager):
 
     def getSiteManager(self):
         if self._components is None:
+            # BBB: for CMF 2.0 instances
             next = find_next_sitemanager(self)
             if next is None:
                 next = base
             name = '/'.join(self.getPhysicalPath())
             self._components = PersistentComponents(name, (next,))
+            self._components.__parent__ = self
+        elif self._components.utilities.LookupClass \
+                != FiveVerifyingAdapterLookup:
+            # BBB: for CMF 2.1 beta instances
+            # XXX: should be removed again after the CMF 2.1 beta2 release
+            self._components.utilities.LookupClass \
+                    = FiveVerifyingAdapterLookup
+            self._components.utilities._createLookup()
+            self._components.utilities.__parent__ = self._components
             self._components.__parent__ = self
         return self._components
 

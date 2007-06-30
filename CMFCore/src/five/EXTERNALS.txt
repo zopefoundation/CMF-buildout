@@ -5,4 +5,4 @@
 #
 # svn propset svn:externals -F ./EXTERNALS.txt .
 #
-localsitemanager -r76996 svn://svn.zope.org/repos/main/five.localsitemanager/trunk/src/five/localsitemanager
+localsitemanager svn://svn.zope.org/repos/main/five.localsitemanager/tags/0.2/src/five/localsitemanager

@@ -557,7 +557,7 @@ class TypesTool(UniqueObject, IFAwareObjectManager, Folder,
     #
     #   ObjectManager methods
     #
-    def all_meta_types(self):
+    def all_meta_types(self, interfaces=None):
         # this is a workaround and should be removed again if allowedTypes
         # have an interface we can use in _product_interfaces
         all = TypesTool.inheritedAttribute('all_meta_types')(self)

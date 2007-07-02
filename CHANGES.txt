@@ -11,6 +11,10 @@ CMF 2.1.0-beta2 (unreleased)
 
   Bug Fixes
 
+    - CMFCore.TypesTool: Corrected method signature of all_meta_types to have
+      an interface keyword argument, as per the underlying OFS.ObjectManager
+      interface declaration.
+
     - SkinnableObjectManager: Changed the way skins are set up.
       Acquisition wrapping no longer triggers 'setupCurrentSkin'. This is now
       done on publishing traversal after the BeforeTraverseEvent triggers

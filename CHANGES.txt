@@ -15,13 +15,7 @@ CMF 2.2.0-beta (unreleased)
       next event relative to a given point in time.
       (http://www.zope.org/Collectors/CMF/462)
 
-    - CMFCore.exportimport.skins: Added the ability to remove whole skin
-      selections using a GS profile.
-      (http://www.zope.org/Collectors/CMF/479)
-
   Others
-
-    - CMFDefault: Adjusted factory.py to new GenericSetup version.
 
     - CMFUid: Removed redundant and unexpected code to auto-create catalog
       index and column for the UID handler tool. The index and column are

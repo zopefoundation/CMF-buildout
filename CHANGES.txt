@@ -11,6 +11,10 @@ CMF 2.1.0-beta2 (unreleased)
 
   Bug Fixes
 
+    - UndoTool: Fixed 'listUndoableTransactionsFor'.
+      The required 'object' argument is now respected. This doesn't change the
+      behavior as long as 'object' is the site root object.
+
     - CMFCore.TypesTool: Corrected method signature of all_meta_types to have
       an interface keyword argument, as per the underlying OFS.ObjectManager
       interface declaration.

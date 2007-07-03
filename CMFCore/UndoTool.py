@@ -19,11 +19,9 @@ from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
-from zope.component import queryUtility
 from zope.interface import implements
 
 from exceptions import AccessControl_Unauthorized
-from interfaces import ISiteRoot
 from interfaces import IUndoTool
 from interfaces.portal_undo import portal_undo as z2IUndoTool
 from permissions import ListUndoableChanges
@@ -60,29 +58,23 @@ class UndoTool(UniqueObject, SimpleItem):
     manage_overview = DTMLFile( 'explainUndoTool', _dtmldir )
 
     #
-    #   'portal_undo' interface methods
+    #   'IUndoTool' interface methods
     #
     security.declareProtected(ListUndoableChanges, 'listUndoableTransactionsFor')
     def listUndoableTransactionsFor(self, object,
                                     first_transaction=None,
                                     last_transaction=None,
                                     PrincipiaUndoBatchSize=None):
-        '''Lists all transaction IDs the user is allowed to undo.
-        '''
-        # arg list for undoable_transactions() changed in Zope 2.2.
-        portal = queryUtility(ISiteRoot)
-        if portal is None:
-            # fallback
-            portal = self.aq_inner.aq_parent
-
-        transactions = portal.undoable_transactions(
+        """ List all transaction IDs the user is allowed to undo on 'object'.
+        """
+        transactions = object.undoable_transactions(
             first_transaction=first_transaction,
             last_transaction=last_transaction,
             PrincipiaUndoBatchSize=PrincipiaUndoBatchSize)
         for t in transactions:
             # Ensure transaction ids don't have embedded LF.
             t['id'] = t['id'].replace('\n', '')
-        if not _checkPermission(ManagePortal, portal):
+        if not _checkPermission(ManagePortal, object):
             # Filter out transactions done by other members of the portal.
             user_id = _getAuthenticatedUser(self).getId()
             transactions = filter(

@@ -21,10 +21,8 @@ import os
 import re
 
 from Acquisition import aq_base
-from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.interfaces import ICachingPolicyManager
 from Products.CMFCore.testing import TraversingZCMLLayer
 from Products.CMFCore.tests.base.testcase import FSDVTest
 from Products.CMFCore.tests.base.testcase import RequestTest
@@ -102,12 +100,6 @@ class FSReSTMethodTests(RequestTest, FSReSTMaker):
         #   Test HTTP caching headers.
         from Products.CMFCore.tests.base.dummy import DummyCachingManager
         self.root.caching_policy_manager = DummyCachingManager()
-
-        sm = getSiteManager(self.root)
-        sm.registerUtility( self.root.caching_policy_manager
-                          , ICachingPolicyManager
-                          )
-        
         original_len = len( self.RESPONSE.headers )
         script = self._makeOne('testReST', 'testReST.rst')
         script = script.__of__(self.root)
@@ -137,12 +129,6 @@ class FSReSTMethodTests(RequestTest, FSReSTMaker):
 
         mod_time = DateTime()
         self.root.caching_policy_manager = DummyCachingManagerWithPolicy()
-
-        sm = getSiteManager(self.root)
-        sm.registerUtility( self.root.caching_policy_manager
-                          , ICachingPolicyManager
-                          )
-
         script = self._makeOne('testReST', 'testReST.rst')
         script = script.__of__(self.root)
         self.REQUEST.environ[ 'IF_MODIFIED_SINCE'

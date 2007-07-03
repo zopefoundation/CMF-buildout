@@ -25,7 +25,6 @@ from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.CMFBTreeFolder import CMFBTreeFolder
-from Products.CMFCore.interfaces import IMemberDataTool
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.MemberDataTool import MemberDataTool
 from Products.CMFCore.PortalFolder import PortalFolder
@@ -166,7 +165,6 @@ class MembershipToolSecurityTests(SecurityTest):
         members = site._setObject( 'Members', PortalFolder('Members') )
         acl_users = site._setObject( 'acl_users', DummyUserFolder() )
         mdtool = site._setObject( 'portal_memberdata', MemberDataTool() )
-        sm.registerUtility(mdtool, IMemberDataTool)
         newSecurityManager(None, acl_users.all_powerful_Oz)
 
         self.assertEqual( acl_users.getUserById('user_foo'),

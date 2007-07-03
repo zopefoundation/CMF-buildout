@@ -30,18 +30,17 @@ from OFS.SimpleItem import SimpleItem
 from Products.PageTemplates.Expressions import getEngine
 from Products.PageTemplates.Expressions import SecureModuleImporter
 from zope.app.container.interfaces import IObjectMovedEvent
-from zope.component import queryUtility
 from zope.interface import implements
 
 from Expression import Expression
 from interfaces import ICachingPolicy
 from interfaces import ICachingPolicyManager
-from interfaces import IMembershipTool
 from permissions import ManagePortal
 from permissions import View
 from utils import _dtmldir
 from utils import _setCacheHeaders
 from utils import _ViewEmulator
+from utils import getToolByName
 from utils import registerToolInterface
 
 # This is lame :(
@@ -61,7 +60,7 @@ def createCPContext( content, view_method, keywords, time=None ):
         Construct an expression context for TALES expressions,
         for use by CachingPolicy objects.
     """
-    pm = queryUtility(IMembershipTool)
+    pm = getToolByName( content, 'portal_membership', None )
     if not pm or pm.isAnonymousUser():
         member = None
     else:
@@ -826,6 +825,8 @@ class CachingPolicyManager( SimpleItem, CacheManager ):
             Return a list of HTTP caching headers based on 'content',
             'view_method', and 'keywords'.
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # createCPContext depends on a non-utility tool
         context = createCPContext( content, view_method, keywords, time=time )
         for policy_id, policy in self.listPolicies():
 
@@ -842,6 +843,8 @@ class CachingPolicyManager( SimpleItem, CacheManager ):
             set_last_modified_header), where modification_time is a DateTime,
             or None.
         """
+        # XXX: this method violates the rules for tools/utilities:
+        # createCPContext depends on a non-utility tool
         context = createCPContext( content, view_method, keywords, time=time )
         for policy_id, policy in self.listPolicies():
             if policy.getEnable304s() and policy.testPredicate(context):
@@ -876,6 +879,7 @@ class CachingPolicyManager( SimpleItem, CacheManager ):
 
 InitializeClass( CachingPolicyManager )
 registerToolInterface('caching_policy_manager', ICachingPolicyManager)
+
 
 def handleCachingPolicyManagerEvent(ob, event):
     """ Event subscriber for (un)registering a CPM as CacheManager

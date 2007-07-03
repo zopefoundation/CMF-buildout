@@ -19,11 +19,9 @@ import unittest
 from Testing import ZopeTestCase
 
 from Acquisition import Implicit
-from zope.component import getSiteManager
 from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.tests.base.testcase import RequestTest
 from Products.CMFDefault.testing import FunctionalLayer
 
@@ -64,10 +62,8 @@ Subject:Hosed by Spam Cannon!
 Spam, spam, spam
 """
 
-        rtool = self._makeOne()
-        mtool = FauxMembershipTool()
-        sm = getSiteManager()
-        sm.registerUtility(mtool, IMembershipTool)
+        rtool = self._makeOne().__of__(self.app)
+        self.app.portal_membership = FauxMembershipTool()
 
         props = { 'email' : INJECTED_HEADERS
                 , 'username' : 'username'

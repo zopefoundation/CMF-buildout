@@ -29,14 +29,13 @@ RegistrationTool
     >>> from zope.app.component.hooks import setSite
     >>> from zope.component import getSiteManager
     >>> from zope.component import getUtility
-    >>> from Products.CMFCore.interfaces import IMembershipTool
     >>> from Products.MailHost.interfaces import IMailHost
     >>> setSite(app.site)
     >>> app.site.setupCurrentSkin(app.REQUEST)
     >>> sm = getSiteManager()
-    >>> sm.registerUtility(MembershipTool(), IMembershipTool)
     >>> sm.registerUtility(MailHost(), IMailHost)
     >>> rtool = app.site.portal_registration
+    >>> rtool.portal_membership = MembershipTool()
     >>> rtool.password_email = password_email
     >>> rtool.mail_password_response = mail_password_response
     >>> rtool.registered_email = registered_email
@@ -51,14 +50,14 @@ RegistrationTool
 
   registeredNotify sends a welcome message::
 
-    >>> rtool.registeredNotify('foo', app.REQUEST)
+    >>> rtool.registeredNotify('foo', REQUEST=app.REQUEST)
 
     >>> getUtility(IMailHost).lastMessage
     'Welcome: foo, secret, foo@example.org'
 
   Now we have to restore the normal MembershipTool::
 
-    >>> sm.registerUtility(app.site.portal_membership, IMembershipTool)
+    >>> del rtool.portal_membership
 
 password_email and registered_email
 -----------------------------------

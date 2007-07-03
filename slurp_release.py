@@ -133,7 +133,7 @@ options:
                                         , 'auth='
                                         ]
                                       )
-        except getopt.GetOptError:
+        except getopt.GetoptError:
             self._usage()
 
         for k, v in opts:

@@ -1,10 +1,10 @@
 ##parameters=change_type
 ##title=Set local roles
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import Message as _
 
-mtool = getToolByInterfaceName('Products.CMFCore.interfaces.IMembershipTool')
+mtool = getToolByName(script, 'portal_membership')
 
 if change_type == 'add':
     mtool.setLocalRoles(obj=context,

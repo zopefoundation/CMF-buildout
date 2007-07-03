@@ -28,7 +28,9 @@ from AccessControl import ModuleSecurityInfo
 from AccessControl.Permission import Permission
 from AccessControl.PermissionRole import rolesForPermissionOn
 from AccessControl.Role import gather_permissions
+from Acquisition.interfaces import IAcquirer
 from Acquisition import aq_get
+from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition import Implicit
 from DateTime import DateTime
@@ -47,14 +49,12 @@ from OFS.SimpleItem import SimpleItem
 from thread import allocate_lock
 from webdav.common import rfc1123_date
 from zope.component import getUtility
-from zope.component import queryUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.dottedname.resolve import resolve as resolve_dotted_name
 from zope.i18nmessageid import MessageFactory
 
 from exceptions import AccessControl_Unauthorized
 from exceptions import NotFound
-from interfaces import ICachingPolicyManager
 
 SUBTEMPLATE = '__SUBTEMPLATE__'
 
@@ -100,7 +100,15 @@ def getToolByName(obj, name, default=_marker):
 
     if tool_interface is not None:
         try:
-            return getUtility(tool_interface)
+            utility = getUtility(tool_interface)
+            # Site managers, except for five.localsitemanager, return unwrapped
+            # utilities. If the result is something which is acquisition-unaware
+            # but unwrapped we wrap it on the context.
+            if IAcquirer.providedBy(obj) and \
+                    aq_parent(utility) is None and \
+                    IAcquirer.providedBy(utility):
+                utilty = utility.__of__(obj)
+            return utility
         except ComponentLookupError:
             # behave in backwards-compatible way
             # fall through to old implementation
@@ -357,7 +365,7 @@ def _checkConditionalGET(obj, extra_context):
         # not a conditional GET
         return False
 
-    manager = queryUtility(ICachingPolicyManager)
+    manager = getToolByName(obj, 'caching_policy_manager', None)
     if manager is None:
         return False
 
@@ -437,7 +445,7 @@ def _setCacheHeaders(obj, extra_context):
         delattr(REQUEST, SUBTEMPLATE)
 
         content = aq_parent(obj)
-        manager = queryUtility(ICachingPolicyManager)
+        manager = getToolByName(obj, 'caching_policy_manager', None)
         if manager is None:
             return
 

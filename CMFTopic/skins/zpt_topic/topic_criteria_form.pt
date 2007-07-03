@@ -12,7 +12,7 @@
     </span>
 </span>
 <input type="submit" name="topic_editCriteria:action"
-       value=" Save changes" /> &nbsp;&nbsp;
+       value=" Save changes " /> &nbsp;&nbsp;
 <input type="submit" name="topic_deleteCriteria:action"
        value=" Delete selected " />
 <input type="hidden" name=":default_action" value="editCriteria" />

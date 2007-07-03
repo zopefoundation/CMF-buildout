@@ -21,14 +21,12 @@ from DateTime.DateTime import DateTime
 from Globals import DTMLFile
 from Globals import InitializeClass
 from OFS.PropertyManager import PropertyManager
-from zope.component import queryUtility
 from zope.interface import implements
 
 from Products.CMFCore.interfaces import ICatalogableDublinCore
 from Products.CMFCore.interfaces import IDublinCore
-from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import IMetadataTool
 from Products.CMFCore.interfaces import IMutableDublinCore
+from Products.CMFCore.utils import getToolByName
 
 from permissions import ModifyPortalContent
 from permissions import View
@@ -100,7 +98,7 @@ class DefaultDublinCoreImpl( PropertyManager ):
         """ Add creator to Dublin Core creators.
         """
         if creator is None:
-            mtool = queryUtility(IMembershipTool)
+            mtool = getToolByName(self, 'portal_membership', None)
             creator = mtool and mtool.getAuthenticatedMember().getId()
 
         # call self.listCreators() to make sure self.creators exists
@@ -163,7 +161,7 @@ class DefaultDublinCoreImpl( PropertyManager ):
     def Publisher( self ):
         """ Dublin Core Publisher element - resource publisher.
         """
-        tool = queryUtility(IMetadataTool)
+        tool = getToolByName(self, 'portal_metadata', None)
 
         if tool is not None:
             return tool.getPublisher()

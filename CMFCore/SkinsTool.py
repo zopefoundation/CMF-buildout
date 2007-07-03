@@ -27,14 +27,12 @@ from OFS.Image import Image
 from OFS.ObjectManager import REPLACEABLE
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from Products.PythonScripts.PythonScript import PythonScript
-from zope.component import getUtility
 from zope.interface import implements
 
 from ActionProviderBase import ActionProviderBase
 from DirectoryView import base_ignore
 from DirectoryView import ignore
 from DirectoryView import ignore_re
-from interfaces import IMembershipTool
 from interfaces import ISkinsTool
 from permissions import AccessContentsInformation
 from permissions import ManagePortal
@@ -305,7 +303,7 @@ class SkinsTool(UniqueObject, SkinsContainer, Folder, ActionProviderBase):
         """
         # XXX: this method violates the rules for tools/utilities:
         # it depends on a non-utility tool and uses self.REQUEST
-        mtool = getUtility(IMembershipTool)
+        mtool = getToolByName(self, 'portal_membership')
         utool = getToolByName(self, 'portal_url')
         member = mtool.getAuthenticatedMember()
         if hasattr(aq_base(member), 'getProperty'):

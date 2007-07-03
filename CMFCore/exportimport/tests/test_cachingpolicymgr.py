@@ -26,10 +26,7 @@ from Products.GenericSetup.tests.common import BaseRegistryTests
 from Products.GenericSetup.tests.common import DummyExportContext
 from Products.GenericSetup.tests.common import DummyImportContext
 
-from Products.CMFCore.interfaces import ICachingPolicyManager
 from Products.CMFCore.testing import ExportImportZCMLLayer
-
-from zope.component import getSiteManager
 
 _CP_XML = """\
 <caching-policy name="foo_policy" enable_304s="False" etag_func=""
@@ -130,9 +127,6 @@ class _CachingPolicyManagerSetup(BaseRegistryTests):
         site = self.root.site
         mgr = CachingPolicyManager()
         site._setObject( mgr.getId(), mgr )
-
-        sm = getSiteManager(site)
-        sm.registerUtility(site.caching_policy_manager, ICachingPolicyManager)
 
         if with_policy:
             mgr.addPolicy( policy_id=self.POLICY_ID

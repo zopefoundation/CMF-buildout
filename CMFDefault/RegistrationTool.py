@@ -15,6 +15,8 @@
 $Id$
 """
 
+from warnings import warn
+
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
 from Acquisition import aq_base
@@ -23,10 +25,10 @@ from Products.MailHost.interfaces import IMailHost
 from zope.component import getUtility
 from zope.schema import ValidationError
 
-from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import IRegistrationTool
 from Products.CMFCore.RegistrationTool import RegistrationTool as BaseTool
 from Products.CMFCore.utils import _checkPermission
+from Products.CMFCore.utils import getToolByName
 
 from permissions import ManagePortal
 from utils import checkEmailAddress
@@ -128,7 +130,9 @@ class RegistrationTool(BaseTool):
 
         o Raise an exception if user ID is not found.
         """
-        membership = getUtility(IMembershipTool)
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
+        membership = getToolByName(self, 'portal_membership')
         member = membership.getMemberById(forgotten_userid)
 
         if member is None:
@@ -154,10 +158,18 @@ class RegistrationTool(BaseTool):
         return self.mail_password_response( self, REQUEST )
 
     security.declarePublic( 'registeredNotify' )
-    def registeredNotify(self, new_member_id, REQUEST, password=None):
+    def registeredNotify(self, new_member_id, password=None, REQUEST=None):
         """ Handle mailing the registration / welcome message.
         """
-        membership = getUtility(IMembershipTool)
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool and uses self.REQUEST
+        if REQUEST is None:
+            REQUEST = self.REQUEST
+            warn("registeredNotify should be called with 'REQUEST' as third "
+                 "argument. The BBB code will be removed in CMF 2.3.",
+                 DeprecationWarning, stacklevel=2)
+
+        membership = getToolByName( self, 'portal_membership' )
         member = membership.getMemberById( new_member_id )
 
         if member is None:
@@ -192,8 +204,9 @@ class RegistrationTool(BaseTool):
         o Checks should be done before this method is called using
           testPropertiesValidity and testPasswordValidity
         """
-
-        mtool = getUtility(IMembershipTool)
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
+        mtool = getToolByName(self, 'portal_membership')
         member = mtool.getMemberById(member_id)
         member.setMemberProperties(properties)
         member.setSecurityProfile(password,roles,domains)

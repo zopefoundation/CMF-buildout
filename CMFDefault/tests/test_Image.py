@@ -25,11 +25,9 @@ import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.User import UnrestrictedUser
 from zope.app.component.hooks import setSite
-from zope.component import getSiteManager
 from zope.interface.verify import verifyClass
 from zope.testing.cleanup import cleanUp
 
-from Products.CMFCore.interfaces import ICachingPolicyManager
 from Products.CMFCore.testing import ConformsToContent
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
 from Products.CMFCore.tests.base.dummy import DummyCachingManagerWithPolicy
@@ -211,10 +209,6 @@ class TestCaching(RequestTest):
 
     def _setupCachingPolicyManager(self, cpm_object):
         self.root.caching_policy_manager = cpm_object
-        sm = getSiteManager()
-        sm.registerUtility( self.root.caching_policy_manager
-                          , ICachingPolicyManager
-                          )
 
     def tearDown(self):
         cleanUp()

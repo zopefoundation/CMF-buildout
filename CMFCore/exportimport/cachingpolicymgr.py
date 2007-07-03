@@ -16,7 +16,6 @@ $Id$
 """
 
 from zope.component import adapts
-from zope.component import getSiteManager
 from zope.component import queryMultiAdapter
 
 from Products.GenericSetup.interfaces import INode
@@ -28,6 +27,7 @@ from Products.GenericSetup.utils import XMLAdapterBase
 
 from Products.CMFCore.interfaces import ICachingPolicy
 from Products.CMFCore.interfaces import ICachingPolicyManager
+from Products.CMFCore.utils import getToolByName
 
 
 class CachingPolicyNodeAdapter(NodeAdapterBase):
@@ -172,16 +172,16 @@ class CachingPolicyManagerXMLAdapter(XMLAdapterBase):
 def importCachingPolicyManager(context):
     """Import caching policy manager settings from an XML file.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.getUtility(ICachingPolicyManager)
+    site = context.getSite()
+    tool = getToolByName(site, 'caching_policy_manager')
 
     importObjects(tool, '', context)
 
 def exportCachingPolicyManager(context):
     """Export caching policy manager settings as an XML file.
     """
-    sm = getSiteManager(context.getSite())
-    tool = sm.queryUtility(ICachingPolicyManager)
+    site = context.getSite()
+    tool = getToolByName(site, 'caching_policy_manager', None)
     if tool is None:
         logger = context.getLogger('cachingpolicies')
         logger.info('Nothing to export.')

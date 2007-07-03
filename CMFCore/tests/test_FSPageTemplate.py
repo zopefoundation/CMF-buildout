@@ -25,14 +25,11 @@ from os.path import join as path_join
 from Acquisition import aq_base
 from OFS.Folder import Folder
 from Products.StandardCacheManagers import RAMCacheManager
-
-from zope.component import getSiteManager
 from zope.tales.tales import Undefined
 from zope.testing.cleanup import cleanUp
 
 from Products.CMFCore.FSPageTemplate import FSPageTemplate
 from Products.CMFCore.FSMetadata import FSMetadata
-from Products.CMFCore.interfaces import ICachingPolicyManager
 from Products.CMFCore.testing import TraversingZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyCachingManager
 from Products.CMFCore.tests.base.testcase import FSDVTest
@@ -63,10 +60,6 @@ class FSPageTemplateTests( RequestTest, FSPTMaker ):
 
     def _setupCachingPolicyManager(self, cpm_object):
         self.root.caching_policy_manager = cpm_object
-        sm = getSiteManager()
-        sm.registerUtility( self.root.caching_policy_manager
-                          , ICachingPolicyManager
-                          )
 
     def test_Call( self ):
         script = self._makeOne( 'testPT', 'testPT.pt' )

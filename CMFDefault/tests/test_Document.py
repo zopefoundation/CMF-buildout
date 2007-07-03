@@ -65,6 +65,7 @@ class RequestTestBase(RequestTest):
     def _makeOne(self, *args, **kw):
         return self._getTargetClass()(*args, **kw)
 
+
 class DummyLinebreakNormalizer(object):
 
     implements(ILinebreakNormalizer)

@@ -5,7 +5,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import Message as _
 
-mtool = getToolByInterfaceName('Products.CMFCore.interfaces.IMembershipTool')
+mtool = getToolByName(script, 'portal_membership')
 ptool = getToolByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
 stool = getToolByName(script, 'portal_skins')
 utool = getToolByName(script, 'portal_url')

@@ -20,12 +20,10 @@ import Testing
 
 from OFS.Folder import manage_addFolder
 from Products.PythonScripts.PythonScript import manage_addPythonScript
-from zope.component import getSiteManager
 from zope.interface.verify import verifyClass
 
 from Products.CMFCore.Expression import createExprContext
 from Products.CMFCore.Expression import Expression
-from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.testing import FunctionalZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -208,9 +206,7 @@ class ActionInfoSecurityTests(SecurityTest):
     def setUp(self):
         SecurityTest.setUp(self)
         self.site = DummySite('site').__of__(self.root)
-        sm = getSiteManager()
         self.site._setObject( 'portal_membership', DummyMembershipTool() )
-        sm.registerUtility(self.site.portal_membership, IMembershipTool)
 
     def _makeOne(self, *args, **kw):
         from Products.CMFCore.ActionInformation import ActionInfo
@@ -324,9 +320,7 @@ class ActionInformationTests(TransactionalTest):
         root = self.root
         root._setObject('portal', DummyContent('portal', 'url_portal'))
         portal = self.portal = root.portal
-        sm = getSiteManager(portal)
         portal.portal_membership = DummyMembershipTool()
-        sm.registerUtility(portal.portal_membership, IMembershipTool)
         self.folder = DummyContent('foo', 'url_foo')
         self.object = DummyContent('bar', 'url_bar')
 

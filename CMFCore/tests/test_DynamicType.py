@@ -34,8 +34,6 @@ from ZPublisher.HTTPRequest import HTTPRequest
 from ZPublisher.HTTPResponse import HTTPResponse
 
 from Products.CMFCore.DynamicType import DynamicType
-from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.tests.base.dummy import DummyObject
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
@@ -71,7 +69,6 @@ class DynamicTypeTests(unittest.TestCase):
 class DynamicTypeDefaultTraversalTests(unittest.TestCase):
 
     def setUp(self):
-        sm = getSiteManager()
         self.site = DummySite('site')
         self.site._setObject( 'portal_types', TypesTool() )
         fti = FTIDATA_CMF15[0].copy()
@@ -154,9 +151,7 @@ class DynamicTypeSecurityTests(SecurityRequestTest):
     def setUp(self):
         SecurityRequestTest.setUp(self)
         self.site = DummySite('site').__of__(self.root)
-        sm = getSiteManager()
         self.site._setObject( 'portal_membership', DummyTool() )
-        sm.registerUtility(self.site.portal_membership, IMembershipTool)
         self.site._setObject( 'portal_types', TypesTool() )
         self.site._setObject( 'portal_url', DummyTool() )
         fti = FTIDATA_CMF15[0].copy()

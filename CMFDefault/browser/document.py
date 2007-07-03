@@ -25,6 +25,7 @@ from zope.schema import Choice
 from zope.schema import Text
 from zope.schema import TextLine
 
+from Products.CMFDefault.Document import REST_AVAILABLE
 from Products.CMFDefault.formlib.form import ContentEditFormBase
 from Products.CMFDefault.formlib.schema import ProxyFieldProperty
 from Products.CMFDefault.formlib.schema import SchemaAdapterBase
@@ -37,8 +38,6 @@ from Products.CMFDefault.utils import Message as _
 from utils import decode
 from utils import memoize
 from utils import ViewBase
-
-from Products.CMFDefault.Document import REST_AVAILABLE
 
 available_text_formats = (
         (u'structured-text', 'structured-text', _(u'structured-text')),

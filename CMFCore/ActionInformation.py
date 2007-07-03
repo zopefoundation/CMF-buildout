@@ -24,7 +24,6 @@ from OFS.ObjectManager import IFAwareObjectManager
 from OFS.OrderedFolder import OrderedFolder
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
-from zope.component import getUtility
 from zope.i18nmessageid import Message
 from zope.interface import implements
 
@@ -32,9 +31,9 @@ from Expression import Expression
 from interfaces import IAction
 from interfaces import IActionCategory
 from interfaces import IActionInfo
-from interfaces import IMembershipTool
 from permissions import View
 from utils import _checkPermission
+from utils import getToolByName
 
 _unchanged = [] # marker
 
@@ -499,7 +498,7 @@ class oai:
 
     def __init__( self, tool, folder, object=None ):
         self.portal = portal = aq_parent(aq_inner(tool))
-        membership = getUtility(IMembershipTool)
+        membership = getToolByName(tool, 'portal_membership')
         self.isAnonymous = membership.isAnonymousUser()
         self.user_id = membership.getAuthenticatedMember().getId()
         self.portal_url = portal.absolute_url()

@@ -22,16 +22,17 @@ from Globals import InitializeClass
 from Globals import Persistent
 from Globals import PersistentMapping
 from OFS.Traversable import Traversable
+from zope.component import getUtility
 from zope.interface import implements
 
 from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
 from Products.CMFCore.interfaces import IDiscussable
 from Products.CMFCore.interfaces import IDiscussionResponse
+from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.interfaces.Discussions \
         import Discussable as z2IDiscussable
 from Products.CMFCore.interfaces.Discussions \
         import DiscussionResponse as z2IDiscussionResponse
-from Products.CMFCore.utils import getToolByName
 
 from Document import Document
 from permissions import AccessContentsInformation
@@ -113,7 +114,7 @@ class DiscussionItem(Document):
               - We are a nested reply;  in this case, our 'in_reply_to'
                 field will be the ID of the parent DiscussionItem.
         """
-        tool = getToolByName( self, 'portal_discussion' )
+        tool = getUtility(IDiscussionTool)
         talkback = tool.getDiscussionFor( self )
         return talkback._getReplyParent( self.in_reply_to )
 

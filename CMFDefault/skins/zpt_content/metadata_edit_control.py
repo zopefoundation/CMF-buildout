@@ -1,10 +1,10 @@
 ##parameters=allow_discussion, title=None, subject=None, description=None, contributors=None, effective_date=None, expiration_date=None, format=None, language=None, rights=None, **kw
 ##
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import getToolByInterfaceName
 from Products.CMFDefault.exceptions import ResourceLockedError
 from Products.CMFDefault.utils import Message as _
 
-dtool = getToolByName(script, 'portal_discussion')
+dtool = getToolByInterfaceName('Products.CMFCore.interfaces.IDiscussionTool')
 
 def tuplify( value ):
 

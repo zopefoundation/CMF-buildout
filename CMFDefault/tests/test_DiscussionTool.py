@@ -18,14 +18,17 @@ $Id$
 import unittest
 import Testing
 
+from zope.component import getSiteManager
 from zope.testing.cleanup import cleanUp
 
+from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.tests.base.dummy import DummyFolder
 from Products.CMFCore.tests.base.dummy import DummySite
 from Products.CMFCore.tests.base.dummy import DummyTool
+from Products.CMFCore.tests.base.testcase import SecurityTest
 
 
-class DiscussionToolTests(unittest.TestCase):
+class DiscussionToolTests(SecurityTest):
 
     def _makeOne(self, *args, **kw):
         from Products.CMFDefault.DiscussionTool import DiscussionTool
@@ -33,13 +36,16 @@ class DiscussionToolTests(unittest.TestCase):
         return DiscussionTool(*args, **kw)
 
     def setUp(self):
+        SecurityTest.setUp(self)
         self.site = DummySite('site')
+        sm = getSiteManager()
         self.site._setObject( 'portal_discussion', self._makeOne() )
-        self.site._setObject( 'portal_membership', DummyTool() )
+        sm.registerUtility(self.site.portal_discussion, IDiscussionTool)
         self.site._setObject( 'portal_types', DummyTool() )
 
     def tearDown(self):
         cleanUp()
+        SecurityTest.tearDown(self)
 
     def test_z2interfaces(self):
         from Interface.Verify import verifyClass

@@ -3,6 +3,9 @@
  <adapters/>
  <utilities>
   <utility
+     interface="Products.CMFCore.interfaces.IDiscussionTool"
+     object="/portal_discussion"/>
+  <utility
      interface="Products.CMFCore.interfaces.IMetadataTool"
      object="/portal_metadata"/>
   <utility

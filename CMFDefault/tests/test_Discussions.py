@@ -18,7 +18,10 @@ $Id$
 import unittest
 import Testing
 
+from zope.component import getSiteManager
+
 from Products.CMFCore.CatalogTool import CatalogTool
+from Products.CMFCore.interfaces import IDiscussionTool
 from Products.CMFCore.testing import EventZCMLLayer
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.dummy import DummySite
@@ -106,7 +109,9 @@ class DiscussionTests(SecurityTest):
     def setUp(self):
         SecurityTest.setUp(self)
         self.site = DummySite('site').__of__(self.root)
+        sm = getSiteManager()
         self.site._setObject( 'portal_discussion', DiscussionTool() )
+        sm.registerUtility(self.site.portal_discussion, IDiscussionTool)
         self.site._setObject( 'portal_membership', DummyTool() )
         self.site._setObject( 'portal_types', TypesTool() )
 

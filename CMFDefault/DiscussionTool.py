@@ -28,7 +28,8 @@ from Products.CMFCore.interfaces.Discussions \
         import DiscussionResponse as z2IDiscussionResponse
 from Products.CMFCore.interfaces.portal_discussion \
         import portal_discussion as z2IDiscussionTool
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import _checkPermission
+from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
 from DiscussionItem import DiscussionItemContainer
@@ -73,10 +74,7 @@ class DiscussionTool(UniqueObject, SimpleItem):
     def overrideDiscussionFor(self, content, allowDiscussion):
         """ Override discussability for the given object or clear the setting.
         """
-        # XXX: this method violates the rules for tools/utilities:
-        # it depends on a non-utility tool
-        mtool = getToolByName( self, 'portal_membership' )
-        if not mtool.checkPermission(ModifyPortalContent, content):
+        if not _checkPermission(ModifyPortalContent, content):
             raise AccessControl_Unauthorized
 
         if allowDiscussion is None or allowDiscussion == 'None':
@@ -126,3 +124,4 @@ class DiscussionTool(UniqueObject, SimpleItem):
         return content.talkback
 
 InitializeClass( DiscussionTool )
+registerToolInterface('portal_discussion', IDiscussionTool)

@@ -33,4 +33,4 @@ class CriterionTestCase(TestCase):
         from zope.interface.verify import verifyClass
         from Products.CMFTopic.interfaces import ICriterion
 
-        verifyClass( ICriterion, self._getTargetClass() )
+        verifyClass(ICriterion, self._getTargetClass())

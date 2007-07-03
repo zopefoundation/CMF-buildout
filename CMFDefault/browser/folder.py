@@ -169,11 +169,10 @@ class FolderContentsView(BatchViewBase, FormViewBase):
     @memoize
     @decode
     def up_info(self):
+        up_obj = self.context.aq_inner.aq_parent
         mtool = self._getTool('portal_membership')
-        allowed = mtool.checkPermission(ListFolderContents, self.context,
-                                        'aq_parent')
+        allowed = mtool.checkPermission(ListFolderContents, up_obj)
         if allowed:
-            up_obj = self.context.aq_inner.aq_parent
             if IDynamicType.providedBy(up_obj):
                 up_url = up_obj.getActionInfo('object/folderContents')['url']
                 return {'icon': '%s/UpFolder_icon.gif' % self._getPortalURL(),

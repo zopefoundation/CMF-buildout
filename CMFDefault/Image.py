@@ -84,7 +84,7 @@ class Image(PortalContent, OFS.Image.Image, DefaultDublinCoreImpl):
     __implements__ = ( PortalContent.__implements__
                      , DefaultDublinCoreImpl.__implements__
                      )
-    
+
     effective_date = expiration_date = None
     icon = PortalContent.icon
 

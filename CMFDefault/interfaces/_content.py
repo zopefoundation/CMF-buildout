@@ -16,7 +16,6 @@ $Id$
 """
 
 from zope.interface import Interface
-from zope.interface import Attribute
 
 class IHTMLScrubber(Interface):
     """ Utility inteface for scrubbing user-supplied HTML.

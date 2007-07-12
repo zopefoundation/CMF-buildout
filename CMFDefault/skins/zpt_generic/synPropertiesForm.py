@@ -1,9 +1,9 @@
 ##parameters=
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getUtilityByInterfaceName
 from Products.CMFDefault.utils import decode
 
-stool = getToolByInterfaceName('Products.CMFCore.interfaces.ISyndicationTool')
+stool = getUtilityByInterfaceName('Products.CMFCore.interfaces.ISyndicationTool')
 options = {}
 
 s_site_allowed = stool.isSiteSyndicationAllowed()

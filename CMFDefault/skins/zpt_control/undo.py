@@ -1,10 +1,10 @@
 ##parameters=transaction_info
 ##title=Undo transactions
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getUtilityByInterfaceName
 from Products.CMFDefault.utils import Message as _
 
-utool = getToolByInterfaceName('Products.CMFCore.interfaces.IUndoTool')
+utool = getUtilityByInterfaceName('Products.CMFCore.interfaces.IUndoTool')
 
 utool.undo(context, transaction_info)
 

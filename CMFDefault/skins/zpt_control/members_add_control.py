@@ -1,13 +1,13 @@
 ##parameters=member_id, password, member_email, send_password=False, **kw
 ##title=Add a member
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getUtilityByInterfaceName
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.permissions import ManageUsers
 from Products.CMFDefault.utils import Message as _
 
 mtool = getToolByName(script, 'portal_membership')
-ptool = getToolByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
+ptool = getUtilityByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
 rtool = getToolByName(script, 'portal_registration')
 
 try:

@@ -5,4 +5,4 @@
 #
 # svn propset svn:externals -F ./EXTERNALS.TXT .
 #
-GenericSetup -r77021 svn://svn.zope.org/repos/main/GenericSetup/trunk
+GenericSetup -r77742 svn://svn.zope.org/repos/main/GenericSetup/trunk

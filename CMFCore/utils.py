@@ -127,6 +127,15 @@ def getToolByName(obj, name, default=_marker):
 
 security.declarePublic('getToolByInterfaceName')
 def getToolByInterfaceName(dotted_name, default=_marker):
+    warn('getToolByInterfaceName() is deprecated and will be removed in CMF '
+         '2.3. Use getUtilityByInterfaceName instead.',
+         DeprecationWarning, stacklevel=2)
+
+    return getUtilityByInterfaceName(dotted_name, default)
+
+
+security.declarePublic('getUtilityByInterfaceName')
+def getUtilityByInterfaceName(dotted_name, default=_marker):
     """ Get a tool by its fully-qualified dotted interface path
 
     This method replaces getToolByName for use in untrusted code.

@@ -1,10 +1,10 @@
 ##parameters=change='', change_and_edit='', change_and_view=''
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getUtilityByInterfaceName
 from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import Message as _
 
-mdtool = getToolByInterfaceName('Products.CMFCore.interfaces.IMetadataTool')
+mdtool = getUtilityByInterfaceName('Products.CMFCore.interfaces.IMetadataTool')
 
 
 form = context.REQUEST.form

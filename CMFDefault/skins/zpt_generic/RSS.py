@@ -2,10 +2,10 @@
 ##
 from ZTUtils import Batch
 from ZTUtils import LazyFilter
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getUtilityByInterfaceName
 from Products.CMFDefault.utils import decode
 
-stool = getToolByInterfaceName('Products.CMFCore.interfaces.ISyndicationTool')
+stool = getUtilityByInterfaceName('Products.CMFCore.interfaces.ISyndicationTool')
 
 
 if not stool.isSyndicationAllowed(context):

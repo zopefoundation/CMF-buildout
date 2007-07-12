@@ -2,10 +2,10 @@
 ##parameters=password='', confirm='', **kw
 ##title=
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getUtilityByInterfaceName
 from Products.CMFCore.utils import getToolByName
 
-ptool = getToolByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
+ptool = getUtilityByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
 rtool = getToolByName(script, 'portal_registration')
 
 if ptool.getProperty('validate_email'):

@@ -36,11 +36,11 @@ Tools Are Utilities
 
     The new way::
 
-      from Products.CMFCore.utils import getToolByInterfaceName
-      foo_tool = getToolByInterfaceName('Products.Fooproduct.interfaces.IFooTool')
+      from Products.CMFCore.utils import getUtilityByInterfaceName
+      foo_tool = getUtilityByInterfaceName('Products.Fooproduct.interfaces.IFooTool')
 
     Since the functions from zope.component are not accessible to untrusted
-    code, a helper function 'getToolByInterfaceName' has been provided. Its
+    code, a helper function 'getUtilityByInterfaceName' has been provided. Its
     main argument is a string representing the dotted name of the interface
     for which you are looking up the utility. Just as with getToolByName, you
     may pass a 'default' argument to specify what is returned if the interface

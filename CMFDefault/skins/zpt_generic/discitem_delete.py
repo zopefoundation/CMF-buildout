@@ -1,10 +1,10 @@
 ##parameters=
 ##title=Delete reply
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getUtilityByInterfaceName
 from Products.CMFDefault.utils import Message as _
 
-dtool = getToolByInterfaceName('Products.CMFCore.interfaces.IDiscussionTool')
+dtool = getUtilityByInterfaceName('Products.CMFCore.interfaces.IDiscussionTool')
 
 parent = context.inReplyTo()
 talkback = dtool.getDiscussionFor(parent)

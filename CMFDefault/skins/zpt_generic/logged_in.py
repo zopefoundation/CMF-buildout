@@ -1,12 +1,12 @@
 ##parameters=
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getUtilityByInterfaceName
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import Message as _
 
 mtool = getToolByName(script, 'portal_membership')
-ptool = getToolByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
+ptool = getUtilityByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
 stool = getToolByName(script, 'portal_skins')
 utool = getToolByName(script, 'portal_url')
 portal_url = utool()

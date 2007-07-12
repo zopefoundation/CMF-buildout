@@ -1,6 +1,6 @@
 ##parameters=
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getUtilityByInterfaceName
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import decode
 from Products.CMFDefault.utils import getBrowserCharset
@@ -8,7 +8,7 @@ from Products.CMFDefault.utils import getBrowserCharset
 atool = getToolByName(script, 'portal_actions')
 caltool = getToolByName(script, 'portal_calendar', None)
 mtool = getToolByName(script, 'portal_membership')
-ptool = getToolByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
+ptool = getUtilityByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
 utool = getToolByName(script, 'portal_url')
 wtool = getToolByName(script, 'portal_workflow')
 portal_object = utool.getPortalObject()

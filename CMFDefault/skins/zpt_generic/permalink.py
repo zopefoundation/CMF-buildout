@@ -7,10 +7,10 @@
 ##parameters=
 ##title=Returns an object by unique id
 ##
-from Products.CMFCore.utils import getToolByInterfaceName
+from Products.CMFCore.utils import getUtilityByInterfaceName
 
 subpath = traverse_subpath[0]
-uid_handler=getToolByInterfaceName('Products.CMFUid.interfaces.UniqueIDHandler')
+uid_handler=getUtilityByInterfaceName('Products.CMFUid.interfaces.UniqueIDHandler')
 
 # appending 'isAvailable' instead of a unique id returns if
 # the site permalink feature is available.
@@ -18,7 +18,7 @@ if str(subpath).strip() == 'isAvailable':
     # no permalink feature without an uid handler tool being installed
     if uid_handler is None:
         return '0'
-    ptool = getToolByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
+    ptool = getUtilityByInterfaceName('Products.CMFCore.interfaces.IPropertiesTool')
     isAvailable = getattr(ptool, 'enable_permalink', 0)
     return str(int(isAvailable))
 

@@ -17,6 +17,8 @@ This script must be executed using "zopectl run".
 $Id$
 """
 
+from zope.component import getSiteManager
+from zope.dottedname.resolve import resolve
 from logging import getLogger
 import sys
 import transaction
@@ -32,6 +34,22 @@ AFFECTED_EXTENSIONS = {
     , 'Products.CMFActionIcons:actionicons' : 'portal_actionicons'
     }
 
+# These are utilities that were registered in CMF 2.1 pre-releases but
+# are no longer present.
+BAD_UTILITIES = [
+    'Products.CMFCalendar.interfaces.ICalendarTool',
+    'Products.CMFCore.interfaces.IActionsTool',
+    'Products.CMFCore.interfaces.ICatalogTool',
+    'Products.CMFCore.interfaces.IContentTypeRegistry',
+    'Products.CMFCore.interfaces.ISkinsTool',
+    'Products.CMFCore.interfaces.ITypesTool',
+    'Products.CMFCore.interfaces.IURLTool',
+    'Products.CMFCore.interfaces.IConfigurableWorkflowTool',
+    'Products.CMFCore.interfaces.IMembershipTool',
+    'Products.CMFCore.interfaces.IMetadataTool',
+    'Products.CMFCore.interfaces.IRegistrationTool',
+    ]
+
 def _log(msg):
     logger.info(msg)
     print msg
@@ -39,11 +57,20 @@ def _log(msg):
 def migrate_site(site):
     """ Migrate a single site
     """
+
     site_path = '/'.join(site.getPhysicalPath())
     _log(' - converting site at %s' % site_path)
     ps = site.portal_setup
 
-    # First we need to run items from the default CMF Site profile
+    # First we remove utility registrations that are no longer
+    # needed.
+    sm = getSiteManager(site)
+    for util in BAD_UTILITIES:
+        iface = resolve(util)
+        if sm.queryUtility(iface) is not None:
+            sm.unregisterUtility(provided=iface)
+
+    # Next we need to run items from the default CMF Site profile
 
     # Check if we have new-style action providers, if not we need to
     # run the action provider step from CMFDefault:default as well

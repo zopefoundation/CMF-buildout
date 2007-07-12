@@ -17,6 +17,9 @@ This script must be executed using "zopectl run".
 $Id$
 """
 
+from zope.component import getSiteManager
+from zope.app.component.hooks import setSite
+from zope.dottedname.resolve import resolve
 from logging import getLogger
 import sys
 import transaction
@@ -32,18 +35,48 @@ AFFECTED_EXTENSIONS = {
     , 'Products.CMFActionIcons:actionicons' : 'portal_actionicons'
     }
 
+# These are utilities that were registered in CMF 2.1 pre-releases but
+# are no longer present.
+BAD_UTILITIES = [
+    'Products.CMFCalendar.interfaces.ICalendarTool',
+    'Products.CMFCore.interfaces.IActionsTool',
+    'Products.CMFCore.interfaces.ICatalogTool',
+    'Products.CMFCore.interfaces.IContentTypeRegistry',
+    'Products.CMFCore.interfaces.ISkinsTool',
+    'Products.CMFCore.interfaces.ITypesTool',
+    'Products.CMFCore.interfaces.IURLTool',
+    'Products.CMFCore.interfaces.IConfigurableWorkflowTool',
+    'Products.CMFCore.interfaces.IMembershipTool',
+    'Products.CMFCore.interfaces.IMetadataTool',
+    'Products.CMFCore.interfaces.IRegistrationTool',
+    ]
+
 def _log(msg):
     logger.info(msg)
     print msg
 
+
 def migrate_site(site):
     """ Migrate a single site
     """
+
     site_path = '/'.join(site.getPhysicalPath())
     _log(' - converting site at %s' % site_path)
     ps = site.portal_setup
 
-    # First we need to run items from the default CMF Site profile
+    # We have to call setSite to make sure we have a site with a proper
+    # acquisition context.
+    setSite(site)
+
+    # First we remove utility registrations that are no longer
+    # needed.
+    sm = getSiteManager(site)
+    for util in BAD_UTILITIES:
+        iface = resolve(util)
+        if sm.queryUtility(iface) is not None:
+            sm.unregisterUtility(provided=iface)
+
+    # Next we need to run items from the default CMF Site profile
 
     # Check if we have new-style action providers, if not we need to
     # run the action provider step from CMFDefault:default as well
@@ -52,15 +85,15 @@ def migrate_site(site):
     else:
         steps = ('componentregistry',)
 
-    ps.setImportContext('profile-Products.CMFDefault:default')
     for step in steps:
-        ps.runImportStep(step, run_dependencies=True)
+        ps.runImportStepFromProfile('profile-Products.CMFDefault:default',
+                step, run_dependencies=True)
 
     # Now we go through the extensions that may need to be run
     for extension_id, object_id in AFFECTED_EXTENSIONS.items():
         if object_id in site.objectIds():
-            ps.setImportContext('profile-' + extension_id)
-            ps.runImportStep('componentregistry', run_dependencies=True)
+            ps.runImportStepFromProfile('profile-' + extension_id,
+                    'componentregistry', run_dependencies=True)
 
     _log(' - finished converting site at %s' % site_path)
 

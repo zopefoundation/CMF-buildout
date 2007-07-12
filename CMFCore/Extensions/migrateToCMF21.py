@@ -52,15 +52,15 @@ def migrate_site(site):
     else:
         steps = ('componentregistry',)
 
-    ps.setImportContext('profile-Products.CMFDefault:default')
     for step in steps:
-        ps.runImportStep(step, run_dependencies=True)
+        ps.runImportStepFromProfile('profile-Products.CMFDefault:default',
+                step, run_dependencies=True)
 
     # Now we go through the extensions that may need to be run
     for extension_id, object_id in AFFECTED_EXTENSIONS.items():
         if object_id in site.objectIds():
-            ps.setImportContext('profile-' + extension_id)
-            ps.runImportStep('componentregistry', run_dependencies=True)
+            ps.runImportStepFromProfile('profile-' + extension_id,
+                    'componentregistry', run_dependencies=True)
 
     _log(' - finished converting site at %s' % site_path)
 

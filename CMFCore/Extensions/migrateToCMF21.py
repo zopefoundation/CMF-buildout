@@ -18,6 +18,7 @@ $Id$
 """
 
 from zope.component import getSiteManager
+from zope.app.component.hooks import setSite
 from zope.dottedname.resolve import resolve
 from logging import getLogger
 import sys
@@ -54,6 +55,7 @@ def _log(msg):
     logger.info(msg)
     print msg
 
+
 def migrate_site(site):
     """ Migrate a single site
     """
@@ -61,6 +63,10 @@ def migrate_site(site):
     site_path = '/'.join(site.getPhysicalPath())
     _log(' - converting site at %s' % site_path)
     ps = site.portal_setup
+
+    # We have to call setSite to make sure we have a site with a proper
+    # acquisition context.
+    setSite(site)
 
     # First we remove utility registrations that are no longer
     # needed.

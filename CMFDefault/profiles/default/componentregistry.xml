@@ -4,27 +4,27 @@
  <utilities>
   <utility
      interface="Products.CMFCore.interfaces.IDiscussionTool"
-     object="/portal_discussion"/>
+     object="portal_discussion"/>
   <utility
      interface="Products.CMFCore.interfaces.IMetadataTool"
-     object="/portal_metadata"/>
+     object="portal_metadata"/>
   <utility
      interface="Products.CMFCore.interfaces.IPropertiesTool"
-     object="/portal_properties"/>
+     object="portal_properties"/>
   <utility
      interface="Products.CMFCore.interfaces.ISiteRoot"
-     object="/"/>
+     object=""/>
   <utility
      interface="Products.CMFCore.interfaces.ISyndicationTool"
-     object="/portal_syndication"/>
+     object="portal_syndication"/>
   <utility
      interface="Products.CMFCore.interfaces.IUndoTool"
-     object="/portal_undo"/>
+     object="portal_undo"/>
   <utility
      interface="Products.GenericSetup.interfaces.ISetupTool"
-     object="/portal_setup"/>
+     object="portal_setup"/>
   <utility
      interface="Products.MailHost.interfaces.IMailHost"
-     object="/MailHost"/>
+     object="MailHost"/>
  </utilities>
 </componentregistry>

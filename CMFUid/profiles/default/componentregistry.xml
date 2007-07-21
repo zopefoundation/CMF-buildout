@@ -4,9 +4,9 @@
  <utilities>
   <utility
      interface="Products.CMFUid.interfaces.IUniqueIdGenerator"
-     object="/portal_uidgenerator"/>
+     object="portal_uidgenerator"/>
   <utility
      interface="Products.CMFUid.interfaces.IUniqueIdAnnotationManagement"
-     object="/portal_uidannotation"/>
+     object="portal_uidannotation"/>
  </utilities>
 </componentregistry>

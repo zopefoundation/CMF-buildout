@@ -4,6 +4,6 @@
  <utilities>
   <utility
      interface="Products.CMFActionIcons.interfaces.IActionIconsTool"
-     object="/portal_actionicons"/>
+     object="portal_actionicons"/>
  </utilities>
 </componentregistry>

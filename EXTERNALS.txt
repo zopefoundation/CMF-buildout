@@ -5,4 +5,4 @@
 #
 # svn propset svn:externals -F ./EXTERNALS.TXT .
 #
-GenericSetup svn://svn.zope.org/repos/main/GenericSetup/tags/1.3beta
+GenericSetup -r78273 svn://svn.zope.org/repos/main/GenericSetup/branches/1.3

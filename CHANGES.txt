@@ -1,4 +1,4 @@
-CMF 2.1.0-beta3
+CMF 2.1.0 (unreleased)
 
   Bug Fixes
 

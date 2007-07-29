@@ -139,7 +139,9 @@ class Favorite(Link):
         if remote_obj is not None:
             return remote_obj
 
-        return getUtility(ISiteRoot).restrictedTraverse(self.remote_url)
+        # XXX: can't use ISiteRoot because absolute_url() depends on REQUEST
+        portal_url = getToolByName(self, 'portal_url')
+        return portal_url.getPortalObject().restrictedTraverse(self.remote_url)
 
     security.declarePrivate('_edit')
     def _edit( self, remote_url ):

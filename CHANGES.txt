@@ -1,5 +1,10 @@
 CMF 2.1.0 (unreleased)
 
+  New Features
+
+    - PortalFolder: Enabled 'Components' ZMI tab.
+      This GenericSetup tab allows to inspect and edit component registrations. 
+
   Bug Fixes
 
     - Fixed all componentregistry.xml files to use plain object paths and strip

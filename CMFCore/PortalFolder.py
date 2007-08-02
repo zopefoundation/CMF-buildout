@@ -59,8 +59,12 @@ class PortalFolderBase(DynamicType, CMFCatalogAware, Folder):
 
     description = ''
 
-    manage_options = ( Folder.manage_options +
-                       CMFCatalogAware.manage_options )
+    manage_options = ( Folder.manage_options[:1]
+                     + ({'label': 'Components',
+                         'action': 'manage_components'},)
+                     + Folder.manage_options[1:]
+                     + CMFCatalogAware.manage_options
+                     )
 
     def __init__(self, id, title='', description=''):
         self.id = id

@@ -512,8 +512,9 @@ _LOCAL_RE = re.compile(r'([A-Za-z0-9!#$%&\'*+\-/=?^_`{|}~]+'
 # RFC 2821 local-part: max 64 characters
 # RFC 2821 domain: sequence of dot-separated labels
 # characters allowed in label: A-Za-z0-9-, first is a letter
-_DOMAIN_RE = re.compile(r'[^@]{1,64}@[A-Za-z][A-Za-z0-9-]*'
-                                r'(\.[A-Za-z][A-Za-z0-9-]*)+$')
+# Even though the RFC does not allow it all-numeric domains do exist
+_DOMAIN_RE = re.compile(r'[^@]{1,64}@[A-Za-z0-9][A-Za-z0-9-]+'
+                                r'(\.[A-Za-z0-9][A-Za-z0-9-]*)+$')
 
 security.declarePublic('checkEmailAddress')
 def checkEmailAddress(address):

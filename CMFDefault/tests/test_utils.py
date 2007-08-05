@@ -248,6 +248,8 @@ Header: value
         from Products.CMFDefault.utils import checkEmailAddress
 
         self.assertEqual(checkEmailAddress('foo@example.com'), None)
+        self.assertEqual(checkEmailAddress('foo@1bar.example.com'), None)
+        self.assertEqual(checkEmailAddress('foo@123456.com'), None)
         self.assertEqual(checkEmailAddress('$.-@example.com'), None)
         self.assertEqual(checkEmailAddress(u'foo@example.com'), None)
         # CMF Collector issue #322
@@ -264,8 +266,6 @@ Header: value
                           'foo.@example.com')
         self.assertRaises(EmailAddressInvalid, checkEmailAddress,
                           '.foo@example.com')
-        self.assertRaises(EmailAddressInvalid, checkEmailAddress,
-                          'foo@1bar.example.com')
         self.assertRaises(EmailAddressInvalid, checkEmailAddress,
                           'foo@-bar.example.com')
         # RFC 2821 local-part: max 64 characters

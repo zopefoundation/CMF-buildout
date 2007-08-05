@@ -11,6 +11,11 @@ CMF 2.1.0 (unreleased)
       and slashes. GenericSetup does only support registering objects which are
       in the site root.
 
+    - Allow email addresses with all-numeric domain names. The RFCs do not
+      support them but they do exist.  
+      (http://dev.plone.org/plone/ticket/6773)
+
+
 CMF 2.1.0-beta2 (2007/07/12)
 
   New Features

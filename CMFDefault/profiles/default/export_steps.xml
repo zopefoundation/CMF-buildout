@@ -17,7 +17,7 @@
  </export-step>
  <export-step id="componentregistry"
               handler="Products.GenericSetup.components.exportComponentRegistry"
-    title="Local Component Registry">
+              title="Local Component Registry">
     Export local component registry configuration.
  </export-step>
  <export-step id="content_type_registry"

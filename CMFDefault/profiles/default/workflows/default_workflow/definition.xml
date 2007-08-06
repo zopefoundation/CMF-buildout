@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <dc-workflow workflow_id="default_workflow"
              title="CMF default workflow [Classic]"
-             state_variable="review_state"
+             description="" state_variable="review_state"
              initial_state="private">
  <permission>Access contents information</permission>
  <permission>Modify portal content</permission>

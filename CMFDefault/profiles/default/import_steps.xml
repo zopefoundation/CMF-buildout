@@ -18,12 +18,11 @@
   <dependency step="toolset"/>
   Import catalog tool's sub-objects, indexes and columns.
  </import-step>
- <import-step id="componentregistry"
-    version="20061025-01"
-    handler="Products.GenericSetup.components.importComponentRegistry"
-    title="Local Component Registry">
-    <dependency step="various"/>
-    Import local component registry configuration.
+ <import-step id="componentregistry" version="20061025-01"
+              handler="Products.GenericSetup.components.importComponentRegistry"
+              title="Local Component Registry">
+  <dependency step="various"/>
+  Import local component registry configuration.
  </import-step>
  <import-step id="content_type_registry"
               version="20051013-01"

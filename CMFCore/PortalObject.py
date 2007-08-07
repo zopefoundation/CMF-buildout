@@ -72,7 +72,7 @@ class PortalObjectBase(PortalFolder, SkinnableObjectManager):
         elif self._components.utilities.LookupClass \
                 != FiveVerifyingAdapterLookup:
             # BBB: for CMF 2.1 beta instances
-            # XXX: should be removed again after the CMF 2.1 beta2 release
+            # XXX: should be removed again after the CMF 2.1 release
             self._components.utilities.LookupClass \
                     = FiveVerifyingAdapterLookup
             self._components.utilities._createLookup()

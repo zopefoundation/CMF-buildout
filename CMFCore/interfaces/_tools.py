@@ -35,9 +35,6 @@ class IActionsTool(Interface):
     id = Attribute('id',
             """ The ID of the tool.
 
-            o BBB:  for use in 'getToolByName';  in the future, prefer
-              'zapi.getUtility(IActionsTool)'.
-
             o Must be set to "portal_actions"
             """,
             )
@@ -642,9 +639,6 @@ class IMembershipTool(Interface):
     id = Attribute('id',
             """ The tool's ID.
 
-            o BBB:  for use in 'getToolByName';  in the future, prefer
-              'zapi.getUtility(IMembershipTool)'.
-
             o Must be set to 'portal_membership'.
             """)
 
@@ -905,9 +899,6 @@ class IMetadataTool(Interface):
     id = Attribute('id',
             """ The tool's ID.
 
-            o BBB:  for use in 'getToolByName';  in the future, prefer
-              'zapi.getUtility(IMetadataTool)'.
-
             o Must be set to 'portal_metadata'.
             """)
 
@@ -1073,9 +1064,6 @@ class IRegistrationTool(Interface):
     id = Attribute('id',
             """ The ID of the tool.
 
-            o BBB:  for use in 'getToolByName';  in the future, prefer
-              'zapi.getUtility(IRegistrationTool)'.
-
             o Must be set to "portal_registration"
             """,
             )
@@ -1229,9 +1217,6 @@ class ISkinsTool(ISkinsContainer):
 
     id = Attribute('id',
             """ The ID of the tool.
-
-            o BBB:  for use in 'getToolByName';  in the future, prefer
-              'zapi.getUtility(ISkinsTool)'.
 
             o Must be set to "portal_skind"
             """,
@@ -1440,9 +1425,6 @@ class ITypesTool(Interface):
     id = Attribute('id',
             """ The ID of the tool.
 
-            o BBB:  for use in 'getToolByName';  in the future, prefer
-              'zapi.getUtility(ITypesTool)'.
-
             o Must be set to "portal_types"
             """,
             )
@@ -1551,9 +1533,6 @@ class IURLTool(Interface):
     id = Attribute('id',
             """ The ID of the tool.
 
-            o BBB:  for use in 'getToolByName';  in the future, prefer
-              'zapi.getUtility(IURLTool)'.
-
             o Must be set to "portal_url"
             """,
             )
@@ -1632,9 +1611,6 @@ class IWorkflowTool(Interface):
 
     id = Attribute('id',
             """ The ID of the tool.
-
-            o BBB:  for use in 'getToolByName';  in the future, prefer
-              'zapi.getUtility(IWorkflowTool)'.
 
             o Must be set to "portal_workflow"
             """,

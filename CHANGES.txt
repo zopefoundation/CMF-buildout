@@ -1,4 +1,4 @@
-CMF 2.1.0 (unreleased)
+CMF 2.1.0 (2007/08/08)
 
   New Features
 

@@ -137,7 +137,7 @@ class DCWorkflowDefinitionTests(unittest.TestCase):
         self.assertEquals('private', evt.old_state.id)
         self.assertEquals('private', evt.new_state.id)
         self.assertEquals(None, evt.transition)
-        self.assertEquals({}, evt.status)
+        self.assertEquals({'state': 'private', 'comments': ''}, evt.status)
         self.assertEquals(None, evt.kwargs)
 
         evt = events[2]
@@ -155,7 +155,7 @@ class DCWorkflowDefinitionTests(unittest.TestCase):
         self.assertEquals('private', evt.old_state.id)
         self.assertEquals('published', evt.new_state.id)
         self.assertEquals('publish', evt.transition.id)
-        self.assertEquals({'state': 'private', 'comments': ''}, evt.status)
+        self.assertEquals({'state': 'published', 'comments': 'foo'}, evt.status)
         self.assertEquals({'test' : 'bar', 'comment' : 'foo'}, evt.kwargs)
 
     def test_checkTransitionGuard(self):

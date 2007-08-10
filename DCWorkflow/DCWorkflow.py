@@ -537,7 +537,7 @@ class DCWorkflowDefinition(WorkflowUIMixin, Folder):
             script(sci)  # May throw an exception.
 
         # Fire "after" event
-        notify(AfterTransitionEvent(ob, self, old_sdef, new_sdef, tdef, former_status, kwargs))
+        notify(AfterTransitionEvent(ob, self, old_sdef, new_sdef, tdef, status, kwargs))
 
         # Return the new state object.
         if moved_exc is not None:

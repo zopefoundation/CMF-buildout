@@ -33,7 +33,7 @@ class ITransitionEvent(IObjectEvent):
     new_state = Attribute(u"The state definition of the workflow state before after transition")
     transition = Attribute(u"The transition definition taking place. "
                             "May be None if this is the 'transition' to the initial state.")                                   
-    status = Attribute(u"The history/status dict of the object before the transition.")
+    status = Attribute(u"The status dict of the object.")
     kwargs = Attribute(u"Any keyword arguments passed to doActionFor() when the transition was invoked")
     
 class IBeforeTransitionEvent(ITransitionEvent):

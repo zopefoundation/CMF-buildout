@@ -51,6 +51,10 @@ a:hover {
     color: Blue;
 }
 
+a img {
+    border: 0;
+}
+
 table {
     border: 0;
 }

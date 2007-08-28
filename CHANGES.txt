@@ -2,6 +2,11 @@ CMF 2.1.1 (unreleased)
 
   Bug Fixes
 
+    - Fixed a bug in the site manager creation code, which would assign the
+      __parent__ pointer to the Aq-wrapper and not the actual object. Also
+      prevented the getMainGlobals script to fail if not content-type header
+      is set.
+
     - AfterTransitionEvent now passes along the new status of the object, just
       as StateChangeInfo passes on the new status to after-transition scripts.
       (http://www.zope.org/Collectors/CMF/490)

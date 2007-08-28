@@ -13,7 +13,7 @@ utool = getToolByName(script, 'portal_url')
 wtool = getToolByName(script, 'portal_workflow')
 portal_object = utool.getPortalObject()
 
-if not 'charset' in context.REQUEST.RESPONSE.getHeader('content-type'):
+if not 'charset' in (context.REQUEST.RESPONSE.getHeader('content-type') or ''):
     # Some newstyle views set a different charset - don't override it.
     # Oldstyle views need the default_charset.
     default_charset = ptool.getProperty('default_charset', None)

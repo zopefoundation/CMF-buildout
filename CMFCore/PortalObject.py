@@ -15,6 +15,7 @@
 $Id$
 """
 
+from Acquisition import aq_base
 from five.localsitemanager import find_next_sitemanager
 from five.localsitemanager.registry import FiveVerifyingAdapterLookup
 from five.localsitemanager.registry import PersistentComponents
@@ -67,17 +68,19 @@ class PortalObjectBase(PortalFolder, SkinnableObjectManager):
             if next is None:
                 next = base
             name = '/'.join(self.getPhysicalPath())
-            self._components = PersistentComponents(name, (next,))
-            self._components.__parent__ = self
+            self._components = components = PersistentComponents(name, (next,))
+            components.__parent__ = self
         elif self._components.utilities.LookupClass \
                 != FiveVerifyingAdapterLookup:
             # BBB: for CMF 2.1 beta instances
             # XXX: should be removed again after the CMF 2.1 beta2 release
-            self._components.utilities.LookupClass \
-                    = FiveVerifyingAdapterLookup
-            self._components.utilities._createLookup()
-            self._components.utilities.__parent__ = self._components
-            self._components.__parent__ = self
+            components = aq_base(self._components)
+            components.__parent__ = self
+            utilities = aq_base(components.utilities)
+            utilities.LookupClass = FiveVerifyingAdapterLookup
+            utilities._createLookup()
+            utilities.__parent__ = components
+            
         return self._components
 
     def __before_publishing_traverse__(self, arg1, arg2=None):

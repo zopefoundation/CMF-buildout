@@ -2,6 +2,10 @@ CMF 2.1.1 (unreleased)
 
   Bug Fixes
 
+    - CMFDefault.utils: The email validation would reject addresses where
+      the domain part started with a single letter element.
+      (http://www.zope.org/Collectors/CMF/495)
+
     - Fixed a bug in the site manager creation code, which would assign the
       __parent__ pointer to the Aq-wrapper and not the actual object. Also
       prevented the getMainGlobals script to fail if not content-type header
@@ -10,6 +14,7 @@ CMF 2.1.1 (unreleased)
     - AfterTransitionEvent now passes along the new status of the object, just
       as StateChangeInfo passes on the new status to after-transition scripts.
       (http://www.zope.org/Collectors/CMF/490)
+
 
 CMF 2.1.0 (2007/08/08)
 

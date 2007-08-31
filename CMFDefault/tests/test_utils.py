@@ -258,6 +258,8 @@ Header: value
         self.assertEqual(checkEmailAddress('username_@example.com'), None)
         # CMF Collector issue #401
         self.assertEqual(checkEmailAddress("user'site@example.com"), None)
+        # CMF Collector issue #495
+        self.assertEqual(checkEmailAddress("user@a.example.com"), None)
         self.assertRaises(EmailAddressInvalid, checkEmailAddress,
                           'this is not an e-mail address')
         self.assertRaises(EmailAddressInvalid, checkEmailAddress,

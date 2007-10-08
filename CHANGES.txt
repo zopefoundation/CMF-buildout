@@ -2,6 +2,11 @@ After CMF 1.6.4
 
   Bug Fixes
 
+    - DCWorkflow.exportimport: Scripts with invalid types imported
+      after scripts with valid types will no longer place the valid
+      script twice.  Scripts can also now be specified with meta_types
+      other than the hard-coded meta_types.
+
     - CMFCore.CMFBTreeFolder: CMFBTreeFolders could not be used as the
       toplevel /Members container. 
       (http://www.zope.org/Collectors/CMF/441)

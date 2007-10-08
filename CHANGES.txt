@@ -15,6 +15,13 @@ CMF 2.2.0-beta (unreleased)
       next event relative to a given point in time.
       (http://www.zope.org/Collectors/CMF/462)
 
+  Bug Fixes
+
+    - DCWorkflow.exportimport: Scripts with invalid types imported
+      after scripts with valid types will no longer place the valid
+      script twice.  Scripts can also now be specified with meta_types
+      other than the hard-coded meta_types.
+
   Others
 
     - CMFUid: Removed redundant and unexpected code to auto-create catalog

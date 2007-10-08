@@ -2,6 +2,11 @@ CMF 2.1.1 (unreleased)
 
   Bug Fixes
 
+    - DCWorkflow.exportimport: Scripts with invalid types imported
+      after scripts with valid types will no longer place the valid
+      script twice.  Scripts can also now be specified with meta_types
+      other than the hard-coded meta_types.
+
     - CMFDefault.utils: The email validation would reject addresses where
       the domain part started with a single letter element.
       (http://www.zope.org/Collectors/CMF/495)

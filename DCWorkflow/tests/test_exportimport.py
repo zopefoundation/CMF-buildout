@@ -2423,6 +2423,52 @@ class Test_importWorkflow(_WorkflowSetup, _GuardChecker):
             if script.meta_type == PythonScript.meta_type:
                 self.assertEqual( script.manage_FTPget(), expected[ 1 ] )
 
+    def test_scripts_with_invalid_meta_type(self):
+        """
+        A script with an invalid meta_type should raise an error.
+
+        Otherwise the previous script will be added for that script.
+        """
+        from Products.DCWorkflow import exportimport
+
+        tool = self._importNormalWorkflow(
+            'dcworkflow_scripts', 'DC Workflow testing scripts',
+            'Testing Scripts', 'closed')
+        workflow = tool.objectValues()[1]
+        scripts = workflow.scripts
+
+        s_infos = [
+            dict(script_id='invalid', meta_type='invalid',
+                 filename='')]
+        self.assertRaises(ValueError, 
+                          exportimport._initDCWorkflowScripts,
+                          workflow, s_infos, None)
+
+    def test_scripts_by_meta_type(self):
+        """
+        Constructors for meta_types other than those hard coded should
+        be looked up.
+        """
+        from Products.DCWorkflow import exportimport
+
+        tool = self._importNormalWorkflow(
+            'dcworkflow_scripts', 'DC Workflow testing scripts',
+            'Testing Scripts', 'closed')
+        workflow = tool.objectValues()[1]
+        scripts = workflow.scripts
+
+        scripts.all_meta_types = scripts.all_meta_types() + [
+            dict(instance=PythonScript, name='Foo Script')]
+
+        s_infos = [
+            dict(script_id='doc', meta_type='DTML Document',
+                 filename=''),
+            dict(script_id='bar', meta_type='Foo Script',
+                 filename='')]
+        exportimport._initDCWorkflowScripts(workflow, s_infos, None)
+        
+        self.assertEqual(scripts['doc'].meta_type, 'DTML Document')
+        self.assertEqual(scripts['bar'].meta_type, 'Script (Python)')
 
 def test_suite():
     return unittest.TestSuite((

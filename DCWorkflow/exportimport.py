@@ -1139,6 +1139,18 @@ def _initDCWorkflowScripts( workflow, scripts, context ):
         elif meta_type == DTMLMethod.meta_type:
             script = DTMLMethod( file, __name__=id )
 
+        else:
+            for mt in workflow.scripts.filtered_meta_types():
+                if mt['name']==meta_type:
+                    if hasattr(mt['instance'], 'write'):
+                        script = mt['instance'](id)
+                        script.write(file)
+                    else:
+                        script = mt['instance'](file, __name__=id)
+                    break
+            else:
+                raise ValueError, 'Invalid type: %s' % meta_type
+
         if workflow.scripts.has_key(id):
             workflow.scripts._delObject(id)
         workflow.scripts._setObject( id, script )

@@ -20,6 +20,10 @@ CMF 2.1.1 (unreleased)
       as StateChangeInfo passes on the new status to after-transition scripts.
       (http://www.zope.org/Collectors/CMF/490)
 
+  Other
+
+    - Testing: Derive test layers from ZopeLite layer if available.
+
 
 CMF 2.1.0 (2007/08/08)
 

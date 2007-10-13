@@ -80,6 +80,13 @@ class WarningInterceptor:
 
 class TransactionalTest(unittest.TestCase):
 
+    try:
+        from Testing.ZopeTestCase.layer import ZopeLite
+    except ImportError:
+        pass # Zope < 2.11
+    else:
+        layer = ZopeLite
+
     def setUp(self):
         transaction.begin()
         self.app = self.root = ZopeTestCase.app()

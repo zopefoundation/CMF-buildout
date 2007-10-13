@@ -33,6 +33,8 @@ CMF 2.2.0-beta (unreleased)
 
     - CMFCore.MembershipTool: Removed ancient LoginManager compatibility code
       and deprecated the no longer needed __getPUS method.
+
+    - Testing: Derive test layers from ZopeLite layer if available.
     
 
 CMF 2.1.x

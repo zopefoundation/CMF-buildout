@@ -2,6 +2,10 @@ After CMF 1.6.4
 
   Bug Fixes
 
+    - CMFCore.FSImage:  Supply class-level defaults for 'alt', 'height',
+      and 'width', to avoid acquiring objects with the same names
+      (http://www.zope.org/Collectors/CMF/507)
+
     - DCWorkflow.exportimport: Scripts with invalid types imported
       after scripts with valid types will no longer place the valid
       script twice.  Scripts can also now be specified with meta_types

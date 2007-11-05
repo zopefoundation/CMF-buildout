@@ -222,6 +222,23 @@ class FSImageTests( RequestTest, FSDVTest):
         self.failUnless('bar' in headers.keys())
         self.assertEqual(headers['test_path'], '/test_image')
 
+    def test_tag_with_acquired_clashing_attrs(self):
+        # See http://www.zope.org/Collectors/CMF/507
+        class Clash:
+            def __str__(self):
+                raise NotImplementedError
+
+        self.root.alt = Clash()
+        self.root.height = Clash()
+        self.root.width = Clash()
+
+        image = self._makeOne( 'test_image', 'test_image.gif' )
+        image = image.__of__( self.root )
+
+        tag = image.tag()
+        self.failUnless('alt=""' in tag)
+
+
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(FSImageTests),

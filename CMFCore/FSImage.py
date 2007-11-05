@@ -41,6 +41,9 @@ class FSImage(FSObject):
 
     meta_type = 'Filesystem Image'
     content_type = 'unknown/unknown'
+    alt = ''
+    height = ''
+    width = ''
     _data = None
 
     manage_options = ({'label':'Customize', 'action':'manage_main'},)

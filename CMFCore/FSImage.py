@@ -40,6 +40,10 @@ class FSImage(FSObject):
 
     meta_type = 'Filesystem Image'
 
+    alt = ''
+    height = ''
+    width = ''
+
     _data = None
 
     manage_options=(

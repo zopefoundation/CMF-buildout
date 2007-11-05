@@ -2,6 +2,10 @@ After CMF 1.5.7
 
   Bug Fixes
 
+    - CMFCore.FSImage:  Supply class-level defaults for 'alt', 'height',
+      and 'width', to avoid acquiring objects with the same names
+      (http://www.zope.org/Collectors/CMF/507)
+
     - Backported test fix from 2.1 branch which suppresses race conditions
       in date-based topic criteria tests.
 

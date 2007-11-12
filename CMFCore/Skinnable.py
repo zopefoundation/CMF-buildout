@@ -116,6 +116,8 @@ class SkinnableObjectManager(ObjectManager):
     security.declarePublic('getSkinNameFromRequest')
     def getSkinNameFromRequest(self, REQUEST=None):
         '''Returns the skin name from the Request.'''
+        if REQUEST is None:
+            return None
         sfn = self.getSkinsFolderName()
         if sfn is not None:
             sf = getattr(self, sfn, None)

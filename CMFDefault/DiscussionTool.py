@@ -89,7 +89,11 @@ class DiscussionTool( UniqueObject, SimpleItem, ActionProviderBase ):
 
         if allowDiscussion is None or allowDiscussion == 'None':
             if hasattr( aq_base(content), 'allow_discussion'):
-                del content.allow_discussion
+                try:
+                    del content.allow_discussion
+                except AttributeError:
+                    # https://bugs.launchpad.net/zope-cmf/+bug/162532
+                    pass
         else:
             content.allow_discussion = bool(allowDiscussion)
 

@@ -2,6 +2,10 @@ After CMF 1.6.4
 
   Bug Fixes
 
+    - CMFDefault.DiscussionTool: Prevent an exception in edge cases 
+      where the flag to allow discussions only exists at class level.
+      (https://bugs.launchpad.net/zope-cmf/+bug/162532)
+
     - CMFCore.FSImage:  Supply class-level defaults for 'alt', 'height',
       and 'width', to avoid acquiring objects with the same names
       (http://www.zope.org/Collectors/CMF/507)

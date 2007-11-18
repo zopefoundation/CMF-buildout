@@ -78,8 +78,13 @@ class DiscussionTool(UniqueObject, SimpleItem):
             raise AccessControl_Unauthorized
 
         if allowDiscussion is None or allowDiscussion == 'None':
-            if getattr( aq_base(content), 'allow_discussion', _marker) is not _marker:
-                del content.allow_discussion
+            disc_flag = getattr(aq_base(content), 'allow_discussion', _marker)
+            if disc_flag is not _marker:
+                try:
+                    del content.allow_discussion
+                except AttributeError:
+                    # https://bugs.launchpad.net/zope-cmf/+bug/162532
+                    pass
         else:
             content.allow_discussion = bool(allowDiscussion)
 

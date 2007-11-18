@@ -73,6 +73,18 @@ class DiscussionToolTests(TestCase):
         dtool.overrideDiscussionFor(foo, None)
         self.failIf( hasattr(foo.aq_base, 'allow_discussion') )
 
+        # https://bugs.launchpad.net/zope-cmf/+bug/162532: Don't break
+        # if allow_discussion only exists at the class level
+        class DummyContent:
+            allow_discussion = False
+            def getId(self): return 'dummy'
+
+        dummy = DummyContent()
+        try:
+            dtool.overrideDiscussionFor(dummy, None)
+        except AttributeError:
+            self.fail('Launchpad issue 162532: AttributeError raised')
+
     def test_isDiscussionAllowedFor(self):
         # Test for Collector issue #398 (allow_discussion wrongly
         # acquired and used from parent)

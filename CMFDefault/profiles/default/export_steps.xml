@@ -50,11 +50,6 @@
               title="Skins Tool">
   Export skins tool's filesystem directory views and skin path definitions.
  </export-step>
- <export-step id="step_registries"
-              handler="Products.GenericSetup.tool.exportStepRegistries"
-              title="Step Registries">
-  Export current contents of import step registry and export step registry.
- </export-step>
  <export-step id="toolset"
               handler="Products.GenericSetup.tool.exportToolset"
               title="Required Tools">

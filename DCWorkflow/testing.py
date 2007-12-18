@@ -32,6 +32,7 @@ class ExportImportZCMLLayer:
         import Products.DCWorkflow
 
         zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('meta.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('tool.zcml', Products.CMFCore)

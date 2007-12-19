@@ -21,7 +21,7 @@
  <import-step id="componentregistry" version="20061025-01"
               handler="Products.GenericSetup.components.importComponentRegistry"
               title="Local Component Registry">
-  <dependency step="various"/>
+  <dependency step="toolset"/>
   Import local component registry configuration.
  </import-step>
  <import-step id="content_type_registry"
@@ -41,7 +41,7 @@
  <import-step id="mailhost" version="20050803-01"
               handler="Products.CMFCore.exportimport.mailhost.importMailHost"
               title="MailHost">
-  <dependency step="toolset"/>
+  <dependency step="componentregistry"/>
   Import mailhost settings
  </import-step>
  <import-step id="properties" version="20041215-01"

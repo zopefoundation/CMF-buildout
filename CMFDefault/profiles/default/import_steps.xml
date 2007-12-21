@@ -18,12 +18,6 @@
   <dependency step="toolset"/>
   Import catalog tool's sub-objects, indexes and columns.
  </import-step>
- <import-step id="componentregistry" version="20061025-01"
-              handler="Products.GenericSetup.components.importComponentRegistry"
-              title="Local Component Registry">
-  <dependency step="toolset"/>
-  Import local component registry configuration.
- </import-step>
  <import-step id="content_type_registry"
               version="20051013-01"
               handler="Products.CMFCore.exportimport.contenttyperegistry.importContentTypeRegistry"
@@ -49,22 +43,11 @@
               title="Site Properties">
   Import site properties.
  </import-step>
- <import-step id="rolemap" version="20040523-01"
-              handler="Products.GenericSetup.rolemap.importRolemap"
-              title="Role / Permission Map">
-  Import custom roles and non-default role-permission mappings.
- </import-step>
  <import-step id="skins" version="20040630-01"
               handler="Products.CMFCore.exportimport.skins.importSkinsTool"
               title="Skins Tool">
   <dependency step="componentregistry"/>
   Import skins tool's filesystem directory views and skin path definitions.
- </import-step>
- <import-step id="toolset" version="20040630-01"
-              handler="Products.GenericSetup.tool.importToolset"
-              title="Required tools">
-  Create required tools, replacing any of the wrong class, and remove
-  forbidden ones.
  </import-step>
  <import-step id="typeinfo" version="20040630-01"
               handler="Products.CMFCore.exportimport.typeinfo.importTypesTool"

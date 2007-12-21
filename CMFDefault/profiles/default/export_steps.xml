@@ -15,11 +15,6 @@
               title="Catalog Tool">
   Export catalog tool's sub-objects, indexes and columns.
  </export-step>
- <export-step id="componentregistry"
-              handler="Products.GenericSetup.components.exportComponentRegistry"
-              title="Local Component Registry">
-    Export local component registry configuration.
- </export-step>
  <export-step id="content_type_registry"
               handler="Products.CMFCore.exportimport.contenttyperegistry.exportContentTypeRegistry"
               title="Content Type Registry">
@@ -40,20 +35,10 @@
               title="Site Properties">
   Export site properties.
  </export-step>
- <export-step id="rolemap"
-              handler="Products.GenericSetup.rolemap.exportRolemap"
-              title="Role / Permission Map">
-  Export custom roles and non-default role-permission mappings.
- </export-step>
  <export-step id="skins"
               handler="Products.CMFCore.exportimport.skins.exportSkinsTool"
               title="Skins Tool">
   Export skins tool's filesystem directory views and skin path definitions.
- </export-step>
- <export-step id="toolset"
-              handler="Products.GenericSetup.tool.exportToolset"
-              title="Required Tools">
-  Export required / forbidden tools.
  </export-step>
  <export-step id="typeinfo"
               handler="Products.CMFCore.exportimport.typeinfo.exportTypesTool"

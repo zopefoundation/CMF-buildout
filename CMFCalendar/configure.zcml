@@ -27,6 +27,16 @@
 
   <cmf:registerDirectory name="zpt_calendar"/>
 
+  <!-- exportimport -->
+
+  <genericsetup:importStep
+      name="various-calendar"
+      title="Various Calendar Settings"
+      description="Import various settings for CMF Calendar."
+      handler="Products.CMFCalendar.setuphandlers.importVarious">
+    <depends name="toolset"/>
+  </genericsetup:importStep>
+
   <!-- profiles -->
 
   <genericsetup:registerProfile

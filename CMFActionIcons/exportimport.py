@@ -45,14 +45,18 @@ def importActionIconsTool(context):
     """ Import action icons tool settings from an XML file.
     """
     site = context.getSite()
-    sm = getSiteManager(site)
-    ait = sm.queryUtility(IActionIconsTool)
-    if ait is None:
-        return 'Action icons: No tool!'
+    logger = context.getLogger('action-icons')
 
     body = context.readDataFile(_FILENAME)
     if body is None:
-        return 'Action icons: Nothing to import.'
+        logger.debug('Nothing to import.')
+        return
+
+    sm = getSiteManager(site)
+    ait = sm.queryUtility(IActionIconsTool)
+    if ait is None:
+        logger.warning('No tool!')
+        return
 
     if context.shouldPurge():
         ait.clearActionIcons()
@@ -71,19 +75,24 @@ def importActionIconsTool(context):
             ait.updateActionIcon(**action_icon)
         else:
             ait.addActionIcon(**action_icon)
-
-    return 'Action icons settings imported.'
+    logger.info('Action icons tool settings imported.')
 
 def exportActionIconsTool(context):
     """ Export caching policy manager settings as an XML file.
     """
     site = context.getSite()
+    logger = context.getLogger('action-icons')
+
+    tool = getSiteManager(site).queryUtility(IActionIconsTool)
+    if tool is None:
+        logger.debug('Nothing to export.')
+        return
+
     mhc = ActionIconsToolExportConfigurator( site ).__of__( site )
     text = mhc.generateXML()
 
     context.writeDataFile( _FILENAME, text, 'text/xml' )
-
-    return 'Action icons tool settings exported.'
+    logger.info('Action icons tool settings exported.')
 
 
 class ActionIconsToolExportConfigurator(ExportConfiguratorBase):

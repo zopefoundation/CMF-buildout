@@ -2,6 +2,14 @@ CMF 2.2.0-beta (unreleased)
 
   New Features
 
+    - CMFDefault setup handler: Improved 'various' import step.
+      Added flag file check and global registration.
+
+    - CMFCalendar setup handler: Improved 'various-calendar' import step.
+      Added flag file check and global registration.
+
+    - CMFActionIcons setup handler: Registered steps globally.
+
     - CMFDefault.Document and CMFDefault.NewsItem: It is now possible to
       register a utility (ILinebreakNormalizer) that can normalize line 
       breaks upon editing or rendering out to FTP.
@@ -18,6 +26,8 @@ CMF 2.2.0-beta (unreleased)
   Bug Fixes
 
   Others
+
+    - profiles: Removed obsolete local import and export step registrations.
 
     - CMFUid: Removed redundant and unexpected code to auto-create catalog
       index and column for the UID handler tool. The index and column are

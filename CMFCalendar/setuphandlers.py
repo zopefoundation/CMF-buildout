@@ -28,6 +28,13 @@ def importVarious(context):
     This provisional handler will be removed again as soon as full handlers
     are implemented for these steps.
     """
+    logger = context.getLogger('various-calendar')
+
+    # Only run step if a flag file is present
+    if context.readDataFile('various-calendar.txt') is None:
+        logger.debug('Nothing to import.')
+        return
+
     site = context.getSite()
     mdtool = getUtility(IMetadataTool)
 
@@ -48,7 +55,6 @@ def importVarious(context):
                                 _('Work'),
                                ),
             REQUEST=None)
+        logger.info('MetadataTool element policy for events imported.')
     except MetadataError:
-        pass
-
-    return 'Various settings for CMF Calendar imported.'
+        logger.warning('Importing MetadataTool element policy failed.')

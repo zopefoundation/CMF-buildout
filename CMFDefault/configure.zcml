@@ -9,6 +9,8 @@
 
   <include file="content.zcml"/>
 
+  <include file="exportimport.zcml"/>
+
   <include file="profiles.zcml"/>
 
   <include file="directories.zcml"/>

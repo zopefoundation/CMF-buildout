@@ -8,6 +8,23 @@
 
   <cmf:registerDirectory name="actionicons"/>
 
+  <!-- exportimport -->
+
+  <genericsetup:importStep
+      name="action-icons"
+      title="Action Icons"
+      description="Import action icon definitions"
+      handler="Products.CMFActionIcons.exportimport.importActionIconsTool">
+    <depends name="componentregistry"/>
+  </genericsetup:importStep>
+
+  <genericsetup:exportStep
+      name="action-icons"
+      title="Action Icons"
+      description="Export action icon definitions"
+      handler="Products.CMFActionIcons.exportimport.exportActionIconsTool"
+      />
+
   <!-- profiles -->
 
   <genericsetup:registerProfile

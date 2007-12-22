@@ -24,14 +24,22 @@ def importVarious(context):
     This provisional handler will be removed again as soon as full handlers
     are implemented for these steps.
     """
+    logger = context.getLogger('various')
+
+    # Only run step if a flag file is present
+    if context.readDataFile('various.txt') is None:
+        logger.debug('Nothing to import.')
+        return
+
     site = context.getSite()
 
     try:
         site.manage_addPortalFolder('Members')
+        site.Members.manage_addProduct['OFSP'].manage_addDTMLMethod(
+                          'index_html', 'Member list', '<dtml-return roster>')
+        logger.info('Members folder imported.')
     except BadRequest:
-        return 'Various settings: Nothing to import.'
-    site.Members.manage_addProduct['OFSP'].manage_addDTMLMethod('index_html',
-                                        'Member list', '<dtml-return roster>')
-    site.acl_users.encrypt_passwords = False
+        logger.warning('Importing Members folder failed.')
 
-    return 'Various settings from PortalGenerator imported.'
+    site.acl_users.encrypt_passwords = False
+    logger.info('Password encryption disabled.')

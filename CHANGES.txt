@@ -2,6 +2,8 @@ CMF 2.1.1 (unreleased)
 
   Bug Fixes
 
+    - CMFActionIcons profiles: Fixed dependency in import_steps.xml.
+
     - CMFDefault profiles: Fixed some dependencies in import_steps.xml.
 
     - DCWorkflow.exportimport: Scripts with invalid types imported

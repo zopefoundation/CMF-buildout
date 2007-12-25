@@ -24,6 +24,8 @@ CMF 2.1.1 (unreleased)
 
   Other
 
+    - Updated to the 0.3 release of five.localsitemanager.
+
     - Testing: Derive test layers from ZopeLite layer if available.
 
   See also CMFCore/CHANGES.txt.

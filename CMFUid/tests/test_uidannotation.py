@@ -21,17 +21,15 @@ import Testing
 import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import Implicit
-
+from OFS.Folder import Folder
 from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.interface import implements
 from zope.interface.verify import verifyClass
 
-from Products.CMFCore.PortalFolder import PortalFolder
+from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.tests.base.dummy import DummyContent
 from Products.CMFCore.tests.base.testcase import SecurityTest
-from Products.CMFCore.tests.test_CMFCatalogAware import SimpleFolder
-from Products.CMFCore.tests.test_CMFCatalogAware import TheClass
 from Products.CMFCore.tests.test_PortalFolder import _AllowedUser
 from Products.CMFCore.tests.test_PortalFolder import _SensitiveSecurityPolicy
 from Products.CMFUid.interfaces import IUniqueIdAnnotationManagement
@@ -40,6 +38,11 @@ from Products.CMFUid.interfaces import UniqueIdError
 from Products.CMFUid.testing import UidEventZCMLLayer
 
 UID_ATTRNAME = 'cmf_uid'
+
+
+class TheClass(Folder):
+
+    implements(IContentish)
 
 
 class DummyUniqueIdHandlerTool(Implicit):
@@ -85,7 +88,7 @@ class UniqueIdAnnotationToolTests(SecurityTest):
                           )
 
         self.root._setObject('dummy', DummyContent(id='dummy'))
-        self.root._setObject('site', SimpleFolder('site'))
+        self.root._setObject('site', Folder('site'))
 
         transaction.savepoint(optimistic=True)
 
@@ -200,7 +203,7 @@ class UniqueIdAnnotationToolTests(SecurityTest):
         site = self.root.site
         site._setObject('dummy', dummy)
         annotation = self.root.portal_uidannotation(dummy, UID_ATTRNAME)
-        self.root._setObject('folder1', SimpleFolder('folder1'))
+        self.root._setObject('folder1', Folder('folder1'))
 
         transaction.savepoint(optimistic=True)
         cookie = site.manage_copyObjects(ids=['dummy'])
@@ -216,7 +219,7 @@ class UniqueIdAnnotationToolTests(SecurityTest):
         site._setObject('dummy', dummy)
         annotation = self.root.portal_uidannotation(dummy, UID_ATTRNAME)
         self.root.portal_uidannotation.remove_on_add = False
-        self.root._setObject('folder1', SimpleFolder('folder1'))
+        self.root._setObject('folder1', Folder('folder1'))
 
         transaction.savepoint(optimistic=True)
         cookie = site.manage_copyObjects(ids=['dummy'])
@@ -232,7 +235,7 @@ class UniqueIdAnnotationToolTests(SecurityTest):
         site._setObject('dummy', dummy)
         annotation = self.root.portal_uidannotation(dummy, UID_ATTRNAME)
         self.root.portal_uidannotation.remove_on_clone = False
-        self.root._setObject('folder1', SimpleFolder('folder1'))
+        self.root._setObject('folder1', Folder('folder1'))
 
         transaction.savepoint(optimistic=True)
         cookie = site.manage_copyObjects(ids=['dummy'])
@@ -249,7 +252,7 @@ class UniqueIdAnnotationToolTests(SecurityTest):
         site._setObject('dummy', dummy)
         annotation = self.root.portal_uidannotation(dummy, UID_ATTRNAME)
         self.root.portal_uidannotation.assign_on_clone = True
-        self.root._setObject('folder1', SimpleFolder('folder1'))
+        self.root._setObject('folder1', Folder('folder1'))
 
         transaction.savepoint(optimistic=True)
         cookie = site.manage_copyObjects(ids=['dummy'])
@@ -259,11 +262,11 @@ class UniqueIdAnnotationToolTests(SecurityTest):
         self.failIf( annotation() == new_annotation() )
 
     def test_simulateNestedFolderCloneRemovingUid1(self):
-        self.root.site._setObject( 'foo', SimpleFolder(id='foo') )
-        self.root.site._setObject( 'foo2', SimpleFolder(id='foo2') )
+        self.root.site._setObject( 'foo', Folder(id='foo') )
+        self.root.site._setObject( 'foo2', Folder(id='foo2') )
         foo = self.root.site.foo
-        foo._setObject( 'sub1', SimpleFolder(id='sub1') )
-        foo.sub1._setObject( 'sub2', SimpleFolder(id='sub2') )
+        foo._setObject( 'sub1', Folder(id='sub1') )
+        foo.sub1._setObject( 'sub2', Folder(id='sub2') )
         foo.sub1.sub2._setObject( 'baz', DummyContent(id='baz', catalog=1) )
         baz = foo.sub1.sub2.baz
         annotation = self.root.portal_uidannotation(baz, UID_ATTRNAME)

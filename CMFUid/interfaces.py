@@ -22,7 +22,6 @@ $Id$
 from zope.interface import Interface
 
 from Products.CMFCore.interfaces import ICallableOpaqueItem
-from Products.CMFCore.interfaces import ICallableOpaqueItemEvents
 
 
 class UniqueIdError(Exception):

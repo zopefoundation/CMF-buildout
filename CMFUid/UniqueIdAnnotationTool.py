@@ -18,7 +18,6 @@ $Id$
 """
 
 from AccessControl import ClassSecurityInfo
-from Acquisition import aq_base, aq_inner, aq_parent
 from Acquisition import Implicit
 from Globals import InitializeClass
 from Globals import Persistent
@@ -69,8 +68,9 @@ class UniqueIdAnnotation(Persistent, Implicit):
 
 InitializeClass(UniqueIdAnnotation)
 
+
 def handleUidAnnotationEvent(ob, event):
-    """ Event subscriber for (IUniqueIdAnnotation, IObjectEvent) events
+    """ Event subscriber for (IContentish, IObjectEvent) events
     """
 
     if IObjectAddedEvent.providedBy(event):
@@ -108,7 +108,8 @@ def handleUidAnnotationEvent(ob, event):
             if assign_on_clone:
                 # assign new uid
                 uid_handler.register(ob)
-        
+
+
 class UniqueIdAnnotationTool(UniqueObject, SimpleItem, PropertyManager):
 
     __doc__ = __doc__ # copy from module

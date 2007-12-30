@@ -1,3 +1,12 @@
+CMF 2.1.1 (unreleased)
+
+  Bug Fixes
+
+    - CMFDefault.PropertiesTool: Fix a faulty manage_changeProperties
+      invocation which broke the 'Reconfigure Portal' screen
+      (https://bugs.launchpad.net/zope-cmf/+bug/174246)
+
+
 CMF 2.1.1-beta (2007/12/29)
 
   Bug Fixes

@@ -1,4 +1,4 @@
-CMF 2.1.1 (unreleased)
+CMF 2.1.1 (2008/01/06)
 
   Bug Fixes
 

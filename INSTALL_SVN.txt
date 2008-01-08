@@ -26,9 +26,9 @@ Installation
   1. Fetch the CMF package from the Zope Subversion repository::
 
      $ cd /tmp
-     $ svn co svn://svn.zope.org/repos/main/CMF/trunk CMF-head
+     $ svn co svn://svn.zope.org/repos/main/CMF/trunk CMF-trunk
 
-     This checkout creates a directory, 'CMF-head', which contain several 
+     This checkout creates a directory, 'CMF-trunk', which contain several 
      subdirectories:
 
       - CMFCore

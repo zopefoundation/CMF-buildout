@@ -1,4 +1,4 @@
-Installing CMF 2.1
+Installing CMF 2.2
 
   Requirements
 

@@ -39,10 +39,11 @@ Zope Content Management Framework (CMF) README
 
   Known Issues
 
-    * Please search the "CMF Collector", http://collector.zope.org/CMF for
-      issues which are open against the CMF. You can also report issues there.
-      (please look for similar ones first!)
+    * Please search the "CMF Collector", https://bugs.launchpad.net/zope-cmf/ 
+      for issues which are open against the CMF. You can also report issues 
+      there.  (please look for similar ones first!)
 
   Installation
 
     Please see "Installing CMF":INSTALL.txt
+

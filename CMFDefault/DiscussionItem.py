@@ -287,9 +287,9 @@ class DiscussionItemContainer( Persistent, Implicit, Traversable ):
         item.setFormat(text_format)
         item._edit(text)
         item.addCreator(Creator)
-        item.indexObject()
+        item.setReplyTo(self._getDiscussable())
 
-        item.setReplyTo( self._getDiscussable() )
+        item.indexObject()
         item.notifyWorkflowCreated()
 
         return id

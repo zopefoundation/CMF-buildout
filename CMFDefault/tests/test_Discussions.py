@@ -202,6 +202,7 @@ class DiscussionTests(SecurityTest):
 
     def test_itemCataloguing( self ):
         ctool = self.site._setObject( 'portal_catalog', CatalogTool() )
+        ctool.addColumn('in_reply_to')
         dtool = self.site.portal_discussion
         catalog = ctool._catalog
         test = self._makeDummyContent('test', catalog=1)
@@ -222,6 +223,10 @@ class DiscussionTests(SecurityTest):
                               '/bar/site/test/talkback/%s' % reply.getId() ) )
 
         reply1 = talkback.getReplies()[0]
+        path1 = '/'.join(reply1.getPhysicalPath())
+        self.assertEqual( ctool.getMetadataForUID(path1),
+                          {'in_reply_to': None} )
+
         talkback1 = dtool.getDiscussionFor(reply1)
         talkback1.createReply( title='test2'
                              , text='blah2'
@@ -234,6 +239,11 @@ class DiscussionTests(SecurityTest):
             self.failUnless( has_path( catalog, reply.getPhysicalPath() ) )
             self.failUnless( has_path( catalog,
                               '/bar/site/test/talkback/%s' % reply.getId() ) )
+
+        reply2 = talkback1.getReplies()[0]
+        path2 = '/'.join(reply2.getPhysicalPath())
+        self.assertEqual( ctool.getMetadataForUID(path2),
+                          {'in_reply_to': reply1.getId()} )
 
     def test_itemWorkflowNotification(self):
         from Products.CMFDefault.DiscussionItem import DiscussionItem

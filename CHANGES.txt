@@ -4,6 +4,11 @@ CMF 2.1.2-beta (unreleased)
 
     - CMFDefault DiscussionItem: Fixed indexing of 'in_reply_to'.
 
+    - CMFUid.testing: Base UidEventZCMLLayer on ZopeTestCase.layer.ZopeLite.
+
+    - CMFUid.UniqueIdHandlerTool: Use %r instead of %s in error messages, so
+      we don't trip over non-ASCII representations (e.g. File and Image).
+
 
 CMF 2.1.1 (2008/01/06)
 

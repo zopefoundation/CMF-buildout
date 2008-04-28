@@ -12,72 +12,36 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Program to extract internationalization markup from Python Code,
-Page Templates and ZCML.
-
-This tool will extract all findable message strings from all
-internationalizable files in your Zope 3 product. It only extracts message ids
-of the specified domain. It defaults to the 'zope' domain and the zope
-package.
-
-Note: The Python Code extraction tool does not support domain
-      registration, so that all message strings are returned for
-      Python code.
-
-Note: The script expects to be executed either from inside the Zope 3 source
-      tree or with the Zope 3 source tree on the Python path.  Execution from
-      a symlinked directory inside the Zope 3 source tree will not work.
-
-Usage: i18nextract.py [options]
-Options:
-    -h / --help
-        Print this message and exit.
-    -d / --domain <domain>
-        Specifies the domain that is supposed to be extracted (i.e. 'zope')
-    -p / --path <path>
-        Specifies the package that is supposed to be searched
-        (i.e. 'zope/app')
-    -s / --site_zcml <path>
-        Specify the location of the 'site.zcml' file. By default the regular
-        Zope 3 one is used.
-    -e / --exclude-default-domain
-        Exclude all messages found as part of the default domain. Messages are
-        in this domain, if their domain could not be determined. This usually
-        happens in page template snippets.
-    -o dir
-        Specifies a directory, relative to the package in which to put the
-        output translation template.
-    -x dir
-        Specifies a directory, relative to the package, to exclude.
-        May be used more than once.
-    --python-only
-        Only extract message ids from Python
+"""Extract message strings from python modules, page template files
+and ZCML files.
 
 $Id$
 """
-# XXX: This is a modified copy of zope3's utilities/i18nextract.py (r68098).
-#      It includes some modified code from zope.app.locales.extract (r69514).
+# XXX: This is a modified copy of zope.app.locales.extract (r79598).
 #      Extracting from ZCML is disabled for now.
 #
 #      This is just used to create .pot files for CMF. Don't make your code
 #      depend on it, it might be changed or removed without further notice!
+__docformat__ = 'restructuredtext'
 
-import fnmatch
+import os, sys, fnmatch
+import getopt
 import time
-import tokenize
 import traceback
 
-from zope.app.locales.extract import POTMaker, TokenEater
-from zope.app.locales.pygettext import safe_eval, normalize, make_escapes
-
-
-DEFAULT_CHARSET = 'UTF-8'
-DEFAULT_ENCODING = '8bit'
+from zope.app.locales.extract import DEFAULT_CHARSET
+from zope.app.locales.extract import DEFAULT_ENCODING
+from zope.app.locales.extract import find_files
+from zope.app.locales.extract import normalize_path
+from zope.app.locales.extract import POTMaker
+from zope.app.locales.extract import py_strings
+from zope.app.locales.extract import zcml_strings
+from zope.app.locales.extract import usage
 
 pot_header = '''\
 ##############################################################################
 #
-# Copyright (c) 2006 Zope Corporation and Contributors. All Rights Reserved.
+# Copyright (c) 2008 Zope Corporation and Contributors. All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
@@ -89,7 +53,7 @@ pot_header = '''\
 ##############################################################################
 msgid ""
 msgstr ""
-"Project-Id-Version: CMF 2.1\\n"
+"Project-Id-Version: CMF 2.2\\n"
 "POT-Creation-Date: $Date$\\n"
 "Language-Team: CMF Developers <zope-cmf@zope.org>\\n"
 "MIME-Version: 1.0\\n"
@@ -118,54 +82,54 @@ class POTMaker(POTMaker):
 
         file.close()
 
-def find_files(dir, pattern, exclude=()):
-    files = []
-
-    def visit(files, dirname, names):
-        names[:] = filter(lambda x:x not in exclude, names)
-        files += [os.path.join(dirname, name)
-                  for name in fnmatch.filter(names, pattern)
-                  if name not in exclude]
-
-    os.path.walk(dir, visit, files)
-    return files
-
-def py_strings(dir, domain="zope", exclude=()):
-    """Retrieve all Python messages from `dir` that are in the `domain`.
-    """
-    eater = TokenEater()
-    make_escapes(0)
-    for filename in find_files(
-            dir, '*.py', exclude=('extract.py', 'pygettext.py')+tuple(exclude)):
-        fp = open(filename)
-        try:
-            eater.set_filename(filename)
-            try:
-                tokenize.tokenize(fp.readline, eater)
-            except tokenize.TokenError, e:
-                print >> sys.stderr, '%s: %s, line %d, column %d' % (
-                    e[0], filename, e[1][0], e[1][1])
-        finally:
-            fp.close()
-    # One limitation of the Python message extractor is that it cannot
-    # determine the domain of the string, since it is not contained anywhere
-    # directly. The only way this could be done is by loading the module and
-    # inspect the '_' function. For now we simply assume that all the found
-    # strings have the domain the user specified.
-    return eater.getCatalog()
-
-def zcml_strings(dir, domain="zope", site_zcml=None):
-    """Retrieve all ZCML messages from `dir` that are in the `domain`.
-    """
-    return {}
 
 def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
     """Retrieve all TAL messages from `dir` that are in the `domain`.
+
+      >>> from zope.app.locales import extract
+      >>> import tempfile
+      >>> dir = tempfile.mkdtemp()
+      
+    Let's create a page template in the i18n domain ``test``:
+      >>> testpt = open(os.path.join(dir, 'test.pt'), 'w')
+      >>> testpt.write('<tal:block i18n:domain="test" i18n:translate="">test</tal:block>')
+      >>> testpt.close()
+      
+    And now one in no domain:
+      >>> nopt = open(os.path.join(dir, 'no.pt'), 'w')
+      >>> nopt.write('<tal:block i18n:translate="">no domain</tal:block>')
+      >>> nopt.close()
+
+    Now let's find the strings for the domain ``test``:
+
+      >>> extract.tal_strings(dir, domain='test', include_default_domain=True)
+      {'test': [('...test.pt', 1)], 'no domain': [('...no.pt', 1)]}
+
+    And now an xml file
+      >>> xml = open(os.path.join(dir, 'xml.pt'), 'w')
+      >>> xml.write('''<?xml version="1.0" encoding="utf-8"?>
+      ... <rss version="2.0"
+      ...     i18n:domain="xml"
+      ...     xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      ...     xmlns:tal="http://xml.zope.org/namespaces/tal"
+      ...     xmlns="http://purl.org/rss/1.0/modules/content/">
+      ...  <channel>
+      ...    <link i18n:translate="">Link Content</link>
+      ...  </channel>
+      ... </rss>
+      ... ''')
+      >>> xml.close()
+      >>> extract.tal_strings(dir, domain='xml')
+      {u'Link Content': [('...xml.pt', 8)]}
+
+    Cleanup
+
+      >>> import shutil
+      >>> shutil.rmtree(dir) 
     """
+
     # We import zope.tal.talgettext here because we can't rely on the
     # right sys path until app_dir has run
-    from zope.pagetemplate.pagetemplatefile import sniff_type
-    from zope.pagetemplate.pagetemplatefile import XML_PREFIX_MAX_LENGTH
     from zope.tal.talgettext import POEngine, POTALInterpreter
     from zope.tal.htmltalparser import HTMLTALParser
     from zope.tal.talparser import TALParser
@@ -180,30 +144,17 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
               + find_files(dir, '*.xml', exclude=tuple(exclude))
 
     for filename in sorted(filenames):
-        # This is taken from zope/pagetemplate/pagetemplatefile.py (r40504)
-        f = open(filename, "rb")
-        try:
-            text = f.read(XML_PREFIX_MAX_LENGTH)
-        except:
-            f.close()
-            raise
-        type_ = sniff_type(text)
-        if type_ == "text/xml":
-            text += f.read()
-        else:
-            # For HTML, we really want the file read in text mode:
-            f.close()
-            f = open(filename)
-            text = f.read()
+        f = file(filename,'rb')
+        start = f.read(6)
         f.close()
-
+        if start.startswith('<?xml'):
+            parserFactory = TALParser
+        else:
+            parserFactory = HTMLTALParser
         try:
             engine.file = filename
-            if type_ != "text/xml":
-                p = HTMLTALParser()
-            else:
-                p = TALParser()
-            p.parseString(text)
+            p = parserFactory()
+            p.parseFile(filename)
             program, macros = p.getCode()
             POTALInterpreter(program, macros, engine, stream=Devnull(),
                              metal=False)()
@@ -227,50 +178,20 @@ def tal_strings(dir, domain="zope", include_default_domain=False, exclude=()):
         catalog[msgid] = map(lambda l: (l[0], l[1][0]), locations)
     return catalog
 
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
 
-import os, sys, getopt
-def usage(code, msg=''):
-    # Python 2.1 required
-    print >> sys.stderr, __doc__
-    if msg:
-        print >> sys.stderr, msg
-    sys.exit(code)
-
-def app_dir():
-    try:
-        import zope
-    except ImportError:
-        # Couldn't import zope, need to add something to the Python path
-
-        # Get the path of the src
-        path = os.path.abspath(os.getcwd())
-        while not path.endswith('src'):
-            parentdir = os.path.dirname(path)
-            if path == parentdir:
-                # root directory reached
-                break
-            path = parentdir
-        sys.path.insert(0, path)
-
-        try:
-            import zope
-        except ImportError:
-            usage(1, "Make sure the script has been executed "
-                     "inside Zope 3 source tree.")
-
-    return os.path.dirname(zope.__file__)
-
-def main(argv=sys.argv):
     try:
         opts, args = getopt.getopt(
-            sys.argv[1:],
+            argv,
             'hd:s:i:p:o:x:',
             ['help', 'domain=', 'site_zcml=', 'path=', 'python-only'])
     except getopt.error, msg:
         usage(1, msg)
 
     domain = 'zope'
-    path = app_dir()
+    path = None
     include_default_domain = True
     output_dir = None
     exclude_dirs = []
@@ -282,7 +203,9 @@ def main(argv=sys.argv):
         elif opt in ('-d', '--domain'):
             domain = arg
         elif opt in ('-s', '--site_zcml'):
-            site_zcml = arg
+            if not os.path.exists(arg):
+                usage(1, 'The specified location for site.zcml does not exist')
+            site_zcml = normalize_path(arg)
         elif opt in ('-e', '--exclude-default-domain'):
             include_default_domain = False
         elif opt in ('-o', ):
@@ -294,14 +217,11 @@ def main(argv=sys.argv):
         elif opt in ('-p', '--path'):
             if not os.path.exists(arg):
                 usage(1, 'The specified path does not exist.')
-            path = arg
-            # We might not have an absolute path passed in.
-            if not path == os.path.abspath(path):
-                cwd = os.getcwd()
-                # This is for symlinks. Thanks to Fred for this trick.
-                if os.environ.has_key('PWD'):
-                    cwd = os.environ['PWD']
-                path = os.path.normpath(os.path.join(cwd, arg))
+            path = normalize_path(arg)
+
+    if path is None:
+        usage(1, 'You need to provide the module search path with -p PATH.')
+    sys.path.insert(0, path)
 
     # When generating the comments, we will not need the base directory info,
     # since it is specific to everyone's installation
@@ -328,7 +248,8 @@ def main(argv=sys.argv):
     maker = POTMaker(output_file, path)
     maker.add(py_strings(path, domain, exclude=exclude_dirs), base_dir)
     if not python_only:
-        maker.add(zcml_strings(path, domain, site_zcml), base_dir)
+        if site_zcml is not None:
+            maker.add(zcml_strings(path, domain, site_zcml), base_dir)
         maker.add(tal_strings(path, domain, include_default_domain,
                               exclude=exclude_dirs), base_dir)
     maker.write()

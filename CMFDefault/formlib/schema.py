@@ -12,6 +12,9 @@
 ##############################################################################
 """Formlib schema adapter base classes.
 
+This is legacy code. It should only be used to adapt old content types that
+can't handle unicode and datetime correctly.
+
 $Id$
 """
 

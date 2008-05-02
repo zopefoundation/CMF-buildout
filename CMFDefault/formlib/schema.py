@@ -10,10 +10,11 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Formlib schema adapter base classes.
+"""Formlib schema fields and schema adapter base classes.
 
-This is legacy code. It should only be used to adapt old content types that
-can't handle unicode and datetime correctly.
+SchemaAdapterBase and ProxyFieldProperty are legacy code. They should only be
+used to adapt old content types that can't handle unicode and datetime
+correctly.
 
 $Id$
 """

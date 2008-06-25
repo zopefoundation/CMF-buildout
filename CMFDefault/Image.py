@@ -75,6 +75,21 @@ def addImage( self
     self._getOb(id).manage_upload(file)
 
 
+#
+#   Fix up PortalContent's over-generalization (OFS.Image.File has
+#   a *method* 'manage_edit', which is supposed to be POSTed to from its
+#   template, 'manage_editForm'.
+#
+manage_options = []
+for mapping in PortalContent.manage_options:
+    mapping = mapping.copy()
+    if mapping['label'] == 'Edit':
+        mapping['action'] = 'manage_editForm'
+    manage_options.append(mapping)
+manage_options.extend(Cacheable.manage_options)
+manage_options = tuple(manage_options)
+
+
 class Image(PortalContent, OFS.Image.Image, DefaultDublinCoreImpl):
 
     """A Portal-managed Image.
@@ -88,9 +103,7 @@ class Image(PortalContent, OFS.Image.Image, DefaultDublinCoreImpl):
     effective_date = expiration_date = None
     icon = PortalContent.icon
 
-    manage_options = ( PortalContent.manage_options
-                     + Cacheable.manage_options
-                     )
+    manage_options = manage_options
 
     security = ClassSecurityInfo()
 

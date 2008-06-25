@@ -76,6 +76,19 @@ def addFile( self
     # can span ZODB objects.
     self._getOb(id).manage_upload(file)
 
+#
+#   Fix up PortalContent's over-generalization (OFS.Image.File has
+#   a *method* 'manage_edit', which is supposed to be POSTed to from its
+#   template, 'manage_editForm'.
+#
+manage_options = []
+for mapping in PortalContent.manage_options:
+    mapping = mapping.copy()
+    if mapping['label'] == 'Edit':
+        mapping['action'] = 'manage_editForm'
+    manage_options.append(mapping)
+manage_options.extend(Cacheable.manage_options)
+manage_options = tuple(manage_options)
 
 class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
 
@@ -90,9 +103,7 @@ class File(PortalContent, OFS.Image.File, DefaultDublinCoreImpl):
     effective_date = expiration_date = None
     icon = PortalContent.icon
 
-    manage_options = ( PortalContent.manage_options
-                     + Cacheable.manage_options
-                     )
+    manage_options = manage_options
 
     security = ClassSecurityInfo()
 

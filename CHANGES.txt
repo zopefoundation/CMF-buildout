@@ -2,6 +2,8 @@ CMF 2.1.2-beta (unreleased)
 
   Bug Fixes
 
+    - CMFDefault.File, CMFDefault.Image:  Make the ZMI edit tab work.
+
     - CMFDefault DiscussionItem: Fixed indexing of 'in_reply_to'.
 
     - CMFUid.testing: Base UidEventZCMLLayer on ZopeTestCase.layer.ZopeLite.

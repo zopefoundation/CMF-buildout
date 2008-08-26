@@ -5,5 +5,11 @@
 #
 # svn propset svn:externals -F ./EXTERNALS.TXT .
 #
+CMFActionIcons svn://svn.zope.org/repos/main/Products.CMFActionIcons/branches/2.1/Products/CMFActionIcons
+CMFCalendar svn://svn.zope.org/repos/main/Products.CMFCalendar/branches/2.1/Products/CMFCalendar
 CMFCore svn://svn.zope.org/repos/main/Products.CMFCore/branches/2.1/Products/CMFCore
+CMFDefault svn://svn.zope.org/repos/main/Products.CMFDefault/branches/2.1/Products/CMFDefault
+CMFTopic svn://svn.zope.org/repos/main/Products.CMFTopic/branches/2.1/Products/CMFTopic
+CMFUid svn://svn.zope.org/repos/main/Products.CMFUid/branches/2.1/Products/CMFUid
+DCWorkflow svn://svn.zope.org/repos/main/Products.DCWorkflow/branches/2.1/Products/DCWorkflow
 GenericSetup svn://svn.zope.org/repos/main/Products.GenericSetup/tags/1.3.3/Products/GenericSetup

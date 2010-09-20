@@ -21,7 +21,7 @@ Usage
 =====
 ::
 
-  $ python2.6 bootstrap/bootstrap.py
+  $ python2.6 bootstrap.py
   $ ./bin/buildout
   $ ./bin/test
   $ ./bin/instance
@@ -46,6 +46,6 @@ Usage
 =====
 ::
 
-  $ python2.6 bootstrap/bootstrap.py
+  $ python2.6 bootstrap.py
   $ ./bin/buildout -c buildout-zope212.cfg
   $ ./bin/test

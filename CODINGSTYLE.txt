@@ -43,6 +43,25 @@ Zope 2 and CMF normally use ``DateTime`` objects. These are not the same as
 the ``datetime`` objects usually used in Python. But converting them is
 possible.
 
+Try to use always offset-naive datetime and DateTime values. Using mixed
+values sometimes causes trouble. This is how you can test and normalize them:
+
+    >>> from DateTime.DateTime import DateTime
+    >>> local_tz = DateTime().timezone()
+    >>> aware_DT = DateTime('2002/02/02 02:02:02 ' + local_tz)
+    >>> aware_DT.timezoneNaive()
+    False
+    >>> aware_dt = aware_DT.asdatetime()
+    >>> aware_dt.tzinfo is None
+    False
+
+    >>> naive_DT = DateTime(str(aware_DT)[:19])
+    >>> naive_DT.timezoneNaive()
+    True
+    >>> naive_dt = aware_dt.replace(tzinfo=None)
+    >>> naive_dt.tzinfo is None
+    True
+
 CMF will be migrated to datetime step by step. Formlib based forms already
 require datetime objects. The same schema adapters used for adapting encoded
 strings should also be used for adapting DateTime values. Don't use any

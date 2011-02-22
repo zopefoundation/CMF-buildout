@@ -55,7 +55,7 @@ values sometimes causes trouble. This is how you can test and normalize them:
     >>> aware_dt.tzinfo is None
     False
 
-    >>> naive_DT = DateTime(str(aware_DT)[:19])
+    >>> naive_DT = DateTime(str(aware_DT).rsplit(' ', 1)[0])
     >>> naive_DT.timezoneNaive()
     True
     >>> naive_dt = aware_dt.replace(tzinfo=None)

@@ -2,16 +2,16 @@
 CMF dev buildouts
 =================
 
---------------------------
-Build CMF 2.3 + Zope trunk
---------------------------
+--------------------------------
+Build CMF 2.3 + Zope 2.13 branch
+--------------------------------
 
 Introduction
 ============
 
 Builds CMF 2.3 from develop eggs located in ``src``. This buildout is usually
-used for developing CMF 2.3 on its primary target platform: Zope trunk and
-five.localsitemanager trunk.
+used for developing CMF 2.3 on its primary target platform: Zope 2.13 branch
+and five.localsitemanager trunk.
 
 Dependencies
 ============

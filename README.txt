@@ -50,3 +50,34 @@ Usage
   $ python2.7 bootstrap.py
   $ ./bin/buildout -c buildout-zope213.cfg
   $ ./bin/test
+
+-------------------------
+Experimental WSGI support
+-------------------------
+
+Usage
+=====
+
+Run ``paster serve`` with a Paste Deploy configuration file like this
+``zope2.ini``::
+
+  [server:main]
+  use = egg:paste#http
+  host = localhost
+  port = 8080
+
+  [pipeline:main]
+  pipeline =
+      egg:paste#evalerror
+      egg:repoze.retry#retry
+      egg:repoze.tm2#tm
+      zope
+
+  [app:zope]
+  use = egg:Zope2#main
+  zope_conf = path/to/zope.conf
+
+Known limitations
+=================
+
+- ``mkzopeinstance`` doesn't generate all the necessary files

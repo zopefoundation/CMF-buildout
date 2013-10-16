@@ -51,6 +51,23 @@ Usage
   $ ./bin/buildout -c buildout-zope213.cfg
   $ ./bin/test
 
+------------------------------
+Experimental Chameleon support
+------------------------------
+
+Usage
+=====
+
+Just add the five.pt egg to the dependencies. The ``test-with-chameleon``
+script tests Chameleon compatibility. Currently this doesn't work on Windows.
+
+Known limitations
+=================
+
+- five.pt doesn't work with zope.pagetemplate 4 and Windows newlines
+
+- Issue #144: repeat/item/first/foo seems broken
+
 -------------------------
 Experimental WSGI support
 -------------------------
